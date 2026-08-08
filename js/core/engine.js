@@ -309,6 +309,7 @@
 
     banner.style.display = '';
     banner.replaceChildren(
+      h('div', { class: 'ship-stamp' }, pick(['APPROVED', 'SHIPPED', 'SIGNED OFF', 'FILED', 'EOD'])),
       h('h3', null, title),
       h('p', null, body),
       h('div', { class: 'banner-btns' }, btn, stay),
