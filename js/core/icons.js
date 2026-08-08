@@ -122,6 +122,10 @@
       r(2, 2, 20, 20, P.dark) +
       c(8, 8, 3.2, P.teal) + c(16, 9, 2.2, P.lime) + c(9, 16, 2.4, P.yellow) +
       c(16, 16, 3.4, P.teal) + c(12, 12, 1.6, P.lime) + c(19, 14, 1.6, P.yellow),
+    /* ---------- sims wave ---------- */
+    schelling: "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" fill=\"#141019\"/><rect x=\"3\" y=\"3\" width=\"8\" height=\"18\" fill=\"#00a6b4\"/><rect x=\"13\" y=\"3\" width=\"8\" height=\"18\" fill=\"#e8402a\"/><rect x=\"9\" y=\"7\" width=\"3\" height=\"3\" fill=\"#e8402a\"/><rect x=\"12\" y=\"14\" width=\"3\" height=\"3\" fill=\"#00a6b4\"/>",
+    sir: "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" fill=\"#d9c9a0\"/><circle cx=\"12\" cy=\"12\" r=\"6\" fill=\"#e8402a\"/><circle cx=\"12\" cy=\"12\" r=\"2.6\" fill=\"#6b6350\"/>",
+    sandpile: "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" fill=\"#1b2430\"/><rect x=\"9\" y=\"9\" width=\"6\" height=\"6\" fill=\"#e8402a\"/><rect x=\"5\" y=\"9\" width=\"4\" height=\"4\" fill=\"#c7a637\"/><rect x=\"15\" y=\"12\" width=\"4\" height=\"4\" fill=\"#2d5f6b\"/><rect x=\"10\" y=\"4\" width=\"4\" height=\"4\" fill=\"#c7a637\"/><rect x=\"11\" y=\"16\" width=\"3\" height=\"3\" fill=\"#2d5f6b\"/>",
     /* ---------- wave 1b ---------- */
     firedrill: "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" fill=\"#141019\"/><rect x=\"4\" y=\"14\" width=\"4\" height=\"4\" fill=\"#d9c9a0\"/><rect x=\"10\" y=\"15\" width=\"4\" height=\"4\" fill=\"#d9c9a0\"/><rect x=\"16\" y=\"6\" width=\"4\" height=\"4\" fill=\"#a79e88\"/><path d=\"M8 12 C7 8 12 7 11 3 C15 6 14 10 12 12 Z\" fill=\"#e8402a\"/><path d=\"M9.6 12 C9.2 9.6 11 9 10.6 6.6 C12.4 8.4 12 10.6 11 12 Z\" fill=\"#ffcb1f\"/>",
     battleship: "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" fill=\"#1c3a5c\"/><path d=\"M2 8h20M2 14h20M8 2v20M14 2v20\" fill=\"none\" stroke=\"#0c1119\" stroke-width=\"1\"/><circle cx=\"5\" cy=\"5\" r=\"1.7\" fill=\"#e8402a\"/><circle cx=\"17\" cy=\"11\" r=\"1.7\" fill=\"#fffdf3\"/><circle cx=\"11\" cy=\"17\" r=\"1.7\" fill=\"#e8402a\"/>",

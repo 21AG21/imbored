@@ -2149,6 +2149,10 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       r(2, 2, 20, 20, P.dark) +
       c(8, 8, 3.2, P.teal) + c(16, 9, 2.2, P.lime) + c(9, 16, 2.4, P.yellow) +
       c(16, 16, 3.4, P.teal) + c(12, 12, 1.6, P.lime) + c(19, 14, 1.6, P.yellow),
+    /* ---------- sims wave ---------- */
+    schelling: "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" fill=\"#141019\"/><rect x=\"3\" y=\"3\" width=\"8\" height=\"18\" fill=\"#00a6b4\"/><rect x=\"13\" y=\"3\" width=\"8\" height=\"18\" fill=\"#e8402a\"/><rect x=\"9\" y=\"7\" width=\"3\" height=\"3\" fill=\"#e8402a\"/><rect x=\"12\" y=\"14\" width=\"3\" height=\"3\" fill=\"#00a6b4\"/>",
+    sir: "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" fill=\"#d9c9a0\"/><circle cx=\"12\" cy=\"12\" r=\"6\" fill=\"#e8402a\"/><circle cx=\"12\" cy=\"12\" r=\"2.6\" fill=\"#6b6350\"/>",
+    sandpile: "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" fill=\"#1b2430\"/><rect x=\"9\" y=\"9\" width=\"6\" height=\"6\" fill=\"#e8402a\"/><rect x=\"5\" y=\"9\" width=\"4\" height=\"4\" fill=\"#c7a637\"/><rect x=\"15\" y=\"12\" width=\"4\" height=\"4\" fill=\"#2d5f6b\"/><rect x=\"10\" y=\"4\" width=\"4\" height=\"4\" fill=\"#c7a637\"/><rect x=\"11\" y=\"16\" width=\"3\" height=\"3\" fill=\"#2d5f6b\"/>",
     /* ---------- wave 1b ---------- */
     firedrill: "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" fill=\"#141019\"/><rect x=\"4\" y=\"14\" width=\"4\" height=\"4\" fill=\"#d9c9a0\"/><rect x=\"10\" y=\"15\" width=\"4\" height=\"4\" fill=\"#d9c9a0\"/><rect x=\"16\" y=\"6\" width=\"4\" height=\"4\" fill=\"#a79e88\"/><path d=\"M8 12 C7 8 12 7 11 3 C15 6 14 10 12 12 Z\" fill=\"#e8402a\"/><path d=\"M9.6 12 C9.2 9.6 11 9 10.6 6.6 C12.4 8.4 12 10.6 11 12 Z\" fill=\"#ffcb1f\"/>",
     battleship: "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" fill=\"#1c3a5c\"/><path d=\"M2 8h20M2 14h20M8 2v20M14 2v20\" fill=\"none\" stroke=\"#0c1119\" stroke-width=\"1\"/><circle cx=\"5\" cy=\"5\" r=\"1.7\" fill=\"#e8402a\"/><circle cx=\"17\" cy=\"11\" r=\"1.7\" fill=\"#fffdf3\"/><circle cx=\"11\" cy=\"17\" r=\"1.7\" fill=\"#e8402a\"/>",
@@ -3810,6 +3814,584 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       'Below the critical density the fire dies in a corner; above it, it spans the whole floor. The change is astonishingly sharp.',
       'The panel plots burned-fraction against density, measured live from the model, with the known threshold p_c = 0.5927 marked. Your ignitions drop as yellow dots.',
       'Your score is the biggest burn fraction you manage to trigger. The interesting play is right at the edge.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Seating Chart — Schelling's segregation model (1971).
+ *
+ * A floor of two teams plus some empty desks. Each person is content only if at
+ * least a fraction T of their occupied neighbours share their team; the content
+ * stay put, the discontented get up and take a random empty desk. One rule, run
+ * to equilibrium. The lesson nobody wants: even a mild preference — around a
+ * third — curdles a well-mixed floor into hard single-team blocks. Push the
+ * preference too high (past ~0.75) and it JAMS: nobody can ever settle, and the
+ * floor stays churned. The instrument is the segregation-index-vs-tolerance
+ * curve, measured live from the model, with its peak marked.
+ */
+(function () {
+  'use strict';
+  const { h, clamp, shuffle } = Engine;
+  const W = 560, H = 560, L = 62;
+  const CELL = W / L;
+  const EMPTY = 0, A = 1, B = 2;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    const grid = new Int8Array(L * L);
+    let T = 0.35, emptyFrac = 0.08, running = false, rounds = 0;
+    const samples = [];      // {T, seg} settled points the player produced
+    let ref = [];            // measured reference curve
+
+    const cv = Engine.canvas(root, W, H, { maxHeight: '62vh' });
+    const ctx = cv.ctx;
+    const plot = h('canvas', { class: 'fire-plot', width: 520, height: 200 });
+    root.appendChild(h('div', { class: 'fire-panel' }, plot));
+    const pctx = plot.getContext('2d');
+
+    const pTol = api.pill('Preference: 0.35');
+    const pSeg = api.pill('Segregation: 0%');
+    const pUnhappy = api.pill('Unsettled: 0%');
+
+    const slider = h('input', { type: 'range', min: '0', max: '0.85', step: '0.01', value: '0.35', class: 'slider' });
+    slider.addEventListener('input', () => { T = parseFloat(slider.value); pTol.textContent = 'Preference: ' + T.toFixed(2); });
+    api.toolbar.appendChild(h('label', { class: 'sel-wrap' }, h('span', null, 'preference'), slider));
+    const runBtn = api.button('Run', () => { running = !running; runBtn.textContent = running ? 'Pause' : 'Run'; });
+    api.button('Reshuffle', () => fill());
+
+    function fill() {
+      for (let i = 0; i < grid.length; i++) grid[i] = Math.random() < emptyFrac ? EMPTY : (Math.random() < 0.5 ? A : B);
+      rounds = 0;
+      running = false; runBtn.textContent = 'Run';
+      api.status('Set how strongly people prefer same-team neighbours, then Run. A mild preference is enough to segregate a mixed floor completely.');
+      syncPills();
+    }
+
+    /* fraction of a cell's occupied neighbours that share its team */
+    function sameFrac(i) {
+      const x = i % L, y = (i / L) | 0, me = grid[i];
+      let same = 0, occ = 0;
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+        if (!dx && !dy) continue;
+        const nx = x + dx, ny = y + dy;
+        if (nx < 0 || ny < 0 || nx >= L || ny >= L) continue;
+        const v = grid[ny * L + nx];
+        if (v === EMPTY) continue;
+        occ++;
+        if (v === me) same++;
+      }
+      return occ === 0 ? 1 : same / occ;   // isolated agents are content
+    }
+
+    /* one relocation round; returns how many people moved */
+    function step() {
+      const unhappy = [], empties = [];
+      for (let i = 0; i < grid.length; i++) {
+        if (grid[i] === EMPTY) empties.push(i);
+        else if (sameFrac(i) < T) unhappy.push(i);
+      }
+      shuffle(empties);
+      let ei = 0, moved = 0;
+      for (const i of shuffle(unhappy)) {
+        if (ei >= empties.length) break;
+        const dest = empties[ei++];
+        grid[dest] = grid[i];
+        grid[i] = EMPTY;
+        empties.push(i);           // the vacated cell becomes available later
+        moved++;
+      }
+      rounds++;
+      return moved;
+    }
+
+    function stats() {
+      let seg = 0, occ = 0, unhappy = 0;
+      for (let i = 0; i < grid.length; i++) {
+        if (grid[i] === EMPTY) continue;
+        occ++;
+        const f = sameFrac(i);
+        seg += f;
+        if (f < T) unhappy++;
+      }
+      return { seg: occ ? seg / occ : 0, unhappy: occ ? unhappy / occ : 0, occ: occ };
+    }
+
+    function syncPills() {
+      const s = stats();
+      pTol.textContent = 'Preference: ' + T.toFixed(2);
+      pSeg.textContent = 'Segregation: ' + Math.round(s.seg * 100) + '%';
+      pUnhappy.textContent = 'Unsettled: ' + Math.round(s.unhappy * 100) + '%';
+      pUnhappy.className = 'pill ' + (s.unhappy > 0.15 ? 'warn' : '');
+    }
+
+    /* measured reference curve on a small grid: settle at each T, record seg */
+    function measureReference() {
+      const S = 34, g = new Int8Array(S * S), out = [];
+      const sf = (i) => {
+        const x = i % S, y = (i / S) | 0, me = g[i]; let same = 0, occ = 0;
+        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+          if (!dx && !dy) continue; const nx = x + dx, ny = y + dy;
+          if (nx < 0 || ny < 0 || nx >= S || ny >= S) continue;
+          const v = g[ny * S + nx]; if (v === EMPTY) continue; occ++; if (v === me) same++;
+        }
+        return occ === 0 ? 1 : same / occ;
+      };
+      for (let ti = 0; ti <= 20; ti++) {
+        const tt = 0.85 * ti / 20;
+        for (let i = 0; i < g.length; i++) g[i] = Math.random() < 0.08 ? 0 : (Math.random() < 0.5 ? A : B);
+        for (let round = 0; round < 60; round++) {
+          const un = [], em = [];
+          for (let i = 0; i < g.length; i++) { if (g[i] === 0) em.push(i); else if (sf(i) < tt) un.push(i); }
+          if (!un.length) break;
+          let ei = 0;
+          for (let q = em.length - 1; q > 0; q--) { const r = (Math.random() * (q + 1)) | 0; const t = em[q]; em[q] = em[r]; em[r] = t; }
+          for (const i of un) { if (ei >= em.length) break; const d = em[ei++]; g[d] = g[i]; g[i] = 0; em.push(i); }
+        }
+        let seg = 0, occ = 0;
+        for (let i = 0; i < g.length; i++) { if (g[i] === 0) continue; occ++; seg += sf(i); }
+        out.push({ T: tt, seg: occ ? seg / occ : 0 });
+      }
+      return out;
+    }
+
+    function drawPlot() {
+      const w = plot.width, hh = plot.height, m = 26;
+      pctx.fillStyle = '#12100c'; pctx.fillRect(0, 0, w, hh);
+      const X = (t) => m + t / 0.85 * (w - m - 8);
+      const Y = (s) => hh - m - s * (hh - m - 8);
+      pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
+      pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(1)); pctx.stroke();
+      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillText('segregation', 2, 12); pctx.fillText('preference T', w - 78, hh - 8);
+      /* mixed baseline ~0.5 */
+      pctx.strokeStyle = 'rgba(0,166,180,.6)'; pctx.setLineDash([3, 3]);
+      pctx.beginPath(); pctx.moveTo(m, Y(0.5)); pctx.lineTo(w - 8, Y(0.5)); pctx.stroke(); pctx.setLineDash([]);
+      pctx.fillStyle = '#00a6b4'; pctx.fillText('well-mixed 50%', m + 4, Y(0.5) - 3);
+      if (ref.length) {
+        pctx.strokeStyle = '#ffcb1f'; pctx.lineWidth = 2; pctx.beginPath();
+        ref.forEach((s, i) => { const x = X(s.T), y = Y(s.seg); i ? pctx.lineTo(x, y) : pctx.moveTo(x, y); });
+        pctx.stroke();
+      }
+      for (const s of samples) { pctx.fillStyle = '#e8402a'; pctx.beginPath(); pctx.arc(X(s.T), Y(s.seg), 3, 0, 7); pctx.fill(); }
+      pctx.fillStyle = '#fffdf3'; pctx.beginPath(); pctx.moveTo(X(T), Y(0) + 2); pctx.lineTo(X(T) - 4, Y(0) + 9); pctx.lineTo(X(T) + 4, Y(0) + 9); pctx.fill();
+    }
+
+    function draw() {
+      ctx.fillStyle = '#141019'; ctx.fillRect(0, 0, W, H);
+      for (let i = 0; i < grid.length; i++) {
+        const v = grid[i];
+        if (v === EMPTY) continue;
+        ctx.fillStyle = v === A ? '#00a6b4' : '#e8402a';
+        ctx.fillRect((i % L) * CELL, ((i / L) | 0) * CELL, CELL + 1, CELL + 1);
+      }
+      drawPlot();
+    }
+
+    window.__schelling = {
+      reset(opts) { if (opts && opts.T != null) T = opts.T; if (opts && opts.empty != null) emptyFrac = opts.empty; fill(); },
+      step() { return { moved: step() }; },
+      settle(maxRounds) { let r = 0; while (r++ < (maxRounds || 200)) { if (step() === 0) break; } return stats(); },
+      stats() { return stats(); },
+      setRunning(v) { running = !!v; }
+    };
+    bagg.add(() => { if (window.__schelling) delete window.__schelling; });
+
+    ref = measureReference();
+    fill();
+    bagg.add(Engine.loop(() => {
+      if (running) {
+        const moved = step();
+        if (moved === 0) {
+          running = false; runBtn.textContent = 'Run';
+          const s = stats();
+          samples.push({ T: T, seg: s.seg });
+          api.submit(Math.round(s.seg * 100));
+          api.status('Settled after ' + rounds + ' rounds at ' + Math.round(s.seg * 100) + '% same-team neighbours. Slide the preference and Run again to trace the curve.');
+        }
+      }
+      syncPills();
+      draw();
+    }));
+
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'schelling',
+    title: 'Seating Chart',
+    emoji: 'schelling',
+    cat: 'sim',
+    order: 7,
+    blurb: 'Two teams, some empty desks, and one mild rule about who you want to sit near. Nobody in here is a villain, and the floor still sorts itself into hard blocks. A famous, uncomfortable little model.',
+    scoreLabel: 'Peak segregation',
+    tags: ['schelling', 'segregation', 'phase-transition', 'emergence'],
+    how: [
+      'Teal and red are two teams; the dark squares are empty desks. Each person is content if at least a fraction T of their occupied neighbours share their team.',
+      'Set that preference T with the slider, then Run. Discontented people get up and take a random empty desk; content people stay.',
+      'The instrument plots the settled segregation against the preference, measured live from the model, against the 50% you would get from pure chance.',
+      'The uncomfortable part: even a preference around a third drives segregation far past 50%. Nobody wanted a segregated floor and you get one anyway.',
+      'Crank it past about 0.75 and it never settles — too fussy to ever be happy — so the floor stays churned and segregation actually falls.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Sick Day — a spatial SIR epidemic (Kermack-McKendrick, on a lattice).
+ *
+ * Every desk is Susceptible, Infected, or Recovered. Each step an infected desk
+ * infects each susceptible neighbour with probability beta and itself recovers
+ * with probability gamma. One uniform rule. The basic reproduction number is
+ * roughly R0 = (contacts * beta) / gamma: below the epidemic threshold the
+ * cough fizzles in a corner; above it, it sweeps the floor into empty chairs.
+ * The instrument is the textbook curve — the susceptible line falling, the
+ * infected hump, the recovered line rising to the final attack rate. Desk
+ * spacing (the empty fraction) and beta are your levers; the goal is to keep
+ * the final size under a cap by pushing R0 back under 1.
+ */
+(function () {
+  'use strict';
+  const { h, clamp } = Engine;
+  const W = 540, H = 540, L = 90;
+  const CELL = W / L;
+  const EMPTY = 0, S = 1, I = 2, R = 3;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let grid = new Uint8Array(L * L);
+    let next = new Uint8Array(L * L);
+    let beta = 0.10, gamma = 0.12, occ = 0.92;
+    let running = false, tstep = 0, peakI = 0, occCount = 0;
+    const series = [];   // {s,i,r} fractions per step
+
+    const cv = Engine.canvas(root, W, H, { maxHeight: '60vh' });
+    const ctx = cv.ctx;
+    const plot = h('canvas', { class: 'fire-plot', width: 520, height: 200 });
+    root.appendChild(h('div', { class: 'fire-panel' }, plot));
+    const pctx = plot.getContext('2d');
+
+    const pR0 = api.pill('R0 ~ 1.0');
+    const pInf = api.pill('Infected: 0%');
+    const pAttack = api.pill('Attack rate: 0%');
+
+    const betaS = h('input', { type: 'range', min: '0.02', max: '0.5', step: '0.01', value: '0.10', class: 'slider' });
+    const gammaS = h('input', { type: 'range', min: '0.04', max: '0.4', step: '0.01', value: '0.12', class: 'slider' });
+    const occS = h('input', { type: 'range', min: '0.4', max: '1', step: '0.02', value: '0.92', class: 'slider' });
+    betaS.addEventListener('input', () => { beta = parseFloat(betaS.value); syncPills(); });
+    gammaS.addEventListener('input', () => { gamma = parseFloat(gammaS.value); syncPills(); });
+    occS.addEventListener('input', () => { occ = parseFloat(occS.value); reset(); });
+    api.toolbar.appendChild(h('label', { class: 'sel-wrap' }, h('span', null, 'spread beta'), betaS));
+    api.toolbar.appendChild(h('label', { class: 'sel-wrap' }, h('span', null, 'recover gamma'), gammaS));
+    api.toolbar.appendChild(h('label', { class: 'sel-wrap' }, h('span', null, 'occupancy'), occS));
+    const runBtn = api.button('Run', () => { running = !running; runBtn.textContent = running ? 'Pause' : 'Run'; });
+    api.button('Reset', reset);
+
+    /* R0 = effective-contacts * beta / gamma. The effective contact number
+       (3.3, not the raw 8 neighbours) is CALIBRATED so this crosses 1 at the
+       lattice's measured epidemic threshold — see tools/sweep-sir.mjs. Without
+       that calibration the readout would claim an epidemic where the model
+       actually fizzles. */
+    function r0() { return (occ * 3.3 * beta) / gamma; }
+
+    function reset() {
+      occCount = 0;
+      for (let i = 0; i < grid.length; i++) { const o = Math.random() < occ; grid[i] = o ? S : EMPTY; if (o) occCount++; }
+      /* seed a small cluster of infected near the centre */
+      const c = ((L / 2) | 0) * L + ((L / 2) | 0);
+      for (const j of [c, c + 1, c - 1, c + L, c - L]) if (grid[j] === S) grid[j] = I;
+      running = false; runBtn.textContent = 'Run'; tstep = 0; peakI = 0;
+      series.length = 0;
+      api.status('Set the spread rate, recovery rate and how packed the desks are, then Run. The epidemic takes off or fizzles depending on whether R0 clears 1.');
+      recordAndSync();
+    }
+
+    function counts() {
+      let s = 0, i = 0, r = 0;
+      for (let k = 0; k < grid.length; k++) { const v = grid[k]; if (v === S) s++; else if (v === I) i++; else if (v === R) r++; }
+      return { s: s, i: i, r: r };
+    }
+
+    /* one synchronous SIR update over the whole lattice */
+    function step() {
+      next.set(grid);
+      for (let y = 0; y < L; y++) {
+        for (let x = 0; x < L; x++) {
+          const idx = y * L + x, v = grid[idx];
+          if (v === S) {
+            let inf = 0;
+            for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+              if (!dx && !dy) continue;
+              const nx = x + dx, ny = y + dy;
+              if (nx < 0 || ny < 0 || nx >= L || ny >= L) continue;
+              if (grid[ny * L + nx] === I) inf++;
+            }
+            if (inf && Math.random() < 1 - Math.pow(1 - beta, inf)) next[idx] = I;
+          } else if (v === I) {
+            if (Math.random() < gamma) next[idx] = R;
+          }
+        }
+      }
+      const t = grid; grid = next; next = t;
+      tstep++;
+    }
+
+    function recordAndSync() {
+      const c = counts();
+      const tot = occCount || 1;
+      series.push({ s: c.s / tot, i: c.i / tot, r: c.r / tot });
+      if (c.i / tot > peakI) peakI = c.i / tot;
+      pR0.textContent = 'R0 ~ ' + r0().toFixed(2);
+      pR0.className = 'pill ' + (r0() > 1 ? 'warn' : 'good');
+      pInf.textContent = 'Infected: ' + Math.round(c.i / tot * 100) + '%';
+      pAttack.textContent = 'Attack rate: ' + Math.round(c.r / tot * 100) + '%';
+      return c;
+    }
+    function syncPills() { pR0.textContent = 'R0 ~ ' + r0().toFixed(2); pR0.className = 'pill ' + (r0() > 1 ? 'warn' : 'good'); }
+
+    function drawPlot() {
+      const w = plot.width, hh = plot.height, m = 24;
+      pctx.fillStyle = '#12100c'; pctx.fillRect(0, 0, w, hh);
+      pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
+      pctx.beginPath(); pctx.moveTo(m, hh - m); pctx.lineTo(w - 6, hh - m); pctx.moveTo(m, hh - m); pctx.lineTo(m, 8); pctx.stroke();
+      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillText('fraction', 2, 12); pctx.fillText('time', w - 30, hh - 8);
+      const n = series.length; if (n < 2) return;
+      const X = (k) => m + k / (n - 1) * (w - m - 6);
+      const Y = (f) => (hh - m) - f * (hh - m - 8);
+      const lineOf = (key, col) => {
+        pctx.strokeStyle = col; pctx.lineWidth = 2; pctx.beginPath();
+        for (let k = 0; k < n; k++) { const x = X(k), y = Y(series[k][key]); k ? pctx.lineTo(x, y) : pctx.moveTo(x, y); }
+        pctx.stroke();
+      };
+      lineOf('s', '#00a6b4');   // susceptible
+      lineOf('r', '#a79e88');   // recovered
+      lineOf('i', '#e8402a');   // infected hump
+      pctx.fillStyle = '#e8402a'; pctx.fillText('infected', w - 120, 14);
+      pctx.fillStyle = '#00a6b4'; pctx.fillText('S', w - 46, 14);
+      pctx.fillStyle = '#a79e88'; pctx.fillText('R', w - 30, 14);
+    }
+
+    function draw() {
+      ctx.fillStyle = '#141019'; ctx.fillRect(0, 0, W, H);
+      for (let k = 0; k < grid.length; k++) {
+        const v = grid[k];
+        if (v === EMPTY) continue;
+        ctx.fillStyle = v === S ? '#d9c9a0' : v === I ? '#e8402a' : '#6b6350';
+        ctx.fillRect((k % L) * CELL, ((k / L) | 0) * CELL, CELL + 1, CELL + 1);
+      }
+      drawPlot();
+    }
+
+    window.__sir = {
+      reset(opts) {
+        if (opts) { if (opts.beta != null) { beta = opts.beta; betaS.value = String(beta); } if (opts.gamma != null) { gamma = opts.gamma; gammaS.value = String(gamma); } if (opts.occ != null) { occ = opts.occ; occS.value = String(occ); } }
+        reset();
+      },
+      step() { step(); const c = counts(); return { s: c.s, i: c.i, r: c.r }; },
+      runToEnd() {
+        let guard = 0, pk = 0;
+        while (guard++ < 5000) { const c = counts(); if (c.i > pk) pk = c.i; if (c.i === 0) break; step(); }
+        const c = counts(); const tot = occCount || 1;
+        return { finalSize: c.r / tot, peakI: pk / tot, duration: tstep };
+      },
+      stats() { const c = counts(); const tot = occCount || 1; return { S: c.s / tot, I: c.i / tot, R: c.r / tot, R0: r0() }; },
+      setRunning(v) { running = !!v; }
+    };
+    bagg.add(() => { if (window.__sir) delete window.__sir; });
+
+    reset();
+    bagg.add(Engine.loop(() => {
+      if (running) {
+        const c = counts();
+        if (c.i === 0) { running = false; runBtn.textContent = 'Run'; api.submit(Math.round((c.r / (occCount || 1)) * 100)); api.status('Burned out after ' + tstep + ' steps. Final attack rate ' + Math.round(c.r / (occCount || 1) * 100) + '%. Lower beta or thin the desks to push R0 under 1.'); }
+        else { step(); recordAndSync(); }
+      }
+      draw();
+    }));
+
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'sir',
+    title: 'Sick Day',
+    emoji: 'sir',
+    cat: 'sim',
+    order: 8,
+    blurb: 'Someone coughs at the coffee machine. Whether it fizzles at three desks or empties the floor comes down to one number crossing one line — the real epidemic threshold, not a scare.',
+    scoreLabel: 'Worst attack rate',
+    tags: ['sir', 'epidemic', 'threshold', 'emergence'],
+    how: [
+      'Every desk is susceptible (paper), infected (red), or recovered (grey). Each step an infected desk infects susceptible neighbours with probability beta and recovers with probability gamma.',
+      'R0, shown live, is beta times an effective contact number over gamma, calibrated so it crosses 1 at this lattice\'s measured threshold. Under 1 the outbreak dies out; over 1 it takes off. That crossing is the whole ballgame.',
+      'Your levers are the spread rate, the recovery rate, and occupancy — thinning the desks is literally social distancing.',
+      'The instrument is the classic curve: susceptible falling, the infected hump, recovered rising to the final attack rate.',
+      'Try to keep the attack rate low by dragging R0 back under 1. Your score is the worst attack rate you trigger.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* In-Box — the Bak-Tang-Wiesenfeld sandpile (1987), self-organized criticality.
+ *
+ * Memos pile on desks. A desk holding four topples, shedding one memo to each
+ * orthogonal neighbour — which can push them over too, in a reply-all cascade.
+ * Grains that fall off the edge are lost. There is no dial to tune: drop memos
+ * at random and the pile drives ITSELF to the critical point, where avalanche
+ * sizes have no typical scale — sometimes one desk, sometimes the whole floor,
+ * and everything between, following a power law. The instrument is the avalanche
+ * size distribution on log-log axes; criticality shows up as a straight line.
+ * The anti-lesson: you cannot calm it. There is no stable regime to reach.
+ */
+(function () {
+  'use strict';
+  const { h } = Engine;
+  const W = 540, H = 540, L = 90;
+  const CELL = W / L;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    const height = new Uint8Array(L * L);
+    const flash = new Float32Array(L * L);
+    let running = true, grains = 0, avalanches = 0, biggest = 0;
+    const hist = {};   // avalanche size -> count
+
+    const cv = Engine.canvas(root, W, H, { maxHeight: '60vh' });
+    const ctx = cv.ctx;
+    const plot = h('canvas', { class: 'fire-plot', width: 520, height: 200 });
+    root.appendChild(h('div', { class: 'fire-panel' }, plot));
+    const pctx = plot.getContext('2d');
+
+    const pGrains = api.pill('Memos dropped: 0');
+    const pAval = api.pill('Avalanches: 0');
+    const pBig = api.pill('Biggest: 0');
+
+    const runBtn = api.button('Pause', () => { running = !running; runBtn.textContent = running ? 'Pause' : 'Run'; });
+    api.button('Reset', reset);
+
+    function reset() {
+      height.fill(0); flash.fill(0);
+      grains = 0; avalanches = 0; biggest = 0;
+      for (const k in hist) delete hist[k];
+      api.status('Memos drop on random desks. A desk with four topples onto its neighbours, which can set off a chain. Click to drop one yourself.');
+      syncPills();
+    }
+
+    /* drop one grain at idx and let the whole avalanche resolve; return its size */
+    function drop(idx) {
+      height[idx]++;
+      grains++;
+      let size = 0;
+      const stack = [];
+      if (height[idx] >= 4) stack.push(idx);
+      while (stack.length) {
+        const i = stack.pop();
+        if (height[i] < 4) continue;
+        const times = (height[i] / 4) | 0;
+        height[i] -= times * 4;
+        size += times;
+        flash[i] = 1;
+        const x = i % L, y = (i / L) | 0;
+        if (x > 0) { height[i - 1] += times; if (height[i - 1] >= 4) stack.push(i - 1); }
+        if (x < L - 1) { height[i + 1] += times; if (height[i + 1] >= 4) stack.push(i + 1); }
+        if (y > 0) { height[i - L] += times; if (height[i - L] >= 4) stack.push(i - L); }
+        if (y < L - 1) { height[i + L] += times; if (height[i + L] >= 4) stack.push(i + L); }
+        /* grains off the edge are lost — the dissipation that makes SOC work */
+      }
+      if (size > 0) { avalanches++; hist[size] = (hist[size] || 0) + 1; if (size > biggest) biggest = size; }
+      return size;
+    }
+
+    function syncPills() {
+      pGrains.textContent = 'Memos dropped: ' + grains;
+      pAval.textContent = 'Avalanches: ' + avalanches;
+      pBig.textContent = 'Biggest: ' + biggest;
+    }
+
+    function drawPlot() {
+      const w = plot.width, hh = plot.height, m = 28;
+      pctx.fillStyle = '#12100c'; pctx.fillRect(0, 0, w, hh);
+      pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
+      pctx.beginPath(); pctx.moveTo(m, hh - m); pctx.lineTo(w - 6, hh - m); pctx.moveTo(m, hh - m); pctx.lineTo(m, 8); pctx.stroke();
+      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillText('log count', 2, 12); pctx.fillText('log avalanche size', w - 118, hh - 8);
+      /* logarithmic bins */
+      const sizes = Object.keys(hist);
+      if (sizes.length < 2) return;
+      const maxLog = Math.log10(biggest) || 1;
+      const NB = 22;
+      const bins = new Array(NB).fill(0);
+      for (const s of sizes) { const b = Math.min(NB - 1, Math.floor(Math.log10(+s) / maxLog * (NB - 1))); bins[b] += hist[s]; }
+      let maxC = 1; for (const c of bins) if (c > maxC) maxC = c;
+      const X = (b) => m + b / (NB - 1) * (w - m - 6);
+      const Y = (c) => (hh - m) - (Math.log10(c) / (Math.log10(maxC) || 1)) * (hh - m - 8);
+      pctx.strokeStyle = '#ffcb1f'; pctx.lineWidth = 2; pctx.beginPath();
+      let started = false;
+      for (let b = 0; b < NB; b++) { if (bins[b] <= 0) continue; const x = X(b), y = Y(bins[b]); started ? pctx.lineTo(x, y) : pctx.moveTo(x, y); started = true; }
+      pctx.stroke();
+      pctx.fillStyle = '#e8402a';
+      for (let b = 0; b < NB; b++) { if (bins[b] <= 0) continue; pctx.beginPath(); pctx.arc(X(b), Y(bins[b]), 2.5, 0, 7); pctx.fill(); }
+      pctx.fillStyle = '#8a8064'; pctx.fillText('a straight line here = criticality', m + 6, 22);
+    }
+
+    function draw() {
+      ctx.fillStyle = '#141019'; ctx.fillRect(0, 0, W, H);
+      const shades = ['#1b2430', '#2d5f6b', '#c7a637', '#e8402a'];
+      for (let i = 0; i < height.length; i++) {
+        const hgt = height[i];
+        if (hgt === 0 && flash[i] <= 0) continue;
+        if (flash[i] > 0) { ctx.fillStyle = 'rgba(255,253,243,' + (0.25 + 0.6 * flash[i]) + ')'; flash[i] -= 0.12; }
+        else ctx.fillStyle = shades[hgt] || '#e8402a';
+        ctx.fillRect((i % L) * CELL, ((i / L) | 0) * CELL, CELL + 1, CELL + 1);
+      }
+      drawPlot();
+    }
+
+    bagg.listen(cv.el, 'pointerdown', (e) => {
+      const p = cv.pos(e);
+      const gx = Math.floor(p.x / W * L), gy = Math.floor(p.y / H * L);
+      if (gx >= 0 && gy >= 0 && gx < L && gy < L) { drop(gy * L + gx); syncPills(); }
+    });
+
+    window.__sandpile = {
+      reset() { reset(); },
+      drop() { const s = drop((Math.random() * L * L) | 0); syncPills(); return s; },
+      dropN(n) { for (let k = 0; k < (n || 1); k++) drop((Math.random() * L * L) | 0); syncPills(); },
+      stats() { return { grains: grains, avalanches: avalanches, biggest: biggest, distinctSizes: Object.keys(hist).length }; },
+      setRunning(v) { running = !!v; }
+    };
+    bagg.add(() => { if (window.__sandpile) delete window.__sandpile; });
+
+    reset();
+    bagg.add(Engine.loop(() => {
+      if (running) { for (let k = 0; k < 4; k++) drop((Math.random() * L * L) | 0); syncPills(); if (grains % 200 === 0) api.submit(biggest); }
+      draw();
+    }));
+
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'sandpile',
+    title: 'In-Box',
+    emoji: 'sandpile',
+    cat: 'sim',
+    order: 9,
+    blurb: 'Memos land on desks; a desk with four spills over onto its neighbours, sometimes setting off a reply-all storm that crosses the whole floor. It tunes itself to the edge of chaos with no help from you, which is the unsettling part.',
+    scoreLabel: 'Biggest avalanche',
+    tags: ['sandpile', 'self-organized-criticality', 'power-law', 'emergence'],
+    how: [
+      'Memos drop on random desks. A desk holding four topples, sending one to each orthogonal neighbour; memos falling off the floor are lost.',
+      'A topple can push neighbours over too, so one memo can trigger an avalanche of any size. Click a desk to drop one yourself.',
+      'There is no setting to change. Left alone, the pile drives itself to criticality — the point where avalanches have no typical size.',
+      'The instrument is the avalanche-size distribution on log-log axes. When it settles into a straight line, that line is the power law of self-organized criticality.',
+      'You cannot calm it down; there is no stable state to reach. Your score is simply the biggest avalanche you have seen.'
     ],
     mount
   });
