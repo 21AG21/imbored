@@ -1,100 +1,150 @@
-# Cubicle Arcade
+# CUBICLE ARCADE 98
 
-Sixteen games and fix-the-system simulations for when the meeting has no agenda.
+**The complete shareware collection for people whose meeting has no agenda.**
 
-No build step, no dependencies, no network calls, no accounts. It is plain HTML, CSS
-and JavaScript — **double-click `index.html` and it runs**, straight off the disk.
+Twenty-four games. Zero installers. No account, no network, no build step. It is plain
+HTML, CSS and JavaScript, so you can **double-click `index.html`** and it runs straight
+off the disk.
+
+Comes with a panic key, a difficulty dial that reaches all the way to Nightmare, a big
+screen mode, and a googly-eyed stapler called CHOMPS who has nothing useful to say.
+
+---
+
+## The panic key
+
+Press <kbd>`</kbd> (backtick) or <kbd>Ctrl</kbd>+<kbd>B</kbd> at any moment. The entire
+page vanishes behind something that looks like work, the browser tab renames itself to
+match, and whatever you were playing pauses exactly where it was. Press it again to go
+back.
+
+There are four disguises and **you can type in all of them**, which is the entire point.
+A frozen screenshot fools nobody once somebody expects to see a cursor moving.
+
+| Disguise | What you get |
+|---|---|
+| 📄 **Doc** | A word processor with a real editable document, a live word count and a "Saved to Drive" tick. Opens with the caret already in the text. |
+| 📊 **Spreadsheet** | Every cell is editable and the formula bar tracks whatever cell you are in. |
+| ✉️ **Inbox** | A mail client with a folder list, a readable thread, and a reply box you can actually type a reply into. |
+| 💻 **Terminal** | A build log that already passed 73 tests, plus a live prompt. Type a command, hit Enter, get a plausible answer. |
+
+Pick one from **PANIC SCREEN** in the footer, or shift-click the 🕴 button to cycle.
+
+## The difficulty dial
+
+One button in the top bar, four settings, and **every game reads it**:
+
+| | What changes |
+|---|---|
+| 😌 **Chill** | Slower spawns, kinder timers, a Four In A Row opponent that plays badly on purpose. |
+| 🙂 **Normal** | The way these were built. |
+| 😰 **Hard** | Faster everything, fewer lives, five guesses in Word Guess, three-card draw in Solitaire, Tetris starts at level 4. |
+| 💀 **Nightmare** | One life in Brick Break and Rock Field, four guesses, one Solitaire redeal, Tetris at level 7, and targets in Reflex Grid that get bored and leave. |
+
+Changing it restarts whatever is running so it takes effect immediately.
+
+## Big screen
+
+The ⛶ button or the <kbd>F</kbd> key hides all the furniture and blows the game up to fill
+the window, requesting real browser fullscreen at the same time. <kbd>Esc</kbd> or
+<kbd>F</kbd> again brings the shelf back.
+
+---
 
 ## The games
 
-### Simulations — something is broken, you fix it
-| | | |
-|---|---|---|
-| 🚦 **Gridlock** | Twelve intersections in rush hour. Click any intersection to flip its lights, watch queues build, and keep commuter rage off the boil. Every switch runs an all-red clearance first, so you have to plan a beat ahead. | *cars delivered* |
-| 🛗 **Elevator Rush** | Three lifts, eight floors, a lobby of people who are already late. You choose which lift answers which floor; passengers press their own buttons once aboard. Five walk-offs ends the shift. | *people delivered* |
-| ⚡ **Load Balance** | Generation must equal demand every second of every day. Coal ramps slowly, gas costs a fortune, solar and wind do as they please, and the battery is small. Let frequency drift off 50 Hz for too long and the lights go out. | *hours online* |
-| ✈️ **Approach Control** | Drag flight paths on a radar screen. Land each aircraft on its matching runway from the correct end, and never let two get closer than the separation ring. | *landings* |
+### Simulations, where something is broken and you fix it
+
+| | |
+|---|---|
+| 🚦 **Gridlock** | Twelve intersections in rush hour. You are the lights. Cars route themselves, queue behind each other, and fill a commuter rage bar while they wait. |
+| 🛗 **Elevator Rush** | Three lifts, eight floors, and people who are already late. You decide who answers which call; passengers press their own buttons. |
+| ⚡ **Load Balance** | Hold a grid at 50 Hz through a full day. Coal ramps slowly, gas costs a fortune, and the weather does not consult you. |
+| ✈️ **Approach Control** | Draw flight paths on radar. Hold separation. Land each aircraft on its matching runway from the correct end. |
+
+There is a companion piece worth ten minutes if Gridlock got its hooks in:
+**[Phantom, a traffic jam with no cause at all](https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd)**.
+One driver taps the brakes and the pulse outlives them, travelling backwards through the
+traffic forever. It is linked from the shelf and from Gridlock itself.
 
 ### Puzzles
-| | | |
-|---|---|---|
-| 💣 **Minesweeper** | Three board sizes, first click always safe, proper chording. | *wins + best time per size* |
-| 🔢 **2048** | Slide and merge, with one level of undo. | *score* |
-| 🚗 **Jam Escape** | 28 sliding-car jams. Every level was generated and solved by breadth-first search, so the listed "par" is the provably shortest solution. | *levels solved* |
-| 📦 **Crate Pusher** | Sokoban. 13 warehouses, all BFS-verified as solvable before shipping. Undo is free. | *levels solved* |
-| 🔧 **Pipe Dream** | Rotate every pipe until the whole grid is fed from one source. Boards are built from a random spanning tree, so a solution always exists. Endless levels. | *level reached* |
+💣 **Minesweeper** · 🔢 **2048** · 🚗 **Jam Escape** · 📦 **Crate Pusher** · 🔧 **Pipe Dream** · 🃏 **Solitaire**
 
 ### Brain
-| | | |
-|---|---|---|
-| 🔤 **Word Guess** | Five letters, six tries, as many rounds as your meeting lasts. No daily limit. | *best streak* |
-| 💡 **Lights Out** | Each light you touch flips its neighbours too. | *level reached* |
-| 🎯 **Reflex Grid** | 25 targets, one honest number at the end. | *best average, in ms* |
+🔤 **Word Guess** · 💡 **Lights Out** · 🎯 **Reflex Grid** · 🎺 **Copycat** · 🔴 **Four In A Row**
 
 ### Action
-| | | |
-|---|---|---|
-| 🐍 **Snake** | Plus a timed golden apple worth five ordinary ones, and a wall toggle. | *score* |
-| 🧱 **Brick Break** | Paddle, ball, falling powerups, escalating levels. | *score* |
-| 🟦 **Stacker** | Falling blocks with hold, ghost piece, hard drop and a proper 7-bag randomiser. | *score* |
-| 🚀 **Rock Field** | Asteroids, including a hyperspace jump that occasionally kills you. | *score* |
+🐍 **Snake** · 🧱 **Brick Break** · 🟦 **Stacker** · 🚀 **Rock Field** · 🚶 **The Commute**
 
-## The boss key
+### Goofy
+| | |
+|---|---|
+| ☕ **Coffee Clicker** | Click mug. Buy an intern to click the mug. Buy a robot to manage the intern. Saves automatically, which is a threat. |
+| 📅 **Whack-a-Meeting** | Decline the junk invites before they book themselves in. The gold ones are payroll and your own review, so leave those alone. |
+| 🗑️ **Desk Toss** | Crumpled paper, one bin, and an air conditioning vent with a personal grudge. Bin on a desk counts double. |
+| ⛳ **Desk Golf** | Nine holes across the carpet. Desks bounce, mousepads drag, somebody has spilled coffee everywhere. |
 
-Press <kbd>`</kbd> (backtick) or <kbd>Ctrl</kbd>+<kbd>B</kbd> at any moment. The whole
-page is instantly replaced by a plausible quarterly forecast spreadsheet, the browser tab
-renames itself `Q3_Regional_Forecast_v7_FINAL.xlsx`, and whatever you were playing pauses
-exactly where it was. Press it again to go back.
+---
 
 ## Other keys
 
 | Key | Does |
 |---|---|
-| <kbd>`</kbd> / <kbd>Ctrl</kbd>+<kbd>B</kbd> | boss key |
-| <kbd>/</kbd> | focus the search box |
-| <kbd>Esc</kbd> | back to the hub |
-| 🎲 | jump to a random game |
-| 🔇 | sound is **off** by default — this is an office, after all |
+| <kbd>`</kbd> / <kbd>Ctrl</kbd>+<kbd>B</kbd> | panic screen |
+| <kbd>F</kbd> | big screen |
+| <kbd>/</kbd> | jump to search |
+| <kbd>Esc</kbd> | back to the shelf |
+| 🎲 | a game at random |
+| 🔇 | sound is **off** by default, because this is an office |
 
 ## Running it
 
-Any of these work:
-
-- **Open the file.** Double-click `index.html`. Everything is a classic `<script>` tag, so
-  there is no module/CORS problem when loading from `file://`.
-- **Serve it.** `python3 -m http.server 8000` then visit `http://localhost:8000`.
-- **Host it.** Copy the folder to any static host. A manual GitHub Pages workflow is
-  included at `.github/workflows/pages.yml` — it only runs when you trigger it from the
-  Actions tab, and publishing needs Pages set to "GitHub Actions" in repository settings.
+- **Open the file.** Double-click `index.html`. Every script is a plain `<script>` tag, so
+  there is no module or CORS problem loading from `file://`.
+- **Serve it.** `python3 -m http.server 8000`, then visit `http://localhost:8000`.
+- **One file.** `node tools/build-single-file.mjs` inlines everything into
+  `dist/cubicle-arcade.html`, about 300 KB, no other assets. Mail it to yourself.
+- **Host it.** Any static host. A GitHub Pages workflow sits in
+  `.github/workflows/pages.yml` and only runs when you start it from the Actions tab.
 
 ## How it is put together
 
 ```
-index.html              loads everything in order
-css/arcade.css          all styling
-js/core/engine.js       canvas, game loop, input, audio, DOM helper, disposer bag
-js/core/arcade.js       registry, hash router, hub, high scores, boss key
-js/games/*.js           one file per game, each self-registering
+index.html            loads everything, in order
+css/arcade.css        the whole look
+js/core/engine.js     canvas, loop, input, audio, DOM helper, disposer bag
+js/core/boss.js       the four panic screens
+js/core/arcade.js     registry, router, shelf, scores, difficulty, CHOMPS
+js/games/*.js         one file per game, each registering itself
+tools/                the single-file bundler
 ```
 
-Each game is a single self-contained file that calls `Arcade.register({...})` with its
-metadata and a `mount(root, api)` function. `mount` returns a cleanup function; the router
-calls it when you navigate away, so nothing leaks between games. To add a game, drop a file
-in `js/games/` and add one `<script>` tag to `index.html`.
+A game is one self-contained file that calls `Arcade.register({...})` with its metadata
+and a `mount(root, api)` function. `mount` returns a cleanup function which the router
+calls on the way out, so nothing leaks between games. `api.dm` is the difficulty
+multiplier every game scales its own knobs by. To add a game, drop a file in `js/games/`
+and add one `<script>` tag.
 
-Scores and progress live in `localStorage` under the `cubicle:` prefix. Nothing leaves the
-browser.
+Scores and progress live in `localStorage` under the `cubicle:` prefix. Nothing leaves
+the browser.
 
-## Verification
+## Checked, not assumed
 
-Everything here was checked rather than assumed:
-
-- All 16 games are loaded in headless Chromium, driven with keyboard input, clicks and
-  drags, left running, and checked for console errors and uncaught exceptions. 16/16 clean.
-- The 28 **Jam Escape** levels were generated by random placement plus a BFS solver, and
-  only boards with a shortest solution between 5 and 26 moves were kept. The "par" shown
-  in-game is that exact BFS depth.
-- The 13 **Crate Pusher** levels were hand-designed and then run through a BFS solver.
-  One candidate turned out to be unsolvable and was cut.
-- **Pipe Dream** and **Lights Out** generate boards by scrambling a solved state, so
+- All 24 games get loaded in headless Chromium, driven with keys, clicks and drags, left
+  running, then checked for console errors and uncaught exceptions. 24 of 24 clean, on all
+  four difficulty settings.
+- All four panic screens are opened and typed into by the test, and the typed text is read
+  back out of the DOM to prove the keyboard reaches them.
+- The 28 **Jam Escape** boards were generated by random placement plus a breadth-first
+  solver, keeping only those with a shortest solution between 5 and 26 moves. The "par"
+  shown in game is that exact search depth.
+- The 13 **Crate Pusher** levels were hand-designed and then run through a solver. One
+  candidate turned out to be genuinely unsolvable and was cut.
+- **Pipe Dream** and **Lights Out** build every board by scrambling a solved one, so
   solvability is structural rather than tested.
+
+## A note on the spreadsheet
+
+Every figure in the panic screens is invented. There is no real company, no real data, and
+the numbers do not reconcile if anybody actually reads them. They exist to be boring from
+three feet away, and that is all.

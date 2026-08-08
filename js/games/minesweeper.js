@@ -1,4 +1,4 @@
-/* Minesweeper — the original meeting game. */
+/* Minesweeper. The original meeting game. */
 (function () {
   'use strict';
   const { h, randInt } = Engine;
@@ -37,7 +37,8 @@
 
     function reset() {
       const L = LEVELS[diff];
-      W = L.w; Hh = L.h; M = L.m;
+      W = L.w; Hh = L.h;
+      M = Engine.clamp(Math.round(L.m * (1 + (api.dm - 1) * 0.42)), 1, W * Hh - 10);
       grid = new Array(W * Hh).fill(0).map(() => ({ mine: false, open: false, flag: false, n: 0 }));
       opened = 0; flags = 0; started = false; dead = false; won = false; firstDone = false;
       clearInterval(timerId);
@@ -186,7 +187,7 @@
       banner.replaceChildren(
         h('h3', null, '🚩 Swept.'),
         h('p', null, LEVELS[diff].label.split(' (')[0] + ' cleared in ' + secs + 's' +
-          (record ? ' — fastest yet!' : ' (best ' + prev + 's)') + '. Total wins: ' + wins + '.'),
+          (record ? ' Fastest yet!' : ' (best ' + prev + 's)') + '. Total wins: ' + wins + '.'),
         h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Again'));
     }
 
@@ -223,14 +224,15 @@
     emoji: '💣',
     cat: 'puzzle',
     order: 10,
-    blurb: 'The undisputed champion of looking like you are concentrating. Three board sizes, chording included.',
+    blurb: 'The reigning world champion at making you look deep in thought. Three sizes, first click always safe, proper chording.',
     scoreLabel: 'Wins',
     tags: ['mines', 'classic', 'logic'],
     how: [
-      'Left click digs. The first dig is always safe.',
-      'Right click plants a flag (long-press on touch).',
-      'Right click or left click an already-open number that has the right number of flags around it to sweep its remaining neighbours.',
-      'Clear every non-mine square to win. Your fastest time per board size is kept.'
+      'Left click digs. The first dig can never be a mine.',
+      'Right click plants a flag. On a touchscreen, press and hold.',
+      'Click a number that already has the right count of flags around it and it sweeps the rest for you. This is the whole game once you learn it.',
+      'Clear every square that is not a mine. Your fastest time for each size is remembered.',
+      'Cranking the difficulty adds more mines to the same board.'
     ],
     mount
   });

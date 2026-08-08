@@ -1,4 +1,4 @@
-/* Crate Pusher — sokoban. Every level here was BFS-verified as solvable. */
+/* Crate Pusher. Sokoban. Every level here was solver-checked before shipping. */
 (function () {
   'use strict';
   const { h, clamp } = Engine;
@@ -60,7 +60,7 @@
       CELL = Math.min(70, Math.floor(Math.min(600 / W, 440 / Hh)));
       steps = 0; pushes = 0; history = []; done = false;
       banner.style.display = 'none';
-      api.status('Arrow keys or WASD. You can push a crate, never pull it — think before you shove.');
+      api.status('Arrow keys or WASD. You can push a crate, never pull it. Think before you shove.');
       sync();
     }
 
@@ -196,14 +196,15 @@
     emoji: '📦',
     cat: 'puzzle',
     order: 13,
-    blurb: 'Push every crate onto a marker. You can only push, never pull, and one careless shove ruins everything.',
+    blurb: 'Push crates onto the markers. You can push. You cannot pull. One thoughtless shove and the level is quietly unwinnable.',
     scoreLabel: 'Levels solved',
     tags: ['sokoban', 'boxes', 'warehouse', 'logic'],
     how: [
-      'Arrow keys or WASD to walk. Walking into a crate pushes it one square.',
-      'You can never pull. A crate shoved into a corner is stuck for good.',
-      'Z or the Undo button rewinds a move — use it freely.',
-      'Get every crate onto a ringed marker to finish the level.'
+      'Arrows or WASD to walk. Walking into a crate shoves it one square.',
+      'You can never pull. A crate in a corner is there forever.',
+      'Z or the Undo button rewinds. Use it constantly, nobody is watching.',
+      'Every crate on a ringed marker finishes the level.',
+      'All thirteen warehouses were checked by solver before shipping. One did not survive.'
     ],
     mount
   });

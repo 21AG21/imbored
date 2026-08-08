@@ -1,15 +1,16 @@
-/* Word Guess — six tries, five letters. */
+/* Word Guess. Five letters and not many goes. */
 (function () {
   'use strict';
   const { h, pick } = Engine;
 
   const WORDS = ('about above abuse actor acute admit adopt adult after again agent agree ahead alarm album alert alike alive allow alone along alter among anger angle angry apart apple apply arena argue arise armed array arrow aside asset avoid awake award aware badly baker bases basic basis beach began begin begun being below bench birth black blame blank blast blind block blood board boost booth bound brain brand brass brave bread break breed brief bring broad broke brown brush build built burst buyer cable calm camp candy canal cargo carry catch cause chain chair chalk chaos charm chart chase cheap check chess chest chief child china chose civil claim class clean clear clerk click cliff climb clock close cloth cloud coach coast could count court cover crack craft crash crazy cream crime cross crowd crown crude curve cycle daily dance dated dealt death debut delay dense depth doing doubt dozen draft drama drank drawn dream dress dried drink drive drove dying eager early earth eight elite empty enemy enjoy enter entry equal error event every exact exist extra faith false fault favor feast fewer field fifth fifty fight final first fixed flame flash fleet flesh float flood floor flour fluid focus force forge forth forty forum found frame fraud fresh front frost fruit fully funny giant given giver glass globe glory going grace grade grain grand grant grape graph grass grave great green greet grief grill grind gross group grove grown guard guess guest guide happy harsh haste hatch heart heavy hedge hello hence hobby honey honor horse hotel house human humor hurry ideal image imply index inner input irony issue japan joint judge juice knife knock known label labor lakes large laser later laugh layer learn lease least leave legal lemon level lever light limit linen links liver lobby local lodge logic loose lorry lower loyal lucky lunar lunch magic major maker maple march match maybe mayor meant medal media mercy merge merit metal meter might minor minus mixed model money month moral motor mount mouse mouth movie music naked nasty naval nerve never newly night noble noise north noted novel nurse ocean offer often olive onion opera orbit order organ other ought ounce outer owner ozone paint panel panic paper party pasta patch pause peace peach pearl pedal penny phase phone photo piano picky piece pilot pinch pitch pixel pizza place plain plane plant plate point polar porch pound power press price pride prime print prior prize probe promo proof proud prove pulse punch pupil purse quest queue quick quiet quilt quite quota radar radio raise rally ranch range rapid ratio reach react ready realm rebel refer reign relax relay renew repay reply rider ridge rifle right rigid rinse risky rival river roast robot rocky rough round route royal rugby ruler rumor rural sadly saint salad sales salon sandy sauce scale scare scene scent scope score scout scrap screw sense serve seven shade shaft shake shall shame shape share sharp sheep sheet shelf shell shift shine shirt shock shoot shore short shown sight silly since sixth sixty skill skirt slate sleep slice slide slope small smart smell smile smoke snack snake sneak solar solid solve sorry sound south space spare spark speak speed spell spend spent spice spike spine spite split spoke spoon sport spray squad stack staff stage stain stair stake stamp stand stare start state steam steel steep steer stern stick stiff still stock stone stood store storm story stove strap straw strip stuck study stuff style sugar suite sunny super surge sweat sweep sweet swift swing sword table taken tally tango taste teach teeth tempo tenth thank theft their theme there these thick thief thing think third those three threw throw thumb tiger tight timer tired title toast today token tooth topic total touch tough tower toxic trace track trade trail train trait trash treat trend trial tribe trick tried tries truck truly trunk trust truth twice twist ultra uncle under union unite unity until upper upset urban usage usual valid value valve vapor vault venue verse video vigor villa virus visit vital vivid vocal voice voter wagon waist waste watch water weary wedge weigh weird whale wheat wheel where which while white whole whose widen widow width witch woman world worry worse worst worth would wound wrist write wrong yield young yours youth zebra').split(' ');
 
-  const ROWS = 6, LEN = 5;
+  const LEN = 5;
   const KEYS = ['qwertyuiop', 'asdfghjkl', '↵zxcvbnm⌫'];
 
   function mount(root, api) {
     const bagg = Engine.bag();
+    const ROWS = api.dm > 2 ? 4 : api.dm > 1.2 ? 5 : 6;
     let answer, guesses, cur, done, streak;
 
     streak = api.load('streak', 0);
@@ -172,14 +173,16 @@
     emoji: '🔤',
     cat: 'brain',
     order: 21,
-    blurb: 'Five letters, six guesses, unlimited rounds. No daily limit, no share button, no waiting until tomorrow.',
+    blurb: 'Five letters, six goes, as many rounds as your meeting lasts. No daily limit, no share button, no waiting until tomorrow.',
     scoreLabel: 'Best streak',
+    usesLetters: true,
     tags: ['words', 'wordle', 'vocabulary'],
     how: [
-      'Type a five-letter word and press Enter.',
-      'Green means the letter is in the right place. Yellow means it is in the word but elsewhere. Grey means it is not in the word.',
-      'Six guesses per word. Win to extend your streak; miss and it resets.',
-      'Unlike the famous one, you can play as many rounds as your meeting lasts.'
+      'Type a five letter word and hit Enter.',
+      'Green means right letter, right spot. Yellow means right letter, wrong spot. Grey means forget it.',
+      'Win to extend your streak. Miss and it goes back to zero.',
+      'Hard gives you five guesses. Nightmare gives you four. Good luck.',
+      'Unlike the famous one you can just play again immediately.'
     ],
     mount
   });

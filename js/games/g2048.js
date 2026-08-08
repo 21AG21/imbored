@@ -1,4 +1,4 @@
-/* 2048 — slide, merge, regret. */
+/* 2048. Slide, merge, regret. */
 (function () {
   'use strict';
   const { h, randInt } = Engine;
@@ -47,7 +47,7 @@
       for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) if (!grid[r][c]) empty.push([r, c]);
       if (!empty.length) return false;
       const [r, c] = empty[randInt(0, empty.length - 1)];
-      grid[r][c] = Math.random() < 0.9 ? 2 : 4;
+      grid[r][c] = Math.random() < (0.9 - (api.dm - 1) * 0.18) ? 2 : 4;
       return true;
     }
 
@@ -160,14 +160,15 @@
     emoji: '🔢',
     cat: 'puzzle',
     order: 11,
-    blurb: 'Slide, merge, and quietly lose forty minutes. Now with one level of undo, because you deserve it.',
+    blurb: 'Slide, merge, and lose forty minutes without noticing. Now with exactly one undo, because you have earned it.',
     scoreLabel: 'Score',
     tags: ['tiles', 'merge', 'numbers'],
     how: [
-      'Arrow keys, WASD, or swipe to slide every tile.',
-      'Two tiles with the same number merge into their sum.',
-      'A new 2 (or occasionally a 4) appears after every move that changes the board.',
-      'Undo rescues exactly one move. Use it wisely.'
+      'Arrow keys, WASD, or swipe. Everything slides at once.',
+      'Two tiles with the same number become one tile with their sum.',
+      'A new tile appears after any move that actually changed something.',
+      'Undo saves you once. Choose your moment.',
+      'Harder settings deal more 4s, which clog the board much faster than you expect.'
     ],
     mount
   });

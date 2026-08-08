@@ -1,4 +1,4 @@
-/* Snake — with a golden apple worth chasing. */
+/* Snake, with a golden apple worth chasing. */
 (function () {
   'use strict';
   const { h, clamp, randInt } = Engine;
@@ -33,7 +33,7 @@
       snake = [{ x: 8, y: 10 }, { x: 7, y: 10 }, { x: 6, y: 10 }];
       dir = { x: 1, y: 0 };
       queue = [];
-      score = 0; speed = 8; acc = 0; dead = false; grow = 0; flash = 0;
+      score = 0; speed = 8 * (0.75 + api.dm * 0.25); acc = 0; dead = false; grow = 0; flash = 0;
       gold = null; goldT = 0; started = false;
       placeFood();
       banner.style.display = 'none';
@@ -83,7 +83,7 @@
       if (head.x === food.x && head.y === food.y) {
         score += 10;
         grow += 1;
-        speed = Math.min(19, speed + 0.28);
+        speed = Math.min(24, speed + 0.28 * api.dm);
         flash = 0.2;
         api.sfx.blip(560 + score);
         placeFood();
@@ -224,14 +224,15 @@
     emoji: '🐍',
     cat: 'action',
     order: 30,
-    blurb: 'The one everybody knows, plus a timed golden apple worth five ordinary ones and a wall toggle for cowards.',
+    blurb: 'The one everybody already knows, plus a golden apple worth five ordinary ones and a wall toggle for cowards.',
     scoreLabel: 'Score',
     tags: ['classic', 'arcade', 'retro'],
     how: [
-      'Arrow keys, WASD, or swipe to steer. You cannot turn back on yourself.',
-      'Normal apples are 10 points. The golden one is 50 but disappears after seven seconds.',
-      'Every apple makes you faster. That is the whole problem.',
-      'Toggle "Walls: open" to wrap around the edges instead of dying at them.'
+      'Arrows, WASD or swipe. You cannot turn back on yourself, so stop trying.',
+      'Normal apples are 10. The golden one is 50 and vanishes after seven seconds.',
+      'Every apple makes you faster. That is the entire problem with this game.',
+      'Flip Walls to open and you wrap around the edges instead of dying at them. No judgement.',
+      'Harder settings start you faster and speed you up quicker.'
     ],
     mount
   });

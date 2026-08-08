@@ -1,4 +1,4 @@
-/* Jam Escape — slide the blockers, drive the red car out.
+/* Jam Escape. Slide the blockers, drive the red car out.
    Every level below was generated and solved by breadth-first search, so the
    shortest solution length after the "|" is exact. */
 (function () {
@@ -272,14 +272,14 @@
     emoji: '🚗',
     cat: 'puzzle',
     order: 12,
-    blurb: 'Twenty-eight parking-lot jams, every one solved by computer first so you know the exit exists.',
+    blurb: 'Twenty-eight car park jams. Every single one was solved by computer first, so the exit definitely exists. Probably.',
     scoreLabel: 'Levels solved',
     tags: ['rush hour', 'sliding', 'cars', 'unblock'],
     how: [
-      'Drag any car along the direction it points. Cars never turn.',
-      'Only the red car escapes, and only through the gap on the right edge.',
-      '"Par" is the provably shortest solution — matching it is a genuine achievement.',
-      'Levels are ordered by that shortest solution, so difficulty climbs steadily.'
+      'Drag a car along the way it points. Cars do not turn. Cars have never turned.',
+      'Only the red one gets out, and only through the gap on the right.',
+      'Par is the shortest possible solution, found by exhaustive search. Matching it is a genuine flex.',
+      'Levels are ordered by that shortest solution, so the difficulty climbs honestly.'
     ],
     mount
   });

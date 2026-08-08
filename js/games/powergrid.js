@@ -1,4 +1,4 @@
-/* Load Balance — keep a power grid on frequency through a whole day. */
+/* Load Balance. Hold a power grid on frequency through a whole day. */
 (function () {
   'use strict';
   const { h, clamp, rand, randInt, pick } = Engine;
@@ -11,6 +11,7 @@
     const bagg = Engine.bag();
     const cv = Engine.canvas(root, W, H);
     const ctx = cv.ctx;
+    const dm = api.dm;
 
     const pClock = api.pill('06:00');
     const pFreq = api.pill('50.00 Hz');
@@ -65,7 +66,7 @@
         + 40 * bell(h24, 19.5, 11)
         + 10 * bell(h24, 13, 14)
         - 16 * bell(h24, 3.5, 10);
-      d *= 1 + (day - 1) * 0.09;
+      d *= 1 + (day - 1) * 0.09 * dm;
       return d;
     }
     const sunAt = (hour) => {
@@ -119,7 +120,7 @@
         h('div', { class: 'row' }, h('span', null, 'solar'), h('span', { class: 'val', id: 'pg-solar' }, '0')),
         h('div', { class: 'row' }, h('span', null, 'wind'), h('span', { class: 'val', id: 'pg-wind' }, '0')),
         h('div', { class: 'row' }, h('span', null, 'reservoir'), h('span', { class: 'val', id: 'pg-res' }, '100%')),
-        h('div', { class: 'row' }, h('span', null, 'not yours to command'), h('span', { class: 'val' }, '—')));
+        h('div', { class: 'row' }, h('span', null, 'not yours to command'), h('span', { class: 'val' }, '--')));
       panels.appendChild(ren);
     }
 
@@ -145,12 +146,12 @@
 
     /* ---------------- events ---------------- */
     const EVENTS = [
-      { text: '☁️  Cloud front rolling in — solar is dropping.', run: () => { S.cloud = 0.18; S.cloudT = 16; } },
+      { text: '☁️  Cloud front rolling in. Solar is dropping.', run: () => { S.cloud = 0.18; S.cloudT = 16; } },
       { text: '🍃  Wind is dying off.', run: () => { S.wind = 0.08; S.windTrend = 0.02; } },
-      { text: '🌬️  Gusty front — wind surging.', run: () => { S.wind = 0.95; S.windTrend = -0.03; } },
+      { text: '🌬️  Gusty front. Wind is surging.', run: () => { S.wind = 0.95; S.windTrend = -0.03; } },
       { text: '🏭  Smelter kicked on. Demand spike incoming.', run: () => { S.surge = 26; S.surgeT = 18; } },
       { text: '⚠️  Coal unit tripped offline! Restart it.', run: () => { S.tripT = 9; S.out.coal = 0; } },
-      { text: '❄️  Cold snap — everyone turned the heat up.', run: () => { S.surge = 18; S.surgeT = 26; } }
+      { text: '❄️  Cold snap. Everyone turned the heat up.', run: () => { S.surge = 18; S.surgeT = 26; } }
     ];
     let eventTimer = 14;
 
@@ -181,7 +182,7 @@
         const ev = pick(EVENTS);
         ev.run();
         flash(ev.text);
-        eventTimer = rand(16, 30);
+        eventTimer = rand(16, 30) / dm;
       }
 
       /* dispatchable ramps */
@@ -214,7 +215,7 @@
       S.freq += (targetFreq - S.freq) * Math.min(1, dt * 2.2);
 
       const dev = Math.abs(S.freq - 50);
-      if (dev > 0.45) S.stability = clamp(S.stability - (dev - 0.45) * 46 * dt, 0, 100);
+      if (dev > 0.45) S.stability = clamp(S.stability - (dev - 0.45) * 46 * dm * dt, 0, 100);
       else S.stability = clamp(S.stability + 11 * dt, 0, 100);
       if (S.stability <= 0) return blackout();
 
@@ -379,15 +380,15 @@
     emoji: '⚡',
     cat: 'sim',
     order: 3,
-    blurb: 'Generation must equal demand every second of every day. Ride the evening peak without dropping the grid.',
+    blurb: 'Generation has to equal demand every single second or the lights go out. Solar and wind will not be helping.',
     scoreLabel: 'Hours online',
     tags: ['power', 'grid', 'energy', 'frequency'],
     how: [
-      'Keep the cyan generation line on top of the pink demand line.',
-      'Coal is cheap but ramps slowly. Gas responds instantly and costs a fortune. Hydro drains a reservoir.',
-      'Solar and wind do whatever they want — plan around them, not with them.',
-      'The battery can push 34 MW either way, but it is small. Charge it overnight, spend it at the peak.',
-      'Frequency drifts off 50 Hz whenever supply and demand disagree. Stability drains while it is off-band; at zero the lights go out.'
+      'Keep the cyan generation line sitting on top of the pink demand line.',
+      'Coal is cheap and slow. Gas is instant and costs a fortune. Hydro drains a reservoir that only refills overnight.',
+      'Solar and wind do whatever they want. Plan around them, not with them.',
+      'The battery pushes 34 MW either way but it is tiny. Fill it overnight, spend it at the evening peak.',
+      'Frequency drifts off 50 Hz the moment supply and demand disagree. Stability drains while it is off band. At zero, blackout.'
     ],
     mount
   });

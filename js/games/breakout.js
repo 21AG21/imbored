@@ -1,4 +1,4 @@
-/* Brick Break — paddle, ball, powerups, mild rage. */
+/* Brick Break. Paddle, ball, powerups, mild rage. */
 (function () {
   'use strict';
   const { h, clamp, rand, randInt, pick } = Engine;
@@ -34,7 +34,7 @@
     api.button('Restart', () => reset(true));
 
     function reset(full) {
-      if (full) { score = 0; lives = 3; level = 1; }
+      if (full) { score = 0; lives = api.dm > 2 ? 1 : api.dm > 1.2 ? 2 : 3; level = 1; }
       paddle = { x: W / 2, w: 110, h: 14, y: H - 34, vx: 0 };
       drops = [];
       wideT = 0; slowT = 0; shake = 0; over = false;
@@ -67,7 +67,7 @@
 
     function sync() {
       pScore.textContent = 'Score: ' + score;
-      pLives.textContent = lives > 0 ? '♥'.repeat(lives) : '—';
+      pLives.textContent = lives > 0 ? '♥'.repeat(lives) : '--';
       pLives.className = 'pill ' + (lives <= 1 ? 'bad' : '');
       pLevel.textContent = 'Level ' + level;
     }
@@ -79,7 +79,7 @@
       launched = true;
       const b = balls[0];
       b.vx = rand(-90, 90);
-      b.vy = -BASE_SPEED - level * 12;
+      b.vy = (-BASE_SPEED - level * 12) * (0.82 + api.dm * 0.18);
       api.sfx.blip(700);
     }
 
@@ -306,14 +306,15 @@
     emoji: '🧱',
     cat: 'action',
     order: 31,
-    blurb: 'Bounce, smash, collect the falling letters. Multiball is a blessing right up until it is not.',
+    blurb: 'Bounce, smash, grab the falling letters. Multiball is a gift right up until the moment it is a punishment.',
     scoreLabel: 'Score',
     tags: ['breakout', 'arkanoid', 'paddle', 'ball'],
     how: [
-      'Move the paddle with the mouse or the arrow keys. Space (or click) launches the ball.',
-      'Where the ball hits the paddle decides where it goes — edges send it out wide.',
-      'Falling tiles: W widens the paddle, 3 splits the ball, S slows everything down, ♥ is an extra life.',
-      'Clear every brick for a 250-point level bonus. Bricks get tougher as you climb.'
+      'Mouse or arrow keys move the paddle. Space or click launches.',
+      'Where the ball hits the paddle decides where it goes. Edges fire it out wide.',
+      'Falling tiles: W widens the paddle, 3 splits the ball, S slows time, and the heart is a spare life.',
+      'Clear every brick for a 250 point bonus, then it does it again but worse.',
+      'Hard gives you two lives. Nightmare gives you one, and a faster ball.'
     ],
     mount
   });

@@ -1,4 +1,4 @@
-/* Stacker — tetromino drop with hold, ghost and a 7-bag. */
+/* Stacker. Falling blocks with hold, ghost and a proper 7-bag. */
 (function () {
   'use strict';
   const { h, clamp, randInt } = Engine;
@@ -32,6 +32,7 @@
 
     let board, cur, hold, canHold, bag, queue, score, lines, level, dropT, lockT, over, paused, clearAnim, combo;
     let dasDir = 0, dasT = 0;
+    const startLevel = api.dm > 2 ? 7 : api.dm > 1.2 ? 4 : 1;
 
     const pScore = api.pill('Score: 0');
     const pLines = api.pill('Lines: 0');
@@ -76,7 +77,7 @@
       board = Array.from({ length: ROWS }, () => Array(COLS).fill(null));
       bag = []; queue = [];
       hold = null; canHold = true;
-      score = 0; lines = 0; level = 1; dropT = 0; lockT = 0;
+      score = 0; lines = 0; level = api.dm > 2 ? 7 : api.dm > 1.2 ? 4 : 1; dropT = 0; lockT = 0;
       over = false; paused = false; clearAnim = null; combo = -1;
       refillBag();
       for (let i = 0; i < 5; i++) queue.push(nextPiece());
@@ -156,7 +157,7 @@
         const base = [0, 100, 300, 500, 800][full.length] || 800;
         score += base * level + (combo > 0 ? combo * 50 * level : 0);
         lines += full.length;
-        const newLevel = 1 + Math.floor(lines / 10);
+        const newLevel = startLevel + Math.floor(lines / 10);
         if (newLevel > level) { level = newLevel; }
       } else {
         combo = -1;
@@ -373,15 +374,15 @@
     emoji: '🟦',
     cat: 'action',
     order: 32,
-    blurb: 'Falling blocks with hold, ghost piece, hard drop and a proper 7-bag. You know exactly what to do.',
+    blurb: 'Falling blocks with hold, ghost piece, hard drop and a proper 7-bag. You already know exactly what to do here.',
     scoreLabel: 'Score',
     tags: ['tetris', 'blocks', 'stacking'],
     how: [
-      '← → move, ↑ or X rotate clockwise, Z rotates the other way.',
-      '↓ soft drops for a point a row; Space hard drops for two.',
-      'C stores a piece in hold. You get one swap per piece.',
-      'Four lines at once is worth 800 × level. Back-to-back clears build a combo bonus.',
-      'P pauses. Level rises every ten lines and so does the gravity.'
+      'Left and right move. Up or X spins clockwise, Z spins the other way.',
+      'Down soft drops for a point a row. Space hard drops for two.',
+      'C parks a piece in hold. One swap per piece.',
+      'Four lines at once is 800 times the level. Back to back clears build a combo bonus on top.',
+      'P pauses. Hard starts you at level 4 and Nightmare at level 7, which is not a gentle place to begin.'
     ],
     mount
   });

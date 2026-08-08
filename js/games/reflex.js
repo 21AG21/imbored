@@ -1,4 +1,4 @@
-/* Reflex Grid — how fast are you, really? */
+/* Reflex Grid. How fast are you, really? */
 (function () {
   'use strict';
   const { h, clamp, rand, randInt } = Engine;
@@ -15,8 +15,8 @@
     let target, times, misses, shown, waiting, waitT, running, t, lastAvg;
 
     const pShot = api.pill('0 / ' + TOTAL);
-    const pLast = api.pill('last: —');
-    const pAvg = api.pill('avg: —');
+    const pLast = api.pill('last: --');
+    const pAvg = api.pill('avg: --');
     const banner = h('div', { class: 'banner', style: { display: 'none' } });
     root.appendChild(banner);
 
@@ -44,10 +44,10 @@
 
     function sync() {
       pShot.textContent = shown + ' / ' + TOTAL;
-      pLast.textContent = 'last: ' + (times.length ? Math.round(times[times.length - 1]) + 'ms' : '—');
+      pLast.textContent = 'last: ' + (times.length ? Math.round(times[times.length - 1]) + 'ms' : '--');
       const avg = times.length ? times.reduce((a, b) => a + b, 0) / times.length + misses * MISS_PENALTY / TOTAL : 0;
       lastAvg = avg;
-      pAvg.textContent = 'avg: ' + (times.length ? Math.round(avg) + 'ms' : '—');
+      pAvg.textContent = 'avg: ' + (times.length ? Math.round(avg) + 'ms' : '--');
       pAvg.className = 'pill ' + (avg && avg < 320 ? 'good' : avg > 600 ? 'warn' : '');
     }
 
@@ -92,6 +92,11 @@
         if (waitT <= 0) { waiting = false; spawn(); }
       } else if (target) {
         target.grow = Math.min(1, target.grow + dt * 9);
+        /* on the mean settings a target you ignore simply leaves */
+        if (api.hard && t - target.born > 1.4 / api.dm) {
+          target = null; misses++; api.sfx.bad(); sync();
+          waiting = true; waitT = rand(0.3, 0.9);
+        }
       }
     }
 
@@ -152,16 +157,17 @@
     emoji: '🎯',
     cat: 'brain',
     order: 23,
-    blurb: 'Twenty-five targets, one number at the end. The most honest game here.',
+    blurb: 'Twenty five targets, one number at the end. The most brutally honest game on the shelf.',
     scoreLabel: 'Best avg',
     lowerIsBetter: true,
     formatScore: (v) => v + 'ms',
     tags: ['reaction', 'aim', 'speed', 'training'],
     how: [
-      'A circle appears somewhere on the grid at a random moment. Click it as fast as you can.',
-      'Twenty-five targets per run. The bars along the bottom show every reaction time.',
-      'Clicking empty space is a misclick and adds a 250ms penalty spread across the run.',
-      'Lower is better here — the score kept is your best average.'
+      'A circle appears somewhere at a random moment. Click it as fast as you physically can.',
+      'Twenty five targets a run. The bars along the bottom are every single reaction time.',
+      'Clicking empty space is a misclick and costs you 250ms spread across the run.',
+      'Lower is better here. The score kept is your best average.',
+      'On Hard and Nightmare the targets get bored and leave if you take too long.'
     ],
     mount
   });

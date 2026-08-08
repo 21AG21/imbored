@@ -1,4 +1,4 @@
-/* Approach Control — draw flight paths, land the right plane on the right runway. */
+/* Approach Control. Draw flight paths, land the right plane on the right runway. */
 (function () {
   'use strict';
   const { h, clamp, rand, randInt, pick } = Engine;
@@ -18,6 +18,7 @@
     const bagg = Engine.bag();
     const cv = Engine.canvas(root, W, H);
     const ctx = cv.ctx;
+    const dm = api.dm;
 
     let planes, landed, spawnT, over, drawing, t, warn;
 
@@ -104,12 +105,12 @@
       spawnT -= dt;
       if (spawnT <= 0) {
         spawn();
-        spawnT = Math.max(2.2, 7 - landed * 0.14) * rand(0.7, 1.3);
+        spawnT = Math.max(2.2, 7 - landed * 0.14) * rand(0.7, 1.3) / dm;
       }
 
       for (let i = planes.length - 1; i >= 0; i--) {
         const p = planes[i];
-        const sp = SPEED * (p.big ? 1.18 : 1);
+        const sp = SPEED * (p.big ? 1.18 : 1) * (0.8 + dm * 0.2);
 
         if (p.path.length) {
           const wp = p.path[0];
@@ -302,15 +303,15 @@
     emoji: '✈️',
     cat: 'sim',
     order: 4,
-    blurb: 'Draw the flight paths, keep everyone apart, land the cyan ones on the cyan runway. It gets busy fast.',
+    blurb: 'Draw the flight paths with your finger. Keep everyone apart. Land the pink ones on the pink runway. It gets busy fast.',
     scoreLabel: 'Landings',
     tags: ['air traffic', 'planes', 'radar', 'routing'],
     how: [
-      'Drag from an aircraft to draw the route it should fly. Release and it follows the line.',
-      'Each aircraft is coloured for its runway, and must arrive from the correct end — the dashed centreline shows the direction.',
-      'Aircraft that touch down on the wrong runway are sent around and cost you time.',
-      'If two aircraft get closer than the white ring, the shift is over. So is letting one drift out of the airspace.',
-      'Score = landings before the incident.'
+      'Drag from an aircraft to draw the route you want it to fly. Let go and it follows the line.',
+      'Each aircraft is coloured for its runway and has to arrive from the correct end. The dashed centreline shows which way.',
+      'Land on the wrong runway and it gets sent around again, which costs you time you do not have.',
+      'If two aircraft get closer than the white ring, that is the end of your shift. So is letting one wander off the screen.',
+      'Score is landings before the incident.'
     ],
     mount
   });

@@ -1,4 +1,4 @@
-/* Elevator Rush — dispatch three lifts in a busy tower. */
+/* Elevator Rush. Dispatch three lifts in a tower full of late people. */
 (function () {
   'use strict';
   const { h, clamp, rand, randInt, pick } = Engine;
@@ -10,7 +10,6 @@
   const SHAFT_W = 86;
   const SPEED = 2.3;            // floors per second
   const DOOR_T = 1.05;
-  const PATIENCE = 26;
   const MAX_FURY = 5;
 
   const floorY = (f) => 540 - f * 62;
@@ -21,6 +20,8 @@
     const bagg = Engine.bag();
     const cv = Engine.canvas(root, W, H);
     const ctx = cv.ctx;
+    const dm = api.dm;
+    const PATIENCE = 26 / dm;
 
     const pDone = api.pill('Delivered: 0');
     const pWait = api.pill('Waiting: 0');
@@ -71,7 +72,7 @@
       spawnT -= dt;
       if (spawnT <= 0) {
         addPerson();
-        spawnT = Math.max(0.7, 3.4 - wave * 0.26) * rand(0.6, 1.4);
+        spawnT = Math.max(0.7, 3.4 - wave * 0.26) * rand(0.6, 1.4) / dm;
       }
 
       /* patience */
@@ -296,15 +297,15 @@
     emoji: '🛗',
     cat: 'sim',
     order: 2,
-    blurb: 'Three lifts, eight floors, and a lobby full of people who are already late. Dispatch well or they take the stairs.',
+    blurb: 'Three lifts. Eight floors. A lobby full of people who are already late and have decided that is your fault.',
     scoreLabel: 'Delivered',
     tags: ['lift', 'dispatch', 'tower', 'scheduling'],
     how: [
-      'Click a floor inside a lift shaft to add it to that lift\'s stop list. Click again to cancel it.',
-      'Passengers board automatically when doors open, and press their own destination button.',
-      'Each lift holds five people; the coloured dot shows where someone is heading.',
-      'The bar under a waiting person is their patience. Five walk-offs and the run is over.',
-      'Score = people delivered.'
+      'Click a floor inside a lift shaft to send that lift there. Click again to cancel it.',
+      'People get in by themselves when the doors open, and press their own floor button. You only decide who goes where.',
+      'Five to a lift. The coloured dot is where somebody wants to go.',
+      'The little bar under a person is their patience. Five walk-offs and the shift is over.',
+      'Score is people delivered.'
     ],
     mount
   });

@@ -1,4 +1,4 @@
-/* Cubicle Arcade — shared engine helpers.
+/* Cubicle Arcade shared engine helpers.
    Plain old script (no modules) so the site works from file:// as well as a server. */
 (function (global) {
   'use strict';
@@ -70,7 +70,10 @@
     c.width = Math.round(w * dpr);
     c.height = Math.round(hh * dpr);
     c.style.aspectRatio = w + ' / ' + hh;
-    c.style.maxWidth = w + 'px';
+    /* big-screen mode reads these to grow the canvas to the viewport */
+    c.style.setProperty('--gw', w + 'px');
+    c.style.setProperty('--ar', String(w / hh));
+    c.style.maxWidth = 'var(--gw)';
     if (opts.maxHeight) c.style.maxHeight = opts.maxHeight;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     parent.appendChild(c);
@@ -126,10 +129,14 @@
   };
 
   /* ---------- keyboard ---------- */
+  const isEditable = (t) => !!t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
+  Engine.isEditable = isEditable;
+
   Engine.keys = function keys(capture) {
     const cap = new Set(capture || []);
     const st = Object.create(null);
     const down = (e) => {
+      if (isEditable(e.target)) return;      // typing beats every game binding
       st[e.code] = true; st[e.key] = true;
       if (cap.has(e.code) || cap.has(e.key)) e.preventDefault();
     };
@@ -152,8 +159,7 @@
   /* discrete key presses; handler returns true to preventDefault */
   Engine.onKey = function onKey(fn) {
     const down = (e) => {
-      const t = e.target;
-      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      if (isEditable(e.target)) return;
       if (fn(e) === true) e.preventDefault();
     };
     addEventListener('keydown', down);

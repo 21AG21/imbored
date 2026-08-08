@@ -1,4 +1,4 @@
-/* Rock Field — asteroids, with a hyperspace button for panic moments. */
+/* Rock Field. Asteroids, with a hyperspace button for panic moments. */
 (function () {
   'use strict';
   const { h, clamp, rand, randInt } = Engine;
@@ -32,7 +32,7 @@
     api.button('Restart', () => reset(true));
 
     function reset(full) {
-      if (full) { score = 0; lives = 3; wave = 1; }
+      if (full) { score = 0; lives = api.dm > 2 ? 1 : api.dm > 1.2 ? 2 : 3; wave = 1; }
       ship = { x: W / 2, y: H / 2, vx: 0, vy: 0, a: -Math.PI / 2, thrusting: false };
       rocks = []; bullets = []; bits = [];
       inv = 2.4; fireCd = 0; waveT = 0; over = false;
@@ -43,7 +43,7 @@
     }
 
     function spawnWave() {
-      const n = Math.min(11, 3 + wave);
+      const n = Math.min(14, Math.round((3 + wave) * api.dm));
       for (let i = 0; i < n; i++) {
         let x, y, guard = 0;
         do {
@@ -132,7 +132,7 @@
 
     function sync() {
       pScore.textContent = 'Score: ' + score.toLocaleString();
-      pLives.textContent = lives > 0 ? '▲'.repeat(lives) : '—';
+      pLives.textContent = lives > 0 ? '▲'.repeat(lives) : '--';
       pLives.className = 'pill ' + (lives <= 1 ? 'bad' : '');
       pWave.textContent = 'Wave ' + wave;
     }
@@ -302,15 +302,15 @@
     emoji: '🚀',
     cat: 'action',
     order: 33,
-    blurb: 'Drifting, shooting, and the terrible realisation that momentum does not stop just because you did.',
+    blurb: 'Drifting, shooting, and the slow horror of realising momentum does not stop just because you did.',
     scoreLabel: 'Score',
     tags: ['asteroids', 'space', 'shooter', 'retro'],
     how: [
-      '← → rotate, ↑ thrusts. There is no brake — turn around and burn the other way.',
-      'Space fires, five shots on screen at a time.',
-      'Big rocks split into two mediums, mediums into two smalls. Smalls are worth the most.',
-      'Shift (or ↓) jumps you somewhere random. It might also drop you inside a rock.',
-      'Clearing a wave is worth 100 and the next wave is bigger and faster.'
+      'Left and right rotate, up thrusts. There is no brake. Turn around and burn the other way.',
+      'Space fires. Five shots on screen at a time.',
+      'Big rocks split into two mediums, mediums into two smalls, and the smalls are worth the most.',
+      'Shift or down jumps you somewhere random. It may also drop you inside a rock. That is the deal.',
+      'Clearing a wave is worth 100 and the next one is bigger. Nightmare starts you with one ship.'
     ],
     mount
   });

@@ -1,4 +1,4 @@
-/* Pipe Dream — rotate every pipe until the whole network is fed. */
+/* Pipe Dream. Rotate every pipe until the whole network is fed. */
 (function () {
   'use strict';
   const { h, clamp, randInt } = Engine;
@@ -34,7 +34,7 @@
     function start(lv) {
       level = clamp(lv, 1, 99);
       api.save('level', level);
-      N = Math.min(9, 4 + Math.floor((level - 1) / 2));
+      N = Engine.clamp(Math.round((4 + Math.floor((level - 1) / 2)) * (0.85 + api.dm * 0.15)), 3, 10);
       CELL = Math.min(112, Math.floor(560 / N));
       OX = (cv.w - N * CELL) / 2;
       OY = (cv.h - N * CELL) / 2;
@@ -216,14 +216,15 @@
     emoji: '🔧',
     cat: 'puzzle',
     order: 14,
-    blurb: 'Spin every pipe until the whole grid lights up from a single source. Endless levels, all guaranteed solvable.',
+    blurb: 'Spin every pipe until the whole grid lights up from one glowing source. Endless levels, all of them definitely solvable.',
     scoreLabel: 'Level',
     tags: ['net', 'rotate', 'connect', 'plumbing'],
     how: [
-      'Left click turns a pipe clockwise. Right click turns it the other way.',
-      'The amber dot is the source. Pipes glow cyan once they are fed by it.',
-      'Every single pipe must end up connected — no orphans, no loops needed.',
-      'Boards are built from a random spanning tree, so a solution always exists.'
+      'Left click spins a pipe clockwise. Right click spins it back.',
+      'The amber blob is the source. Pipes glow when they are fed by it.',
+      'Every single pipe has to end up connected. No orphans allowed, not even the little ones.',
+      'Boards are grown from a random spanning tree, so a solution always exists by construction.',
+      'Harder settings hand you bigger grids sooner.'
     ],
     mount
   });

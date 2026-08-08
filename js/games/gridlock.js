@@ -1,4 +1,4 @@
-/* Gridlock — traffic light simulation. Keep a city grid flowing. */
+/* Gridlock. Twelve intersections, one rush hour, one very stressed player. */
 (function () {
   'use strict';
   const { h, clamp, rand, randInt, pick } = Engine;
@@ -25,6 +25,7 @@
     const bagg = Engine.bag();
     const cv = Engine.canvas(root, W, H);
     const ctx = cv.ctx;
+    const dm = api.dm;
 
     const pDelivered = api.pill('Through: 0');
     const pWave = api.pill('Wave 1');
@@ -209,7 +210,7 @@
             if (L.red <= 0 && L.pending) { L.phase = L.pending; L.pending = null; L.t = 0; }
           } else {
             L.t += dt;
-            if (autoMode && L.t > 11) switchLight(r, c);
+            if (autoMode && L.t > 11 / dm) switchLight(r, c);
           }
         }
       }
@@ -218,7 +219,7 @@
       spawnT -= dt;
       if (spawnT <= 0) {
         spawn();
-        spawnT = Math.max(0.38, 1.35 - wave * 0.09) * rand(0.7, 1.4);
+        spawnT = Math.max(0.38, 1.35 - wave * 0.09) * rand(0.7, 1.4) / dm;
       }
 
       for (const car of cars) place(car);
@@ -259,7 +260,7 @@
         if (cars[i].s >= cars[i].path.total) { cars.splice(i, 1); delivered++; }
       }
 
-      rage = clamp(rage + dt * (jammed * 0.85 - 2.6), 0, 100);
+      rage = clamp(rage + dt * (jammed * 0.85 * dm - 2.6 / dm), 0, 100);
       if (rage >= 100 && !prefill) endGame();
 
       pJam.textContent = 'Jammed: ' + jammed;
@@ -436,15 +437,19 @@
     emoji: '🚦',
     cat: 'sim',
     order: 1,
-    blurb: 'Twelve intersections, one rush hour. Flip the lights and keep the city moving before commuter rage boils over.',
+    blurb: 'Twelve intersections. One rush hour. You are the lights. Nobody voted for you and everybody is going to blame you.',
     scoreLabel: 'Cars through',
+    link: {
+      url: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd',
+      label: 'See why real jams start'
+    },
     tags: ['traffic', 'jam', 'city', 'lights'],
     how: [
-      'Click any intersection to flip which direction gets the green.',
-      'Every switch runs a short all-red clearance first, so plan a beat ahead.',
-      'Auto-cycle flips lights on a timer — turn it off to take full manual control.',
-      'Cars stuck in traffic build commuter rage. Fill the bar and the city revolts.',
-      'Waves get busier every 34 seconds. Score = cars delivered off the map.'
+      'Click an intersection to flip which way gets the green.',
+      'Every flip runs a short all-red first, so think one beat ahead or you will just move the jam somewhere else.',
+      'Auto-cycle flips lights on a timer. Switch it off when you want total control and total responsibility.',
+      'Cars stuck in traffic fill the commuter rage bar. Fill it and the city turns on you.',
+      'It gets busier every 34 seconds. Score is cars that made it off the map.'
     ],
     mount
   });
