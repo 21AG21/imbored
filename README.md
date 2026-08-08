@@ -207,11 +207,13 @@ exception is the anonymous page-view ping described below, and only on a live de
 `js/core/analytics.js` wires up **Vercel Web Analytics**, and it is the single thing in the
 build that touches the network. It is on a short leash:
 
-- It loads **only when the page is served from a real deployed host**. Opened from a
-  `file://` path, from `localhost`, from a `192.168.x`/`10.x` LAN address, or as the
-  single-file bundle, it does nothing at all — so the "runs off the disk, nothing leaves
-  the browser" promise still holds everywhere except a live deployment, and the console
-  stays clean off-Vercel (no 404 for a Vercel script that no Vercel is serving).
+- It **only wakes up on Vercel**. The insights script is served by Vercel's own edge, so it
+  is allow-listed to hosts ending in `.vercel.app` (production, branch and preview deploys)
+  and does nothing anywhere else — `file://`, `localhost`, **Google Drive / DriveToWeb**,
+  GitHub Pages, the single-file bundle. Off Vercel it makes no request at all, so the "runs
+  off the disk, nothing leaves the browser" promise holds and the console stays clean (no
+  404 for a Vercel script that no Vercel is serving). A custom domain in front of a Vercel
+  project can opt in with `window.__ARCADE_VERCEL__ = true`.
 - It records **anonymous page views only**. No scores, no settings, and none of the text
   you type into a panic screen is ever sent.
 - Collection still has to be switched on in the Vercel project: **Vercel dashboard →
