@@ -175,8 +175,13 @@ the page chrome, which gets you most of the way there.
 - **One file.** `node tools/build-single-file.mjs` inlines everything into
   `dist/cubicle-arcade.html`, about 406 KB, no other assets — a complete
   standards-mode document (real doctype, meta viewport, favicon and all). Mail it
-  to yourself, drop it on Google Drive, or paste the whole thing into an online
-  HTML playground (OneCompiler, CodePen, JSFiddle).
+  to yourself, drop it on Google Drive, or open it from a `file://` path.
+- **Online playgrounds.** `node tools/build-onecompiler.mjs` emits three files to
+  `dist/onecompiler/` (`index.html`, `style.css`, `script.js`). Playgrounds like
+  OneCompiler serve a Content-Security-Policy that blocks *inline* scripts, so a
+  full single-file paste renders only the background and nothing else. Splitting
+  the code into an external `script.js` sidesteps that — paste each file into its
+  matching tab.
 - **Host it.** Any static host. A GitHub Pages workflow sits in
   `.github/workflows/pages.yml` and only runs when you start it from the Actions tab.
 
