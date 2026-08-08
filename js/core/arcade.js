@@ -294,7 +294,13 @@
     const foot = h('footer', { class: 'foot' },
       h('span', { class: 'foot-skin' },
         h('strong', null, 'PANIC SCREEN:'), skinSel,
-        h('button', { class: 'btn tiny', type: 'button', onclick: () => toggleBoss(true) }, 'try it')),
+        h('button', { class: 'btn tiny', type: 'button', onclick: () => toggleBoss(true) }, 'try it'),
+        h('label', { class: 'foot-check' },
+          h('input', {
+            type: 'checkbox', checked: store.get('autohide', false) ? true : null,
+            onchange: (e) => store.set('autohide', e.target.checked)
+          }),
+          h('span', null, 'auto-hide when I click away'))),
       h('span', { class: 'foot-skin' },
         h('strong', null, 'SCORES:'),
         h('button', { class: 'btn tiny', type: 'button', onclick: exportSaves }, 'Back up'),
@@ -632,6 +638,11 @@
 
     addEventListener('visibilitychange', () => {
       Engine.paused = bossOn || document.hidden;
+    });
+
+    /* opt-in quick-hide: clicking to another window snaps to the disguise */
+    addEventListener('blur', () => {
+      if (store.get('autohide', false) && !bossOn) toggleBoss(true);
     });
 
     route();

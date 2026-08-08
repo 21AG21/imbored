@@ -311,6 +311,34 @@
       input.textContent = '';
       scroller.scrollTop = scroller.scrollHeight;
     });
+
+    /* Autopilot: keep the terminal streaming plausible output on a jittered
+       timer, so an unattended screen reads as a long-running job. Appends above
+       the prompt and self-stops the moment the skin leaves the DOM. */
+    const AP_LOGS = [
+      '  ✓ src/api/routes.test.ts  (31)  1.02s', 'transforming (512) src/index.ts',
+      '  info  Deploying to production...', '  [INFO] request handled in 42ms',
+      'npm warn deprecated glob@7.2.3: no longer supported', '  ✓ compiled successfully',
+      'Watching for file changes...', '  → GET  /api/health          200  3ms',
+      '  ✓ src/lib/queue.test.ts  (18)  288ms', 'docker: pulled layer 4f2c9a... done',
+      '  info  Uploaded 1284 files (18.2 MB)', '  ~ update in-place  aws_instance.web',
+      '  + create           aws_lb_listener.https', 'Apply complete! Resources: 3 added, 1 changed.',
+      '  → POST /api/jobs            202  11ms', '  hint: waiting for lock on .terraform.tfstate',
+      '1284 modules transformed.', '  ✓ built in 6.91s'
+    ];
+    const AP_CMDS = ['npm run build', 'pytest -x -q', 'terraform apply -auto-approve',
+      'git pull --rebase', 'docker compose up -d', 'tail -f logs/app.log',
+      'kubectl rollout status deploy/web', 'npm run deploy -- --prod'];
+    let apLeft = 0;
+    function apTick() {
+      if (!scroller.isConnected) return;                 // skin removed -> stop
+      if (apLeft > 0) { out.appendChild(h('div', { class: 'tline dim' }, AP_LOGS[Math.floor(Math.random() * AP_LOGS.length)])); apLeft--; }
+      else { out.appendChild(h('div', { class: 'tline' }, '~/work/platform $ ' + AP_CMDS[Math.floor(Math.random() * AP_CMDS.length)])); apLeft = 4 + Math.floor(Math.random() * 8); }
+      while (out.children.length > 240) out.removeChild(out.firstChild);
+      scroller.scrollTop = scroller.scrollHeight;
+      setTimeout(apTick, 650 + Math.random() * 950);
+    }
+    setTimeout(apTick, 500);                              // wait until render() attaches the skin
     return {
       focus: () => { input.focus(); scroller.scrollTop = scroller.scrollHeight; },
       el: h('div', { class: 'skin term' },

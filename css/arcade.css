@@ -1662,3 +1662,5 @@ body.crt::before {
 body.crt.boss-on::after, body.crt.boss-on::before { display: none; }
 .theme-crt { display: flex; align-items: center; gap: 7px; margin-top: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
 .theme-crt input { width: 15px; height: 15px; }
+.foot-check { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; cursor: pointer; margin-left: 6px; }
+.foot-check input { width: 13px; height: 13px; }
