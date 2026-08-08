@@ -182,7 +182,12 @@ the page chrome, which gets you most of the way there.
   ~256 KB, so the full single file (~406 KB) gets chopped mid-script and only the
   background paints. Splitting the code out and minifying `script.js` to ~209 KB
   (the tool uses terser when installed) keeps every tab under the cap. Paste each
-  file into its matching tab.
+  file into its matching tab. The `index.html` loader (`tools/onecompiler-loader.js`)
+  also side-steps OneCompiler's infinite-loop-guard rewriter, which injects `__lp`
+  counters into tab scripts and chokes on the minified bundle: it fetches
+  `script.js` and runs it from a runtime-created inline `<script>`, out of the
+  rewriter's reach, and falls back to an on-screen diagnostic rather than a blank
+  preview. It was hardened against several models of that rewriter's behaviour.
 - **Host it.** Any static host. A GitHub Pages workflow sits in
   `.github/workflows/pages.yml` and only runs when you start it from the Actions tab.
 

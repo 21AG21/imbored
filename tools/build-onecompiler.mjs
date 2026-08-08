@@ -48,7 +48,16 @@ try {
    minified/one-line loops (ReferenceError: __lp1 is not defined). A script
    element built at runtime from fetched text is outside the rewriter's reach,
    so the code runs untouched. fetch() of a same-origin sibling and inline
-   execution both work in these sandboxes. */
+   execution both work in these sandboxes.
+
+   The loader itself lives in tools/onecompiler-loader.js — a hardened,
+   self-diagnosing version (no syntactic loops, so the rewriter cannot
+   instrument the bootstrap; detects and neutralizes __lp guards if the fetched
+   bytes are themselves instrumented; falls back to an on-screen diagnostic
+   instead of a blank preview). It was validated against local reproductions of
+   OneCompiler's behavior models. */
+const loader = read('tools/onecompiler-loader.js');
+if (loader.includes('</script')) throw new Error('literal </script in loader');
 const indexHtml = `<!doctype html>
 <html lang="en">
 <head>
@@ -56,22 +65,13 @@ const indexHtml = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
 <meta name="theme-color" content="#6f3fa8">
 <title>CUBICLE ARCADE 98</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23ffcb1f'/%3E%3Crect x='4' y='9' width='24' height='15' fill='%231d1722'/%3E%3Ccircle cx='11' cy='16' r='3' fill='%23ffcb1f'/%3E%3Crect x='18' y='13' width='4' height='4' fill='%2300a6b4'/%3E%3Crect x='23' y='17' width='4' height='4' fill='%23ff2d87'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <noscript><p style="padding:24px;font-family:Verdana,sans-serif">This needs JavaScript. It is all client side.</p></noscript>
 <script>
-/* run script.js without letting the playground's loop-guard rewriter touch it */
-(function () {
-  fetch('script.js').then(function (r) { return r.text(); }).then(function (code) {
-    var s = document.createElement('script');
-    s.textContent = code;
-    document.body.appendChild(s);
-  }).catch(function (e) {
-    document.body.insertAdjacentHTML('beforeend',
-      '<pre style="padding:16px;font:14px monospace;color:#b00020">Could not load script.js: ' + e + '</pre>');
-  });
-})();
+${loader}
 </script>
 </body>
 </html>
