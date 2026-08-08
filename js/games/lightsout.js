@@ -71,12 +71,10 @@
       solving = true;
       api.sfx.great();
       const res = api.submit(level);
-      banner.style.display = '';
-      banner.replaceChildren(
-        h('h3', null, 'Lights out.'),
-        h('p', null, 'Level ' + level + ' cleared in ' + moves + ' moves (par ' + par + ').' +
-          (res.isRecord ? ' Deepest run yet!' : '')),
-        h('button', { class: 'btn primary', type: 'button', onclick: () => start(level + 1) }, 'Level ' + (level + 1) + ' →'));
+      Engine.autoAdvance(banner, 'Lights out.',
+        'Level ' + level + ' cleared in ' + moves + ' moves (par ' + par + ').' +
+          (res.isRecord ? ' Deepest run yet!' : ''),
+        'Level ' + (level + 1), () => start(level + 1));
     }
 
     function render() {

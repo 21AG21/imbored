@@ -282,5 +282,43 @@
   Engine.audio = audio;
   Engine.sfx = audio;
 
+  /* ---------- auto-advancing win banner ----------
+     Shows the result, then moves to the next level on a short countdown so
+     nobody has to reach for the mouse. The button still works if you are
+     impatient, and "Stay here" cancels it. */
+  Engine.autoAdvance = function autoAdvance(banner, title, body, nextLabel, next, delay) {
+    delay = delay || 2.4;
+    let left = delay;
+    let cancelled = false;
+    const btn = h('button', { class: 'btn primary', type: 'button' }, nextLabel + ' →');
+    const stay = h('button', { class: 'btn', type: 'button' }, 'Stay here');
+    const bar = h('i');
+    const countWrap = h('div', { class: 'auto-count' }, bar);
+
+    const go = () => { if (!cancelled) { cleanup(); next(); } };
+    let raf = 0, last = performance.now();
+    function cleanup() { cancelled = true; cancelAnimationFrame(raf); }
+    btn.addEventListener('click', go);
+    stay.addEventListener('click', () => { cleanup(); stay.remove(); countWrap.remove(); });
+
+    banner.style.display = '';
+    banner.replaceChildren(
+      h('h3', null, title),
+      h('p', null, body),
+      h('div', { class: 'banner-btns' }, btn, stay),
+      countWrap);
+
+    function tickFn(now) {
+      if (cancelled) return;
+      left -= (now - last) / 1000;
+      last = now;
+      bar.style.width = clamp(left / delay, 0, 1) * 100 + '%';
+      if (left <= 0) return go();
+      raf = requestAnimationFrame(tickFn);
+    }
+    raf = requestAnimationFrame(tickFn);
+    return cleanup;
+  };
+
   global.Engine = Engine;
 })(window);

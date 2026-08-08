@@ -1231,6 +1231,147 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
   .kbd-row { margin-bottom: min(4px, .8vmin); }
 }
 
+/* ---------------- sudoku ---------------- */
+.sud-board {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  width: min(486px, 96vw);
+  aspect-ratio: 1;
+  background: var(--ink);
+  border: 5px solid var(--ink);
+  box-shadow: var(--hard);
+  gap: 1px;
+}
+.sud-cell {
+  position: relative;
+  display: grid; place-items: center;
+  background: var(--label);
+  font: 400 clamp(18px, 4.4vw, 26px)/1 Verdana, sans-serif;
+  color: var(--teal);
+  cursor: pointer;
+  user-select: none;
+}
+.sud-cell.rb { margin-right: 2px; }
+.sud-cell.bb { margin-bottom: 2px; }
+.sud-cell.given { color: var(--ink); font-weight: 700; background: var(--paper); }
+.sud-cell.peer { background: #efe9d8; }
+.sud-cell.given.peer { background: #d8cfb6; }
+.sud-cell.same { background: var(--banana); }
+.sud-cell.sel { background: var(--teal); color: var(--label); box-shadow: inset 0 0 0 3px var(--ink); }
+.sud-cell.sel.given { color: var(--label); }
+.sud-cell.wrong { color: var(--tomato); font-weight: 700; }
+.sud-notes {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  width: 100%; height: 100%;
+  font: 400 clamp(7px, 1.7vw, 10px)/1 Verdana, sans-serif; color: var(--ink3);
+}
+.sud-notes i { display: grid; place-items: center; font-style: normal; }
+.sud-pad {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 5px;
+  width: min(486px, 96vw);
+}
+.sud-key {
+  aspect-ratio: 1;
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  box-shadow: var(--bevel-out);
+  font: 700 clamp(15px, 3.6vw, 20px)/1 Verdana, sans-serif;
+  color: var(--ink);
+  cursor: pointer;
+}
+.sud-key:active { box-shadow: var(--bevel-in); }
+.sud-key.wide { grid-column: span 2; aspect-ratio: auto; font-size: 12px; text-transform: uppercase; }
+.sud-key.on { background: var(--lime); }
+@media (max-width: 520px) {
+  .sud-key.wide { grid-column: span 3; }
+}
+
+/* ---------------- memory match ---------------- */
+.mem-board { display: grid; gap: min(10px, 2vw); width: min(560px, 96vw); }
+.mem-card {
+  aspect-ratio: 3 / 4;
+  border: 3px solid var(--ink);
+  box-shadow: 3px 3px 0 0 var(--ink);
+  cursor: pointer;
+  position: relative;
+  background: none;
+  padding: 0;
+  perspective: 600px;
+}
+.mem-inner { position: absolute; inset: 0; transition: transform .3s; transform-style: preserve-3d; }
+.mem-card.flipped .mem-inner, .mem-card.matched .mem-inner { transform: rotateY(180deg); }
+.mem-face {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  backface-visibility: hidden;
+}
+.mem-back { background: var(--grape); }
+.mem-back::after {
+  content: ""; position: absolute; inset: 8px;
+  border: 2px dashed rgba(255,255,255,.4);
+}
+.mem-front { background: var(--label); transform: rotateY(180deg); }
+.mem-card.matched .mem-front { background: var(--lime); }
+.mem-card.matched { animation: mempop .3s steps(3); }
+@keyframes mempop { 50% { transform: scale(1.08); } }
+.mem-front .ico { width: 62%; height: 62%; }
+@media (prefers-reduced-motion: reduce) { .mem-inner { transition: none; } }
+
+/* ---------------- maze ---------------- */
+.maze-hint { font: 700 12px/1.4 Verdana, sans-serif; color: var(--ink2); text-align: center; max-width: 520px; }
+
+/* auto-advance countdown under a win banner */
+.banner-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.auto-count {
+  margin: 12px auto 0; width: 70%; height: 8px;
+  background: var(--paper2); border: 2px solid var(--ink); overflow: hidden;
+}
+.auto-count > i { display: block; height: 100%; width: 100%; background: var(--lime); }
+@media (prefers-reduced-motion: reduce) { .auto-count { display: none; } }
+
+/* ---------------- theme picker ---------------- */
+.theme-wrap { position: relative; }
+.theme-pop {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 50;
+  width: 230px;
+  background: var(--label); border: 3px solid var(--ink); box-shadow: var(--hard);
+  padding: 12px;
+}
+.theme-pop.hidden { display: none; }
+.theme-pop h4 { margin: 0 0 9px; font-size: 12px; }
+.theme-swatches { display: grid; gap: 6px; }
+.theme-swatch {
+  display: flex; align-items: center; gap: 9px;
+  border: 3px solid var(--ink); box-shadow: 2px 2px 0 0 var(--ink);
+  padding: 7px 9px; cursor: pointer; text-align: left;
+  font: 700 12px/1 Verdana, sans-serif; color: var(--ink);
+}
+.theme-swatch::before {
+  content: ""; width: 20px; height: 20px; flex: none;
+  border: 2px solid var(--ink); background: var(--sw, var(--paper));
+}
+.theme-swatch[data-theme="beige"]::before { background: #ded6c2; }
+.theme-swatch[data-theme="slate"]::before { background: #c3ccd8; }
+.theme-swatch[data-theme="mint"]::before { background: #c4e4d4; }
+.theme-swatch[data-theme="rose"]::before { background: #f0cdd6; }
+.theme-swatch[data-theme="dusk"]::before { background: #2e3650; }
+.theme-swatch[data-theme="carbon"]::before { background: #26262e; }
+.theme-swatch.on { background: var(--banana); }
+.theme-name { flex: 1; }
+.theme-custom {
+  display: flex; align-items: center; justify-content: space-between; gap: 9px;
+  margin-top: 10px; padding-top: 10px; border-top: 3px dashed var(--ink);
+  font: 700 12px/1 Verdana, sans-serif;
+}
+.theme-custom input[type="color"] {
+  width: 40px; height: 30px; border: 3px solid var(--ink); padding: 0; background: none; cursor: pointer;
+}
+@media (max-width: 720px) {
+  .theme-pop { position: fixed; top: auto; bottom: 12px; left: 12px; right: 12px; width: auto; }
+}
+
 </style>
 <script>
 /* Cubicle Arcade shared engine helpers.
@@ -1517,6 +1658,44 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
   Engine.audio = audio;
   Engine.sfx = audio;
 
+  /* ---------- auto-advancing win banner ----------
+     Shows the result, then moves to the next level on a short countdown so
+     nobody has to reach for the mouse. The button still works if you are
+     impatient, and "Stay here" cancels it. */
+  Engine.autoAdvance = function autoAdvance(banner, title, body, nextLabel, next, delay) {
+    delay = delay || 2.4;
+    let left = delay;
+    let cancelled = false;
+    const btn = h('button', { class: 'btn primary', type: 'button' }, nextLabel + ' →');
+    const stay = h('button', { class: 'btn', type: 'button' }, 'Stay here');
+    const bar = h('i');
+    const countWrap = h('div', { class: 'auto-count' }, bar);
+
+    const go = () => { if (!cancelled) { cleanup(); next(); } };
+    let raf = 0, last = performance.now();
+    function cleanup() { cancelled = true; cancelAnimationFrame(raf); }
+    btn.addEventListener('click', go);
+    stay.addEventListener('click', () => { cleanup(); stay.remove(); countWrap.remove(); });
+
+    banner.style.display = '';
+    banner.replaceChildren(
+      h('h3', null, title),
+      h('p', null, body),
+      h('div', { class: 'banner-btns' }, btn, stay),
+      countWrap);
+
+    function tickFn(now) {
+      if (cancelled) return;
+      left -= (now - last) / 1000;
+      last = now;
+      bar.style.width = clamp(left / delay, 0, 1) * 100 + '%';
+      if (left <= 0) return go();
+      raf = requestAnimationFrame(tickFn);
+    }
+    raf = requestAnimationFrame(tickFn);
+    return cleanup;
+  };
+
   global.Engine = Engine;
 })(window);
 
@@ -1624,6 +1803,24 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
     deskgolf:
       c(6, 20, 3, P.paper) + line(17, 20, 17, 4, 2) + p('M17 4l7 3-7 3z', P.tomato) +
       r(1, 21, 22, 2, P.green),
+    sudoku:
+      r(3, 3, 18, 18, P.paper) +
+      line(9, 3, 9, 21, 1.4, P.grey) + line(15, 3, 15, 21, 1.4, P.grey) +
+      line(3, 9, 21, 9, 1.4, P.grey) + line(3, 15, 21, 15, 1.4, P.grey) +
+      '<text x="5" y="8.4" font-size="5.5" fill="' + INK + '" stroke="none" font-family="Verdana">5</text>' +
+      '<text x="11" y="14.4" font-size="5.5" fill="' + P.teal + '" stroke="none" font-family="Verdana">3</text>' +
+      '<text x="17" y="20.4" font-size="5.5" fill="' + INK + '" stroke="none" font-family="Verdana">8</text>' +
+      '<text x="17" y="8.4" font-size="5.5" fill="' + P.teal + '" stroke="none" font-family="Verdana">1</text>',
+    memory:
+      r(2, 4, 9, 16, P.grape) + r(13, 4, 9, 16, P.paper) +
+      p('M17.5 9c-1.4 0-2 2 0 3.4C19.4 11 18.9 9 17.5 9z', P.tomato) +
+      c(6.5, 12, 2.4, 'rgba(255,255,255,.5)'),
+    maze:
+      r(2, 2, 20, 20, P.paper) +
+      line(2, 7, 15, 7, 1.8, INK) + line(19, 7, 22, 7, 1.8, INK) +
+      line(7, 7, 7, 13, 1.8, INK) + line(11, 11, 17, 11, 1.8, INK) +
+      line(7, 17, 22, 17, 1.8, INK) + line(11, 13, 11, 22, 1.8, INK) +
+      c(4.5, 4.5, 1.4, P.teal) + c(19, 19.5, 1.4, P.tomato),
     /* ---------- gridlock shop ---------- */
     smart: r(4, 4, 16, 16, P.teal) + p('M9 9h6v2h-4v2h4v2H9z', P.paper) + r(4, 4, 16, 16, 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="2"'),
     circle: '<circle cx="12" cy="12" r="8" fill="none" stroke="' + P.grey + '" stroke-width="5"/>' + c(12, 12, 4, P.green),
@@ -1642,6 +1839,8 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
     sheet: r(3, 3, 18, 18, P.paper) + r(3, 3, 18, 4, P.green) + line(9, 7, 9, 21, 1.4, P.grey) + line(15, 7, 15, 21, 1.4, P.grey) + line(3, 12, 21, 12, 1.4, P.grey) + line(3, 17, 21, 17, 1.4, P.grey),
     inbox: r(2, 5, 20, 14, P.paper) + p('M2 5l10 8 10-8', 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round"'),
     term: r(2, 4, 20, 16, P.dark) + r(2, 4, 20, 3.5, P.grey) + p('M6 12l3 2.5-3 2.5', 'none').replace('fill="none"', 'fill="none" stroke="' + P.lime + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"') + line(12, 17, 17, 17, 2, P.lime),
+    palette: p('M12 3a9 9 0 0 0 0 18c1.5 0 2-1 2-2 0-1.4 1-2 2.2-2H18a4 4 0 0 0 4-4c0-5-4.5-8-10-8z', P.paper) +
+      c(7.5, 11, 1.5, P.tomato) + c(11, 8, 1.5, P.yellow) + c(15.5, 9, 1.5, P.teal) + c(16.5, 13.5, 1.5, P.grape),
     web: c(12, 12, 9, P.teal) + '<ellipse cx="12" cy="12" rx="4" ry="9" fill="none" stroke="' + INK + '" stroke-width="1.6"/>' + line(3, 12, 21, 12, 1.6) + line(4.5, 7, 19.5, 7, 1.4) + line(4.5, 17, 19.5, 17, 1.4),
     /* ---------- misc ---------- */
     road: p('M7 2h4l-1 20H5zM17 2h-4l1 20h5z', P.grey) + line(12, 3, 12, 7, 2.5, P.yellow) + line(12, 11, 12, 15, 2.5, P.yellow) + line(12, 19, 12, 22, 2.5, P.yellow),
@@ -1670,6 +1869,125 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
   };
 
   global.Icons = Icons;
+})(window);
+
+</script>
+<script>
+/* Themes. The whole page is driven by CSS variables, so a theme is just a set
+   of overrides. Ships with a handful of presets plus a custom colour you pick. */
+(function (global) {
+  'use strict';
+  const h = Engine.h;
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem('cubicle:' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem('cubicle:' + k, JSON.stringify(v)); } catch (e) { } }
+  };
+
+  /* each theme overrides the paper/ink family; the loud accent colours stay put */
+  const THEMES = {
+    beige: { name: 'Beige (classic)', vars: {} },
+    slate: {
+      name: 'Cool slate',
+      vars: {
+        '--paper': '#c3ccd8', '--paper2': '#b0bccb', '--label': '#f4f7fb',
+        '--chrome': '#8b98a9', '--shade': '#5f6b7c', '--hilite': '#ffffff',
+        '--ink': '#161d29', '--ink2': '#3b475a', '--ink3': '#6d7b90'
+      }
+    },
+    mint: {
+      name: 'Mint',
+      vars: {
+        '--paper': '#c4e4d4', '--paper2': '#b0d8c3', '--label': '#f2fbf6',
+        '--chrome': '#88b39d', '--shade': '#5b8571', '--hilite': '#ffffff',
+        '--ink': '#132218', '--ink2': '#345043', '--ink3': '#5f8271'
+      }
+    },
+    rose: {
+      name: 'Rose',
+      vars: {
+        '--paper': '#f0cdd6', '--paper2': '#e8b9c6', '--label': '#fdf1f5',
+        '--chrome': '#c894a4', '--shade': '#9c6675', '--hilite': '#ffffff',
+        '--ink': '#2a141c', '--ink2': '#5a3644', '--ink3': '#8a6472'
+      }
+    },
+    dusk: {
+      name: 'Dusk (dark)',
+      vars: {
+        '--paper': '#242a3d', '--paper2': '#2e3650', '--label': '#333c58',
+        '--chrome': '#454f6e', '--shade': '#151a28', '--hilite': '#4a5578',
+        '--ink': '#eef1fb', '--ink2': '#b9c2dd', '--ink3': '#8590b0'
+      }
+    },
+    carbon: {
+      name: 'Carbon (dark)',
+      vars: {
+        '--paper': '#1c1c22', '--paper2': '#26262e', '--label': '#2c2c36',
+        '--chrome': '#3a3a46', '--shade': '#0e0e12', '--hilite': '#43434f',
+        '--ink': '#f2f2f5', '--ink2': '#c2c2cc', '--ink3': '#8a8a98'
+      }
+    }
+  };
+
+  let themeId = store.get('theme', 'beige');
+  let custom = store.get('themeCustom', '#5b8cff');
+
+  /* build a full theme from a single accent colour the user picks */
+  function customVars(hex) {
+    const { r, g, b } = hexRGB(hex);
+    const dark = (r * 0.299 + g * 0.587 + b * 0.114) < 150;
+    const mix = (t) => rgbHex(r + (255 - r) * t, g + (255 - g) * t, b + (255 - b) * t);
+    const shade = (t) => rgbHex(r * t, g * t, b * t);
+    if (dark) {
+      return {
+        '--paper': shade(0.5), '--paper2': shade(0.62), '--label': shade(0.72),
+        '--chrome': shade(0.85), '--shade': shade(0.3), '--hilite': shade(1.0),
+        '--ink': '#f4f5fb', '--ink2': mix(0.72), '--ink3': mix(0.5)
+      };
+    }
+    return {
+      '--paper': mix(0.62), '--paper2': mix(0.5), '--label': mix(0.86),
+      '--chrome': mix(0.32), '--shade': shade(0.55), '--hilite': '#ffffff',
+      '--ink': shade(0.22), '--ink2': shade(0.42), '--ink3': mix(0.2)
+    };
+  }
+  function hexRGB(hex) {
+    hex = (hex || '').replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map((c) => c + c).join('');
+    const n = parseInt(hex, 16) || 0;
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+  }
+  const clampByte = (v) => Math.max(0, Math.min(255, Math.round(v)));
+  function rgbHex(r, g, b) {
+    return '#' + [r, g, b].map((v) => clampByte(v).toString(16).padStart(2, '0')).join('');
+  }
+
+  function apply() {
+    const root = document.documentElement;
+    /* clear anything a previous theme set */
+    const all = new Set();
+    Object.values(THEMES).forEach((t) => Object.keys(t.vars).forEach((k) => all.add(k)));
+    Object.keys(customVars('#888888')).forEach((k) => all.add(k));
+    all.forEach((k) => root.style.removeProperty(k));
+
+    const vars = themeId === 'custom' ? customVars(custom) : (THEMES[themeId] || THEMES.beige).vars;
+    for (const k in vars) root.style.setProperty(k, vars[k]);
+
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', getComputedStyle(root).getPropertyValue('--grape').trim() || '#6f3fa8');
+  }
+
+  const Themes = {
+    list: () => Object.keys(THEMES).map((id) => ({ id, name: THEMES[id].name })).concat([{ id: 'custom', name: 'Custom colour' }]),
+    current: () => themeId,
+    custom: () => custom,
+    set(id) { themeId = id; store.set('theme', id); apply(); },
+    setCustom(hex) { custom = hex; themeId = 'custom'; store.set('themeCustom', hex); store.set('theme', 'custom'); apply(); },
+    apply
+  };
+  global.Themes = Themes;
+
+  /* apply as early as possible so there is no beige flash */
+  apply();
 })(window);
 
 </script>
@@ -2205,6 +2523,46 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
     diffBtn.className = 'btn diffbtn d-' + DIFFS[diffIdx].id;
   }
 
+  /* ---------------- theme picker ---------------- */
+  function buildThemeBtn() {
+    const swatches = h('div', { class: 'theme-swatches' });
+    const pop = h('div', { class: 'theme-pop hidden' },
+      h('h4', null, 'Colour scheme'),
+      swatches,
+      h('label', { class: 'theme-custom' },
+        h('span', null, 'Pick your own'),
+        h('input', {
+          type: 'color', value: Themes.custom(),
+          oninput: (e) => { Themes.setCustom(e.target.value); paintSwatches(); }
+        })));
+
+    function paintSwatches() {
+      swatches.replaceChildren();
+      for (const t of Themes.list()) {
+        const btn = h('button', {
+          class: 'theme-swatch' + (Themes.current() === t.id ? ' on' : ''),
+          type: 'button', title: t.name,
+          onclick: () => { Themes.set(t.id); paintSwatches(); }
+        }, h('span', { class: 'theme-name' }, t.name));
+        /* preview chip built from that theme's own tokens */
+        btn.style.setProperty('--sw', t.id === 'custom' ? Themes.custom() : '');
+        btn.dataset.theme = t.id;
+        swatches.appendChild(btn);
+      }
+    }
+    paintSwatches();
+
+    const btn = h('button', { class: 'icon-btn', type: 'button', title: 'Colour scheme', html: Icons.svg('palette', 19) });
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      pop.classList.toggle('hidden');
+    });
+    document.addEventListener('click', (e) => {
+      if (!pop.classList.contains('hidden') && !pop.contains(e.target) && e.target !== btn) pop.classList.add('hidden');
+    });
+    return h('div', { class: 'theme-wrap' }, btn, pop);
+  }
+
   /* ---------------- top chrome ---------------- */
   function buildChrome() {
     const search = h('input', {
@@ -2248,6 +2606,7 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
         onclick: () => Arcade.go(Engine.pick(games).id)
       }),
       h('button', { class: 'icon-btn', id: 'fsbtn', type: 'button', title: 'Big screen (F)', html: Icons.svg('expand', 19), onclick: () => Arcade.toggleBig() }),
+      buildThemeBtn(),
       soundBtn,
       h('button', {
         class: 'icon-btn', type: 'button',
@@ -4242,7 +4601,7 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       spawnT -= dt;
       if (spawnT <= 0) {
         spawn();
-        spawnT = Math.max(2.2, 7 - landed * 0.14) * rand(0.7, 1.3) / dm;
+        spawnT = Math.max(2.6, 8 - landed * 0.12) * rand(0.75, 1.3) / Math.min(dm, 1.7);
       }
 
       for (let i = planes.length - 1; i >= 0; i--) {
@@ -4496,7 +4855,8 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
     function reset() {
       const L = LEVELS[diff];
       W = L.w; Hh = L.h;
-      M = Engine.clamp(Math.round(L.m * (1 + (api.dm - 1) * 0.42)), 1, W * Hh - 10);
+      /* past roughly a quarter of the board, boards stop being solvable by logic */
+      M = Engine.clamp(Math.round(L.m * (1 + (api.dm - 1) * 0.42)), 1, Math.floor(W * Hh * 0.26));
       grid = new Array(W * Hh).fill(0).map(() => ({ mine: false, open: false, flag: false, n: 0 }));
       opened = 0; flags = 0; started = false; dead = false; won = false; firstDone = false;
       clearInterval(timerId);
@@ -5058,14 +5418,17 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       api.save('solved', solved);
       api.submit(solved);
       setTimeout(() => {
-        banner.style.display = '';
-        banner.replaceChildren(
-          h('h3', null, 'Out of the jam.'),
-          h('p', null, 'Level ' + (level + 1) + ' in ' + moves + ' moves. Shortest possible: ' + par + '.' +
-            (moves === par ? ' Perfect.' : moves <= par + 2 ? ' Very tidy.' : '')),
-          level + 1 < LEVELS.length
-            ? h('button', { class: 'btn primary', type: 'button', onclick: () => load(level + 1) }, 'Level ' + (level + 2) + ' →')
-            : h('p', null, 'That was the last level. You beat all ' + LEVELS.length + '.'));
+        if (level + 1 < LEVELS.length) {
+          Engine.autoAdvance(banner, 'Out of the jam.',
+            'Level ' + (level + 1) + ' in ' + moves + ' moves. Shortest possible: ' + par + '.' +
+              (moves === par ? ' Perfect.' : moves <= par + 2 ? ' Very tidy.' : ''),
+            'Level ' + (level + 2), () => load(level + 1));
+        } else {
+          banner.style.display = '';
+          banner.replaceChildren(h('h3', null, 'Out of the jam.'),
+            h('p', null, 'That was the last level. You beat all ' + LEVELS.length + '.'),
+            h('button', { class: 'btn primary', type: 'button', onclick: () => load(0) }, 'Start over'));
+        }
       }, 900);
     }
 
@@ -5274,13 +5637,16 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       const solved = Math.max(api.load('solved', 0), level + 1);
       api.save('solved', solved);
       api.submit(solved);
-      banner.style.display = '';
-      banner.replaceChildren(
-        h('h3', null, 'Every crate home.'),
-        h('p', null, 'Level ' + (level + 1) + ' in ' + steps + ' steps and ' + pushes + ' pushes.'),
-        level + 1 < LEVELS.length
-          ? h('button', { class: 'btn primary', type: 'button', onclick: () => load(level + 1) }, 'Level ' + (level + 2) + ' →')
-          : h('p', null, 'That was the last warehouse. All ' + LEVELS.length + ' cleared.'));
+      if (level + 1 < LEVELS.length) {
+        Engine.autoAdvance(banner, 'Every crate home.',
+          'Level ' + (level + 1) + ' in ' + steps + ' steps and ' + pushes + ' pushes.',
+          'Level ' + (level + 2), () => load(level + 1));
+      } else {
+        banner.style.display = '';
+        banner.replaceChildren(h('h3', null, 'Every crate home.'),
+          h('p', null, 'That was the last warehouse. All ' + LEVELS.length + ' cleared.'),
+          h('button', { class: 'btn primary', type: 'button', onclick: () => load(0) }, 'Start over'));
+      }
     }
 
     function sync() {
@@ -5497,11 +5863,9 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       api.sfx.great();
       api.submit(level);
       setTimeout(() => {
-        banner.style.display = '';
-        banner.replaceChildren(
-          h('h3', null, 'Network live.'),
-          h('p', null, 'Level ' + level + ' solved in ' + moves + ' turns.'),
-          h('button', { class: 'btn primary', type: 'button', onclick: () => start(level + 1) }, 'Level ' + (level + 1) + ' →'));
+        Engine.autoAdvance(banner, 'Network live.',
+          'Level ' + level + ' solved in ' + moves + ' turns.',
+          'Level ' + (level + 1), () => start(level + 1));
       }, 500);
     }
 
@@ -5610,6 +5974,260 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       'Every single pipe has to end up connected. No orphans allowed, not even the little ones.',
       'Boards are grown from a random spanning tree, so a solution always exists by construction.',
       'Harder settings hand you bigger grids sooner.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Maze. A perfect maze (exactly one path between any two cells), so it always
+   has a solution and can never trap you. Get from the corner to the flag. */
+(function () {
+  'use strict';
+  const { h, clamp, randInt, shuffle } = Engine;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    const cv = Engine.canvas(root, 640, 640);
+    const ctx = cv.ctx;
+
+    const SIZE = { chill: 9, normal: 15, hard: 21, nightmare: 29 }[api.diffId] || 15;
+
+    let cells, N, px, py, trail, done, level, startedAt, showSol, sol, steps;
+
+    const pLevel = api.pill('');
+    const pSteps = api.pill('Steps: 0');
+    const pTime = api.pill('0:00');
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+    root.appendChild(banner);
+    Engine.dpad(root, (d) => { if (d !== 'action') step(d); }, { class: 'touch-only' });
+
+    /* each cell stores which walls are still standing */
+    function generate(n) {
+      N = n;
+      cells = [];
+      for (let i = 0; i < n * n; i++) cells.push({ N: true, S: true, E: true, W: true, v: false });
+      /* recursive-backtracker carve, iterative so big mazes never overflow */
+      const stack = [0];
+      cells[0].v = true;
+      const OPP = { N: 'S', S: 'N', E: 'W', W: 'E' };
+      const DXY = { N: [0, -1], S: [0, 1], E: [1, 0], W: [-1, 0] };
+      while (stack.length) {
+        const cur = stack[stack.length - 1];
+        const cx = cur % n, cy = Math.floor(cur / n);
+        const nbrs = [];
+        for (const dir of ['N', 'S', 'E', 'W']) {
+          const nx = cx + DXY[dir][0], ny = cy + DXY[dir][1];
+          if (nx < 0 || ny < 0 || nx >= n || ny >= n) continue;
+          const ni = ny * n + nx;
+          if (!cells[ni].v) nbrs.push([dir, ni]);
+        }
+        if (!nbrs.length) { stack.pop(); continue; }
+        const [dir, ni] = nbrs[randInt(0, nbrs.length - 1)];
+        cells[cur][dir] = false;
+        cells[ni][OPP[dir]] = false;
+        cells[ni].v = true;
+        stack.push(ni);
+      }
+    }
+
+    /* breadth-first path from player to the exit, for the hint */
+    function solve() {
+      const n = N, start = py * n + px, goal = n * n - 1;
+      const prev = new Int32Array(n * n).fill(-2);
+      prev[start] = -1;
+      const q = [start];
+      const DXY = { N: [0, -1], S: [0, 1], E: [1, 0], W: [-1, 0] };
+      while (q.length) {
+        const cur = q.shift();
+        if (cur === goal) break;
+        const cx = cur % n, cy = Math.floor(cur / n);
+        for (const dir of ['N', 'S', 'E', 'W']) {
+          if (cells[cur][dir]) continue;
+          const nx = cx + DXY[dir][0], ny = cy + DXY[dir][1];
+          const ni = ny * n + nx;
+          if (prev[ni] === -2) { prev[ni] = cur; q.push(ni); }
+        }
+      }
+      const path = [];
+      let c = goal;
+      while (c >= 0) { path.push(c); c = prev[c]; }
+      return path.reverse();
+    }
+
+    function start(nextLevel) {
+      level = nextLevel ? (level || 0) + 1 : 1;
+      generate(SIZE + (nextLevel ? Math.min(8, (level - 1) * 2) : 0));
+      px = 0; py = 0;
+      trail = [0];
+      done = false; showSol = false; steps = 0;
+      startedAt = Date.now();
+      banner.style.display = 'none';
+      api.status('Arrows, WASD, swipe or the pad. Reach the flag in the far corner. Stuck? Tap Show path.');
+      draw();
+    }
+
+    function step(dir) {
+      if (done) return;
+      const map = { up: 'N', down: 'S', left: 'W', right: 'E' };
+      const d = map[dir];
+      if (!d) return;
+      const cur = py * N + px;
+      if (cells[cur][d]) { api.sfx.thud(); return; }
+      const DXY = { N: [0, -1], S: [0, 1], E: [1, 0], W: [-1, 0] };
+      px += DXY[d][0]; py += DXY[d][1];
+      steps++;
+      const ni = py * N + px;
+      const back = trail.length > 1 && trail[trail.length - 2] === ni;
+      if (back) trail.pop(); else trail.push(ni);
+      showSol = false;
+      api.sfx.blip(440 + (px + py) % 5 * 40);
+      pSteps.textContent = 'Steps: ' + steps;
+      if (px === N - 1 && py === N - 1) win();
+      draw();
+    }
+
+    function win() {
+      done = true;
+      const secs = Math.round((Date.now() - startedAt) / 1000);
+      const reached = Math.max(api.load('level', 0), level);
+      api.save('level', reached);
+      api.submit(reached);
+      api.sfx.great();
+      Engine.autoAdvance(banner, 'Out.',
+        'Maze ' + level + ' (' + N + '×' + N + ') in ' + steps + ' steps and ' + Engine.fmtTime(secs) + '.',
+        'Bigger maze', () => start(true));
+      draw();
+    }
+
+    function draw() {
+      const pad = 18;
+      const cell = (cv.w - pad * 2) / N;
+      ctx.fillStyle = '#0f1729';
+      ctx.fillRect(0, 0, cv.w, cv.h);
+
+      const X = (c) => pad + c * cell;
+      const Y = (r) => pad + r * cell;
+
+      /* solution hint */
+      if (showSol) {
+        sol = solve();
+        ctx.strokeStyle = 'rgba(56,225,255,.5)';
+        ctx.lineWidth = Math.max(3, cell * 0.32);
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        sol.forEach((ci, i) => {
+          const x = X(ci % N) + cell / 2, y = Y(Math.floor(ci / N)) + cell / 2;
+          i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        });
+        ctx.stroke();
+        ctx.lineCap = 'butt';
+      }
+
+      /* breadcrumb trail */
+      ctx.strokeStyle = 'rgba(255,203,31,.55)';
+      ctx.lineWidth = Math.max(2, cell * 0.2);
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      trail.forEach((ci, i) => {
+        const x = X(ci % N) + cell / 2, y = Y(Math.floor(ci / N)) + cell / 2;
+        i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      });
+      ctx.stroke();
+
+      /* exit cell */
+      ctx.fillStyle = '#1e6b3a';
+      ctx.fillRect(X(N - 1) + 2, Y(N - 1) + 2, cell - 4, cell - 4);
+
+      /* walls */
+      ctx.strokeStyle = '#cfc6ae';
+      ctx.lineWidth = Math.max(2, cell * 0.14);
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+        const cellObj = cells[r * N + c];
+        const x = X(c), y = Y(r);
+        if (cellObj.N) { ctx.moveTo(x, y); ctx.lineTo(x + cell, y); }
+        if (cellObj.W) { ctx.moveTo(x, y); ctx.lineTo(x, y + cell); }
+        if (cellObj.S) { ctx.moveTo(x, y + cell); ctx.lineTo(x + cell, y + cell); }
+        if (cellObj.E) { ctx.moveTo(x + cell, y); ctx.lineTo(x + cell, y + cell); }
+      }
+      ctx.stroke();
+      ctx.lineCap = 'butt';
+
+      /* flag */
+      const fx = X(N - 1) + cell / 2, fy = Y(N - 1) + cell / 2;
+      ctx.strokeStyle = '#fffdf3';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(fx, fy + cell * 0.3);
+      ctx.lineTo(fx, fy - cell * 0.3);
+      ctx.stroke();
+      ctx.fillStyle = '#e8402a';
+      ctx.beginPath();
+      ctx.moveTo(fx, fy - cell * 0.3);
+      ctx.lineTo(fx + cell * 0.32, fy - cell * 0.18);
+      ctx.lineTo(fx, fy - cell * 0.06);
+      ctx.closePath();
+      ctx.fill();
+
+      /* player */
+      ctx.fillStyle = '#38e1ff';
+      ctx.beginPath();
+      ctx.arc(X(px) + cell / 2, Y(py) + cell / 2, cell * 0.3, 0, 7);
+      ctx.fill();
+      ctx.strokeStyle = '#0c1119';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    bagg.add(Engine.onKey((e) => {
+      const m = {
+        ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right',
+        w: 'up', s: 'down', a: 'left', d: 'right', W: 'up', S: 'down', A: 'left', D: 'right'
+      }[e.key];
+      if (m) { step(m); return true; }
+    }));
+    bagg.add(Engine.swipe(cv.el, step));
+
+    api.button('New maze', () => start(false));
+    const solBtn = api.button('Show path', () => {
+      showSol = !showSol;
+      solBtn.classList.toggle('on', showSol);
+      draw();
+    });
+
+    start(false);
+    let rafId = 0;
+    (function paint() { rafId = requestAnimationFrame(paint); if (Engine.paused) draw(); })();
+    bagg.add(() => cancelAnimationFrame(rafId));
+    const t = setInterval(() => {
+      if (done || !startedAt) return;
+      pTime.textContent = Engine.fmtTime((Date.now() - startedAt) / 1000);
+      pLevel.textContent = 'Maze ' + level + '  ' + N + '×' + N;
+    }, 500);
+    bagg.add(() => clearInterval(t));
+
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'maze',
+    title: 'Maze',
+    emoji: 'maze',
+    cat: 'puzzle',
+    order: 16,
+    blurb: 'Find your way to the flag. Every maze is a perfect maze, so there is always exactly one path and you can never get truly stuck.',
+    scoreLabel: 'Level',
+    tags: ['maze', 'labyrinth', 'navigation'],
+    how: [
+      'Arrows, WASD, swipe or the on-screen pad to move one cell at a time.',
+      'Your yellow breadcrumb shows where you have been, so you never retread by accident.',
+      'Reach the green flag in the far corner. Each maze you solve makes the next one bigger.',
+      'Truly stuck? "Show path" draws the way out. There is no shame and no penalty.',
+      'Mazes are carved so exactly one route connects any two cells, meaning a solution always exists.'
     ],
     mount
   });
@@ -6393,12 +7011,10 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       solving = true;
       api.sfx.great();
       const res = api.submit(level);
-      banner.style.display = '';
-      banner.replaceChildren(
-        h('h3', null, 'Lights out.'),
-        h('p', null, 'Level ' + level + ' cleared in ' + moves + ' moves (par ' + par + ').' +
-          (res.isRecord ? ' Deepest run yet!' : '')),
-        h('button', { class: 'btn primary', type: 'button', onclick: () => start(level + 1) }, 'Level ' + (level + 1) + ' →'));
+      Engine.autoAdvance(banner, 'Lights out.',
+        'Level ' + level + ' cleared in ' + moves + ' moves (par ' + par + ').' +
+          (res.isRecord ? ' Deepest run yet!' : ''),
+        'Level ' + (level + 1), () => start(level + 1));
     }
 
     function render() {
@@ -6427,6 +7043,292 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       'You want the whole board dark.',
       'Boards are made by scrambling a solved one, so there is always a way back.',
       'Par is how many presses scrambled it. Beating par means you found a shortcut.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Sudoku. Every puzzle is generated and then checked to have exactly one
+   solution, so there is never a guess and never a dead end. */
+(function () {
+  'use strict';
+  const { h, clamp, randInt, shuffle } = Engine;
+
+  const N = 9;
+  const idx = (r, c) => r * N + c;
+
+  /* ---------------- solver ---------------- */
+  function candidates(g, r, c) {
+    let used = 0;
+    for (let i = 0; i < N; i++) {
+      used |= 1 << g[idx(r, i)];
+      used |= 1 << g[idx(i, c)];
+    }
+    const br = r - r % 3, bc = c - c % 3;
+    for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) used |= 1 << g[idx(br + i, bc + j)];
+    const out = [];
+    for (let v = 1; v <= 9; v++) if (!(used & (1 << v))) out.push(v);
+    return out;
+  }
+
+  /* fills the grid in place; returns true once complete */
+  function fill(g) {
+    let best = -1, bestList = null;
+    for (let i = 0; i < 81; i++) {
+      if (g[i]) continue;
+      const list = candidates(g, Math.floor(i / N), i % N);
+      if (!list.length) return false;
+      if (!bestList || list.length < bestList.length) { best = i; bestList = list; }
+      if (list.length === 1) break;
+    }
+    if (best < 0) return true;
+    for (const v of shuffle(bestList)) {
+      g[best] = v;
+      if (fill(g)) return true;
+      g[best] = 0;
+    }
+    return false;
+  }
+
+  /* counts solutions, bailing out as soon as it finds a second one */
+  function countSolutions(g, limit) {
+    let best = -1, bestList = null;
+    for (let i = 0; i < 81; i++) {
+      if (g[i]) continue;
+      const list = candidates(g, Math.floor(i / N), i % N);
+      if (!list.length) return 0;
+      if (!bestList || list.length < bestList.length) { best = i; bestList = list; }
+      if (list.length === 1) break;
+    }
+    if (best < 0) return 1;
+    let total = 0;
+    for (const v of bestList) {
+      g[best] = v;
+      total += countSolutions(g, limit - total);
+      g[best] = 0;
+      if (total >= limit) break;
+    }
+    return total;
+  }
+
+  function generate(clues) {
+    const solved = new Int8Array(81);
+    fill(solved);
+    const puzzle = Int8Array.from(solved);
+    /* dig holes, but only where the answer stays forced */
+    for (const i of shuffle([...Array(81).keys()])) {
+      if (81 - puzzle.reduce((a, v) => a + (v ? 1 : 0), 0) >= 81 - clues) break;
+      const keep = puzzle[i];
+      if (!keep) continue;
+      puzzle[i] = 0;
+      const probe = Int8Array.from(puzzle);
+      if (countSolutions(probe, 2) !== 1) puzzle[i] = keep;
+    }
+    return { puzzle, solved };
+  }
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    const CLUES = { chill: 46, normal: 38, hard: 31, nightmare: 26 }[api.diffId] || 38;
+
+    let puzzle, solved, grid, notes, sel, notesMode, done, startedAt, mistakes, tick;
+
+    const pDiff = api.pill('');
+    const pTime = api.pill('0:00');
+    const pLeft = api.pill('');
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+
+    const boardEl = h('div', { class: 'sud-board' });
+    const cells = [];
+    for (let i = 0; i < 81; i++) {
+      const el = h('div', { class: 'sud-cell', data: { i } });
+      cells.push(el);
+      boardEl.appendChild(el);
+    }
+
+    const padEl = h('div', { class: 'sud-pad' });
+    for (let v = 1; v <= 9; v++) {
+      padEl.appendChild(h('button', { class: 'sud-key', type: 'button', onclick: () => enter(v) }, String(v)));
+    }
+    const notesBtn = h('button', { class: 'sud-key wide', type: 'button', onclick: () => toggleNotes() }, 'Notes');
+    padEl.appendChild(h('button', { class: 'sud-key wide', type: 'button', onclick: () => enter(0) }, 'Erase'));
+    padEl.appendChild(notesBtn);
+
+    root.append(boardEl, padEl, banner);
+
+    boardEl.addEventListener('pointerdown', (e) => {
+      const t = e.target.closest('.sud-cell');
+      if (!t || done) return;
+      sel = +t.dataset.i;
+      render();
+    });
+
+    api.button('New puzzle', () => start());
+    api.button('Check', () => {
+      let wrong = 0;
+      for (let i = 0; i < 81; i++) if (grid[i] && grid[i] !== solved[i]) wrong++;
+      api.status(wrong
+        ? wrong + ' number' + (wrong === 1 ? ' is' : 's are') + ' wrong. They are marked in red.'
+        : 'Everything on the board so far is correct.');
+      for (let i = 0; i < 81; i++) cells[i].classList.toggle('wrong', !!grid[i] && grid[i] !== solved[i] && !puzzle[i]);
+      api.sfx[wrong ? 'bad' : 'good']();
+    });
+    api.button('Hint', () => {
+      if (done) return;
+      const blanks = [];
+      for (let i = 0; i < 81; i++) if (!grid[i]) blanks.push(i);
+      if (!blanks.length) return;
+      const i = sel != null && !grid[sel] ? sel : blanks[randInt(0, blanks.length - 1)];
+      grid[i] = solved[i];
+      notes[i] = 0;
+      mistakes++;
+      api.sfx.blip(700);
+      render();
+      checkWin();
+    });
+
+    function start() {
+      api.status('Generating a puzzle with exactly one solution...');
+      /* generation is quick but not instant, so let the status paint first */
+      setTimeout(() => {
+        const made = generate(CLUES);
+        puzzle = made.puzzle;
+        solved = made.solved;
+        grid = Int8Array.from(puzzle);
+        notes = new Uint16Array(81);
+        sel = null;
+        notesMode = false;
+        done = false;
+        mistakes = 0;
+        startedAt = Date.now();
+        notesBtn.classList.remove('on');
+        banner.style.display = 'none';
+        api.status('Tap a square, then a number. Notes mode pencils in small candidates.');
+        render();
+      }, 30);
+    }
+
+    function toggleNotes() {
+      notesMode = !notesMode;
+      notesBtn.classList.toggle('on', notesMode);
+      api.sfx.click();
+    }
+
+    function enter(v) {
+      if (done || sel == null || puzzle[sel]) return;
+      if (v === 0) { grid[sel] = 0; notes[sel] = 0; }
+      else if (notesMode) { notes[sel] ^= 1 << v; grid[sel] = 0; }
+      else { grid[sel] = grid[sel] === v ? 0 : v; notes[sel] = 0; }
+      cells[sel].classList.remove('wrong');
+      api.sfx.click();
+      render();
+      checkWin();
+    }
+
+    function checkWin() {
+      for (let i = 0; i < 81; i++) if (grid[i] !== solved[i]) return;
+      done = true;
+      const secs = Math.round((Date.now() - startedAt) / 1000);
+      const solvedCount = api.load('solved', 0) + 1;
+      api.save('solved', solvedCount);
+      api.submit(solvedCount);
+      api.sfx.great();
+      banner.style.display = '';
+      banner.replaceChildren(
+        h('h3', null, 'Solved.'),
+        h('p', null, 'Finished in ' + Engine.fmtTime(secs) +
+          (mistakes ? ' with ' + mistakes + ' hint' + (mistakes === 1 ? '' : 's') + '.' : ' with no hints at all.') +
+          ' That is ' + solvedCount + ' puzzle' + (solvedCount === 1 ? '' : 's') + ' solved.'),
+        h('button', { class: 'btn primary', type: 'button', onclick: start }, 'Another one'));
+      render();
+    }
+
+    function render() {
+      if (!grid) return;
+      const selV = sel != null ? grid[sel] : 0;
+      let blanks = 0;
+      for (let i = 0; i < 81; i++) {
+        const el = cells[i];
+        const v = grid[i];
+        if (!v) blanks++;
+        let cls = 'sud-cell';
+        const r = Math.floor(i / N), c = i % N;
+        if (c % 3 === 2 && c !== 8) cls += ' rb';
+        if (r % 3 === 2 && r !== 8) cls += ' bb';
+        if (puzzle[i]) cls += ' given';
+        if (sel === i) cls += ' sel';
+        else if (sel != null) {
+          const sr = Math.floor(sel / N), sc = sel % N;
+          if (sr === r || sc === c ||
+            (Math.floor(sr / 3) === Math.floor(r / 3) && Math.floor(sc / 3) === Math.floor(c / 3))) cls += ' peer';
+        }
+        if (v && selV && v === selV) cls += ' same';
+        if (el.classList.contains('wrong')) cls += ' wrong';
+
+        if (v) {
+          if (el.dataset.v !== String(v) || el.className !== cls) {
+            el.dataset.v = String(v);
+            el.textContent = String(v);
+          }
+        } else if (notes[i]) {
+          const marks = [];
+          for (let n = 1; n <= 9; n++) marks.push(h('i', null, (notes[i] & (1 << n)) ? String(n) : ''));
+          el.dataset.v = 'n' + notes[i];
+          el.replaceChildren(h('span', { class: 'sud-notes' }, marks));
+        } else if (el.dataset.v !== '') {
+          el.dataset.v = '';
+          el.textContent = '';
+        }
+        el.className = cls;
+      }
+      pDiff.textContent = api.diffId.toUpperCase() + '  ' + CLUES + ' given';
+      pLeft.textContent = blanks + ' to go';
+      pLeft.className = 'pill ' + (blanks === 0 ? 'good' : '');
+    }
+
+    bagg.add(Engine.onKey((e) => {
+      if (done) return;
+      if (/^[1-9]$/.test(e.key)) { enter(+e.key); return true; }
+      if (e.key === '0' || e.key === 'Backspace' || e.key === 'Delete') { enter(0); return true; }
+      if (e.key === 'n' || e.key === 'N') { toggleNotes(); return true; }
+      const move = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -N, ArrowDown: N }[e.key];
+      if (move && sel != null) {
+        const nr = sel + move;
+        if (nr >= 0 && nr < 81 && !(Math.abs(move) === 1 && Math.floor(nr / N) !== Math.floor(sel / N))) {
+          sel = nr;
+          render();
+        }
+        return true;
+      }
+    }));
+
+    tick = setInterval(() => {
+      if (!startedAt || done) return;
+      pTime.textContent = Engine.fmtTime((Date.now() - startedAt) / 1000);
+    }, 500);
+    bagg.add(() => clearInterval(tick));
+
+    start();
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'sudoku',
+    title: 'Sudoku',
+    emoji: 'sudoku',
+    cat: 'brain',
+    order: 20,
+    blurb: 'Generated fresh every time and machine-checked to have exactly one solution, so you never have to guess and can never paint yourself into a corner.',
+    scoreLabel: 'Solved',
+    tags: ['sudoku', 'numbers', 'logic', 'classic'],
+    how: [
+      'Tap a square, then tap a number. Type the number if you have a keyboard.',
+      'Notes mode pencils small candidates into a square. N toggles it.',
+      'Every puzzle is dug out of a full solution one square at a time, and any dig that would allow a second answer is put back. Pure logic will always get you there.',
+      'Check marks any wrong number in red. Hint fills the selected square, at the cost of your no-hint finish.',
+      'The difficulty dial sets how many numbers you start with: 46 on Chill down to 26 on Nightmare.'
     ],
     mount
   });
@@ -6529,7 +7431,7 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       } else if (target) {
         target.grow = Math.min(1, target.grow + dt * 9);
         /* on the mean settings a target you ignore simply leaves */
-        if (api.hard && t - target.born > 1.4 / api.dm) {
+        if (api.hard && t - target.born > Math.max(0.95, 1.6 / api.dm)) {
           target = null; misses++; api.sfx.bad(); sync();
           waiting = true; waitT = rand(0.3, 0.9);
         }
@@ -6640,7 +7542,7 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
     /* how long each note plays, and the gap after it */
     const noteLen = () => clamp(0.52 - seq.length * 0.012, 0.16, 0.52) / dm;
     /* how long you get to hit the next pad before it counts as a fumble */
-    const patience = () => clamp(3.4 / dm, 0.9, 4);
+    const patience = () => clamp(3.4 / dm, 1.6, 4);
 
     function reset() {
       seq = [];
@@ -7125,6 +8027,149 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       'Four in a row wins: across, up and down, or either diagonal.',
       'The computer searches ahead with alpha-beta pruning. Chill looks one move ahead and plays sloppily on purpose. Nightmare looks eight and does not.',
       'Your win-loss record is kept between visits.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Memory Match. Flip two, keep the pairs. Always winnable, no way to get stuck. */
+(function () {
+  'use strict';
+  const { h, shuffle } = Engine;
+
+  const FACES = ['gridlock', 'coffee', 'snake', 'atc', 'powergrid', 'jam', 'pipes', 'reflex',
+    'solitaire', 'deskgolf', 'connect4', 'sokoban', 'copycat', 'whack', 'lightsout', 'desktoss',
+    'elevator', 'tetris'];
+
+  const SIZES = {
+    chill: { cols: 4, rows: 3, label: '6 pairs' },
+    normal: { cols: 4, rows: 4, label: '8 pairs' },
+    hard: { cols: 6, rows: 4, label: '12 pairs' },
+    nightmare: { cols: 6, rows: 6, label: '18 pairs' }
+  };
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    const cfg = SIZES[api.diffId] || SIZES.normal;
+    const pairs = cfg.cols * cfg.rows / 2;
+
+    let deck, first, busy, matched, moves, startedAt, done, tick;
+
+    const pMoves = api.pill('Moves: 0');
+    const pPairs = api.pill('');
+    const pTime = api.pill('0:00');
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+
+    const board = h('div', { class: 'mem-board', style: { gridTemplateColumns: 'repeat(' + cfg.cols + ', 1fr)' } });
+    root.append(board, banner);
+
+    function start() {
+      const chosen = shuffle(FACES).slice(0, pairs);
+      deck = shuffle(chosen.concat(chosen)).map((face, i) => ({ face, i, matched: false }));
+      first = null; busy = false; matched = 0; moves = 0; done = false;
+      startedAt = Date.now();
+      banner.style.display = 'none';
+      render();
+      api.status('Flip two cards. If they match they stay up. Find every pair.');
+    }
+
+    function render() {
+      board.replaceChildren();
+      deck.forEach((card, i) => {
+        const el = h('button', {
+          class: 'mem-card', type: 'button',
+          onclick: () => flip(i)
+        },
+          h('span', { class: 'mem-inner' },
+            h('span', { class: 'mem-face mem-back' }),
+            h('span', { class: 'mem-face mem-front', html: Icons.svg(card.face, 46) })));
+        card.el = el;
+        board.appendChild(el);
+      });
+    }
+
+    function flip(i) {
+      if (busy || done) return;
+      const card = deck[i];
+      if (card.matched || card === first) return;
+      card.el.classList.add('flipped');
+      api.sfx.blip(520);
+
+      if (!first) { first = card; return; }
+
+      moves++;
+      pMoves.textContent = 'Moves: ' + moves;
+
+      if (first.face === card.face) {
+        first.matched = card.matched = true;
+        first.el.classList.add('matched');
+        card.el.classList.add('matched');
+        first = null;
+        matched++;
+        api.sfx.good();
+        if (matched === pairs) win();
+      } else {
+        busy = true;
+        const a = first, b = card;
+        first = null;
+        setTimeout(() => {
+          a.el.classList.remove('flipped');
+          b.el.classList.remove('flipped');
+          busy = false;
+        }, 720);
+        api.sfx.thud();
+      }
+    }
+
+    function win() {
+      done = true;
+      const secs = Math.round((Date.now() - startedAt) / 1000);
+      /* fewer moves is better; a perfect game is one move per pair */
+      const best = api.load('best:' + cfg.cols + 'x' + cfg.rows, null);
+      const record = best == null || moves < best;
+      if (record) api.save('best:' + cfg.cols + 'x' + cfg.rows, moves);
+      const wins = api.load('wins', 0) + 1;
+      api.save('wins', wins);
+      api.submit(wins);
+      api.sfx.great();
+      banner.style.display = '';
+      banner.replaceChildren(
+        h('h3', null, 'All matched.'),
+        h('p', null, pairs + ' pairs in ' + moves + ' moves and ' + Engine.fmtTime(secs) + '. ' +
+          (record ? 'Fewest moves yet on this size.' : 'Best on this size: ' + best + ' moves.')),
+        h('button', { class: 'btn primary', type: 'button', onclick: start }, 'Shuffle again'));
+    }
+
+    api.button('New game', start);
+    pPairs.textContent = cfg.label;
+
+    tick = setInterval(() => {
+      if (!startedAt || done) return;
+      pTime.textContent = Engine.fmtTime((Date.now() - startedAt) / 1000);
+    }, 500);
+    bagg.add(() => clearInterval(tick));
+
+    start();
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'memory',
+    title: 'Memory Match',
+    emoji: 'memory',
+    cat: 'brain',
+    order: 26,
+    blurb: 'Flip two cards, keep the pairs that match. Calm, quick, and impossible to lose. Just try to do it in fewer moves.',
+    scoreLabel: 'Games won',
+    tags: ['memory', 'pairs', 'concentration', 'cards'],
+    how: [
+      'Tap a card to flip it, then tap a second one.',
+      'A matching pair stays face up. A mismatch flips both back down.',
+      'Find every pair to win. You cannot lose, so the goal is to do it in as few moves as possible.',
+      'Your fewest-moves record is kept for each board size.',
+      'The difficulty dial only changes the board size: 6 pairs on Chill up to 18 on Nightmare.'
     ],
     mount
   });
@@ -8509,11 +9554,12 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       for (let r = 7; r <= 10; r++) {
         const dir = r % 2 ? -1 : 1;
         const speed = dir * rand(44, 92) * spd;
+        /* boxes have to cover most of the belt or landing on one is a coin flip */
         const items = [];
-        const n = randInt(3, 4);
+        const n = randInt(4, 5);
         const gap = W / n;
         for (let i = 0; i < n; i++) {
-          items.push({ x: i * gap + rand(0, gap * 0.3), w: rand(96, 156) });
+          items.push({ x: i * gap + rand(0, gap * 0.18), w: gap * rand(0.66, 0.82) });
         }
         belts.push({ r, speed, items });
       }
@@ -8609,7 +9655,9 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       /* belts carry you, and only if you are standing on something */
       const belt = belts.find((b) => b.r === row);
       if (belt) {
-        const on = belt.items.find((it) => px > it.x && px < it.x + it.w);
+        /* a short grace after landing, so a hop onto the edge of a box is not instant death */
+        const edge = hopT > 0 ? 14 : 0;
+        const on = belt.items.find((it) => px > it.x - edge && px < it.x + it.w + edge);
         if (!on) return die('You stepped onto a moving belt with nothing on it.');
         px += belt.speed * dt;
         if (px < 6 || px > W - 6) return die('The belt carried you into the wall.');
@@ -9240,7 +10288,7 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       const maxX = W - 90;
       const spread = clamp(0.45 + score / 400, 0, 1);
       const x = rand(minX + (maxX - minX) * (1 - spread) * 0.4, maxX);
-      const w = clamp(78 - score / 26 - (dm - 1) * 14, 40, 78);
+      const w = clamp(78 - score / 34 - (dm - 1) * 10, 52, 78);
       const onDesk = Math.random() < clamp(0.2 + score / 260, 0, 0.65);
       bin = { x, w, h: 62, y: onDesk ? FLOOR - 96 : FLOOR, desk: onDesk };
     }

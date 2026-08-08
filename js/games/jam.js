@@ -176,14 +176,17 @@
       api.save('solved', solved);
       api.submit(solved);
       setTimeout(() => {
-        banner.style.display = '';
-        banner.replaceChildren(
-          h('h3', null, 'Out of the jam.'),
-          h('p', null, 'Level ' + (level + 1) + ' in ' + moves + ' moves. Shortest possible: ' + par + '.' +
-            (moves === par ? ' Perfect.' : moves <= par + 2 ? ' Very tidy.' : '')),
-          level + 1 < LEVELS.length
-            ? h('button', { class: 'btn primary', type: 'button', onclick: () => load(level + 1) }, 'Level ' + (level + 2) + ' →')
-            : h('p', null, 'That was the last level. You beat all ' + LEVELS.length + '.'));
+        if (level + 1 < LEVELS.length) {
+          Engine.autoAdvance(banner, 'Out of the jam.',
+            'Level ' + (level + 1) + ' in ' + moves + ' moves. Shortest possible: ' + par + '.' +
+              (moves === par ? ' Perfect.' : moves <= par + 2 ? ' Very tidy.' : ''),
+            'Level ' + (level + 2), () => load(level + 1));
+        } else {
+          banner.style.display = '';
+          banner.replaceChildren(h('h3', null, 'Out of the jam.'),
+            h('p', null, 'That was the last level. You beat all ' + LEVELS.length + '.'),
+            h('button', { class: 'btn primary', type: 'button', onclick: () => load(0) }, 'Start over'));
+        }
       }, 900);
     }
 

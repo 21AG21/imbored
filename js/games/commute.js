@@ -93,11 +93,12 @@
       for (let r = 7; r <= 10; r++) {
         const dir = r % 2 ? -1 : 1;
         const speed = dir * rand(44, 92) * spd;
+        /* boxes have to cover most of the belt or landing on one is a coin flip */
         const items = [];
-        const n = randInt(3, 4);
+        const n = randInt(4, 5);
         const gap = W / n;
         for (let i = 0; i < n; i++) {
-          items.push({ x: i * gap + rand(0, gap * 0.3), w: rand(96, 156) });
+          items.push({ x: i * gap + rand(0, gap * 0.18), w: gap * rand(0.66, 0.82) });
         }
         belts.push({ r, speed, items });
       }
@@ -193,7 +194,9 @@
       /* belts carry you, and only if you are standing on something */
       const belt = belts.find((b) => b.r === row);
       if (belt) {
-        const on = belt.items.find((it) => px > it.x && px < it.x + it.w);
+        /* a short grace after landing, so a hop onto the edge of a box is not instant death */
+        const edge = hopT > 0 ? 14 : 0;
+        const on = belt.items.find((it) => px > it.x - edge && px < it.x + it.w + edge);
         if (!on) return die('You stepped onto a moving belt with nothing on it.');
         px += belt.speed * dt;
         if (px < 6 || px > W - 6) return die('The belt carried you into the wall.');

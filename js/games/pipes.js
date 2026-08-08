@@ -112,11 +112,9 @@
       api.sfx.great();
       api.submit(level);
       setTimeout(() => {
-        banner.style.display = '';
-        banner.replaceChildren(
-          h('h3', null, 'Network live.'),
-          h('p', null, 'Level ' + level + ' solved in ' + moves + ' turns.'),
-          h('button', { class: 'btn primary', type: 'button', onclick: () => start(level + 1) }, 'Level ' + (level + 1) + ' →'));
+        Engine.autoAdvance(banner, 'Network live.',
+          'Level ' + level + ' solved in ' + moves + ' turns.',
+          'Level ' + (level + 1), () => start(level + 1));
       }, 500);
     }
 

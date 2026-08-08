@@ -103,13 +103,16 @@
       const solved = Math.max(api.load('solved', 0), level + 1);
       api.save('solved', solved);
       api.submit(solved);
-      banner.style.display = '';
-      banner.replaceChildren(
-        h('h3', null, 'Every crate home.'),
-        h('p', null, 'Level ' + (level + 1) + ' in ' + steps + ' steps and ' + pushes + ' pushes.'),
-        level + 1 < LEVELS.length
-          ? h('button', { class: 'btn primary', type: 'button', onclick: () => load(level + 1) }, 'Level ' + (level + 2) + ' →')
-          : h('p', null, 'That was the last warehouse. All ' + LEVELS.length + ' cleared.'));
+      if (level + 1 < LEVELS.length) {
+        Engine.autoAdvance(banner, 'Every crate home.',
+          'Level ' + (level + 1) + ' in ' + steps + ' steps and ' + pushes + ' pushes.',
+          'Level ' + (level + 2), () => load(level + 1));
+      } else {
+        banner.style.display = '';
+        banner.replaceChildren(h('h3', null, 'Every crate home.'),
+          h('p', null, 'That was the last warehouse. All ' + LEVELS.length + ' cleared.'),
+          h('button', { class: 'btn primary', type: 'button', onclick: () => load(0) }, 'Start over'));
+      }
     }
 
     function sync() {

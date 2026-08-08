@@ -100,6 +100,24 @@
     deskgolf:
       c(6, 20, 3, P.paper) + line(17, 20, 17, 4, 2) + p('M17 4l7 3-7 3z', P.tomato) +
       r(1, 21, 22, 2, P.green),
+    sudoku:
+      r(3, 3, 18, 18, P.paper) +
+      line(9, 3, 9, 21, 1.4, P.grey) + line(15, 3, 15, 21, 1.4, P.grey) +
+      line(3, 9, 21, 9, 1.4, P.grey) + line(3, 15, 21, 15, 1.4, P.grey) +
+      '<text x="5" y="8.4" font-size="5.5" fill="' + INK + '" stroke="none" font-family="Verdana">5</text>' +
+      '<text x="11" y="14.4" font-size="5.5" fill="' + P.teal + '" stroke="none" font-family="Verdana">3</text>' +
+      '<text x="17" y="20.4" font-size="5.5" fill="' + INK + '" stroke="none" font-family="Verdana">8</text>' +
+      '<text x="17" y="8.4" font-size="5.5" fill="' + P.teal + '" stroke="none" font-family="Verdana">1</text>',
+    memory:
+      r(2, 4, 9, 16, P.grape) + r(13, 4, 9, 16, P.paper) +
+      p('M17.5 9c-1.4 0-2 2 0 3.4C19.4 11 18.9 9 17.5 9z', P.tomato) +
+      c(6.5, 12, 2.4, 'rgba(255,255,255,.5)'),
+    maze:
+      r(2, 2, 20, 20, P.paper) +
+      line(2, 7, 15, 7, 1.8, INK) + line(19, 7, 22, 7, 1.8, INK) +
+      line(7, 7, 7, 13, 1.8, INK) + line(11, 11, 17, 11, 1.8, INK) +
+      line(7, 17, 22, 17, 1.8, INK) + line(11, 13, 11, 22, 1.8, INK) +
+      c(4.5, 4.5, 1.4, P.teal) + c(19, 19.5, 1.4, P.tomato),
     /* ---------- gridlock shop ---------- */
     smart: r(4, 4, 16, 16, P.teal) + p('M9 9h6v2h-4v2h4v2H9z', P.paper) + r(4, 4, 16, 16, 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="2"'),
     circle: '<circle cx="12" cy="12" r="8" fill="none" stroke="' + P.grey + '" stroke-width="5"/>' + c(12, 12, 4, P.green),
@@ -118,6 +136,8 @@
     sheet: r(3, 3, 18, 18, P.paper) + r(3, 3, 18, 4, P.green) + line(9, 7, 9, 21, 1.4, P.grey) + line(15, 7, 15, 21, 1.4, P.grey) + line(3, 12, 21, 12, 1.4, P.grey) + line(3, 17, 21, 17, 1.4, P.grey),
     inbox: r(2, 5, 20, 14, P.paper) + p('M2 5l10 8 10-8', 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round"'),
     term: r(2, 4, 20, 16, P.dark) + r(2, 4, 20, 3.5, P.grey) + p('M6 12l3 2.5-3 2.5', 'none').replace('fill="none"', 'fill="none" stroke="' + P.lime + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"') + line(12, 17, 17, 17, 2, P.lime),
+    palette: p('M12 3a9 9 0 0 0 0 18c1.5 0 2-1 2-2 0-1.4 1-2 2.2-2H18a4 4 0 0 0 4-4c0-5-4.5-8-10-8z', P.paper) +
+      c(7.5, 11, 1.5, P.tomato) + c(11, 8, 1.5, P.yellow) + c(15.5, 9, 1.5, P.teal) + c(16.5, 13.5, 1.5, P.grape),
     web: c(12, 12, 9, P.teal) + '<ellipse cx="12" cy="12" rx="4" ry="9" fill="none" stroke="' + INK + '" stroke-width="1.6"/>' + line(3, 12, 21, 12, 1.6) + line(4.5, 7, 19.5, 7, 1.4) + line(4.5, 17, 19.5, 17, 1.4),
     /* ---------- misc ---------- */
     road: p('M7 2h4l-1 20H5zM17 2h-4l1 20h5z', P.grey) + line(12, 3, 12, 7, 2.5, P.yellow) + line(12, 11, 12, 15, 2.5, P.yellow) + line(12, 19, 12, 22, 2.5, P.yellow),

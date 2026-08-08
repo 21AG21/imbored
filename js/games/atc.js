@@ -105,7 +105,7 @@
       spawnT -= dt;
       if (spawnT <= 0) {
         spawn();
-        spawnT = Math.max(2.2, 7 - landed * 0.14) * rand(0.7, 1.3) / dm;
+        spawnT = Math.max(2.6, 8 - landed * 0.12) * rand(0.75, 1.3) / Math.min(dm, 1.7);
       }
 
       for (let i = planes.length - 1; i >= 0; i--) {

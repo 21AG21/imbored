@@ -93,7 +93,7 @@
       } else if (target) {
         target.grow = Math.min(1, target.grow + dt * 9);
         /* on the mean settings a target you ignore simply leaves */
-        if (api.hard && t - target.born > 1.4 / api.dm) {
+        if (api.hard && t - target.born > Math.max(0.95, 1.6 / api.dm)) {
           target = null; misses++; api.sfx.bad(); sync();
           waiting = true; waitT = rand(0.3, 0.9);
         }

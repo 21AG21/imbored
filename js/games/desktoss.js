@@ -40,7 +40,7 @@
       const maxX = W - 90;
       const spread = clamp(0.45 + score / 400, 0, 1);
       const x = rand(minX + (maxX - minX) * (1 - spread) * 0.4, maxX);
-      const w = clamp(78 - score / 26 - (dm - 1) * 14, 40, 78);
+      const w = clamp(78 - score / 34 - (dm - 1) * 10, 52, 78);
       const onDesk = Math.random() < clamp(0.2 + score / 260, 0, 0.65);
       bin = { x, w, h: 62, y: onDesk ? FLOOR - 96 : FLOOR, desk: onDesk };
     }

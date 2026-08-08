@@ -38,7 +38,8 @@
     function reset() {
       const L = LEVELS[diff];
       W = L.w; Hh = L.h;
-      M = Engine.clamp(Math.round(L.m * (1 + (api.dm - 1) * 0.42)), 1, W * Hh - 10);
+      /* past roughly a quarter of the board, boards stop being solvable by logic */
+      M = Engine.clamp(Math.round(L.m * (1 + (api.dm - 1) * 0.42)), 1, Math.floor(W * Hh * 0.26));
       grid = new Array(W * Hh).fill(0).map(() => ({ mine: false, open: false, flag: false, n: 0 }));
       opened = 0; flags = 0; started = false; dead = false; won = false; firstDone = false;
       clearInterval(timerId);

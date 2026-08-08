@@ -2,12 +2,35 @@
 
 **The complete shareware collection for people whose meeting has no agenda.**
 
-Twenty-four games. Zero installers. No account, no network, no build step. It is plain
+Twenty-seven games. Zero installers. No account, no network, no build step. It is plain
 HTML, CSS and JavaScript, so you can **double-click `index.html`** and it runs straight
 off the disk.
 
 Comes with a panic key, a difficulty dial that reaches all the way to Nightmare, a big
-screen mode, and a googly-eyed stapler called CHOMPS who has nothing useful to say.
+screen mode, a colour-scheme picker, and a googly-eyed stapler called CHOMPS who has
+nothing useful to say.
+
+## Every game is doable
+
+Nothing here can trap you or hand you an impossible board:
+
+- **Sudoku** puzzles are dug out of a full solution one square at a time, and any dig that
+  would allow a second answer is undone, so every board has exactly one solution reachable
+  by pure logic.
+- **Maze** is a *perfect maze* (one and only one path between any two cells), and there is
+  a "Show path" button if you ever want the way out handed to you.
+- **Jam Escape** and **Crate Pusher** levels were all solved by computer before shipping;
+  Jam Escape even shows the provably shortest solution as par.
+- **Pipe Dream** and **Lights Out** are built by scrambling a solved state, so a solution
+  always exists.
+- **Memory Match** literally cannot be lost.
+- The action and simulation games had a fairness pass: mine density is capped where logic
+  stops working, the Commute's conveyor boxes now cover enough of each belt that landing is
+  never a coin-flip, Desk Toss keeps a makeable bin size, and the reaction games always
+  leave you enough time to actually react.
+
+Levels **auto-advance** on a short countdown when you finish, so you never have to reach
+for the mouse between them. A "Stay here" button cancels it if you want a breather.
 
 ---
 
@@ -63,6 +86,14 @@ The expand button or the <kbd>F</kbd> key hides all the furniture and blows the 
 the window, requesting real browser fullscreen at the same time. <kbd>Esc</kbd> or
 <kbd>F</kbd> again brings the shelf back.
 
+## Colour scheme
+
+Not a fan of the beige? The palette button in the top bar opens a picker with six presets
+(the classic beige, cool slate, mint, rose, and two dark schemes) plus **a colour wheel
+that builds a whole matching scheme from any single colour you pick**. The entire page is
+driven by CSS variables, so a theme is genuinely just a set of overrides, dark schemes
+included, and your choice is remembered.
+
 ---
 
 ## The games
@@ -82,10 +113,10 @@ One driver taps the brakes and the pulse outlives them, travelling backwards thr
 traffic forever. It is linked from the shelf and from Gridlock itself.
 
 ### Puzzles
-**Minesweeper** · **2048** · **Jam Escape** · **Crate Pusher** · **Pipe Dream** · **Solitaire**
+**Minesweeper** · **2048** · **Jam Escape** · **Crate Pusher** · **Pipe Dream** · **Solitaire** · **Maze**
 
 ### Brain
-**Word Guess** · **Lights Out** · **Reflex Grid** · **Copycat** · **Four In A Row**
+**Sudoku** · **Word Guess** · **Lights Out** · **Reflex Grid** · **Copycat** · **Four In A Row** · **Memory Match**
 
 ### Action
 **Snake** · **Brick Break** · **Stacker** · **Rock Field** · **The Commute**
@@ -153,6 +184,7 @@ index.html            loads everything, in order
 css/arcade.css        the whole look
 js/core/engine.js     canvas, loop, input, audio, DOM helper, disposer bag
 js/core/icons.js      the drawn icon set (there are no emoji in this build)
+js/core/themes.js     the colour-scheme presets and custom-colour builder
 js/core/boss.js       the five panic screens
 js/core/arcade.js     registry, router, shelf, scores, difficulty, CHOMPS
 js/games/*.js         one file per game, each registering itself
@@ -171,7 +203,7 @@ the browser.
 ## Checked, not assumed
 
 - All 24 games get loaded in headless Chromium, driven with keys, clicks and drags, left
-  running, then checked for console errors and uncaught exceptions. 24 of 24 clean, on all
+  running, then checked for console errors and uncaught exceptions. 27 of 27 clean, on all
   four difficulty settings, and again in the single-file bundle.
 - Mobile is checked at 390x844, 844x390 and 320x568: zero horizontal overflow on the shelf
   and in all 24 games, and zero playfields below the fold in landscape. Touch input is

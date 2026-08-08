@@ -27,7 +27,7 @@
     /* how long each note plays, and the gap after it */
     const noteLen = () => clamp(0.52 - seq.length * 0.012, 0.16, 0.52) / dm;
     /* how long you get to hit the next pad before it counts as a fumble */
-    const patience = () => clamp(3.4 / dm, 0.9, 4);
+    const patience = () => clamp(3.4 / dm, 1.6, 4);
 
     function reset() {
       seq = [];

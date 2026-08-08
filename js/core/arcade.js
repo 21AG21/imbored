@@ -109,6 +109,46 @@
     diffBtn.className = 'btn diffbtn d-' + DIFFS[diffIdx].id;
   }
 
+  /* ---------------- theme picker ---------------- */
+  function buildThemeBtn() {
+    const swatches = h('div', { class: 'theme-swatches' });
+    const pop = h('div', { class: 'theme-pop hidden' },
+      h('h4', null, 'Colour scheme'),
+      swatches,
+      h('label', { class: 'theme-custom' },
+        h('span', null, 'Pick your own'),
+        h('input', {
+          type: 'color', value: Themes.custom(),
+          oninput: (e) => { Themes.setCustom(e.target.value); paintSwatches(); }
+        })));
+
+    function paintSwatches() {
+      swatches.replaceChildren();
+      for (const t of Themes.list()) {
+        const btn = h('button', {
+          class: 'theme-swatch' + (Themes.current() === t.id ? ' on' : ''),
+          type: 'button', title: t.name,
+          onclick: () => { Themes.set(t.id); paintSwatches(); }
+        }, h('span', { class: 'theme-name' }, t.name));
+        /* preview chip built from that theme's own tokens */
+        btn.style.setProperty('--sw', t.id === 'custom' ? Themes.custom() : '');
+        btn.dataset.theme = t.id;
+        swatches.appendChild(btn);
+      }
+    }
+    paintSwatches();
+
+    const btn = h('button', { class: 'icon-btn', type: 'button', title: 'Colour scheme', html: Icons.svg('palette', 19) });
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      pop.classList.toggle('hidden');
+    });
+    document.addEventListener('click', (e) => {
+      if (!pop.classList.contains('hidden') && !pop.contains(e.target) && e.target !== btn) pop.classList.add('hidden');
+    });
+    return h('div', { class: 'theme-wrap' }, btn, pop);
+  }
+
   /* ---------------- top chrome ---------------- */
   function buildChrome() {
     const search = h('input', {
@@ -152,6 +192,7 @@
         onclick: () => Arcade.go(Engine.pick(games).id)
       }),
       h('button', { class: 'icon-btn', id: 'fsbtn', type: 'button', title: 'Big screen (F)', html: Icons.svg('expand', 19), onclick: () => Arcade.toggleBig() }),
+      buildThemeBtn(),
       soundBtn,
       h('button', {
         class: 'icon-btn', type: 'button',
