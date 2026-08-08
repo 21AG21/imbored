@@ -173,7 +173,10 @@ the page chrome, which gets you most of the way there.
   there is no module or CORS problem loading from `file://`.
 - **Serve it.** `python3 -m http.server 8000`, then visit `http://localhost:8000`.
 - **One file.** `node tools/build-single-file.mjs` inlines everything into
-  `dist/cubicle-arcade.html`, about 366 KB, no other assets. Mail it to yourself.
+  `dist/cubicle-arcade.html`, about 406 KB, no other assets — a complete
+  standards-mode document (real doctype, meta viewport, favicon and all). Mail it
+  to yourself, drop it on Google Drive, or paste the whole thing into an online
+  HTML playground (OneCompiler, CodePen, JSFiddle).
 - **Host it.** Any static host. A GitHub Pages workflow sits in
   `.github/workflows/pages.yml` and only runs when you start it from the Actions tab.
 

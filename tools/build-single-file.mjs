@@ -1,7 +1,11 @@
 /* Bundle the whole arcade into one portable .html file.
    Usage: node tools/build-single-file.mjs
-   Output: dist/cubicle-arcade.html  — email it to yourself, drop it on a USB stick,
-   open it from a file:// path. No server, no separate assets. */
+   Output: dist/cubicle-arcade.html — a single, COMPLETE, standards-mode HTML
+   document: real <!doctype>, the meta viewport, the favicon, all of it. Every
+   script and the stylesheet are inlined, so there are no side-requests. Email
+   it, drop it on a USB stick, open it from a file:// path, put it on Google
+   Drive, or paste the whole thing into an online HTML playground (OneCompiler,
+   CodePen, JSFiddle) — it needs nothing else. */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -9,24 +13,39 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
 
-/* take the script order straight from index.html so the two can never drift */
-const html = read('index.html');
-const scripts = [...html.matchAll(/<script src="([^"]+)"><\/script>/g)].map((m) => m[1]);
-if (!scripts.length) throw new Error('no <script src> tags found in index.html');
-
-const guard = (src, file) => {
+const guardScript = (src, file) => {
   if (src.includes('</script')) throw new Error('literal </script in ' + file);
   return src;
 };
+const guardStyle = (src, file) => {
+  if (src.includes('</style')) throw new Error('literal </style in ' + file);
+  return src;
+};
 
-const parts = [
-  '<title>Cubicle Arcade</title>',
-  '<style>\n' + read('css/arcade.css') + '\n</style>'
-];
-for (const s of scripts) parts.push('<script>\n' + guard(read(s), s) + '\n</script>');
-parts.push('<script>Arcade.start();</script>');
+/* Start from the real index.html and inline its assets in place, so the bundle
+   is the exact same document — doctype, meta viewport, favicon, body and all —
+   just with nothing left to fetch. The two can never drift. */
+let html = read('index.html');
+
+let cssCount = 0;
+html = html.replace(/[ \t]*<link rel="stylesheet" href="([^"]+)">/g, (m, href) => {
+  cssCount++;
+  return '<style>\n' + guardStyle(read(href), href) + '\n</style>';
+});
+if (!cssCount) throw new Error('no <link rel="stylesheet"> found in index.html');
+
+let jsCount = 0;
+html = html.replace(/[ \t]*<script src="([^"]+)"><\/script>/g, (m, src) => {
+  jsCount++;
+  return '<script>\n' + guardScript(read(src), src) + '\n</script>';
+});
+if (!jsCount) throw new Error('no <script src> tags found in index.html');
+
+if (/<script src="/.test(html) || /<link rel="stylesheet"/.test(html)) {
+  throw new Error('an external reference survived inlining');
+}
 
 fs.mkdirSync(path.join(ROOT, 'dist'), { recursive: true });
-const out = parts.join('\n');
-fs.writeFileSync(path.join(ROOT, 'dist/cubicle-arcade.html'), out);
-console.log('dist/cubicle-arcade.html  ' + (out.length / 1024).toFixed(1) + ' KB  (' + scripts.length + ' scripts inlined)');
+fs.writeFileSync(path.join(ROOT, 'dist/cubicle-arcade.html'), html);
+console.log('dist/cubicle-arcade.html  ' + (html.length / 1024).toFixed(1) +
+  ' KB  (' + jsCount + ' scripts + ' + cssCount + ' stylesheet inlined)');
