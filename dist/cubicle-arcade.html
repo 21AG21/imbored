@@ -1921,14 +1921,14 @@ body.crt.boss-on::after, body.crt.boss-on::before { display: none; }
     const mk = (label, dir, cls) =>
       h('button', {
         class: 'dpad-btn ' + cls, type: 'button', 'aria-label': dir,
-        onpointerdown: (e) => { e.preventDefault(); fn(dir); }
+        onpointerdown: (e) => { e.preventDefault(); Engine.haptic(6); fn(dir); }
       }, label);
     const pad = h('div', { class: 'dpad' + (opts.class ? ' ' + opts.class : '') },
       mk('▲', 'up', 'up'), mk('◀', 'left', 'left'),
       opts.center
         ? h('button', {
           class: 'dpad-btn mid', type: 'button',
-          onpointerdown: (e) => { e.preventDefault(); fn('action'); }
+          onpointerdown: (e) => { e.preventDefault(); Engine.haptic(6); fn('action'); }
         }, opts.center)
         : h('span', { class: 'dpad-btn mid ghost' }),
       mk('▶', 'right', 'right'), mk('▼', 'down', 'down'));
@@ -1984,17 +1984,22 @@ body.crt.boss-on::after, body.crt.boss-on::before { display: none; }
       src.connect(flt); flt.connect(g); g.connect(a.destination);
       src.start();
     }
+    /* haptics ride the same mute toggle as sound; no-op where unsupported */
+    function buzz(pattern) {
+      try { if (!api.muted && global.navigator && global.navigator.vibrate) global.navigator.vibrate(pattern); } catch (e) { /* ignore */ }
+    }
     const api = {
       muted: true,
-      tone, noise,
+      tone, noise, buzz,
       blip(f) { tone({ freq: f || 640, dur: 0.05, vol: 0.08 }); },
       click() { tone({ freq: 320, dur: 0.03, vol: 0.06, type: 'triangle' }); },
       good() {
         tone({ freq: 520, dur: 0.08, type: 'triangle', vol: 0.12 });
         tone({ freq: 784, dur: 0.12, type: 'triangle', vol: 0.1, delay: 0.07 });
+        buzz(12);
       },
-      great() { [523, 659, 784, 1046].forEach((f, i) => tone({ freq: f, dur: 0.12, type: 'triangle', vol: 0.1, delay: i * 0.06 })); },
-      bad() { tone({ freq: 180, to: 60, dur: 0.28, type: 'sawtooth', vol: 0.1 }); },
+      great() { [523, 659, 784, 1046].forEach((f, i) => tone({ freq: f, dur: 0.12, type: 'triangle', vol: 0.1, delay: i * 0.06 })); buzz([8, 24, 8, 24, 16]); },
+      bad() { tone({ freq: 180, to: 60, dur: 0.28, type: 'sawtooth', vol: 0.1 }); buzz(28); },
       thud() { noise({ dur: 0.12, cutoff: 500, vol: 0.12 }); },
       boom() { noise({ dur: 0.45, cutoff: 900, vol: 0.16 }); }
     };
@@ -2002,6 +2007,7 @@ body.crt.boss-on::after, body.crt.boss-on::before { display: none; }
   })();
   Engine.audio = audio;
   Engine.sfx = audio;
+  Engine.haptic = function haptic(pattern) { audio.buzz(pattern); };
 
   /* ---------- auto-advancing win banner ----------
      Shows the result, then moves to the next level on a short countdown so
