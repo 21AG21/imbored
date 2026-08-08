@@ -7,7 +7,8 @@
 
   function mount(root, api) {
     const bagg = Engine.bag();
-    let b, turn, done, streak;
+    let b, turn, done, streak, mode = '1p';
+    const tally = { X: 0, O: 0 };
     streak = api.load('streak', 0);
 
     const pStreak = api.pill('Streak: ' + streak);
@@ -24,17 +25,35 @@
     root.append(board, banner);
     api.button('New game', reset);
     api.button('Reset streak', () => { streak = 0; api.save('streak', 0); sync(); });
+    api.select('Players', [
+      { value: '1p', label: '1 player (vs CPU)' },
+      { value: '2p', label: '2 players (hotseat)' }
+    ], '1p', (v) => { mode = v; tally.X = 0; tally.O = 0; reset(); });
 
     function reset() {
       b = ['', '', '', '', '', '', '', '', ''];
       turn = 'X'; done = false;
       banner.style.display = 'none';
-      api.status('You are X. Three in a row wins. Your win streak is the score.');
+      api.status(mode === '2p'
+        ? 'Hotseat: Player 1 is X, Player 2 is O. Player 1 to move.'
+        : 'You are X. Three in a row wins. Your win streak is the score.');
       render();
     }
 
     function place(i) {
-      if (done || b[i] || turn !== 'X') return;
+      if (done || b[i]) return;
+      if (mode === '2p') {
+        const who = turn;
+        b[i] = who;
+        if (who === 'X') api.sfx.click(); else api.sfx.blip(300);
+        render();
+        const w = winLine(b);
+        if (w || full(b)) return finish(w ? who : '');
+        turn = who === 'X' ? 'O' : 'X';
+        api.status((turn === 'X' ? 'Player 1' : 'Player 2') + ' to move (' + turn + ').');
+        return;
+      }
+      if (turn !== 'X') return;
       b[i] = 'X'; api.sfx.click();
       render();
       const w = winLine(b);
@@ -79,6 +98,20 @@
     function finish(w) {
       done = true;
       let title, msg;
+      if (mode === '2p') {
+        if (w) { tally[w]++; api.sfx.great(); title = (w === 'X' ? 'Player 1 (X)' : 'Player 2 (O)') + ' wins.'; }
+        else { api.sfx.blip(420); title = 'Draw.'; }
+        msg = 'Series so far: Player 1 ' + tally.X + ' – ' + tally.O + ' Player 2.';
+        sync();
+        const line2 = winLine(b);
+        if (line2) for (const i of line2) cells[i].classList.add('win');
+        banner.style.display = '';
+        banner.replaceChildren(
+          h('h3', null, title),
+          h('p', null, msg),
+          h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Play again'));
+        return;
+      }
       if (w === 'X') {
         streak++; api.save('streak', streak); api.submit(streak); api.sfx.great();
         title = 'You win.'; msg = 'Streak up to ' + streak + '.';
@@ -107,7 +140,7 @@
       sync();
     }
 
-    function sync() { pStreak.textContent = 'Streak: ' + streak; }
+    function sync() { pStreak.textContent = mode === '2p' ? ('P1 ' + tally.X + ' – ' + tally.O + ' P2') : ('Streak: ' + streak); }
     function winner(bd) { const l = winLine(bd); return l ? bd[l[0]] : ''; }
     function winLine(bd) {
       for (const L of LINES) if (bd[L[0]] && bd[L[0]] === bd[L[1]] && bd[L[0]] === bd[L[2]]) return L;

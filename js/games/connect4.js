@@ -19,10 +19,11 @@
     /* how many plies the computer looks ahead */
     const DEPTH = { chill: 1, normal: 4, hard: 6, nightmare: 8 }[api.diffId] || 4;
 
-    let board, turn, over, winner, winLine, drop, hoverCol, thinking, wins, losses;
+    let board, turn, over, winner, winLine, drop, hoverCol, thinking, wins, losses, mode = '1p', p1w = 0, p2w = 0;
 
     wins = api.load('wins', 0);
     losses = api.load('losses', 0);
+    const canClick = () => !over && (mode === '2p' || turn === YOU);
 
     const pRec = api.pill('');
     const pTurn = api.pill('');
@@ -31,18 +32,26 @@
 
     function reset(cpuFirst) {
       board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
-      turn = cpuFirst ? CPU : YOU;
+      turn = (mode === '1p' && cpuFirst) ? CPU : YOU;
       over = false; winner = 0; winLine = null; drop = null; hoverCol = -1; thinking = 0;
       banner.style.display = 'none';
-      api.status('Click a column to drop a disc. Four in a row in any direction wins it.');
+      api.status(mode === '2p'
+        ? 'Hotseat: Player 1 is yellow, Player 2 is red. Click a column to drop.'
+        : 'Click a column to drop a disc. Four in a row in any direction wins it.');
       sync();
-      if (turn === CPU) thinking = 0.45;
+      if (mode === '1p' && turn === CPU) thinking = 0.45;
     }
 
     function sync() {
-      pRec.textContent = 'You ' + wins + ' - ' + losses + ' Computer';
-      pTurn.textContent = over ? 'game over' : turn === YOU ? 'your move' : 'thinking...';
-      pTurn.className = 'pill ' + (over ? '' : turn === YOU ? 'good' : 'warn');
+      if (mode === '2p') {
+        pRec.textContent = 'P1 ' + p1w + ' - ' + p2w + ' P2';
+        pTurn.textContent = over ? 'game over' : (turn === YOU ? "Player 1's move (yellow)" : "Player 2's move (red)");
+        pTurn.className = 'pill good';
+      } else {
+        pRec.textContent = 'You ' + wins + ' - ' + losses + ' Computer';
+        pTurn.textContent = over ? 'game over' : turn === YOU ? 'your move' : 'thinking...';
+        pTurn.className = 'pill ' + (over ? '' : turn === YOU ? 'good' : 'warn');
+      }
     }
 
     const freeRow = (b, c) => {
@@ -153,7 +162,10 @@
         over = true;
         winner = w.p;
         winLine = w.line;
-        if (w.p === YOU) { wins++; api.save('wins', wins); api.submit(wins); api.sfx.great(); }
+        if (mode === '2p') {
+          if (w.p === YOU) p1w++; else p2w++;
+          api.sfx.great();
+        } else if (w.p === YOU) { wins++; api.save('wins', wins); api.submit(wins); api.sfx.great(); }
         else { losses++; api.save('losses', losses); api.sfx.bad(); }
         setTimeout(showEnd, 700);
       } else if (full(board)) {
@@ -162,7 +174,7 @@
         setTimeout(showEnd, 500);
       } else {
         turn = who === YOU ? CPU : YOU;
-        if (turn === CPU) thinking = 0.35;
+        if (mode === '1p' && turn === CPU) thinking = 0.35;
       }
       sync();
       return true;
@@ -170,31 +182,41 @@
 
     function showEnd() {
       banner.style.display = '';
+      let title, msg;
+      if (mode === '2p') {
+        title = winner === YOU ? 'Player 1 wins.' : winner === CPU ? 'Player 2 wins.' : 'Full board, nobody wins.';
+        msg = winner ? ('Series: Player 1 ' + p1w + ' – ' + p2w + ' Player 2.') : 'A draw. Run it back.';
+      } else {
+        title = winner === YOU ? 'You got it.' : winner === CPU ? 'Beaten.' : 'Full board, nobody wins.';
+        msg = winner === YOU ? ('Four in a row. Record now ' + wins + ' to ' + losses + '.')
+          : winner === CPU ? ('The computer was looking ' + DEPTH + ' moves ahead. Record ' + wins + ' to ' + losses + '.')
+            : 'A draw. Nobody is proud of this.';
+      }
       banner.replaceChildren(
-        h('h3', null, winner === YOU ? 'You got it.' : winner === CPU ? 'Beaten.' : 'Full board, nobody wins.'),
-        h('p', null, winner === YOU
-          ? 'Four in a row. Record now ' + wins + ' to ' + losses + '.'
-          : winner === CPU
-            ? 'The computer was looking ' + DEPTH + ' moves ahead. Record ' + wins + ' to ' + losses + '.'
-            : 'A draw. Nobody is proud of this.'),
-        h('button', { class: 'btn primary', type: 'button', onclick: () => reset(winner === YOU) }, 'Play again'));
+        h('h3', null, title),
+        h('p', null, msg),
+        h('button', { class: 'btn primary', type: 'button', onclick: () => reset(mode === '1p' && winner === YOU) }, 'Play again'));
     }
 
     bagg.listen(cv.el, 'pointermove', (e) => {
       const p = cv.pos(e);
-      hoverCol = (over || turn !== YOU) ? -1 : clamp(Math.floor((p.x - PAD) / CELL), 0, COLS - 1);
+      hoverCol = !canClick() ? -1 : clamp(Math.floor((p.x - PAD) / CELL), 0, COLS - 1);
     });
     bagg.listen(cv.el, 'pointerleave', () => { hoverCol = -1; });
     bagg.listen(cv.el, 'pointerdown', (e) => {
-      if (over || turn !== YOU) return;
+      if (!canClick()) return;
       const p = cv.pos(e);
       const c = Math.floor((p.x - PAD) / CELL);
       if (c < 0 || c >= COLS) return;
-      place(c, YOU);
+      place(c, turn);
     });
 
     api.button('New game', () => reset(false));
     api.button('Let it start', () => reset(true));
+    api.select('Players', [
+      { value: '1p', label: '1 player (vs CPU)' },
+      { value: '2p', label: '2 players (hotseat)' }
+    ], '1p', (v) => { mode = v; p1w = 0; p2w = 0; reset(false); });
 
     function update(dt) {
       if (drop) {
@@ -216,12 +238,14 @@
       ctx.fillRect(0, 0, W, H);
 
       /* hover ghost */
-      if (hoverCol >= 0 && !over && turn === YOU && freeRow(board, hoverCol) >= 0) {
-        ctx.fillStyle = 'rgba(255,203,31,.9)';
+      if (hoverCol >= 0 && canClick() && freeRow(board, hoverCol) >= 0) {
+        const solid = turn === YOU ? 'rgba(255,203,31,.9)' : 'rgba(232,64,42,.9)';
+        const wash = turn === YOU ? 'rgba(255,203,31,.13)' : 'rgba(232,64,42,.13)';
+        ctx.fillStyle = solid;
         ctx.beginPath();
         ctx.arc(PAD + hoverCol * CELL + CELL / 2, 34, CELL * 0.34, 0, 7);
         ctx.fill();
-        ctx.fillStyle = 'rgba(255,203,31,.13)';
+        ctx.fillStyle = wash;
         ctx.fillRect(PAD + hoverCol * CELL, TOP, CELL, ROWS * CELL + PAD * 2);
       }
 

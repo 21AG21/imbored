@@ -18,7 +18,7 @@
 
   function mount(root, api) {
     const bagg = Engine.bag();
-    let b, turn, done, busy, timer;
+    let b, turn, done, busy, timer, mode = '1p';
 
     const pYou = api.pill('You: 2');
     const pAi = api.pill('CPU: 2');
@@ -34,6 +34,11 @@
     }
     root.append(board, banner);
     api.button('New game', reset);
+    api.select('Players', [
+      { value: '1p', label: '1 player (vs CPU)' },
+      { value: '2p', label: '2 players (hotseat)' }
+    ], '1p', (v) => { mode = v; reset(); });
+    const sideName = (who) => (who === YOU ? 'dark (P1)' : 'light (P2)');
     bagg.add(() => { if (timer) clearTimeout(timer); });
 
     function reset() {
@@ -42,7 +47,9 @@
       b[3][3] = AI; b[3][4] = YOU; b[4][3] = YOU; b[4][4] = AI;
       turn = YOU; done = false; busy = false;
       banner.style.display = 'none';
-      api.status('You are the dark discs. Legal squares glow — click one to trap a run of light discs and flip it.');
+      api.status(mode === '2p'
+        ? 'Hotseat: Player 1 is dark, Player 2 is light. Click a glowing square to move.'
+        : 'You are the dark discs. Legal squares glow — click one to trap a run of light discs and flip it.');
       render();
     }
 
@@ -80,18 +87,30 @@
     }
 
     function human(r, c) {
-      if (done || busy || turn !== YOU) return;
-      const f = flips(r, c, YOU);
+      if (done || busy) return;
+      const who = turn;
+      if (mode === '1p' && who !== YOU) return;
+      const f = flips(r, c, who);
       if (!f.length) return;
-      apply(r, c, YOU, f);
-      api.sfx.click();
+      apply(r, c, who, f);
+      if (who === YOU) api.sfx.click(); else api.sfx.blip(300);
       render();
-      handoff(AI);
+      handoff(who === YOU ? AI : YOU);
     }
 
     function handoff(next) {
       turn = next;
       if (!legal(YOU).length && !legal(AI).length) return finish();
+      if (mode === '2p') {
+        /* both sides human: if the next player is stuck, pass back automatically */
+        if (!legal(next).length) {
+          api.status('No move for ' + sideName(next) + ' — turn passes.');
+          turn = next === YOU ? AI : YOU;
+        }
+        busy = false;
+        render();
+        return;
+      }
       if (next === AI) {
         busy = true;
         render();
@@ -128,22 +147,27 @@
     function finish() {
       done = true; busy = false;
       const cc = counts();
-      const res = api.submit(cc.y);
-      const title = cc.y > cc.a ? 'You win.' : cc.y < cc.a ? 'CPU wins.' : 'Dead even.';
+      const res = mode === '1p' ? api.submit(cc.y) : null;
+      const title = cc.y > cc.a
+        ? (mode === '2p' ? 'Player 1 (dark) wins.' : 'You win.')
+        : cc.y < cc.a
+          ? (mode === '2p' ? 'Player 2 (light) wins.' : 'CPU wins.')
+          : 'Dead even.';
       (cc.y > cc.a ? api.sfx.great : api.sfx.bad)();
       render();
       banner.style.display = '';
       banner.replaceChildren(
         h('h3', null, title),
-        h('p', null, 'Dark ' + cc.y + ', light ' + cc.a + '.' + (res.isRecord ? ' Most discs yet!' : '')),
+        h('p', null, 'Dark ' + cc.y + ', light ' + cc.a + '.' + (res && res.isRecord ? ' Most discs yet!' : '')),
         h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Play again'));
     }
 
     function render() {
       const cc = counts();
-      pYou.textContent = 'You: ' + cc.y;
-      pAi.textContent = 'CPU: ' + cc.a;
-      const hints = (turn === YOU && !done && !busy) ? legal(YOU) : [];
+      pYou.textContent = (mode === '2p' ? 'Dark P1: ' : 'You: ') + cc.y;
+      pAi.textContent = (mode === '2p' ? 'Light P2: ' : 'CPU: ') + cc.a;
+      const humanTurn = !done && !busy && (mode === '2p' || turn === YOU);
+      const hints = humanTurn ? legal(turn) : [];
       const hintSet = new Set(hints.map((m) => m.r * N + m.c));
       for (let i = 0; i < N * N; i++) {
         const r = Math.floor(i / N), c = i % N;

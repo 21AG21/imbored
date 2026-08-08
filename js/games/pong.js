@@ -20,6 +20,11 @@
     const banner = h('div', { class: 'banner', style: { display: 'none' } });
     root.appendChild(banner);
     api.button('Rematch', reset);
+    let mode = '1p';
+    api.select('Players', [
+      { value: '1p', label: '1 player (vs CPU)' },
+      { value: '2p', label: '2 players (hotseat)' }
+    ], '1p', (v) => { mode = v; reset(); });
 
     let pointerY = null;
     bagg.listen(cv.el, 'pointermove', (e) => { pointerY = cv.pos(e).y; });
@@ -32,7 +37,9 @@
       youScore = 0; cpuScore = 0; bestRally = 0; over = false;
       pointerY = null;
       serve(1);
-      api.status('Mouse or drag to move your bat. Up/Down or W/S work too. First to ' + WIN + ' takes it.');
+      api.status(mode === '2p'
+        ? 'Hotseat: left player uses W and S, right player uses Up and Down arrows. First to ' + WIN + '.'
+        : 'Mouse or drag to move your bat. Up/Down or W/S work too. First to ' + WIN + ' takes it.');
       sync();
     }
 
@@ -67,19 +74,29 @@
     function update(dt) {
       if (over) return;
 
-      /* player bat: follow pointer, or keys */
-      const kv = (keys.get('ArrowUp', 'w', 'W') ? -1 : 0) + (keys.get('ArrowDown', 's', 'S') ? 1 : 0);
+      /* left bat = Player 1 (W/S; arrows and pointer also drive it in 1-player) */
       const speed = 600;
-      if (pointerY != null) you.y += clamp(pointerY - you.y, -speed * dt, speed * dt);
-      if (kv) you.y += kv * speed * dt;
+      let p1 = (keys.get('w', 'W') ? -1 : 0) + (keys.get('s', 'S') ? 1 : 0);
+      if (mode === '1p') {
+        p1 += (keys.get('ArrowUp') ? -1 : 0) + (keys.get('ArrowDown') ? 1 : 0);
+        if (pointerY != null) you.y += clamp(pointerY - you.y, -speed * dt, speed * dt);
+      }
+      if (p1) you.y += p1 * speed * dt;
       you.y = clamp(you.y, PH / 2, H - PH / 2);
 
-      /* CPU bat: track the ball with difficulty-scaled speed and wobble */
-      const cpuSpeed = 300 + api.dm * 120;
-      const wobble = clamp(1 - api.dm * 0.4, 0.08, 0.9) * 130;
-      const target = ball.vx > 0 ? ball.y + rand(-wobble, wobble) : H / 2;
-      cpu.y += clamp(target - cpu.y, -cpuSpeed * dt, cpuSpeed * dt);
-      cpu.y = clamp(cpu.y, PH / 2, H - PH / 2);
+      if (mode === '2p') {
+        /* right bat = Player 2 (arrow keys) */
+        const p2 = (keys.get('ArrowUp') ? -1 : 0) + (keys.get('ArrowDown') ? 1 : 0);
+        if (p2) cpu.y += p2 * speed * dt;
+        cpu.y = clamp(cpu.y, PH / 2, H - PH / 2);
+      } else {
+        /* right bat = CPU: track the ball with difficulty-scaled speed and wobble */
+        const cpuSpeed = 300 + api.dm * 120;
+        const wobble = clamp(1 - api.dm * 0.4, 0.08, 0.9) * 130;
+        const target = ball.vx > 0 ? ball.y + rand(-wobble, wobble) : H / 2;
+        cpu.y += clamp(target - cpu.y, -cpuSpeed * dt, cpuSpeed * dt);
+        cpu.y = clamp(cpu.y, PH / 2, H - PH / 2);
+      }
 
       if (serveT > 0) { serveT -= dt; return; }
 
@@ -112,7 +129,9 @@
       (youWon ? api.sfx.great : api.sfx.bad)();
       banner.style.display = '';
       banner.replaceChildren(
-        h('h3', null, youWon ? 'Game. You win.' : 'CPU takes it.'),
+        h('h3', null, mode === '2p'
+          ? (youWon ? 'Left player wins.' : 'Right player wins.')
+          : (youWon ? 'Game. You win.' : 'CPU takes it.')),
         h('p', null, 'Final ' + youScore + '–' + cpuScore + '. Longest rally ' + bestRally + ' hits.' +
           (res.isRecord ? ' New rally record!' : res.isFirst ? '' : ' Best rally: ' + res.best + '.')),
         h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Rematch'));
@@ -172,7 +191,8 @@
       'Where the ball strikes your bat bends its angle — hit near the edge to fire it back sharp.',
       'First side to seven points wins the match.',
       'Your recorded score is the longest single rally you keep alive.',
-      'Harder settings give the CPU a faster, steadier bat.'
+      'Harder settings give the CPU a faster, steadier bat.',
+      'Set Players to 2 for hotseat on one keyboard: left bat is W/S, right bat is the Up/Down arrows.'
     ],
     mount
   });

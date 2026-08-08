@@ -214,7 +214,7 @@
         html: Icons.svg('dice', 19),
         onclick: () => Arcade.go(Engine.pick(games).id)
       }),
-      h('button', { class: 'icon-btn', id: 'fsbtn', type: 'button', title: 'Big screen (F)', html: Icons.svg('expand', 19), onclick: () => Arcade.toggleBig() }),
+      h('button', { class: 'icon-btn', id: 'fsbtn', type: 'button', title: 'Big screen (\\)', html: Icons.svg('expand', 19), onclick: () => Arcade.toggleBig() }),
       buildThemeBtn(),
       soundBtn,
       h('button', {
@@ -265,14 +265,14 @@
         h('kbd', null, '`'), ' look busy   ',
         h('kbd', null, '['), h('kbd', null, ']'), ' switch game   ',
         h('kbd', null, 'R'), ' restart   ',
-        h('kbd', null, 'F'), ' big screen   ',
+        h('kbd', null, '\\'), ' big screen   ',
         h('kbd', null, '/'), ' search   ',
         h('kbd', null, 'Esc'), ' back'),
       webHint);
     syncWebRow();
 
     document.body.append(bar, view, foot);
-    document.body.appendChild(h('div', { class: 'bigscreen-note' }, 'big screen on • press F or Esc to shrink'));
+    document.body.appendChild(h('div', { class: 'bigscreen-note' }, 'big screen on • press \\ or Esc to shrink'));
     return view;
   }
 
@@ -564,9 +564,9 @@
         if (e.key === 'Escape') { t.value = ''; t.blur(); if (!location.hash) renderHub(); }
         return;
       }
-      /* F is a free key in every game here, so it is the big-screen toggle */
-      if ((e.key === 'f' || e.key === 'F') && !e.ctrlKey && !e.metaKey &&
-          !(currentGame && currentGame.usesLetters)) { e.preventDefault(); Arcade.toggleBig(); return; }
+      /* big screen is a non-letter key (backslash) so it never competes with a
+         game's own controls — every letter belongs to the games */
+      if (e.key === '\\') { e.preventDefault(); Arcade.toggleBig(); return; }
       /* in a game: [ and ] flick to the previous/next game on the shelf,
          R restarts the current one (skipped where letters are the controls) */
       if (currentGame) {
