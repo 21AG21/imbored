@@ -118,6 +118,32 @@
       line(7, 7, 7, 13, 1.8, INK) + line(11, 11, 17, 11, 1.8, INK) +
       line(7, 17, 22, 17, 1.8, INK) + line(11, 13, 11, 22, 1.8, INK) +
       c(4.5, 4.5, 1.4, P.teal) + c(19, 19.5, 1.4, P.tomato),
+    /* ---------- added arcade ---------- */
+    pong:
+      r(3, 7, 3, 10, P.paper) + r(18, 7, 3, 10, P.paper) +
+      c(12, 12, 2.4, P.paper) + line(12, 3, 12, 21, 1.2, P.grey),
+    flap:
+      r(2, 2, 5, 8, P.lime) + r(2, 14, 5, 8, P.lime) +
+      c(14, 12, 6, P.yellow) + c(16, 10, 1.7, INK) + p('M20 12l3-1v2z', P.tomato),
+    stack:
+      r(4, 15, 16, 5, P.teal) + r(6, 10, 12, 5, P.yellow) + r(8, 5, 8, 5, P.tomato),
+    climb:
+      r(3, 18, 8, 3, P.lime) + r(13, 12, 8, 3, P.lime) + r(6, 5, 8, 3, P.lime) +
+      c(9, 15, 2.6, P.yellow),
+    fifteen:
+      r(3, 3, 8, 8, P.paper) + r(13, 3, 8, 8, P.paper) +
+      r(3, 13, 8, 8, P.paper) + r(13, 13, 8, 8, P.dark),
+    flood:
+      r(3, 3, 7, 7, P.tomato) + r(11, 3, 7, 7, P.yellow) +
+      r(3, 11, 7, 7, P.teal) + r(11, 11, 7, 7, P.grape),
+    noughts:
+      line(9, 3, 9, 21, 1.6, P.grey) + line(15, 3, 15, 21, 1.6, P.grey) +
+      line(3, 9, 21, 9, 1.6, P.grey) + line(3, 15, 21, 15, 1.6, P.grey) +
+      line(4.5, 4.5, 7.5, 7.5, 2, P.tomato) + line(7.5, 4.5, 4.5, 7.5, 2, P.tomato) +
+      '<circle cx="18" cy="18" r="2.4" fill="none" stroke="' + P.teal + '" stroke-width="2"/>',
+    reversi:
+      r(2, 2, 20, 20, P.green) +
+      c(8, 8, 2.6, INK) + c(16, 8, 2.6, P.paper) + c(8, 16, 2.6, P.paper) + c(16, 16, 2.6, INK),
     /* ---------- gridlock shop ---------- */
     smart: r(4, 4, 16, 16, P.teal) + p('M9 9h6v2h-4v2h4v2H9z', P.paper) + r(4, 4, 16, 16, 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="2"'),
     circle: '<circle cx="12" cy="12" r="8" fill="none" stroke="' + P.grey + '" stroke-width="5"/>' + c(12, 12, 4, P.green),

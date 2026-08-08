@@ -686,6 +686,60 @@ kbd {
 .plant .val { font-family: "Courier New", monospace; white-space: nowrap; flex: none; }
 .slider { width: 100%; accent-color: var(--grape); }
 
+/* fifteen */
+.f15 { background: var(--ink); padding: 8px; border: 5px solid var(--ink); box-shadow: var(--hard); }
+.f15 .board { gap: 6px; }
+.f15 .cell {
+  width: 68px; height: 68px;
+  font: 800 27px/1 Impact, "Arial Black", sans-serif;
+  color: var(--ink); background: var(--banana);
+  border: 3px solid var(--ink); box-shadow: var(--bevel-out);
+}
+.f15 .cell.home { background: var(--lime); }
+.f15 .cell.blank { background: #2c2735; border-color: #2c2735; box-shadow: none; cursor: default; }
+
+/* flood */
+.flood { width: min(430px, 92vw); padding: 7px; background: var(--ink); border: 5px solid var(--ink); box-shadow: var(--hard); }
+.flood .board { gap: 0; width: 100%; }
+.flood .cell { aspect-ratio: 1; border: 0; cursor: default; }
+.flood-picker { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.flood-swatch { width: 44px; height: 44px; border: 3px solid var(--ink); box-shadow: var(--bevel-out); cursor: pointer; }
+.flood-swatch:active { box-shadow: var(--bevel-in); }
+.flood-swatch.cur { outline: 3px solid var(--label); outline-offset: -6px; }
+
+/* noughts */
+.ttt { background: var(--ink); padding: 8px; border: 5px solid var(--ink); box-shadow: var(--hard); }
+.ttt .board { gap: 6px; }
+.ttt .cell {
+  width: 92px; height: 92px;
+  font: 800 56px/1 Impact, "Arial Black", sans-serif;
+  background: var(--label); border: 3px solid var(--ink);
+}
+.ttt .cell.x { color: var(--tomato); }
+.ttt .cell.o { color: var(--teal); }
+.ttt .cell.win { background: var(--banana); }
+
+/* reversi */
+.rev { background: #1c7a4a; padding: 7px; border: 5px solid var(--ink); box-shadow: var(--hard); }
+.rev .board { gap: 2px; background: var(--ink); }
+.rev .cell { width: 46px; height: 46px; background: #219a5b; border: 1px solid #17131f; padding: 0; position: relative; cursor: default; }
+.rev .cell.hint { cursor: pointer; }
+.rev .cell.d::after, .rev .cell.l::after {
+  content: ''; position: absolute; inset: 5px; border-radius: 50%;
+  box-shadow: inset 0 -2px 0 0 rgba(0,0,0,.35);
+}
+.rev .cell.d::after { background: #241f2b; }
+.rev .cell.l::after { background: #fdfaf0; }
+.rev .cell.hint::before {
+  content: ''; position: absolute; inset: 17px; border-radius: 50%;
+  background: rgba(255,255,255,.42);
+}
+@media (max-width: 480px) {
+  .f15 .cell { width: min(68px, 17vw); height: min(68px, 17vw); font-size: min(27px, 7vw); }
+  .ttt .cell { width: min(92px, 25vw); height: min(92px, 25vw); font-size: min(56px, 15vw); }
+  .rev .cell { width: min(46px, 10.4vw); height: min(46px, 10.4vw); }
+}
+
 /* ============================================================
    THE PANIC SCREEN
    Four disguises. All of them typeable. None of them beige.

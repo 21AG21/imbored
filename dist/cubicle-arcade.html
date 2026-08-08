@@ -700,6 +700,60 @@ kbd {
 .plant .val { font-family: "Courier New", monospace; white-space: nowrap; flex: none; }
 .slider { width: 100%; accent-color: var(--grape); }
 
+/* fifteen */
+.f15 { background: var(--ink); padding: 8px; border: 5px solid var(--ink); box-shadow: var(--hard); }
+.f15 .board { gap: 6px; }
+.f15 .cell {
+  width: 68px; height: 68px;
+  font: 800 27px/1 Impact, "Arial Black", sans-serif;
+  color: var(--ink); background: var(--banana);
+  border: 3px solid var(--ink); box-shadow: var(--bevel-out);
+}
+.f15 .cell.home { background: var(--lime); }
+.f15 .cell.blank { background: #2c2735; border-color: #2c2735; box-shadow: none; cursor: default; }
+
+/* flood */
+.flood { width: min(430px, 92vw); padding: 7px; background: var(--ink); border: 5px solid var(--ink); box-shadow: var(--hard); }
+.flood .board { gap: 0; width: 100%; }
+.flood .cell { aspect-ratio: 1; border: 0; cursor: default; }
+.flood-picker { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.flood-swatch { width: 44px; height: 44px; border: 3px solid var(--ink); box-shadow: var(--bevel-out); cursor: pointer; }
+.flood-swatch:active { box-shadow: var(--bevel-in); }
+.flood-swatch.cur { outline: 3px solid var(--label); outline-offset: -6px; }
+
+/* noughts */
+.ttt { background: var(--ink); padding: 8px; border: 5px solid var(--ink); box-shadow: var(--hard); }
+.ttt .board { gap: 6px; }
+.ttt .cell {
+  width: 92px; height: 92px;
+  font: 800 56px/1 Impact, "Arial Black", sans-serif;
+  background: var(--label); border: 3px solid var(--ink);
+}
+.ttt .cell.x { color: var(--tomato); }
+.ttt .cell.o { color: var(--teal); }
+.ttt .cell.win { background: var(--banana); }
+
+/* reversi */
+.rev { background: #1c7a4a; padding: 7px; border: 5px solid var(--ink); box-shadow: var(--hard); }
+.rev .board { gap: 2px; background: var(--ink); }
+.rev .cell { width: 46px; height: 46px; background: #219a5b; border: 1px solid #17131f; padding: 0; position: relative; cursor: default; }
+.rev .cell.hint { cursor: pointer; }
+.rev .cell.d::after, .rev .cell.l::after {
+  content: ''; position: absolute; inset: 5px; border-radius: 50%;
+  box-shadow: inset 0 -2px 0 0 rgba(0,0,0,.35);
+}
+.rev .cell.d::after { background: #241f2b; }
+.rev .cell.l::after { background: #fdfaf0; }
+.rev .cell.hint::before {
+  content: ''; position: absolute; inset: 17px; border-radius: 50%;
+  background: rgba(255,255,255,.42);
+}
+@media (max-width: 480px) {
+  .f15 .cell { width: min(68px, 17vw); height: min(68px, 17vw); font-size: min(27px, 7vw); }
+  .ttt .cell { width: min(92px, 25vw); height: min(92px, 25vw); font-size: min(56px, 15vw); }
+  .rev .cell { width: min(46px, 10.4vw); height: min(46px, 10.4vw); }
+}
+
 /* ============================================================
    THE PANIC SCREEN
    Four disguises. All of them typeable. None of them beige.
@@ -1885,6 +1939,32 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       line(7, 7, 7, 13, 1.8, INK) + line(11, 11, 17, 11, 1.8, INK) +
       line(7, 17, 22, 17, 1.8, INK) + line(11, 13, 11, 22, 1.8, INK) +
       c(4.5, 4.5, 1.4, P.teal) + c(19, 19.5, 1.4, P.tomato),
+    /* ---------- added arcade ---------- */
+    pong:
+      r(3, 7, 3, 10, P.paper) + r(18, 7, 3, 10, P.paper) +
+      c(12, 12, 2.4, P.paper) + line(12, 3, 12, 21, 1.2, P.grey),
+    flap:
+      r(2, 2, 5, 8, P.lime) + r(2, 14, 5, 8, P.lime) +
+      c(14, 12, 6, P.yellow) + c(16, 10, 1.7, INK) + p('M20 12l3-1v2z', P.tomato),
+    stack:
+      r(4, 15, 16, 5, P.teal) + r(6, 10, 12, 5, P.yellow) + r(8, 5, 8, 5, P.tomato),
+    climb:
+      r(3, 18, 8, 3, P.lime) + r(13, 12, 8, 3, P.lime) + r(6, 5, 8, 3, P.lime) +
+      c(9, 15, 2.6, P.yellow),
+    fifteen:
+      r(3, 3, 8, 8, P.paper) + r(13, 3, 8, 8, P.paper) +
+      r(3, 13, 8, 8, P.paper) + r(13, 13, 8, 8, P.dark),
+    flood:
+      r(3, 3, 7, 7, P.tomato) + r(11, 3, 7, 7, P.yellow) +
+      r(3, 11, 7, 7, P.teal) + r(11, 11, 7, 7, P.grape),
+    noughts:
+      line(9, 3, 9, 21, 1.6, P.grey) + line(15, 3, 15, 21, 1.6, P.grey) +
+      line(3, 9, 21, 9, 1.6, P.grey) + line(3, 15, 21, 15, 1.6, P.grey) +
+      line(4.5, 4.5, 7.5, 7.5, 2, P.tomato) + line(7.5, 4.5, 4.5, 7.5, 2, P.tomato) +
+      '<circle cx="18" cy="18" r="2.4" fill="none" stroke="' + P.teal + '" stroke-width="2"/>',
+    reversi:
+      r(2, 2, 20, 20, P.green) +
+      c(8, 8, 2.6, INK) + c(16, 8, 2.6, P.paper) + c(8, 16, 2.6, P.paper) + c(16, 16, 2.6, INK),
     /* ---------- gridlock shop ---------- */
     smart: r(4, 4, 16, 16, P.teal) + p('M9 9h6v2h-4v2h4v2H9z', P.paper) + r(4, 4, 16, 16, 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="2"'),
     circle: '<circle cx="12" cy="12" r="8" fill="none" stroke="' + P.grey + '" stroke-width="5"/>' + c(12, 12, 4, P.green),
@@ -5330,6 +5410,252 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
 
 </script>
 <script>
+/* Fifteen. Slide the tiles back into order. */
+(function () {
+  'use strict';
+  const { h, randInt } = Engine;
+  const N = 4;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let tiles, moves, solved;
+
+    const pMoves = api.pill('Moves: 0');
+    const board = h('div', { class: 'board f15', style: { gridTemplateColumns: 'repeat(4, auto)' } });
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+    const cells = [];
+    for (let i = 0; i < N * N; i++) {
+      const el = h('button', { class: 'cell', type: 'button' });
+      const idx = i;
+      el.addEventListener('click', () => clickTile(idx));
+      cells.push(el);
+      board.appendChild(el);
+    }
+    root.append(board, banner);
+    api.button('New scramble', scramble);
+
+    function neighbors(i) {
+      const r = Math.floor(i / N), c = i % N, out = [];
+      if (r > 0) out.push(i - N);
+      if (r < N - 1) out.push(i + N);
+      if (c > 0) out.push(i - 1);
+      if (c < N - 1) out.push(i + 1);
+      return out;
+    }
+
+    function scramble() {
+      tiles = [];
+      for (let i = 1; i < N * N; i++) tiles.push(i);
+      tiles.push(0);
+      /* shuffle by legal slides only, so it is always solvable */
+      let blank = N * N - 1, last = -1;
+      const total = 90 + Math.round(api.dm * 40);
+      for (let k = 0; k < total; k++) {
+        const ns = neighbors(blank).filter((n) => n !== last);
+        const to = ns[randInt(0, ns.length - 1)];
+        tiles[blank] = tiles[to]; tiles[to] = 0;
+        last = blank; blank = to;
+      }
+      if (isSolved()) return scramble();
+      moves = 0; solved = false;
+      banner.style.display = 'none';
+      api.status('Click a tile beside the gap, or use the arrow keys. Line them up 1 to 15.');
+      render();
+    }
+
+    function blankPos() { return tiles.indexOf(0); }
+
+    function clickTile(i) {
+      if (solved) return;
+      const b = blankPos();
+      if (neighbors(i).indexOf(b) < 0) return;
+      tiles[b] = tiles[i]; tiles[i] = 0;
+      moves++; api.sfx.click();
+      after();
+    }
+
+    /* arrow keys slide the neighbouring tile into the gap */
+    function slide(d) {
+      if (solved) return;
+      const b = blankPos(), r = Math.floor(b / N), c = b % N;
+      let from = -1;
+      if (d === 'up' && r < N - 1) from = b + N;
+      if (d === 'down' && r > 0) from = b - N;
+      if (d === 'left' && c < N - 1) from = b + 1;
+      if (d === 'right' && c > 0) from = b - 1;
+      if (from < 0) return;
+      tiles[b] = tiles[from]; tiles[from] = 0;
+      moves++; api.sfx.click();
+      after();
+    }
+
+    function after() { render(); if (isSolved()) win(); }
+
+    function isSolved() {
+      for (let i = 0; i < N * N - 1; i++) if (tiles[i] !== i + 1) return false;
+      return true;
+    }
+
+    function win() {
+      solved = true;
+      api.sfx.great();
+      const res = api.submit(moves);
+      banner.style.display = '';
+      banner.replaceChildren(
+        h('h3', null, 'Solved.'),
+        h('p', null, 'Ordered in ' + moves + ' moves.' +
+          (res.isRecord ? ' Fewest yet!' : res.isFirst ? '' : ' Best: ' + res.best + '.')),
+        h('button', { class: 'btn primary', type: 'button', onclick: scramble }, 'Scramble again'));
+    }
+
+    function render() {
+      for (let i = 0; i < N * N; i++) {
+        const v = tiles[i], el = cells[i];
+        el.textContent = v || '';
+        el.classList.toggle('blank', v === 0);
+        el.classList.toggle('home', v !== 0 && v === i + 1);
+      }
+      pMoves.textContent = 'Moves: ' + moves;
+    }
+
+    bagg.add(Engine.onKey((e) => {
+      const m = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', w: 'up', s: 'down', a: 'left', d: 'right' }[e.key];
+      if (!m) return;
+      slide(m);
+      return true;
+    }));
+    Engine.dpad(root, (d) => { if (d !== 'action') slide(d); }, { class: 'touch-only' });
+
+    scramble();
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'fifteen',
+    title: 'Fifteen',
+    emoji: 'fifteen',
+    cat: 'puzzle',
+    order: 14,
+    blurb: 'The little sliding-tile puzzle from the back of a cereal box. Getting it solved is easy. Getting it solved in few moves is the whole game.',
+    scoreLabel: 'Fewest moves',
+    lowerIsBetter: true,
+    tags: ['sliding', 'tiles', '15-puzzle'],
+    how: [
+      'Click any tile next to the empty gap to slide it in.',
+      'Arrow keys or WASD slide tiles too.',
+      'Get them in order, 1 through 15, with the gap in the last spot.',
+      'Every scramble is solvable. Fewer moves beats your record.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Flood. Swallow the whole board in as few moves as you can. */
+(function () {
+  'use strict';
+  const { h, randInt } = Engine;
+  const N = 14;
+  const COLORS = ['#e8402a', '#ffcb1f', '#6fcf2f', '#00a6b4', '#6f3fa8', '#ff2d87'];
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let grid, moves, done;
+
+    const pMoves = api.pill('Moves: 0');
+    const pPar = api.pill('Par: 0');
+    const board = h('div', { class: 'board flood', style: { gridTemplateColumns: 'repeat(' + N + ', 1fr)' } });
+    const cells = [];
+    for (let i = 0; i < N * N; i++) { const el = h('div', { class: 'cell' }); cells.push(el); board.appendChild(el); }
+    const picker = h('div', { class: 'flood-picker' });
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+    const swatches = COLORS.map((col, ci) => {
+      const b = h('button', { class: 'flood-swatch', type: 'button', style: { background: col }, 'aria-label': 'colour ' + (ci + 1) });
+      b.addEventListener('click', () => play(ci));
+      picker.appendChild(b);
+      return b;
+    });
+    root.append(board, picker, banner);
+    api.button('New board', reset);
+
+    function par() { return Math.round(25 * (0.82 + (api.dm - 1) * 0.14)); }
+
+    function reset() {
+      grid = [];
+      for (let i = 0; i < N * N; i++) grid.push(randInt(0, COLORS.length - 1));
+      moves = 0; done = false;
+      banner.style.display = 'none';
+      api.status('Pick a colour. Your corner blob spreads into every touching tile of that colour. Fill the board.');
+      render();
+    }
+
+    function region() {
+      const target = grid[0], seen = new Set([0]), st = [0];
+      while (st.length) {
+        const i = st.pop(), r = Math.floor(i / N), c = i % N;
+        const ns = [r > 0 ? i - N : -1, r < N - 1 ? i + N : -1, c > 0 ? i - 1 : -1, c < N - 1 ? i + 1 : -1];
+        for (const n of ns) if (n >= 0 && !seen.has(n) && grid[n] === target) { seen.add(n); st.push(n); }
+      }
+      return seen;
+    }
+
+    function play(ci) {
+      if (done || ci === grid[0]) return;
+      const reg = region();
+      for (const i of reg) grid[i] = ci;
+      moves++; api.sfx.click();
+      render();
+      if (grid.every((v) => v === grid[0])) win();
+    }
+
+    function win() {
+      done = true;
+      api.sfx.great();
+      const res = api.submit(moves);
+      banner.style.display = '';
+      banner.replaceChildren(
+        h('h3', null, 'Whole board.'),
+        h('p', null, 'Filled in ' + moves + ' moves (par ' + par() + ').' +
+          (res.isRecord ? ' Fewest yet!' : res.isFirst ? '' : ' Best: ' + res.best + '.')),
+        h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'New board'));
+    }
+
+    function render() {
+      for (let i = 0; i < N * N; i++) cells[i].style.background = COLORS[grid[i]];
+      for (const b of swatches) b.classList.remove('cur');
+      swatches[grid[0]].classList.add('cur');
+      pMoves.textContent = 'Moves: ' + moves;
+      pPar.textContent = 'Par: ' + par();
+      pMoves.className = 'pill ' + (moves > par() ? 'warn' : '');
+    }
+
+    reset();
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'flood',
+    title: 'Flood',
+    emoji: 'flood',
+    cat: 'puzzle',
+    order: 16,
+    blurb: 'Start in the corner, choose a colour, and swallow the board one flood at a time. Fewer moves is the flex.',
+    scoreLabel: 'Fewest moves',
+    lowerIsBetter: true,
+    tags: ['flood-it', 'colour', 'fill'],
+    how: [
+      'Your blob starts in the top-left corner.',
+      'Choose a colour and the blob repaints, absorbing every tile of that colour it now touches.',
+      'Keep going until the entire board is a single colour.',
+      'Par is a rough target. Beat it and you were thinking ahead.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
 /* Jam Escape. Slide the blockers, drive the red car out.
    Every level below was generated and solved by breadth-first search, so the
    shortest solution length after the "|" is exact. */
@@ -7428,6 +7754,148 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
 
 </script>
 <script>
+/* Noughts. Beat the machine before it learns not to lose. */
+(function () {
+  'use strict';
+  const { h, randInt } = Engine;
+  const LINES = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+  const BLUNDER = { chill: 0.65, normal: 0.4, hard: 0.15, nightmare: 0 };
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let b, turn, done, streak;
+    streak = api.load('streak', 0);
+
+    const pStreak = api.pill('Streak: ' + streak);
+    const board = h('div', { class: 'board ttt', style: { gridTemplateColumns: 'repeat(3, auto)' } });
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+    const cells = [];
+    for (let i = 0; i < 9; i++) {
+      const el = h('button', { class: 'cell', type: 'button' });
+      const idx = i;
+      el.addEventListener('click', () => place(idx));
+      cells.push(el);
+      board.appendChild(el);
+    }
+    root.append(board, banner);
+    api.button('New game', reset);
+    api.button('Reset streak', () => { streak = 0; api.save('streak', 0); sync(); });
+
+    function reset() {
+      b = ['', '', '', '', '', '', '', '', ''];
+      turn = 'X'; done = false;
+      banner.style.display = 'none';
+      api.status('You are X. Three in a row wins. Your win streak is the score.');
+      render();
+    }
+
+    function place(i) {
+      if (done || b[i] || turn !== 'X') return;
+      b[i] = 'X'; api.sfx.click();
+      render();
+      const w = winLine(b);
+      if (w || full(b)) return finish(w ? 'X' : '');
+      turn = 'O';
+      const mv = aiMove();
+      if (mv >= 0) { b[mv] = 'O'; api.sfx.blip(300); }
+      render();
+      const w2 = winLine(b);
+      if (w2 || full(b)) return finish(w2 ? 'O' : '');
+      turn = 'X';
+    }
+
+    function aiMove() {
+      const empty = [];
+      for (let i = 0; i < 9; i++) if (!b[i]) empty.push(i);
+      if (!empty.length) return -1;
+      const bl = BLUNDER[api.diffId];
+      if (Math.random() < (bl === undefined ? 0.3 : bl)) return empty[randInt(0, empty.length - 1)];
+      return best('O').index;
+    }
+
+    /* minimax; O maximises, X minimises */
+    function best(player) {
+      const w = winner(b);
+      if (w === 'O') return { score: 10 };
+      if (w === 'X') return { score: -10 };
+      if (full(b)) return { score: 0 };
+      let choice = null;
+      for (let i = 0; i < 9; i++) {
+        if (b[i]) continue;
+        b[i] = player;
+        const s = best(player === 'O' ? 'X' : 'O').score;
+        b[i] = '';
+        if (!choice ||
+          (player === 'O' && s > choice.score) ||
+          (player === 'X' && s < choice.score)) choice = { index: i, score: s };
+      }
+      return choice;
+    }
+
+    function finish(w) {
+      done = true;
+      let title, msg;
+      if (w === 'X') {
+        streak++; api.save('streak', streak); api.submit(streak); api.sfx.great();
+        title = 'You win.'; msg = 'Streak up to ' + streak + '.';
+      } else if (w === 'O') {
+        streak = 0; api.save('streak', 0); api.sfx.bad();
+        title = 'It got you.'; msg = 'Streak reset to zero. Go again.';
+      } else {
+        api.sfx.blip(420);
+        title = 'Draw.'; msg = 'Nobody blinked. Streak holds at ' + streak + '.';
+      }
+      sync();
+      const line = winLine(b);
+      if (line) for (const i of line) cells[i].classList.add('win');
+      banner.style.display = '';
+      banner.replaceChildren(
+        h('h3', null, title),
+        h('p', null, msg),
+        h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Play again'));
+    }
+
+    function render() {
+      for (let i = 0; i < 9; i++) {
+        cells[i].textContent = b[i];
+        cells[i].className = 'cell' + (b[i] ? ' ' + b[i].toLowerCase() : '');
+      }
+      sync();
+    }
+
+    function sync() { pStreak.textContent = 'Streak: ' + streak; }
+    function winner(bd) { const l = winLine(bd); return l ? bd[l[0]] : ''; }
+    function winLine(bd) {
+      for (const L of LINES) if (bd[L[0]] && bd[L[0]] === bd[L[1]] && bd[L[0]] === bd[L[2]]) return L;
+      return null;
+    }
+    function full(bd) { return bd.every((v) => v); }
+
+    reset();
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'noughts',
+    title: 'Noughts',
+    emoji: 'noughts',
+    cat: 'brain',
+    order: 19,
+    blurb: 'Tic-tac-toe with a difficulty dial. On chill it fumbles and hands you wins. On nightmare it is a brick wall and a draw is a moral victory.',
+    scoreLabel: 'Win streak',
+    tags: ['tic-tac-toe', 'xo', 'vs-cpu'],
+    how: [
+      'You are X. Click a square to move; the machine replies at once.',
+      'Three in a row wins.',
+      'Your score is your current win streak. A loss resets it; a draw keeps it.',
+      'Harder settings make the AI blunder less often. On nightmare it never blunders — so it can only be drawn.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
 /* Reflex Grid. How fast are you, really? */
 (function () {
   'use strict';
@@ -8126,6 +8594,186 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
 
 </script>
 <script>
+/* Reversi. Flank the light discs and flip them dark. */
+(function () {
+  'use strict';
+  const { h } = Engine;
+  const N = 8, YOU = 1, AI = 2;
+  const DIRS = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+  const BLUNDER = { chill: 0.5, normal: 0.25, hard: 0.05, nightmare: 0 };
+  const WEIGHTS = [
+    [120, -20, 20, 5, 5, 20, -20, 120],
+    [-20, -40, -5, -5, -5, -5, -40, -20],
+    [20, -5, 15, 3, 3, 15, -5, 20],
+    [5, -5, 3, 3, 3, 3, -5, 5],
+    [5, -5, 3, 3, 3, 3, -5, 5],
+    [20, -5, 15, 3, 3, 15, -5, 20],
+    [-20, -40, -5, -5, -5, -5, -40, -20],
+    [120, -20, 20, 5, 5, 20, -20, 120]
+  ];
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let b, turn, done, busy, timer;
+
+    const pYou = api.pill('You: 2');
+    const pAi = api.pill('CPU: 2');
+    const board = h('div', { class: 'board rev', style: { gridTemplateColumns: 'repeat(8, auto)' } });
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+    const cells = [];
+    for (let i = 0; i < N * N; i++) {
+      const el = h('button', { class: 'cell', type: 'button' });
+      const r = Math.floor(i / N), c = i % N;
+      el.addEventListener('click', () => human(r, c));
+      cells.push(el);
+      board.appendChild(el);
+    }
+    root.append(board, banner);
+    api.button('New game', reset);
+    bagg.add(() => { if (timer) clearTimeout(timer); });
+
+    function reset() {
+      b = [];
+      for (let r = 0; r < N; r++) b.push(new Array(N).fill(0));
+      b[3][3] = AI; b[3][4] = YOU; b[4][3] = YOU; b[4][4] = AI;
+      turn = YOU; done = false; busy = false;
+      banner.style.display = 'none';
+      api.status('You are the dark discs. Legal squares glow — click one to trap a run of light discs and flip it.');
+      render();
+    }
+
+    const inb = (r, c) => r >= 0 && c >= 0 && r < N && c < N;
+
+    function flips(r, c, who) {
+      if (b[r][c]) return [];
+      const opp = who === YOU ? AI : YOU, out = [];
+      for (const d of DIRS) {
+        const line = [];
+        let rr = r + d[0], cc = c + d[1];
+        while (inb(rr, cc) && b[rr][cc] === opp) { line.push([rr, cc]); rr += d[0]; cc += d[1]; }
+        if (line.length && inb(rr, cc) && b[rr][cc] === who) for (const p of line) out.push(p);
+      }
+      return out;
+    }
+
+    function legal(who) {
+      const mv = [];
+      for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+        const f = flips(r, c, who);
+        if (f.length) mv.push({ r, c, f });
+      }
+      return mv;
+    }
+
+    function apply(r, c, who, f) { b[r][c] = who; for (const p of f) b[p[0]][p[1]] = who; }
+
+    function counts() {
+      let y = 0, a = 0;
+      for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+        if (b[r][c] === YOU) y++; else if (b[r][c] === AI) a++;
+      }
+      return { y, a };
+    }
+
+    function human(r, c) {
+      if (done || busy || turn !== YOU) return;
+      const f = flips(r, c, YOU);
+      if (!f.length) return;
+      apply(r, c, YOU, f);
+      api.sfx.click();
+      render();
+      handoff(AI);
+    }
+
+    function handoff(next) {
+      turn = next;
+      if (!legal(YOU).length && !legal(AI).length) return finish();
+      if (next === AI) {
+        busy = true;
+        render();
+        timer = setTimeout(aiTurn, 300);
+      } else {
+        busy = false;
+        if (!legal(YOU).length) { api.status('No move for you — the CPU plays on.'); handoff(AI); }
+        else render();
+      }
+    }
+
+    function aiTurn() {
+      timer = null;
+      const mv = legal(AI);
+      if (!mv.length) { handoff(YOU); return; }
+      const m = choose(mv);
+      apply(m.r, m.c, AI, m.f);
+      api.sfx.blip(300);
+      render();
+      handoff(YOU);
+    }
+
+    function choose(mv) {
+      const bl = BLUNDER[api.diffId];
+      if (Math.random() < (bl === undefined ? 0.2 : bl)) return mv[Math.floor(Math.random() * mv.length)];
+      let pick = mv[0], hi = -1e9;
+      for (const m of mv) {
+        const s = WEIGHTS[m.r][m.c] + m.f.length;
+        if (s > hi) { hi = s; pick = m; }
+      }
+      return pick;
+    }
+
+    function finish() {
+      done = true; busy = false;
+      const cc = counts();
+      const res = api.submit(cc.y);
+      const title = cc.y > cc.a ? 'You win.' : cc.y < cc.a ? 'CPU wins.' : 'Dead even.';
+      (cc.y > cc.a ? api.sfx.great : api.sfx.bad)();
+      render();
+      banner.style.display = '';
+      banner.replaceChildren(
+        h('h3', null, title),
+        h('p', null, 'Dark ' + cc.y + ', light ' + cc.a + '.' + (res.isRecord ? ' Most discs yet!' : '')),
+        h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Play again'));
+    }
+
+    function render() {
+      const cc = counts();
+      pYou.textContent = 'You: ' + cc.y;
+      pAi.textContent = 'CPU: ' + cc.a;
+      const hints = (turn === YOU && !done && !busy) ? legal(YOU) : [];
+      const hintSet = new Set(hints.map((m) => m.r * N + m.c));
+      for (let i = 0; i < N * N; i++) {
+        const r = Math.floor(i / N), c = i % N;
+        cells[i].className = 'cell' +
+          (b[r][c] === YOU ? ' d' : b[r][c] === AI ? ' l' : '') +
+          (hintSet.has(i) ? ' hint' : '');
+      }
+    }
+
+    reset();
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'reversi',
+    title: 'Reversi',
+    emoji: 'reversi',
+    cat: 'brain',
+    order: 27,
+    blurb: 'Othello, the boardroom classic. Trap a straight line of light discs between two dark ones and the whole line switches sides. Corners decide everything.',
+    scoreLabel: 'Most discs',
+    tags: ['othello', 'reversi', 'vs-cpu'],
+    how: [
+      'You are the dark discs. Legal squares glow.',
+      'Placing a disc flips every straight run of light discs pinned between it and another dark disc.',
+      'If you have no legal move, your turn is passed automatically.',
+      'When neither side can move, the most discs wins. Fight for the corners.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
 /* Memory Match. Flip two, keep the pairs. Always winnable, no way to get stuck. */
 (function () {
   'use strict';
@@ -8270,6 +8918,188 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
 </script>
 
 <!-- action -->
+<script>
+/* Desk Tennis. You versus a CPU that never gets up for coffee. */
+(function () {
+  'use strict';
+  const { h, clamp, rand } = Engine;
+  const W = 820, H = 520;
+  const PW = 14, PH = 96, MARGIN = 26, BR = 9;
+  const WIN = 7;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    const cv = Engine.canvas(root, W, H);
+    const ctx = cv.ctx;
+    const keys = Engine.keys(['ArrowUp', 'ArrowDown', 'w', 's', 'W', 'S']);
+    bagg.add(() => keys.dispose());
+
+    let you, cpu, ball, youScore, cpuScore, rally, bestRally, over, serveT;
+
+    const pScore = api.pill('0 – 0');
+    const pRally = api.pill('Rally: 0');
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+    root.appendChild(banner);
+    api.button('Rematch', reset);
+
+    let pointerY = null;
+    bagg.listen(cv.el, 'pointermove', (e) => { pointerY = cv.pos(e).y; });
+    bagg.listen(cv.el, 'pointerdown', (e) => { pointerY = cv.pos(e).y; });
+    bagg.listen(cv.el, 'pointerleave', () => { pointerY = null; });
+
+    function reset() {
+      you = { y: H / 2 };
+      cpu = { y: H / 2 };
+      youScore = 0; cpuScore = 0; bestRally = 0; over = false;
+      pointerY = null;
+      serve(1);
+      api.status('Mouse or drag to move your bat. Up/Down or W/S work too. First to ' + WIN + ' takes it.');
+      sync();
+    }
+
+    function serve(dir) {
+      rally = 0;
+      const ang = rand(-0.32, 0.32);
+      const sp = 360;
+      ball = { x: W / 2, y: H / 2, vx: dir * sp * Math.cos(ang), vy: sp * Math.sin(ang) };
+      serveT = 0.8;
+    }
+
+    function hit(pad) {
+      const off = clamp((ball.y - pad.y) / (PH / 2), -1, 1);
+      const sp = Math.min(780, Math.hypot(ball.vx, ball.vy) * 1.06 + 14);
+      const dir = ball.vx < 0 ? 1 : -1;
+      const ang = off * 0.92;
+      ball.vx = dir * sp * Math.cos(ang);
+      ball.vy = sp * Math.sin(ang);
+      rally++;
+      if (rally > bestRally) bestRally = rally;
+      api.sfx.blip(420 + rally * 10);
+      sync();
+    }
+
+    function point(youScored) {
+      if (youScored) { youScore++; api.sfx.good(); } else { cpuScore++; api.sfx.bad(); }
+      sync();
+      if (youScore >= WIN || cpuScore >= WIN) return end();
+      serve(youScored ? 1 : -1);
+    }
+
+    function update(dt) {
+      if (over) return;
+
+      /* player bat: follow pointer, or keys */
+      const kv = (keys.get('ArrowUp', 'w', 'W') ? -1 : 0) + (keys.get('ArrowDown', 's', 'S') ? 1 : 0);
+      const speed = 600;
+      if (pointerY != null) you.y += clamp(pointerY - you.y, -speed * dt, speed * dt);
+      if (kv) you.y += kv * speed * dt;
+      you.y = clamp(you.y, PH / 2, H - PH / 2);
+
+      /* CPU bat: track the ball with difficulty-scaled speed and wobble */
+      const cpuSpeed = 300 + api.dm * 120;
+      const wobble = clamp(1 - api.dm * 0.4, 0.08, 0.9) * 130;
+      const target = ball.vx > 0 ? ball.y + rand(-wobble, wobble) : H / 2;
+      cpu.y += clamp(target - cpu.y, -cpuSpeed * dt, cpuSpeed * dt);
+      cpu.y = clamp(cpu.y, PH / 2, H - PH / 2);
+
+      if (serveT > 0) { serveT -= dt; return; }
+
+      /* substep the ball so it can never tunnel through a bat */
+      const steps = Math.ceil(Math.hypot(ball.vx, ball.vy) * dt / 7) || 1;
+      const sdt = dt / steps;
+      for (let s = 0; s < steps; s++) {
+        ball.x += ball.vx * sdt;
+        ball.y += ball.vy * sdt;
+        if (ball.y < BR) { ball.y = BR; ball.vy = Math.abs(ball.vy); api.sfx.click(); }
+        if (ball.y > H - BR) { ball.y = H - BR; ball.vy = -Math.abs(ball.vy); api.sfx.click(); }
+
+        const px = MARGIN + PW;
+        if (ball.vx < 0 && ball.x - BR <= px && ball.x - BR >= MARGIN - 8 &&
+          Math.abs(ball.y - you.y) <= PH / 2 + BR) { ball.x = px + BR; hit(you); }
+
+        const cx = W - MARGIN - PW;
+        if (ball.vx > 0 && ball.x + BR >= cx && ball.x + BR <= W - MARGIN + 8 &&
+          Math.abs(ball.y - cpu.y) <= PH / 2 + BR) { ball.x = cx - BR; hit(cpu); }
+
+        if (ball.x < -30) return point(false);
+        if (ball.x > W + 30) return point(true);
+      }
+    }
+
+    function end() {
+      over = true;
+      const youWon = youScore > cpuScore;
+      const res = api.submit(bestRally);
+      (youWon ? api.sfx.great : api.sfx.bad)();
+      banner.style.display = '';
+      banner.replaceChildren(
+        h('h3', null, youWon ? 'Game. You win.' : 'CPU takes it.'),
+        h('p', null, 'Final ' + youScore + '–' + cpuScore + '. Longest rally ' + bestRally + ' hits.' +
+          (res.isRecord ? ' New rally record!' : res.isFirst ? '' : ' Best rally: ' + res.best + '.')),
+        h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Rematch'));
+    }
+
+    function sync() {
+      pScore.textContent = youScore + ' – ' + cpuScore;
+      pRally.textContent = 'Rally: ' + rally;
+    }
+
+    function draw() {
+      ctx.fillStyle = '#0b1020';
+      ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = 'rgba(255,255,255,.16)';
+      for (let y = 10; y < H; y += 30) ctx.fillRect(W / 2 - 3, y, 6, 16);
+
+      ctx.fillStyle = 'rgba(255,255,255,.22)';
+      ctx.font = 'bold 66px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText(youScore, W / 2 - 78, 74);
+      ctx.fillText(cpuScore, W / 2 + 78, 74);
+      ctx.textAlign = 'left';
+
+      ctx.fillStyle = '#dfe6f5';
+      ctx.fillRect(MARGIN, you.y - PH / 2, PW, PH);
+      ctx.fillStyle = '#ffd05a';
+      ctx.fillRect(W - MARGIN - PW, cpu.y - PH / 2, PW, PH);
+
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(ball.x - BR, ball.y - BR, BR * 2, BR * 2);
+
+      if (serveT > 0 && !over) {
+        ctx.fillStyle = 'rgba(255,255,255,.5)';
+        ctx.font = 'bold 15px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('serving…', W / 2, H - 40);
+        ctx.textAlign = 'left';
+      }
+    }
+
+    reset();
+    bagg.add(Engine.loop((dt) => { update(dt); draw(); }));
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'pong',
+    title: 'Desk Tennis',
+    emoji: 'pong',
+    cat: 'action',
+    order: 29,
+    blurb: 'The original video game, more or less. You, a CPU, and a square that will not stop. Your longest rally is the score worth chasing.',
+    scoreLabel: 'Longest rally',
+    tags: ['pong', 'paddle', 'ball', 'vs-cpu'],
+    how: [
+      'Move your bat with the mouse, a drag, or Up/Down and W/S.',
+      'Where the ball strikes your bat bends its angle — hit near the edge to fire it back sharp.',
+      'First side to seven points wins the match.',
+      'Your recorded score is the longest single rally you keep alive.',
+      'Harder settings give the CPU a faster, steadier bat.'
+    ],
+    mount
+  });
+})();
+
+</script>
 <script>
 /* Snake, with a golden apple worth chasing. */
 (function () {
@@ -9226,6 +10056,449 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       'C parks a piece in hold. One swap per piece.',
       'Four lines at once is 800 times the level. Back to back clears build a combo bonus on top.',
       'P pauses. Hard starts you at level 4 and Nightmare at level 7, which is not a gentle place to begin.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Flap. One button between you and the floor. */
+(function () {
+  'use strict';
+  const { h, clamp, randInt } = Engine;
+  const W = 560, H = 640;
+  const BX = 150, R = 16, PIPE_W = 74, SPACING = 250;
+  const GRAV = 1500, FLAP_V = -430;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    const cv = Engine.canvas(root, W, H, { maxHeight: '78vh' });
+    const ctx = cv.ctx;
+
+    let by, bv, pipes, score, started, over;
+
+    const pScore = api.pill('Score: 0');
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+    root.appendChild(banner);
+    api.button('Restart', reset);
+
+    const gap = () => Math.max(120, 190 - api.dm * 24);
+    const speed = () => 168 + api.dm * 42;
+
+    function reset() {
+      by = H / 2; bv = 0; pipes = []; score = 0; started = false; over = false;
+      spawn(W + 120);
+      spawn(W + 120 + SPACING);
+      spawn(W + 120 + SPACING * 2);
+      banner.style.display = 'none';
+      api.status('Click, tap, or press Space to flap. Thread every gap.');
+      sync();
+    }
+
+    function spawn(x) {
+      pipes.push({ x, cy: randInt(130, H - 130), g: gap(), passed: false });
+    }
+
+    function flap() {
+      if (over) return;
+      started = true;
+      bv = FLAP_V;
+      api.sfx.blip(680);
+    }
+    bagg.listen(cv.el, 'pointerdown', (e) => { e.preventDefault(); flap(); });
+    bagg.add(Engine.onKey((e) => {
+      if (e.code === 'Space' || e.key === ' ' || e.key === 'ArrowUp') { flap(); return true; }
+    }));
+
+    function die() {
+      over = true;
+      api.sfx.bad();
+      const res = api.submit(score);
+      banner.style.display = '';
+      banner.replaceChildren(
+        h('h3', null, 'Down it goes.'),
+        h('p', null, score + ' pipe' + (score === 1 ? '' : 's') + ' cleared.' +
+          (res.isRecord ? ' New best!' : res.isFirst ? '' : ' Best: ' + res.best + '.')),
+        h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Try again'));
+    }
+
+    function update(dt) {
+      if (over || !started) return;
+      bv += GRAV * dt;
+      by += bv * dt;
+
+      const sp = speed();
+      for (const p of pipes) p.x -= sp * dt;
+      while (pipes.length && pipes[0].x < -PIPE_W) pipes.shift();
+      const lastX = pipes.length ? pipes[pipes.length - 1].x : W;
+      if (lastX <= W - SPACING) spawn(lastX + SPACING);
+
+      for (const p of pipes) {
+        if (!p.passed && p.x + PIPE_W < BX) { p.passed = true; score++; api.sfx.good(); sync(); }
+      }
+
+      if (by + R > H - 6 || by - R < 6) return die();
+      for (const p of pipes) {
+        if (BX + R > p.x && BX - R < p.x + PIPE_W &&
+          (by - R < p.cy - p.g / 2 || by + R > p.cy + p.g / 2)) return die();
+      }
+    }
+
+    function sync() { pScore.textContent = 'Score: ' + score; }
+
+    function draw() {
+      ctx.fillStyle = '#7ec0ee';
+      ctx.fillRect(0, 0, W, H);
+
+      for (const p of pipes) {
+        ctx.fillStyle = '#4aa72e';
+        ctx.fillRect(p.x, 0, PIPE_W, p.cy - p.g / 2);
+        ctx.fillRect(p.x, p.cy + p.g / 2, PIPE_W, H - (p.cy + p.g / 2));
+        ctx.fillStyle = 'rgba(0,0,0,.16)';
+        ctx.fillRect(p.x + PIPE_W - 10, 0, 10, p.cy - p.g / 2);
+        ctx.fillRect(p.x + PIPE_W - 10, p.cy + p.g / 2, 10, H - (p.cy + p.g / 2));
+        ctx.fillStyle = '#3c8a24';
+        ctx.fillRect(p.x - 3, p.cy - p.g / 2 - 16, PIPE_W + 6, 16);
+        ctx.fillRect(p.x - 3, p.cy + p.g / 2, PIPE_W + 6, 16);
+      }
+
+      ctx.fillStyle = '#caa24a';
+      ctx.fillRect(0, H - 6, W, 6);
+
+      const rot = clamp(bv / 620, -0.5, 1.2);
+      ctx.save();
+      ctx.translate(BX, by);
+      ctx.rotate(started ? rot : 0);
+      ctx.fillStyle = '#ffd02a';
+      ctx.beginPath(); ctx.arc(0, 0, R, 0, 7); ctx.fill();
+      ctx.fillStyle = '#fffdf3';
+      ctx.beginPath(); ctx.arc(6, -5, 5, 0, 7); ctx.fill();
+      ctx.fillStyle = '#1d1722';
+      ctx.beginPath(); ctx.arc(8, -5, 2.2, 0, 7); ctx.fill();
+      ctx.fillStyle = '#e8402a';
+      ctx.fillRect(R - 3, -2, 9, 5);
+      ctx.restore();
+
+      if (!started && !over) {
+        ctx.fillStyle = 'rgba(0,0,0,.5)';
+        ctx.font = 'bold 22px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('tap / space to flap', W / 2, H / 2 - 70);
+        ctx.textAlign = 'left';
+      }
+    }
+
+    reset();
+    bagg.add(Engine.loop((dt) => { update(dt); draw(); }));
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'flap',
+    title: 'Flap',
+    emoji: 'flap',
+    cat: 'action',
+    order: 34,
+    blurb: 'One button, one bird, one floor. The gaps never get bigger and you never get better quite fast enough.',
+    scoreLabel: 'Score',
+    tags: ['flappy', 'one-button', 'tap'],
+    how: [
+      'Click, tap, or press Space to flap upward.',
+      'Gravity is always winning — keep tapping.',
+      'Fit through the gap in each pipe. Touching anything at all ends the run.',
+      'Harder settings tighten the gaps and speed up the scroll.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Stack. Land each slab on the last one. Miss and it crumbles. */
+(function () {
+  'use strict';
+  const { h } = Engine;
+  const W = 520, H = 640, BH = 34;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    const cv = Engine.canvas(root, W, H, { maxHeight: '78vh' });
+    const ctx = cv.ctx;
+
+    let stack, cur, dir, speed, camY, score, slivers, over;
+
+    const pScore = api.pill('Height: 0');
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+    root.appendChild(banner);
+    api.button('Restart', reset);
+
+    function reset() {
+      const w0 = 230;
+      stack = [{ x: (W - w0) / 2, w: w0 }];
+      score = 0; camY = 0; slivers = []; over = false;
+      speed = 180 + api.dm * 44;
+      newBlock();
+      banner.style.display = 'none';
+      api.status('Click, tap, or Space to drop the slab. Whatever hangs over the edge is sliced away.');
+      sync();
+    }
+
+    function screenTop(i) { return H - (i + 1) * BH + camY; }
+
+    function newBlock() {
+      const top = stack[stack.length - 1];
+      cur = { x: 0, w: top.w, row: stack.length };
+      dir = 1;
+      speed += 4;
+    }
+
+    function drop() {
+      if (over) return;
+      const below = stack[stack.length - 1];
+      const left = Math.max(cur.x, below.x);
+      const right = Math.min(cur.x + cur.w, below.x + below.w);
+      const overlap = right - left;
+      if (overlap <= 0) return die();
+
+      const sy = screenTop(cur.row);
+      if (cur.x < below.x) slivers.push({ sx: cur.x, sy, w: below.x - cur.x, vx: -70, vy: -120, rot: 0 });
+      if (cur.x + cur.w > below.x + below.w) slivers.push({ sx: below.x + below.w, sy, w: (cur.x + cur.w) - (below.x + below.w), vx: 70, vy: -120, rot: 0 });
+
+      const perfect = overlap === below.w;
+      stack.push({ x: left, w: overlap });
+      score++;
+      if (perfect) api.sfx.good(); else api.sfx.blip(340 + score * 12);
+      sync();
+      newBlock();
+    }
+    bagg.listen(cv.el, 'pointerdown', (e) => { e.preventDefault(); drop(); });
+    bagg.add(Engine.onKey((e) => { if (e.code === 'Space' || e.key === ' ') { drop(); return true; } }));
+
+    function die() {
+      over = true;
+      api.sfx.bad();
+      const res = api.submit(score);
+      banner.style.display = '';
+      banner.replaceChildren(
+        h('h3', null, 'It topples.'),
+        h('p', null, 'Height ' + score + '.' +
+          (res.isRecord ? ' New record!' : res.isFirst ? '' : ' Best: ' + res.best + '.')),
+        h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Stack again'));
+    }
+
+    function update(dt) {
+      if (over) return;
+      cur.x += dir * speed * dt;
+      if (cur.x < 0) { cur.x = 0; dir = 1; }
+      if (cur.x + cur.w > W) { cur.x = W - cur.w; dir = -1; }
+
+      const targetCam = Math.max(0, (stack.length + 1) * BH - 0.46 * H);
+      camY += (targetCam - camY) * Math.min(1, dt * 7);
+
+      for (const s of slivers) { s.vy += 1500 * dt; s.sy += s.vy * dt; s.sx += s.vx * dt; s.rot += dt * 4; }
+      slivers = slivers.filter((s) => s.sy < H + 80);
+    }
+
+    function slab(x, y, w, i, active) {
+      if (y > H || y < -BH) return;
+      ctx.fillStyle = active ? '#ffd05a' : 'hsl(' + ((190 + i * 12) % 360) + ',52%,' + (44 + (i % 3) * 6) + '%)';
+      ctx.fillRect(x, y, w, BH - 3);
+      ctx.fillStyle = 'rgba(255,255,255,.12)';
+      ctx.fillRect(x, y, w, 5);
+      ctx.fillStyle = 'rgba(0,0,0,.18)';
+      ctx.fillRect(x, y + BH - 7, w, 4);
+    }
+
+    function draw() {
+      ctx.fillStyle = '#141726';
+      ctx.fillRect(0, 0, W, H);
+      for (let i = 0; i < stack.length; i++) slab(stack[i].x, screenTop(i), stack[i].w, i, false);
+      if (!over) slab(cur.x, screenTop(cur.row), cur.w, cur.row, true);
+      for (const s of slivers) {
+        ctx.save();
+        ctx.globalAlpha = 0.85;
+        ctx.fillStyle = '#8892b8';
+        ctx.translate(s.sx + s.w / 2, s.sy + BH / 2);
+        ctx.rotate(s.rot);
+        ctx.fillRect(-s.w / 2, -BH / 2, s.w, BH - 3);
+        ctx.restore();
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function sync() { pScore.textContent = 'Height: ' + score; }
+
+    reset();
+    bagg.add(Engine.loop((dt) => { update(dt); draw(); }));
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'stack',
+    title: 'Stack',
+    emoji: 'stack',
+    cat: 'action',
+    order: 36,
+    blurb: 'Drop the sliding slab onto the tower. Miss the edge and it gets trimmed, thinner and thinner, until there is nothing left to aim at.',
+    scoreLabel: 'Height',
+    tags: ['stacker', 'timing', 'tower'],
+    how: [
+      'A slab slides back and forth. Click, tap, or Space drops it.',
+      'Anything hanging past the slab below is sliced off, so precision keeps you wide.',
+      'A perfect drop keeps the full width and plays a happier note.',
+      'It speeds up as you climb. Height is your score.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Climb. Bounce up the shelves. Do not look down. */
+(function () {
+  'use strict';
+  const { h, clamp, randInt } = Engine;
+  const W = 480, H = 680;
+  const PW = 78, PH = 16, R = 18;
+  const JUMP = -720, GRAV = 1500, START_PY = H - 80;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    const cv = Engine.canvas(root, W, H, { maxHeight: '80vh' });
+    const ctx = cv.ctx;
+    const keys = Engine.keys(['ArrowLeft', 'ArrowRight', 'a', 'd', 'A', 'D']);
+    bagg.add(() => keys.dispose());
+
+    let px, py, vy, plats, camY, best, over, started, facing, pointerDir;
+
+    const pScore = api.pill('Height: 0');
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+    root.appendChild(banner);
+    api.button('Restart', reset);
+
+    bagg.listen(cv.el, 'pointerdown', (e) => { started = true; aim(e); });
+    bagg.listen(cv.el, 'pointermove', (e) => { if (e.buttons) aim(e); });
+    bagg.listen(cv.el, 'pointerup', () => { pointerDir = 0; });
+    bagg.listen(cv.el, 'pointerleave', () => { pointerDir = 0; });
+    function aim(e) { pointerDir = cv.pos(e).x < W / 2 ? -1 : 1; }
+
+    function mkPlat(y) {
+      const moving = Math.random() < clamp(0.09 * api.dm, 0, 0.42);
+      return { x: randInt(6, W - PW - 6), y, moving, dir: Math.random() < 0.5 ? -1 : 1, vx: 42 + api.dm * 22 };
+    }
+
+    function reset() {
+      plats = [{ x: (W - PW) / 2, y: H - 40, moving: false, dir: 1, vx: 0 }];
+      let y = H - 40;
+      for (let i = 0; i < 16; i++) { y -= randInt(74, 112); plats.push(mkPlat(y)); }
+      px = W / 2; py = START_PY; vy = JUMP; camY = 0; best = 0;
+      over = false; started = false; facing = 1; pointerDir = 0;
+      banner.style.display = 'none';
+      api.status('Steer with the mouse, arrow keys, or A/D. You bounce on your own — just line up the shelves.');
+      sync();
+    }
+
+    function topY() { let m = 1e9; for (const p of plats) if (p.y < m) m = p.y; return m; }
+
+    function die() {
+      over = true;
+      api.sfx.bad();
+      const res = api.submit(Math.round(best / 10));
+      banner.style.display = '';
+      banner.replaceChildren(
+        h('h3', null, 'And down.'),
+        h('p', null, 'Height ' + Math.round(best / 10) + '.' +
+          (res.isRecord ? ' New peak!' : res.isFirst ? '' : ' Best: ' + res.best + '.')),
+        h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Climb again'));
+    }
+
+    function update(dt) {
+      if (over) return;
+      const k = (keys.get('ArrowLeft', 'a', 'A') ? -1 : 0) + (keys.get('ArrowRight', 'd', 'D') ? 1 : 0);
+      const dir = k || pointerDir;
+      if (dir) facing = dir;
+      px += dir * 320 * dt;
+      if (px < -R) px = W + R; else if (px > W + R) px = -R;
+
+      if (started) { vy += GRAV * dt; py += vy * dt; }
+
+      for (const p of plats) {
+        if (!p.moving) continue;
+        p.x += p.dir * p.vx * dt;
+        if (p.x < 4) { p.x = 4; p.dir = 1; } else if (p.x > W - PW - 4) { p.x = W - PW - 4; p.dir = -1; }
+      }
+
+      if (vy > 0) {
+        for (const p of plats) {
+          if (px + R > p.x && px - R < p.x + PW &&
+            py + R >= p.y && py + R <= p.y + PH + Math.max(0, vy * dt)) {
+            py = p.y - R; vy = JUMP; api.sfx.blip(560); break;
+          }
+        }
+      }
+
+      const line = camY + H * 0.42;
+      if (py < line) camY += (py - line);
+
+      plats = plats.filter((p) => p.y < camY + H + 60);
+      let ty = topY();
+      while (ty > camY - 60) { ty -= randInt(74, 112); plats.push(mkPlat(ty)); }
+
+      const climbed = START_PY - py;
+      if (climbed > best) best = climbed;
+      sync();
+
+      if (py - camY > H + R) return die();
+    }
+
+    function sync() { pScore.textContent = 'Height: ' + Math.max(0, Math.round(best / 10)); }
+
+    function draw() {
+      ctx.fillStyle = '#1b2340';
+      ctx.fillRect(0, 0, W, H);
+      for (const p of plats) {
+        const sy = p.y - camY;
+        if (sy < -PH || sy > H) continue;
+        ctx.fillStyle = p.moving ? '#c9822e' : '#3bbf6a';
+        ctx.fillRect(p.x, sy, PW, PH);
+        ctx.fillStyle = 'rgba(255,255,255,.16)';
+        ctx.fillRect(p.x, sy, PW, 4);
+      }
+      const sy = py - camY;
+      ctx.fillStyle = '#ffd02a';
+      ctx.beginPath(); ctx.arc(px, sy, R, 0, 7); ctx.fill();
+      ctx.fillStyle = '#1d1722';
+      ctx.beginPath(); ctx.arc(px + facing * 5, sy - 5, 2.6, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(px + facing * 5 + facing * 6, sy - 5, 2.6, 0, 7); ctx.fill();
+      if (!started && !over) {
+        ctx.fillStyle = 'rgba(255,255,255,.6)';
+        ctx.font = 'bold 20px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('click or press a key to start', W / 2, H * 0.5);
+        ctx.textAlign = 'left';
+      }
+    }
+
+    reset();
+    bagg.add(Engine.loop((dt) => { update(dt); draw(); }));
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'climb',
+    title: 'Climb',
+    emoji: 'climb',
+    cat: 'action',
+    order: 37,
+    blurb: 'You bounce forever on your own. All you do is steer onto the next shelf, and the next, until you miss one. Then it is a long way down.',
+    scoreLabel: 'Height',
+    tags: ['doodle', 'jump', 'platform'],
+    how: [
+      'You bounce automatically. Steering is the only job.',
+      'Mouse side, arrow keys, or A/D move you left and right. Walk off one edge to appear on the other.',
+      'Orange shelves slide around. Land on top of any shelf to bounce higher.',
+      'Fall off the bottom and the run is over. Height is your score.'
     ],
     mount
   });
