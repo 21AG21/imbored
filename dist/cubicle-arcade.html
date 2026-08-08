@@ -7,8 +7,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Cubicle Arcade">
-<title>CUBICLE ARCADE 98</title>
+<meta name="apple-mobile-web-app-title" content="Docs">
+<title>Docs</title>
 <meta name="description" content="Twenty-four games and fix-the-system simulations for when the meeting has no agenda. Runs entirely in your browser. Comes with a panic key.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23ffcb1f'/%3E%3Crect x='4' y='9' width='24' height='15' fill='%231d1722'/%3E%3Ccircle cx='11' cy='16' r='3' fill='%23ffcb1f'/%3E%3Crect x='18' y='13' width='4' height='4' fill='%2300a6b4'/%3E%3Crect x='23' y='17' width='4' height='4' fill='%23ff2d87'/%3E%3C/svg%3E">
 <style>
@@ -116,10 +116,22 @@ kbd {
 .brand-text {
   font-family: Impact, Haettenschweiler, "Arial Narrow Bold", Arial Black, sans-serif;
   font-size: 21px;
-  text-transform: uppercase;
   color: var(--label);
   letter-spacing: .02em;
   text-shadow: 2px 2px 0 var(--ink);
+  white-space: nowrap;
+  cursor: text;
+  min-width: 1ch;
+  padding: 1px 4px;
+  border-radius: 3px;
+  outline: 2px dashed transparent;
+  outline-offset: 1px;
+}
+.brand-text:hover { outline-color: rgba(0,0,0,.28); }
+.brand-text:focus {
+  outline: 2px solid var(--ink);
+  background: rgba(255,255,255,.14);
+  text-shadow: none;
 }
 .brand-text em { font-style: normal; color: var(--banana); margin-left: .28em; }
 .topbar-spacer { flex: 1; }
@@ -2504,7 +2516,14 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
   let currentGame = null;
   let bossOn = false;
   let bigOn = false;
-  const REAL_TITLE = 'CUBICLE ARCADE 98';
+  /* The site's display name. Editable straight from the top bar (click it and
+     type); defaults to a forgettable "Docs" so a glance at the header or the
+     browser tab gives nothing away. Drives both the brand and the tab title. */
+  function brandName() { return store.get('brand', 'Docs'); }
+  function applyDocTitle() {
+    document.title = bossOn ? Boss.title()
+      : (currentGame ? currentGame.title.toUpperCase() + ' - ' + brandName() : brandName());
+  }
 
   /* ---------------- public API ---------------- */
   const Arcade = {
@@ -2645,10 +2664,26 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
     diffIdx = savedDiff < 0 ? 1 : savedDiff;
     syncDiffBtn();
 
+    const brandText = h('span', {
+      class: 'brand-text', contenteditable: 'true', spellcheck: 'false',
+      title: 'Click to rename. Enter to save.', 'aria-label': 'Site name (editable)'
+    }, brandName());
+    const readBrand = () => brandText.textContent.replace(/\s+/g, ' ').trim();
+    const saveBrand = () => { store.set('brand', readBrand() || 'Docs'); applyDocTitle(); };
+    brandText.addEventListener('input', saveBrand);
+    brandText.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); brandText.blur(); }
+    });
+    brandText.addEventListener('blur', () => {
+      const t = readBrand() || 'Docs';
+      if (brandText.textContent !== t) brandText.textContent = t;
+      store.set('brand', t); applyDocTitle();
+    });
+
     const bar = h('header', { class: 'topbar' },
-      h('a', { class: 'brand', href: '#' },
-        h('span', { class: 'brand-mark', html: Icons.svg('dice', 19) }),
-        h('span', { class: 'brand-text' }, 'Cubicle', h('em', null, 'Arcade'), ' 98')),
+      h('span', { class: 'brand' },
+        h('a', { class: 'brand-mark', href: '#', title: 'Home', html: Icons.svg('dice', 19) }),
+        brandText),
       h('div', { class: 'topbar-spacer' }),
       diffBtn,
       search,
@@ -2859,7 +2894,7 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
           h('span', { class: 'card-best' }, 'opens in a new tab \u2197')) : null),
       h('div', { class: 'ticker' }, h('span', null,
         '*** NOW WITH ' + games.length + ' GAMES ***' + TICKER.slice(2).join(''))));
-    document.title = bossOn ? Boss.title() : REAL_TITLE;
+    applyDocTitle();
   }
 
   /* ---------------- game screen ---------------- */
@@ -2943,7 +2978,7 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
 
     currentDispose = () => { if (typeof dispose === 'function') dispose(); };
     currentGame = g;
-    document.title = bossOn ? Boss.title() : g.title.toUpperCase() + ' - ' + REAL_TITLE;
+    applyDocTitle();
   }
 
   /* ---------------- router ---------------- */
@@ -2971,8 +3006,7 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
   function toggleBoss(force) {
     bossOn = Boss.toggle(force);
     Engine.paused = bossOn || document.hidden;
-    document.title = bossOn ? Boss.title()
-      : (currentGame ? currentGame.title.toUpperCase() + ' - ' + REAL_TITLE : REAL_TITLE);
+    applyDocTitle();
   }
 
   Arcade.toggleBoss = toggleBoss;
@@ -2992,7 +3026,7 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
     addEventListener('keydown', (e) => {
       const t = e.target;
       const typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
-      if (e.key === '`' || (e.ctrlKey && !e.altKey && e.key.toLowerCase() === 'b' && !typing)) {
+      if (!typing && (e.key === '`' || (e.ctrlKey && !e.altKey && e.key.toLowerCase() === 'b'))) {
         e.preventDefault();
         toggleBoss();
         return;

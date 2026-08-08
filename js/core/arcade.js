@@ -38,7 +38,14 @@
   let currentGame = null;
   let bossOn = false;
   let bigOn = false;
-  const REAL_TITLE = 'CUBICLE ARCADE 98';
+  /* The site's display name. Editable straight from the top bar (click it and
+     type); defaults to a forgettable "Docs" so a glance at the header or the
+     browser tab gives nothing away. Drives both the brand and the tab title. */
+  function brandName() { return store.get('brand', 'Docs'); }
+  function applyDocTitle() {
+    document.title = bossOn ? Boss.title()
+      : (currentGame ? currentGame.title.toUpperCase() + ' - ' + brandName() : brandName());
+  }
 
   /* ---------------- public API ---------------- */
   const Arcade = {
@@ -179,10 +186,26 @@
     diffIdx = savedDiff < 0 ? 1 : savedDiff;
     syncDiffBtn();
 
+    const brandText = h('span', {
+      class: 'brand-text', contenteditable: 'true', spellcheck: 'false',
+      title: 'Click to rename. Enter to save.', 'aria-label': 'Site name (editable)'
+    }, brandName());
+    const readBrand = () => brandText.textContent.replace(/\s+/g, ' ').trim();
+    const saveBrand = () => { store.set('brand', readBrand() || 'Docs'); applyDocTitle(); };
+    brandText.addEventListener('input', saveBrand);
+    brandText.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); brandText.blur(); }
+    });
+    brandText.addEventListener('blur', () => {
+      const t = readBrand() || 'Docs';
+      if (brandText.textContent !== t) brandText.textContent = t;
+      store.set('brand', t); applyDocTitle();
+    });
+
     const bar = h('header', { class: 'topbar' },
-      h('a', { class: 'brand', href: '#' },
-        h('span', { class: 'brand-mark', html: Icons.svg('dice', 19) }),
-        h('span', { class: 'brand-text' }, 'Cubicle', h('em', null, 'Arcade'), ' 98')),
+      h('span', { class: 'brand' },
+        h('a', { class: 'brand-mark', href: '#', title: 'Home', html: Icons.svg('dice', 19) }),
+        brandText),
       h('div', { class: 'topbar-spacer' }),
       diffBtn,
       search,
@@ -393,7 +416,7 @@
           h('span', { class: 'card-best' }, 'opens in a new tab \u2197')) : null),
       h('div', { class: 'ticker' }, h('span', null,
         '*** NOW WITH ' + games.length + ' GAMES ***' + TICKER.slice(2).join(''))));
-    document.title = bossOn ? Boss.title() : REAL_TITLE;
+    applyDocTitle();
   }
 
   /* ---------------- game screen ---------------- */
@@ -477,7 +500,7 @@
 
     currentDispose = () => { if (typeof dispose === 'function') dispose(); };
     currentGame = g;
-    document.title = bossOn ? Boss.title() : g.title.toUpperCase() + ' - ' + REAL_TITLE;
+    applyDocTitle();
   }
 
   /* ---------------- router ---------------- */
@@ -505,8 +528,7 @@
   function toggleBoss(force) {
     bossOn = Boss.toggle(force);
     Engine.paused = bossOn || document.hidden;
-    document.title = bossOn ? Boss.title()
-      : (currentGame ? currentGame.title.toUpperCase() + ' - ' + REAL_TITLE : REAL_TITLE);
+    applyDocTitle();
   }
 
   Arcade.toggleBoss = toggleBoss;
@@ -526,7 +548,7 @@
     addEventListener('keydown', (e) => {
       const t = e.target;
       const typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
-      if (e.key === '`' || (e.ctrlKey && !e.altKey && e.key.toLowerCase() === 'b' && !typing)) {
+      if (!typing && (e.key === '`' || (e.ctrlKey && !e.altKey && e.key.toLowerCase() === 'b'))) {
         e.preventDefault();
         toggleBoss();
         return;

@@ -102,10 +102,22 @@ kbd {
 .brand-text {
   font-family: Impact, Haettenschweiler, "Arial Narrow Bold", Arial Black, sans-serif;
   font-size: 21px;
-  text-transform: uppercase;
   color: var(--label);
   letter-spacing: .02em;
   text-shadow: 2px 2px 0 var(--ink);
+  white-space: nowrap;
+  cursor: text;
+  min-width: 1ch;
+  padding: 1px 4px;
+  border-radius: 3px;
+  outline: 2px dashed transparent;
+  outline-offset: 1px;
+}
+.brand-text:hover { outline-color: rgba(0,0,0,.28); }
+.brand-text:focus {
+  outline: 2px solid var(--ink);
+  background: rgba(255,255,255,.14);
+  text-shadow: none;
 }
 .brand-text em { font-style: normal; color: var(--banana); margin-left: .28em; }
 .topbar-spacer { flex: 1; }
