@@ -2149,6 +2149,9 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       r(2, 2, 20, 20, P.dark) +
       c(8, 8, 3.2, P.teal) + c(16, 9, 2.2, P.lime) + c(9, 16, 2.4, P.yellow) +
       c(16, 16, 3.4, P.teal) + c(12, 12, 1.6, P.lime) + c(19, 14, 1.6, P.yellow),
+    /* ---------- sims wave 2 ---------- */
+    vicsek: "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" fill=\"#0f1420\"/><path d=\"M6 6l4 2-4 2z\" fill=\"#6fcf2f\"/><path d=\"M12 5l4 2-4 2z\" fill=\"#6fcf2f\"/><path d=\"M7 13l4 2-4 2z\" fill=\"#00a6b4\"/><path d=\"M13 12l4 2-4 2z\" fill=\"#00a6b4\"/>",
+    kuramoto: "<circle cx=\"12\" cy=\"12\" r=\"9\" fill=\"none\" stroke=\"#a79e88\" stroke-width=\"1.5\"/><circle cx=\"12\" cy=\"3\" r=\"1.7\" fill=\"#e8402a\"/><circle cx=\"20\" cy=\"10\" r=\"1.7\" fill=\"#ffcb1f\"/><circle cx=\"16\" cy=\"19\" r=\"1.7\" fill=\"#6fcf2f\"/><path d=\"M12 12 L18 8\" fill=\"none\" stroke=\"#fffdf3\" stroke-width=\"1.6\"/>",
     /* ---------- sims wave ---------- */
     schelling: "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" fill=\"#141019\"/><rect x=\"3\" y=\"3\" width=\"8\" height=\"18\" fill=\"#00a6b4\"/><rect x=\"13\" y=\"3\" width=\"8\" height=\"18\" fill=\"#e8402a\"/><rect x=\"9\" y=\"7\" width=\"3\" height=\"3\" fill=\"#e8402a\"/><rect x=\"12\" y=\"14\" width=\"3\" height=\"3\" fill=\"#00a6b4\"/>",
     sir: "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" fill=\"#d9c9a0\"/><circle cx=\"12\" cy=\"12\" r=\"6\" fill=\"#e8402a\"/><circle cx=\"12\" cy=\"12\" r=\"2.6\" fill=\"#6b6350\"/>",
@@ -4392,6 +4395,320 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       'There is no setting to change. Left alone, the pile drives itself to criticality — the point where avalanches have no typical size.',
       'The instrument is the avalanche-size distribution on log-log axes. When it settles into a straight line, that line is the power law of self-organized criticality.',
       'You cannot calm it down; there is no stable state to reach. Your score is simply the biggest avalanche you have seen.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* The Herd — the Vicsek model (1995), the founding flocking phase transition.
+ *
+ * A crowd of self-propelled dots, each moving at constant speed and, every step,
+ * turning to the average heading of everyone within a short radius — plus a dose
+ * of random noise. One rule. Below a critical noise the whole crowd spontaneously
+ * commits to a single direction with no leader; above it, they mill uselessly.
+ * The order parameter phi (mean of the unit velocities) is 0 for a milling crowd
+ * and 1 for perfect lockstep. The instrument is phi versus noise, measured live
+ * from the model. Default noise sits just inside the ordered side.
+ */
+(function () {
+  'use strict';
+  const { h, rand } = Engine;
+  const W = 560, H = 560, LB = 100, N = 340, R = 5.0, V0 = 1.0;
+  const SCALE = W / LB;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    const x = new Float32Array(N), y = new Float32Array(N), th = new Float32Array(N), nth = new Float32Array(N);
+    let eta = 1.2, running = true;
+    const samples = [];
+    let ref = [];
+
+    const cv = Engine.canvas(root, W, H, { maxHeight: '62vh' });
+    const ctx = cv.ctx;
+    const plot = h('canvas', { class: 'fire-plot', width: 520, height: 200 });
+    root.appendChild(h('div', { class: 'fire-panel' }, plot));
+    const pctx = plot.getContext('2d');
+
+    const pEta = api.pill('Noise: 1.20');
+    const pPhi = api.pill('Alignment: 0.00');
+
+    const slider = h('input', { type: 'range', min: '0', max: '5', step: '0.05', value: '1.2', class: 'slider' });
+    slider.addEventListener('input', () => { eta = parseFloat(slider.value); pEta.textContent = 'Noise: ' + eta.toFixed(2); });
+    api.toolbar.appendChild(h('label', { class: 'sel-wrap' }, h('span', null, 'noise'), slider));
+    const runBtn = api.button('Pause', () => { running = !running; runBtn.textContent = running ? 'Pause' : 'Run'; });
+    api.button('Reset', reset);
+
+    function reset() {
+      for (let i = 0; i < N; i++) { x[i] = Math.random() * LB; y[i] = Math.random() * LB; th[i] = rand(-Math.PI, Math.PI); }
+      api.status('Lower the noise and watch a milling crowd snap into one shared heading with nobody in charge. Raise it and the flock dissolves.');
+      syncPills();
+    }
+
+    function wrap(v) { return v < 0 ? v + LB : v >= LB ? v - LB : v; }
+
+    function step() {
+      for (let i = 0; i < N; i++) {
+        let sc = 0, ss = 0;
+        for (let j = 0; j < N; j++) {
+          let dx = x[j] - x[i], dy = y[j] - y[i];
+          if (dx > LB / 2) dx -= LB; else if (dx < -LB / 2) dx += LB;
+          if (dy > LB / 2) dy -= LB; else if (dy < -LB / 2) dy += LB;
+          if (dx * dx + dy * dy <= R * R) { sc += Math.cos(th[j]); ss += Math.sin(th[j]); }
+        }
+        nth[i] = Math.atan2(ss, sc) + rand(-eta / 2, eta / 2);
+      }
+      for (let i = 0; i < N; i++) { th[i] = nth[i]; x[i] = wrap(x[i] + V0 * Math.cos(th[i])); y[i] = wrap(y[i] + V0 * Math.sin(th[i])); }
+    }
+
+    function phi() {
+      let sc = 0, ss = 0;
+      for (let i = 0; i < N; i++) { sc += Math.cos(th[i]); ss += Math.sin(th[i]); }
+      return Math.hypot(sc, ss) / N;
+    }
+
+    function syncPills() { pEta.textContent = 'Noise: ' + eta.toFixed(2); const ph = phi(); pPhi.textContent = 'Alignment: ' + ph.toFixed(2); pPhi.className = 'pill ' + (ph > 0.5 ? 'good' : 'warn'); }
+
+    /* measured reference: settle at each noise, record alignment (smaller flock) */
+    function measureReference() {
+      const n = 160, xr = new Float32Array(n), yr = new Float32Array(n), tr = new Float32Array(n), ntr = new Float32Array(n), out = [];
+      for (let ei = 0; ei <= 18; ei++) {
+        const et = 5 * ei / 18;
+        for (let i = 0; i < n; i++) { xr[i] = Math.random() * LB; yr[i] = Math.random() * LB; tr[i] = rand(-Math.PI, Math.PI); }
+        for (let s = 0; s < 60; s++) {
+          for (let i = 0; i < n; i++) {
+            let sc = 0, ss = 0;
+            for (let j = 0; j < n; j++) {
+              let dx = xr[j] - xr[i], dy = yr[j] - yr[i];
+              if (dx > LB / 2) dx -= LB; else if (dx < -LB / 2) dx += LB;
+              if (dy > LB / 2) dy -= LB; else if (dy < -LB / 2) dy += LB;
+              if (dx * dx + dy * dy <= R * R) { sc += Math.cos(tr[j]); ss += Math.sin(tr[j]); }
+            }
+            ntr[i] = Math.atan2(ss, sc) + rand(-et / 2, et / 2);
+          }
+          for (let i = 0; i < n; i++) { tr[i] = ntr[i]; xr[i] = wrap(xr[i] + V0 * Math.cos(tr[i])); yr[i] = wrap(yr[i] + V0 * Math.sin(tr[i])); }
+        }
+        let sc = 0, ss = 0; for (let i = 0; i < n; i++) { sc += Math.cos(tr[i]); ss += Math.sin(tr[i]); }
+        out.push({ eta: et, phi: Math.hypot(sc, ss) / n });
+      }
+      return out;
+    }
+
+    function drawPlot() {
+      const w = plot.width, hh = plot.height, m = 26;
+      pctx.fillStyle = '#12100c'; pctx.fillRect(0, 0, w, hh);
+      const X = (e) => m + e / 5 * (w - m - 8);
+      const Y = (f) => hh - m - f * (hh - m - 8);
+      pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
+      pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(1)); pctx.stroke();
+      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillText('alignment', 2, 12); pctx.fillText('noise', w - 40, hh - 8);
+      if (ref.length) { pctx.strokeStyle = '#6fcf2f'; pctx.lineWidth = 2; pctx.beginPath(); ref.forEach((s, i) => { const px = X(s.eta), py = Y(s.phi); i ? pctx.lineTo(px, py) : pctx.moveTo(px, py); }); pctx.stroke(); }
+      for (const s of samples) { pctx.fillStyle = '#e8402a'; pctx.beginPath(); pctx.arc(X(s.eta), Y(s.phi), 3, 0, 7); pctx.fill(); }
+      pctx.fillStyle = '#fffdf3'; pctx.beginPath(); pctx.moveTo(X(eta), Y(0) + 2); pctx.lineTo(X(eta) - 4, Y(0) + 9); pctx.lineTo(X(eta) + 4, Y(0) + 9); pctx.fill();
+    }
+
+    function draw() {
+      ctx.fillStyle = '#0f1420'; ctx.fillRect(0, 0, W, H);
+      for (let i = 0; i < N; i++) {
+        const px = x[i] * SCALE, py = y[i] * SCALE, a = th[i];
+        const hue = ((a + Math.PI) / (2 * Math.PI) * 360) | 0;
+        ctx.fillStyle = 'hsl(' + hue + ',75%,62%)';
+        ctx.beginPath();
+        ctx.moveTo(px + Math.cos(a) * 5, py + Math.sin(a) * 5);
+        ctx.lineTo(px + Math.cos(a + 2.5) * 3, py + Math.sin(a + 2.5) * 3);
+        ctx.lineTo(px + Math.cos(a - 2.5) * 3, py + Math.sin(a - 2.5) * 3);
+        ctx.fill();
+      }
+      drawPlot();
+    }
+
+    window.__vicsek = {
+      reset(opts) { if (opts && opts.eta != null) { eta = opts.eta; slider.value = String(eta); } reset(); },
+      step() { step(); return phi(); },
+      settle(steps) { for (let s = 0; s < (steps || 120); s++) step(); return phi(); },
+      stats() { return { phi: phi(), eta: eta }; },
+      setRunning(v) { running = !!v; }
+    };
+    bagg.add(() => { if (window.__vicsek) delete window.__vicsek; });
+
+    ref = measureReference();
+    reset();
+    bagg.add(Engine.loop(() => {
+      if (running) { step(); if ((Math.random() * 30 | 0) === 0) { const ph = phi(); samples.push({ eta: eta, phi: ph }); if (samples.length > 60) samples.shift(); api.submit(Math.round(ph * 100)); } }
+      syncPills();
+      draw();
+    }));
+
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'vicsek',
+    title: 'The Herd',
+    emoji: 'vicsek',
+    cat: 'sim',
+    order: 10,
+    blurb: 'A few hundred dots, each just steering toward the average heading of its neighbours plus a little randomness. Turn the randomness down and a directionless swarm suddenly moves as one, leaderless. The original model of flocking.',
+    scoreLabel: 'Best alignment',
+    tags: ['vicsek', 'flocking', 'phase-transition', 'emergence'],
+    how: [
+      'Every dot moves at the same speed and, each step, turns to the average heading of the dots within a short radius, plus some random jitter.',
+      'The noise slider is that jitter. There is no leader and no goal — alignment is entirely emergent.',
+      'The order parameter, "alignment", is 0 when the crowd mills in all directions and 1 when it moves in perfect lockstep.',
+      'The instrument plots alignment against noise, measured live. Below a critical noise the flock locks in; above it, it falls apart. The change is sharp.',
+      'Your score is the best alignment you sustain. The interesting play is right around the transition.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Slow Clap — the Kuramoto model (1975) of coupled oscillators.
+ *
+ * A room of clappers, each with their own natural rhythm, each nudging its phase
+ * toward the crowd's average. Below a critical coupling the applause is a wash of
+ * noise; turn the coupling up past one exact point and it collapses into a single
+ * synchronized slow clap — a real, documented instance of this model (rhythmic
+ * applause, Neda et al., Nature 2000). The order parameter r runs 0 (incoherent)
+ * to 1 (locked). Mean-field dynamics: dtheta_i = omega_i + K r sin(psi - theta_i).
+ * Critical coupling for a normal spread of rhythms is K_c ~ 1.6 sigma. The
+ * instrument is r versus coupling K, measured live.
+ */
+(function () {
+  'use strict';
+  const { h } = Engine;
+  const W = 560, H = 560, N = 220, DT = 0.05, SIGMA = 1.0;
+  const CX = W / 2, CY = H / 2 - 30, RC = 190;
+
+  function gauss() { const u1 = Math.random() || 1e-9, u2 = Math.random(); return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2); }
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    const th = new Float32Array(N), om = new Float32Array(N);
+    let K = 2.2, running = true;
+    const samples = [];
+    let ref = [];
+
+    const cv = Engine.canvas(root, W, H, { maxHeight: '62vh' });
+    const ctx = cv.ctx;
+    const plot = h('canvas', { class: 'fire-plot', width: 520, height: 200 });
+    root.appendChild(h('div', { class: 'fire-panel' }, plot));
+    const pctx = plot.getContext('2d');
+
+    const pK = api.pill('Coupling K: 2.20');
+    const pR = api.pill('Sync r: 0.00');
+
+    const slider = h('input', { type: 'range', min: '0', max: '4', step: '0.05', value: '2.2', class: 'slider' });
+    slider.addEventListener('input', () => { K = parseFloat(slider.value); pK.textContent = 'Coupling K: ' + K.toFixed(2); });
+    api.toolbar.appendChild(h('label', { class: 'sel-wrap' }, h('span', null, 'coupling'), slider));
+    const runBtn = api.button('Pause', () => { running = !running; runBtn.textContent = running ? 'Pause' : 'Run'; });
+    api.button('Reset', reset);
+
+    function reset() {
+      for (let i = 0; i < N; i++) { th[i] = Math.random() * 2 * Math.PI; om[i] = gauss() * SIGMA; }
+      api.status('Everyone claps at their own pace. Raise the coupling — how hard they listen to the room — past the critical point and the whole crowd snaps into one rhythm.');
+      syncPills();
+    }
+
+    function order() { let sc = 0, ss = 0; for (let i = 0; i < N; i++) { sc += Math.cos(th[i]); ss += Math.sin(th[i]); } return { r: Math.hypot(sc, ss) / N, psi: Math.atan2(ss, sc) }; }
+
+    function step() {
+      const o = order();
+      for (let i = 0; i < N; i++) th[i] += (om[i] + K * o.r * Math.sin(o.psi - th[i])) * DT;
+      return o.r;
+    }
+
+    function syncPills() { pK.textContent = 'Coupling K: ' + K.toFixed(2); const r = order().r; pR.textContent = 'Sync r: ' + r.toFixed(2); pR.className = 'pill ' + (r > 0.5 ? 'good' : 'warn'); }
+
+    function measureReference() {
+      const n = 160, tr = new Float32Array(n), or = new Float32Array(n), out = [];
+      for (let ki = 0; ki <= 20; ki++) {
+        const kk = 4 * ki / 20;
+        for (let i = 0; i < n; i++) { tr[i] = Math.random() * 2 * Math.PI; or[i] = gauss() * SIGMA; }
+        for (let s = 0; s < 300; s++) {
+          let sc = 0, ss = 0; for (let i = 0; i < n; i++) { sc += Math.cos(tr[i]); ss += Math.sin(tr[i]); }
+          const r = Math.hypot(sc, ss) / n, psi = Math.atan2(ss, sc);
+          for (let i = 0; i < n; i++) tr[i] += (or[i] + kk * r * Math.sin(psi - tr[i])) * DT;
+        }
+        let sc = 0, ss = 0; for (let i = 0; i < n; i++) { sc += Math.cos(tr[i]); ss += Math.sin(tr[i]); }
+        out.push({ K: kk, r: Math.hypot(sc, ss) / n });
+      }
+      return out;
+    }
+
+    function drawPlot() {
+      const w = plot.width, hh = plot.height, m = 26;
+      pctx.fillStyle = '#12100c'; pctx.fillRect(0, 0, w, hh);
+      const X = (k) => m + k / 4 * (w - m - 8);
+      const Y = (f) => hh - m - f * (hh - m - 8);
+      pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
+      pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(1)); pctx.stroke();
+      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillText('sync r', 2, 12); pctx.fillText('coupling K', w - 60, hh - 8);
+      const kc = 1.6 * SIGMA;
+      pctx.strokeStyle = 'rgba(232,64,42,.7)'; pctx.setLineDash([4, 3]); pctx.beginPath(); pctx.moveTo(X(kc), Y(0)); pctx.lineTo(X(kc), Y(1)); pctx.stroke(); pctx.setLineDash([]);
+      pctx.fillStyle = '#e8402a'; pctx.fillText('K_c~' + kc.toFixed(1), X(kc) + 3, Y(1) + 10);
+      if (ref.length) { pctx.strokeStyle = '#ffcb1f'; pctx.lineWidth = 2; pctx.beginPath(); ref.forEach((s, i) => { const px = X(s.K), py = Y(s.r); i ? pctx.lineTo(px, py) : pctx.moveTo(px, py); }); pctx.stroke(); }
+      for (const s of samples) { pctx.fillStyle = '#6fcf2f'; pctx.beginPath(); pctx.arc(X(s.K), Y(s.r), 3, 0, 7); pctx.fill(); }
+      pctx.fillStyle = '#fffdf3'; pctx.beginPath(); pctx.moveTo(X(K), Y(0) + 2); pctx.lineTo(X(K) - 4, Y(0) + 9); pctx.lineTo(X(K) + 4, Y(0) + 9); pctx.fill();
+    }
+
+    function draw() {
+      ctx.fillStyle = '#12101a'; ctx.fillRect(0, 0, W, H);
+      ctx.strokeStyle = '#332b3f'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(CX, CY, RC, 0, 7); ctx.stroke();
+      for (let i = 0; i < N; i++) {
+        const a = th[i];
+        const hue = Math.max(0, Math.min(240, 120 + om[i] * 60)) | 0;
+        ctx.fillStyle = 'hsl(' + hue + ',70%,60%)';
+        ctx.beginPath(); ctx.arc(CX + Math.cos(a) * RC, CY + Math.sin(a) * RC, 3.2, 0, 7); ctx.fill();
+      }
+      const o = order();
+      ctx.strokeStyle = '#fffdf3'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(CX, CY); ctx.lineTo(CX + Math.cos(o.psi) * RC * o.r, CY + Math.sin(o.psi) * RC * o.r); ctx.stroke();
+      ctx.fillStyle = '#fffdf3'; ctx.font = 'bold 26px system-ui'; ctx.textAlign = 'center';
+      ctx.fillText('r = ' + o.r.toFixed(2), CX, CY + 6); ctx.textAlign = 'left';
+      drawPlot();
+    }
+
+    window.__kuramoto = {
+      reset(opts) { if (opts && opts.K != null) { K = opts.K; slider.value = String(K); } reset(); },
+      step() { return step(); },
+      settle(steps) { for (let s = 0; s < (steps || 400); s++) step(); return order().r; },
+      stats() { return { r: order().r, K: K }; },
+      setRunning(v) { running = !!v; }
+    };
+    bagg.add(() => { if (window.__kuramoto) delete window.__kuramoto; });
+
+    ref = measureReference();
+    reset();
+    bagg.add(Engine.loop(() => {
+      if (running) { step(); if ((Math.random() * 30 | 0) === 0) { const r = order().r; samples.push({ K: K, r: r }); if (samples.length > 60) samples.shift(); api.submit(Math.round(r * 100)); } }
+      syncPills();
+      draw();
+    }));
+
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'kuramoto',
+    title: 'Slow Clap',
+    emoji: 'kuramoto',
+    cat: 'sim',
+    order: 11,
+    blurb: 'A room full of people clapping at their own pace, each nudging toward the room average. Below a critical coupling it stays a wash of noise; above it, the whole crowd falls into one synchronized slow clap. Applause really does do this.',
+    scoreLabel: 'Best sync',
+    tags: ['kuramoto', 'synchronization', 'phase-transition', 'emergence'],
+    how: [
+      'Each dot on the ring is a clapper at its own natural rhythm; its colour is that rhythm. Each step it nudges toward the crowd average.',
+      'The coupling slider is how hard everyone listens to the room. The white arrow is the order parameter r — how synchronized the crowd is.',
+      'Below the critical coupling the dots smear around the ring (r near 0). Above it they clump and travel together (r near 1).',
+      'The instrument plots sync against coupling, measured live, with the critical coupling K_c marked. The onset is sharp.',
+      'Your score is the best sync you reach. Rhythmic applause is a documented real example of this exact transition.'
     ],
     mount
   });
