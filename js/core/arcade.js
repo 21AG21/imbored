@@ -260,10 +260,46 @@
         : 'Embed it: the key drops the site into a frame over the games, keeping your game paused underneath. Only works for sites that allow embedding, which most big ones do not.';
     };
 
+    /* Filing cabinet: every score lives in this origin's localStorage, so the
+       Vercel / Pages / Drive / USB copies are separate silos. Back up carries
+       them between; Restore merges a backup in. Purely local — nothing leaves. */
+    function exportSaves() {
+      const data = {};
+      try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.indexOf('cubicle:') === 0) data[k] = localStorage.getItem(k); } } catch (e) { /* private mode */ }
+      const blob = new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = h('a', { href: url, download: 'cubicle-arcade-saves.json' });
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+    }
+    const importInput = h('input', {
+      type: 'file', accept: 'application/json,.json', style: { display: 'none' },
+      onchange: (e) => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        const rd = new FileReader();
+        rd.onload = () => {
+          try {
+            const data = JSON.parse(rd.result);
+            let n = 0;
+            for (const k in data) if (k.indexOf('cubicle:') === 0) { localStorage.setItem(k, data[k]); n++; }
+            if (n) location.reload(); else alert('No arcade scores found in that file.');
+          } catch (err) { alert('That file did not look like an arcade backup.'); }
+        };
+        rd.readAsText(f);
+        e.target.value = '';
+      }
+    });
+
     const foot = h('footer', { class: 'foot' },
       h('span', { class: 'foot-skin' },
         h('strong', null, 'PANIC SCREEN:'), skinSel,
         h('button', { class: 'btn tiny', type: 'button', onclick: () => toggleBoss(true) }, 'try it')),
+      h('span', { class: 'foot-skin' },
+        h('strong', null, 'SCORES:'),
+        h('button', { class: 'btn tiny', type: 'button', onclick: exportSaves }, 'Back up'),
+        h('button', { class: 'btn tiny', type: 'button', onclick: () => importInput.click() }, 'Restore'),
+        importInput),
       webRow,
       h('span', null,
         h('a', { class: 'foot-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener' }, 'PHANTOM: why traffic jams happen for no reason')),
