@@ -1641,3 +1641,24 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
 .cell.prev-ok { background: #2f7a3a; }
 .cell.prev-bad { background: #8a2a1a; }
 @media (max-width: 640px) { .battleship { --bsc: min(27px, 7vw); } .battleship .panelrow { gap: 10px; } }
+
+/* ============ CRT mode — "the boss's old 15-inch" ============ */
+body.crt::after {
+  content: "";
+  position: fixed; inset: 0; z-index: 900; pointer-events: none;
+  background:
+    repeating-linear-gradient(to bottom, rgba(0,0,0,.16) 0 1px, transparent 1px 3px),
+    radial-gradient(125% 125% at 50% 50%, transparent 60%, rgba(0,0,0,.38) 100%);
+  mix-blend-mode: multiply;
+}
+body.crt::before {
+  content: ""; position: fixed; inset: 0; z-index: 901; pointer-events: none;
+  background: rgba(130,160,255,.04);
+  animation: crtflicker 5s steps(48) infinite;
+}
+@keyframes crtflicker { 0%,100% { opacity: .55; } 50% { opacity: .9; } }
+@media (prefers-reduced-motion: reduce) { body.crt::before { animation: none; } }
+/* the disguise must look like a clean, ordinary document */
+body.crt.boss-on::after, body.crt.boss-on::before { display: none; }
+.theme-crt { display: flex; align-items: center; gap: 7px; margin-top: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+.theme-crt input { width: 15px; height: 15px; }

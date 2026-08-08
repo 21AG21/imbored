@@ -127,7 +127,13 @@
         h('input', {
           type: 'color', value: Themes.custom(),
           oninput: (e) => { Themes.setCustom(e.target.value); paintSwatches(); }
-        })));
+        })),
+      h('label', { class: 'theme-crt' },
+        h('input', {
+          type: 'checkbox', checked: store.get('crt', false) ? true : null,
+          onchange: (e) => { document.body.classList.toggle('crt', e.target.checked); store.set('crt', e.target.checked); }
+        }),
+        h('span', null, 'CRT screen')));
 
     function paintSwatches() {
       swatches.replaceChildren();
@@ -542,6 +548,7 @@
   /* ---------------- boot ---------------- */
   Arcade.start = function start() {
     games.sort((a, b) => (a.order || 50) - (b.order || 50));
+    if (store.get('crt', false)) document.body.classList.add('crt');
     buildChrome();
     document.body.appendChild(Boss.build());
     buildChomps();
