@@ -1,13 +1,19 @@
-/* Build a three-file version for online HTML playgrounds that block inline
-   <script> via CSP (OneCompiler, some CodePen configs, corp sandboxes).
+/* Build a three-file version for online HTML playgrounds (OneCompiler, CodePen,
+   corp sandboxes).
    Usage: node tools/build-onecompiler.mjs
    Output: dist/onecompiler/{index.html, style.css, script.js}
 
-   Why three files: a full-page paste puts every script inline, and a preview
-   that serves `script-src 'self'` (no 'unsafe-inline') silently blocks all of
-   it — the stylesheet still applies, so you get the background and nothing
-   else. An EXTERNAL script.js is same-origin to the playground and runs anyway.
-   Paste each file into the matching tab. */
+   Why three files: playgrounds cap how much text a single tab will hold —
+   OneCompiler silently truncates a paste at ~256 KB. The full inlined single
+   file (~406 KB) gets chopped mid-script and nothing runs. Splitting the code
+   into an external script.js keeps each tab small; the stylesheet still applies
+   either way, which is why a broken paste shows only the background.
+
+   Even split out, the concatenated JS (~362 KB) is over the cap, so this tool
+   MINIFIES script.js with terser when it is available (`npm i terser`, or run
+   `npx terser` by hand). Minified it is ~209 KB — comfortably under 256 KB.
+   Without terser it writes the readable version and warns that it will be
+   truncated by size-capped playgrounds. Paste each file into the matching tab. */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -22,8 +28,19 @@ if (!scripts.length) throw new Error('no <script src> tags found in index.html')
 
 /* concatenate every module. Each file is a self-contained IIFE; a leading
    semicolon before each guards against any ASI hazard at the joins. */
-const js = scripts.map((s) => ';\n/* ' + s + ' */\n' + read(s).trim() + '\n').join('\n') +
+let js = scripts.map((s) => ';\n/* ' + s + ' */\n' + read(s).trim() + '\n').join('\n') +
   '\n;\n/* boot */\nArcade.start();\n';
+
+/* Minify to fit under playground paste caps (OneCompiler ~256 KB). Optional:
+   if terser is not installed we ship the readable file and warn. */
+let minified = false;
+try {
+  const terser = await import('terser');
+  const out = await terser.minify(js, { compress: true, mangle: true });
+  if (out && out.code) { js = out.code; minified = true; }
+} catch (e) {
+  /* terser not available — fall through and warn below */
+}
 
 const indexHtml = `<!doctype html>
 <html lang="en">
@@ -48,4 +65,10 @@ fs.writeFileSync(path.join(outDir, 'style.css'), read('css/arcade.css'));
 fs.writeFileSync(path.join(outDir, 'script.js'), js);
 console.log('dist/onecompiler/index.html   ' + (indexHtml.length / 1024).toFixed(1) + ' KB');
 console.log('dist/onecompiler/style.css    ' + (read('css/arcade.css').length / 1024).toFixed(1) + ' KB');
-console.log('dist/onecompiler/script.js    ' + (js.length / 1024).toFixed(1) + ' KB  (' + scripts.length + ' modules)');
+console.log('dist/onecompiler/script.js    ' + (js.length / 1024).toFixed(1) + ' KB  (' + scripts.length +
+  ' modules, ' + (minified ? 'minified' : 'NOT minified') + ')');
+if (!minified) {
+  console.warn('\n  WARNING: terser not found, script.js is ~' + (js.length / 1024).toFixed(0) +
+    ' KB and will be TRUNCATED by size-capped playgrounds (OneCompiler caps at ~256 KB).' +
+    '\n  Fix: `npm i terser` then re-run, or `npx terser dist/onecompiler/script.js -c -m -o dist/onecompiler/script.js`.');
+}
