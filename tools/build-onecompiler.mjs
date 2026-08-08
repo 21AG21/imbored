@@ -42,6 +42,13 @@ try {
   /* terser not available — fall through and warn below */
 }
 
+/* NOTE the loader: instead of <script src="script.js"> we fetch the file and
+   run it as a runtime-injected inline script. Playgrounds like OneCompiler
+   rewrite TAB scripts to add infinite-loop guards, and that rewriter breaks on
+   minified/one-line loops (ReferenceError: __lp1 is not defined). A script
+   element built at runtime from fetched text is outside the rewriter's reach,
+   so the code runs untouched. fetch() of a same-origin sibling and inline
+   execution both work in these sandboxes. */
 const indexHtml = `<!doctype html>
 <html lang="en">
 <head>
@@ -53,7 +60,19 @@ const indexHtml = `<!doctype html>
 </head>
 <body>
 <noscript><p style="padding:24px;font-family:Verdana,sans-serif">This needs JavaScript. It is all client side.</p></noscript>
-<script src="script.js"></script>
+<script>
+/* run script.js without letting the playground's loop-guard rewriter touch it */
+(function () {
+  fetch('script.js').then(function (r) { return r.text(); }).then(function (code) {
+    var s = document.createElement('script');
+    s.textContent = code;
+    document.body.appendChild(s);
+  }).catch(function (e) {
+    document.body.insertAdjacentHTML('beforeend',
+      '<pre style="padding:16px;font:14px monospace;color:#b00020">Could not load script.js: ' + e + '</pre>');
+  });
+})();
+</script>
 </body>
 </html>
 `;

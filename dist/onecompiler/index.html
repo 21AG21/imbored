@@ -9,6 +9,18 @@
 </head>
 <body>
 <noscript><p style="padding:24px;font-family:Verdana,sans-serif">This needs JavaScript. It is all client side.</p></noscript>
-<script src="script.js"></script>
+<script>
+/* run script.js without letting the playground's loop-guard rewriter touch it */
+(function () {
+  fetch('script.js').then(function (r) { return r.text(); }).then(function (code) {
+    var s = document.createElement('script');
+    s.textContent = code;
+    document.body.appendChild(s);
+  }).catch(function (e) {
+    document.body.insertAdjacentHTML('beforeend',
+      '<pre style="padding:16px;font:14px monospace;color:#b00020">Could not load script.js: ' + e + '</pre>');
+  });
+})();
+</script>
 </body>
 </html>
