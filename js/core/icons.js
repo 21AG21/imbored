@@ -118,6 +118,10 @@
       line(7, 7, 7, 13, 1.8, INK) + line(11, 11, 17, 11, 1.8, INK) +
       line(7, 17, 22, 17, 1.8, INK) + line(11, 13, 11, 22, 1.8, INK) +
       c(4.5, 4.5, 1.4, P.teal) + c(19, 19.5, 1.4, P.tomato),
+    reactdiff:
+      r(2, 2, 20, 20, P.dark) +
+      c(8, 8, 3.2, P.teal) + c(16, 9, 2.2, P.lime) + c(9, 16, 2.4, P.yellow) +
+      c(16, 16, 3.4, P.teal) + c(12, 12, 1.6, P.lime) + c(19, 14, 1.6, P.yellow),
     /* ---------- added arcade ---------- */
     pong:
       r(3, 7, 3, 10, P.paper) + r(18, 7, 3, 10, P.paper) +

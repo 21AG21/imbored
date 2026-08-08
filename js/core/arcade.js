@@ -261,7 +261,13 @@
       webRow,
       h('span', null,
         h('a', { class: 'foot-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener' }, 'PHANTOM: why traffic jams happen for no reason')),
-      h('span', null, h('kbd', null, '`'), ' look busy   ', h('kbd', null, 'F'), ' big screen   ', h('kbd', null, '/'), ' search   ', h('kbd', null, 'Esc'), ' back'),
+      h('span', null,
+        h('kbd', null, '`'), ' look busy   ',
+        h('kbd', null, '['), h('kbd', null, ']'), ' switch game   ',
+        h('kbd', null, 'R'), ' restart   ',
+        h('kbd', null, 'F'), ' big screen   ',
+        h('kbd', null, '/'), ' search   ',
+        h('kbd', null, 'Esc'), ' back'),
       webHint);
     syncWebRow();
 
@@ -561,6 +567,19 @@
       /* F is a free key in every game here, so it is the big-screen toggle */
       if ((e.key === 'f' || e.key === 'F') && !e.ctrlKey && !e.metaKey &&
           !(currentGame && currentGame.usesLetters)) { e.preventDefault(); Arcade.toggleBig(); return; }
+      /* in a game: [ and ] flick to the previous/next game on the shelf,
+         R restarts the current one (skipped where letters are the controls) */
+      if (currentGame) {
+        if (e.key === '[' || e.key === ']') {
+          e.preventDefault();
+          const i = games.indexOf(currentGame);
+          if (i >= 0) { const j = (i + (e.key === ']' ? 1 : -1) + games.length) % games.length; Arcade.go(games[j].id); }
+          return;
+        }
+        if ((e.key === 'r' || e.key === 'R') && !e.ctrlKey && !e.metaKey && !currentGame.usesLetters) {
+          e.preventDefault(); route(); return;
+        }
+      }
       if (e.key === '/') { e.preventDefault(); if (!location.hash) Arcade._search.focus(); }
       if (e.key === 'Escape') {
         if (bigOn) setBig(false);
