@@ -1664,3 +1664,23 @@ body.crt.boss-on::after, body.crt.boss-on::before { display: none; }
 .theme-crt input { width: 15px; height: 15px; }
 .foot-check { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; cursor: pointer; margin-left: 6px; }
 .foot-check input { width: 13px; height: 13px; }
+
+/* ============ Your Timesheet (stats page) ============ */
+.stats-wrap { display: flex; flex-direction: column; gap: 16px; max-width: 900px; margin: 0 auto; width: 100%; }
+.ts-rating { max-width: 520px; }
+.ts-rating h4 { margin: 0 0 6px; }
+.ts-tier { font-family: Impact, "Arial Black", sans-serif; font-size: 30px; color: var(--grape); letter-spacing: .02em; margin-bottom: 8px; }
+.ts-rating p { margin: 8px 0 0; font-size: 12px; }
+.ts-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.ts-badge {
+  background: var(--banana); border: 3px solid var(--ink); box-shadow: 3px 3px 0 0 var(--ink);
+  padding: 5px 10px; font: 700 11px Verdana, sans-serif; letter-spacing: .03em; cursor: help;
+}
+.ts-table { width: 100%; border-collapse: collapse; background: var(--label); border: 3px solid var(--ink); box-shadow: var(--hard); font-size: 12px; }
+.ts-table th, .ts-table td { border: 1px solid var(--paper2); padding: 6px 9px; text-align: left; }
+.ts-table thead th { background: var(--paper2); font: 700 11px Verdana, sans-serif; letter-spacing: .04em; }
+.ts-table td.num, .ts-table th.num { text-align: right; font-family: "Courier New", monospace; }
+.ts-code { font-family: "Courier New", monospace; color: var(--ink3, #6d7b90); }
+.ts-ico { display: inline-flex; vertical-align: middle; margin-right: 7px; }
+.ts-total td { background: var(--paper2); font-weight: 700; }
+@media (max-width: 560px) { .ts-table { font-size: 11px; } .ts-table th, .ts-table td { padding: 4px 6px; } }

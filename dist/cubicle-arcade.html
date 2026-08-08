@@ -1679,6 +1679,26 @@ body.crt.boss-on::after, body.crt.boss-on::before { display: none; }
 .foot-check { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; cursor: pointer; margin-left: 6px; }
 .foot-check input { width: 13px; height: 13px; }
 
+/* ============ Your Timesheet (stats page) ============ */
+.stats-wrap { display: flex; flex-direction: column; gap: 16px; max-width: 900px; margin: 0 auto; width: 100%; }
+.ts-rating { max-width: 520px; }
+.ts-rating h4 { margin: 0 0 6px; }
+.ts-tier { font-family: Impact, "Arial Black", sans-serif; font-size: 30px; color: var(--grape); letter-spacing: .02em; margin-bottom: 8px; }
+.ts-rating p { margin: 8px 0 0; font-size: 12px; }
+.ts-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.ts-badge {
+  background: var(--banana); border: 3px solid var(--ink); box-shadow: 3px 3px 0 0 var(--ink);
+  padding: 5px 10px; font: 700 11px Verdana, sans-serif; letter-spacing: .03em; cursor: help;
+}
+.ts-table { width: 100%; border-collapse: collapse; background: var(--label); border: 3px solid var(--ink); box-shadow: var(--hard); font-size: 12px; }
+.ts-table th, .ts-table td { border: 1px solid var(--paper2); padding: 6px 9px; text-align: left; }
+.ts-table thead th { background: var(--paper2); font: 700 11px Verdana, sans-serif; letter-spacing: .04em; }
+.ts-table td.num, .ts-table th.num { text-align: right; font-family: "Courier New", monospace; }
+.ts-code { font-family: "Courier New", monospace; color: var(--ink3, #6d7b90); }
+.ts-ico { display: inline-flex; vertical-align: middle; margin-right: 7px; }
+.ts-total td { background: var(--paper2); font-weight: 700; }
+@media (max-width: 560px) { .ts-table { font-size: 11px; } .ts-table th, .ts-table td { padding: 4px 6px; } }
+
 </style>
 </head>
 <body>
@@ -3147,6 +3167,7 @@ body.crt.boss-on::after, body.crt.boss-on::before { display: none; }
         h('strong', null, 'SCORES:'),
         h('button', { class: 'btn tiny', type: 'button', onclick: exportSaves }, 'Back up'),
         h('button', { class: 'btn tiny', type: 'button', onclick: () => importInput.click() }, 'Restore'),
+        h('a', { class: 'foot-link', href: '#stats' }, 'Your timesheet'),
         importInput),
       webRow,
       h('span', null,
@@ -3315,6 +3336,70 @@ body.crt.boss-on::after, body.crt.boss-on::before { display: none; }
     applyDocTitle();
   }
 
+  /* ---------------- your timesheet (stats, doubles as camouflage) ---------------- */
+  const LADDER = [
+    [0, 'Intern'], [15, 'Junior Associate'], [40, 'Associate'], [80, 'Senior Associate'],
+    [140, 'Team Lead'], [220, 'Manager'], [340, 'Senior Manager'], [500, 'Regional Manager'], [750, 'VP of Morale']
+  ];
+  function renderStats() {
+    const view = document.getElementById('view');
+    const rows = [];
+    let totalPlays = 0, played = 0, records = 0;
+    for (const g of games) {
+      const pl = Arcade.plays(g.id), bs = Arcade.best(g.id);
+      totalPlays += pl; if (pl > 0) played++; if (bs != null) records++;
+      if (pl > 0 || bs != null) rows.push({ g, pl, bs });
+    }
+    rows.sort((a, b) => b.pl - a.pl);
+    const score = played * 3 + totalPlays + records * 2;
+    let tier = LADDER[0], next = null;
+    for (let i = 0; i < LADDER.length; i++) { if (score >= LADDER[i][0]) { tier = LADDER[i]; next = LADDER[i + 1] || null; } }
+    const pct = next ? Math.max(3, Math.round((score - tier[0]) / (next[0] - tier[0]) * 100)) : 100;
+
+    const badges = [];
+    const add = (cond, name, desc) => { if (cond) badges.push({ name, desc }); };
+    add(played >= 1, 'Onboarded', 'Played at least one game.');
+    add(totalPlays >= 25, 'Getting Comfortable', 'Twenty-five sessions on the clock.');
+    add(totalPlays >= 100, 'Regular', 'One hundred sessions. Nobody suspects a thing.');
+    add(records >= 10, 'Record Holder', 'Ten personal bests on file.');
+    add(played >= Math.ceil(games.length * 0.5), 'Half the Building', 'Tried half the shelf.');
+    add(played >= games.length, 'Completionist', 'Opened every game. Concerning and impressive.');
+    add(Arcade.plays('coffee') > 0, 'Caffeinated', 'You clicked the mug. It began.');
+    add(Arcade.best('reflex') != null, 'Quick Draw', 'Logged a reaction time.');
+
+    const table = h('table', { class: 'ts-table' },
+      h('thead', null, h('tr', null,
+        h('th', null, 'Code'), h('th', null, 'Activity'), h('th', null, 'Dept'),
+        h('th', { class: 'num' }, 'Sessions'), h('th', null, 'Best result'), h('th', { class: 'num' }, 'Hrs'))),
+      h('tbody', null,
+        rows.map((r, i) => h('tr', null,
+          h('td', { class: 'ts-code' }, 'TSK-' + (1000 + i)),
+          h('td', null, h('span', { class: 'ts-ico', html: Icons.svg(r.g.emoji, 16) }), r.g.title),
+          h('td', null, (CATS.find((c) => c.id === r.g.cat) || { label: r.g.cat }).label),
+          h('td', { class: 'num' }, r.pl),
+          h('td', null, r.bs == null ? '—' : (r.g.scoreLabel + ': ' + (r.g.formatScore ? r.g.formatScore(r.bs) : r.bs))),
+          h('td', { class: 'num' }, (r.pl * 0.4).toFixed(1)))),
+        rows.length ? h('tr', { class: 'ts-total' },
+          h('td', null, ''), h('td', null, 'TOTAL'), h('td', null, ''),
+          h('td', { class: 'num' }, totalPlays), h('td', null, records + ' records'),
+          h('td', { class: 'num' }, (totalPlays * 0.4).toFixed(1))) : null));
+
+    view.replaceChildren(
+      h('div', { class: 'stats-wrap' },
+        h('div', { class: 'gamehead' },
+          h('a', { class: 'back', href: '#' }, '◀ shelf'),
+          h('h2', { class: 'gtitle' }, h('span', { class: 'ge', html: Icons.svg('sheet', 24) }), 'Timesheet')),
+        h('div', { class: 'ts-rating panel' },
+          h('h4', null, 'Overall performance rating'),
+          h('div', { class: 'ts-tier' }, tier[1]),
+          h('div', { class: 'meter' }, h('i', { style: { width: pct + '%' } })),
+          h('p', null, next ? (pct + '% of the way to ' + next[1] + '.') : 'Top of the ladder. Nowhere left to be promoted.')),
+        badges.length ? h('div', { class: 'ts-badges' }, badges.map((b) => h('span', { class: 'ts-badge', title: b.desc }, b.name))) : null,
+        rows.length ? table
+          : h('p', { class: 'empty' }, 'No sessions logged yet. Go play something — this page fills itself in, and doubles as a convincing timesheet.')));
+    applyDocTitle();
+  }
+
   /* ---------------- game screen ---------------- */
   function renderGame(g) {
     const view = document.getElementById('view');
@@ -3413,6 +3498,9 @@ body.crt.boss-on::after, body.crt.boss-on::before { display: none; }
       recent.unshift(g.id);
       store.set('recent', recent.slice(0, 8));
       renderGame(g);
+    } else if ((location.hash || '') === '#stats') {
+      if (bigOn) setBig(false);
+      renderStats();
     } else {
       if (bigOn) setBig(false);
       renderHub();
