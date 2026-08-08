@@ -182,6 +182,7 @@ the page chrome, which gets you most of the way there.
 ```
 index.html            loads everything, in order
 css/arcade.css        the whole look
+js/core/analytics.js  the one network call: Vercel page views, deployed hosts only
 js/core/engine.js     canvas, loop, input, audio, DOM helper, disposer bag
 js/core/icons.js      the drawn icon set (there are no emoji in this build)
 js/core/themes.js     the colour-scheme presets and custom-colour builder
@@ -197,8 +198,25 @@ calls on the way out, so nothing leaks between games. `api.dm` is the difficulty
 multiplier every game scales its own knobs by. To add a game, drop a file in `js/games/`
 and add one `<script>` tag.
 
-Scores and progress live in `localStorage` under the `cubicle:` prefix. Nothing leaves
-the browser.
+Scores and progress live in `localStorage` under the `cubicle:` prefix. Your scores, your
+settings and anything you type into a panic screen never leave the browser. The only
+exception is the anonymous page-view ping described below, and only on a live deployment.
+
+## A note on analytics
+
+`js/core/analytics.js` wires up **Vercel Web Analytics**, and it is the single thing in the
+build that touches the network. It is on a short leash:
+
+- It loads **only when the page is served from a real deployed host**. Opened from a
+  `file://` path, from `localhost`, from a `192.168.x`/`10.x` LAN address, or as the
+  single-file bundle, it does nothing at all — so the "runs off the disk, nothing leaves
+  the browser" promise still holds everywhere except a live deployment, and the console
+  stays clean off-Vercel (no 404 for a Vercel script that no Vercel is serving).
+- It records **anonymous page views only**. No scores, no settings, and none of the text
+  you type into a panic screen is ever sent.
+- Collection still has to be switched on in the Vercel project: **Vercel dashboard →
+  your project → Analytics → enable Web Analytics**. The code side is done; that toggle is
+  the other half.
 
 ## Checked, not assumed
 
