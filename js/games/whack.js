@@ -217,7 +217,7 @@
   Arcade.register({
     id: 'whack',
     title: 'Whack-a-Meeting',
-    emoji: '📅',
+    emoji: 'whack',
     cat: 'goof',
     order: 61,
     blurb: 'Meeting invites pop up. Click them to decline. But the gold ones are payroll and your own review, so leave those alone.',

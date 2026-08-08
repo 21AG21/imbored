@@ -319,7 +319,7 @@
   Arcade.register({
     id: 'deskgolf',
     title: 'Desk Golf',
-    emoji: '⛳',
+    emoji: 'deskgolf',
     cat: 'goof',
     order: 63,
     blurb: 'Nine holes of putting across the office carpet. Desks bounce, mousepads drag, and someone has spilled coffee absolutely everywhere.',

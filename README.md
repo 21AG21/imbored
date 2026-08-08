@@ -18,17 +18,31 @@ page vanishes behind something that looks like work, the browser tab renames its
 match, and whatever you were playing pauses exactly where it was. Press it again to go
 back.
 
-There are four disguises and **you can type in all of them**, which is the entire point.
+There are **five** disguises and you can type in all of them, which is the entire point.
 A frozen screenshot fools nobody once somebody expects to see a cursor moving.
 
 | Disguise | What you get |
 |---|---|
-| 📄 **Doc** | A word processor with a real editable document, a live word count and a "Saved to Drive" tick. Opens with the caret already in the text. |
-| 📊 **Spreadsheet** | Every cell is editable and the formula bar tracks whatever cell you are in. |
-| ✉️ **Inbox** | A mail client with a folder list, a readable thread, and a reply box you can actually type a reply into. |
-| 💻 **Terminal** | A build log that already passed 73 tests, plus a live prompt. Type a command, hit Enter, get a plausible answer. |
+| **Doc** | A close reproduction of Google Docs: the real chrome, the pill toolbar with drawn icons, the ruler, an 8.5in page with 1in margins, and Arial 11pt body text. Fully editable, caret already in place. |
+| **Spreadsheet** | Every cell is editable and the formula bar tracks whatever cell you are in. |
+| **Inbox** | A mail client with a folder list, a readable thread, and a reply box you can actually type a reply into. |
+| **Terminal** | A build log that already passed 73 tests, plus a live prompt. Type a command, hit Enter, get a plausible answer. |
+| **Any website** | Type any web address into the box in the footer and the panic key takes you there. Two modes, explained below. |
 
-Pick one from **PANIC SCREEN** in the footer, or shift-click the 🕴 button to cycle.
+### Your own website as the panic screen
+
+Put an address in the **PANIC SCREEN** box in the footer and pick how it opens:
+
+- **Open the site** (default) navigates this tab straight to that address. This works with
+  literally any website. Your scores live in `localStorage`, so the back button brings the
+  arcade back exactly as you left it.
+- **Embed it** drops the site into a frame on top of the games, so whatever you were
+  playing stays paused underneath. This only works for sites that permit being framed, and
+  most large sites explicitly forbid it with `X-Frame-Options` or a `frame-ancestors`
+  policy. If you get a blank panel, that is why; switch to "Open the site".
+
+Neither mode works in the hosted preview link, whose sandbox blocks all external hosts.
+Run the local copy or your own hosted copy for this one.
 
 ## The difficulty dial
 
@@ -36,16 +50,16 @@ One button in the top bar, four settings, and **every game reads it**:
 
 | | What changes |
 |---|---|
-| 😌 **Chill** | Slower spawns, kinder timers, a Four In A Row opponent that plays badly on purpose. |
-| 🙂 **Normal** | The way these were built. |
-| 😰 **Hard** | Faster everything, fewer lives, five guesses in Word Guess, three-card draw in Solitaire, Tetris starts at level 4. |
-| 💀 **Nightmare** | One life in Brick Break and Rock Field, four guesses, one Solitaire redeal, Tetris at level 7, and targets in Reflex Grid that get bored and leave. |
+| **Chill** | Slower spawns, kinder timers, a Four In A Row opponent that plays badly on purpose. |
+| **Normal** | The way these were built. |
+| **Hard** | Faster everything, fewer lives, five guesses in Word Guess, three-card draw in Solitaire, Tetris starts at level 4. |
+| **Nightmare** | One life in Brick Break and Rock Field, four guesses, one Solitaire redeal, Tetris at level 7, and targets in Reflex Grid that get bored and leave. |
 
 Changing it restarts whatever is running so it takes effect immediately.
 
 ## Big screen
 
-The ⛶ button or the <kbd>F</kbd> key hides all the furniture and blows the game up to fill
+The expand button or the <kbd>F</kbd> key hides all the furniture and blows the game up to fill
 the window, requesting real browser fullscreen at the same time. <kbd>Esc</kbd> or
 <kbd>F</kbd> again brings the shelf back.
 
@@ -57,10 +71,10 @@ the window, requesting real browser fullscreen at the same time. <kbd>Esc</kbd> 
 
 | | |
 |---|---|
-| 🚦 **Gridlock** | Twelve intersections in rush hour. You are the lights. Cars route themselves, queue behind each other, and fill a commuter rage bar while they wait. |
-| 🛗 **Elevator Rush** | Three lifts, eight floors, and people who are already late. You decide who answers which call; passengers press their own buttons. |
-| ⚡ **Load Balance** | Hold a grid at 50 Hz through a full day. Coal ramps slowly, gas costs a fortune, and the weather does not consult you. |
-| ✈️ **Approach Control** | Draw flight paths on radar. Hold separation. Land each aircraft on its matching runway from the correct end. |
+| **Gridlock** | The deep one. Twelve junctions across a full working day with a budget. Cars, buses that pull in at stops, slow trucks and ambulances that run reds and pay out if they arrive in time. Traffic direction swings inbound at the morning peak and outbound in the evening. Drag along a row for a green wave. Pedestrians only cross during the all-red, so leaving the lights alone is a losing strategy. Between days you spend the takings on smart signals, roundabouts, overpasses, wider roads, ambulance priority and a congestion heat map. |
+| **Elevator Rush** | Three lifts, eight floors, and people who are already late. You decide who answers which call; passengers press their own buttons. |
+| **Load Balance** | Hold a grid at 50 Hz through a full day. Coal ramps slowly, gas costs a fortune, and the weather does not consult you. |
+| **Approach Control** | Draw flight paths on radar. Hold separation. Land each aircraft on its matching runway from the correct end. |
 
 There is a companion piece worth ten minutes if Gridlock got its hooks in:
 **[Phantom, a traffic jam with no cause at all](https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd)**.
@@ -68,21 +82,21 @@ One driver taps the brakes and the pulse outlives them, travelling backwards thr
 traffic forever. It is linked from the shelf and from Gridlock itself.
 
 ### Puzzles
-💣 **Minesweeper** · 🔢 **2048** · 🚗 **Jam Escape** · 📦 **Crate Pusher** · 🔧 **Pipe Dream** · 🃏 **Solitaire**
+**Minesweeper** · **2048** · **Jam Escape** · **Crate Pusher** · **Pipe Dream** · **Solitaire**
 
 ### Brain
-🔤 **Word Guess** · 💡 **Lights Out** · 🎯 **Reflex Grid** · 🎺 **Copycat** · 🔴 **Four In A Row**
+**Word Guess** · **Lights Out** · **Reflex Grid** · **Copycat** · **Four In A Row**
 
 ### Action
-🐍 **Snake** · 🧱 **Brick Break** · 🟦 **Stacker** · 🚀 **Rock Field** · 🚶 **The Commute**
+**Snake** · **Brick Break** · **Stacker** · **Rock Field** · **The Commute**
 
 ### Goofy
 | | |
 |---|---|
-| ☕ **Coffee Clicker** | Click mug. Buy an intern to click the mug. Buy a robot to manage the intern. Saves automatically, which is a threat. |
-| 📅 **Whack-a-Meeting** | Decline the junk invites before they book themselves in. The gold ones are payroll and your own review, so leave those alone. |
-| 🗑️ **Desk Toss** | Crumpled paper, one bin, and an air conditioning vent with a personal grudge. Bin on a desk counts double. |
-| ⛳ **Desk Golf** | Nine holes across the carpet. Desks bounce, mousepads drag, somebody has spilled coffee everywhere. |
+| **Coffee Clicker** | Click mug. Buy an intern to click the mug. Buy a robot to manage the intern. Saves automatically, which is a threat. |
+| **Whack-a-Meeting** | Decline the junk invites before they book themselves in. The gold ones are payroll and your own review, so leave those alone. |
+| **Desk Toss** | Crumpled paper, one bin, and an air conditioning vent with a personal grudge. Bin on a desk counts double. |
+| **Desk Golf** | Nine holes across the carpet. Desks bounce, mousepads drag, somebody has spilled coffee everywhere. |
 
 ---
 
@@ -94,8 +108,8 @@ traffic forever. It is linked from the shelf and from Gridlock itself.
 | <kbd>F</kbd> | big screen |
 | <kbd>/</kbd> | jump to search |
 | <kbd>Esc</kbd> | back to the shelf |
-| 🎲 | a game at random |
-| 🔇 | sound is **off** by default, because this is an office |
+| dice button | a game at random |
+| speaker button | sound is **off** by default, because this is an office |
 
 ## Running it
 
@@ -103,7 +117,7 @@ traffic forever. It is linked from the shelf and from Gridlock itself.
   there is no module or CORS problem loading from `file://`.
 - **Serve it.** `python3 -m http.server 8000`, then visit `http://localhost:8000`.
 - **One file.** `node tools/build-single-file.mjs` inlines everything into
-  `dist/cubicle-arcade.html`, about 300 KB, no other assets. Mail it to yourself.
+  `dist/cubicle-arcade.html`, about 357 KB, no other assets. Mail it to yourself.
 - **Host it.** Any static host. A GitHub Pages workflow sits in
   `.github/workflows/pages.yml` and only runs when you start it from the Actions tab.
 
@@ -113,7 +127,8 @@ traffic forever. It is linked from the shelf and from Gridlock itself.
 index.html            loads everything, in order
 css/arcade.css        the whole look
 js/core/engine.js     canvas, loop, input, audio, DOM helper, disposer bag
-js/core/boss.js       the four panic screens
+js/core/icons.js      the drawn icon set (there are no emoji in this build)
+js/core/boss.js       the five panic screens
 js/core/arcade.js     registry, router, shelf, scores, difficulty, CHOMPS
 js/games/*.js         one file per game, each registering itself
 tools/                the single-file bundler
@@ -132,7 +147,7 @@ the browser.
 
 - All 24 games get loaded in headless Chromium, driven with keys, clicks and drags, left
   running, then checked for console errors and uncaught exceptions. 24 of 24 clean, on all
-  four difficulty settings.
+  four difficulty settings, and again in the single-file bundle.
 - All four panic screens are opened and typed into by the test, and the typed text is read
   back out of the DOM to prove the keyboard reaches them.
 - The 28 **Jam Escape** boards were generated by random placement plus a breadth-first
@@ -142,6 +157,11 @@ the browser.
   candidate turned out to be genuinely unsolvable and was cut.
 - **Pipe Dream** and **Lights Out** build every board by scrambling a solved one, so
   solvability is structural rather than tested.
+
+## A note on the artwork
+
+Every icon on the page is drawn as inline SVG in `js/core/icons.js`, and every graphic
+inside a game is drawn with canvas primitives. There is not a single emoji in the build.
 
 ## A note on the spreadsheet
 

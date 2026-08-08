@@ -282,7 +282,7 @@
   Arcade.register({
     id: 'connect4',
     title: 'Four In A Row',
-    emoji: '🔴',
+    emoji: 'connect4',
     cat: 'brain',
     order: 25,
     blurb: 'Drop discs, get four in a line, try to beat a computer that is genuinely quite good at this once you turn the dial up.',

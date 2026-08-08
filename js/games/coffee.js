@@ -4,25 +4,25 @@
   const { h, clamp, rand, pick } = Engine;
 
   const SHOP = [
-    { id: 'intern', name: 'Unpaid Intern', emoji: '🧑‍🎓', base: 15, cps: 0.15, blurb: 'Fetches coffee. Slowly. Resentfully.' },
-    { id: 'press', name: 'French Press', emoji: '🫖', base: 110, cps: 1.1, blurb: 'Somebody left it in the sink for a week.' },
-    { id: 'machine', name: 'Vending Machine', emoji: '🎰', base: 620, cps: 5.4, blurb: 'Takes your money. Sometimes gives coffee.' },
-    { id: 'barista', name: 'Guy Named Todd', emoji: '🧔', base: 3400, cps: 24, blurb: 'Todd has opinions about beans.' },
-    { id: 'robot', name: 'Espresso Robot', emoji: '🤖', base: 21000, cps: 130, blurb: 'Four arms. Zero small talk. Perfect.' },
-    { id: 'breakroom', name: 'Second Break Room', emoji: '🚪', base: 145000, cps: 720, blurb: 'Nobody knows it exists. Keep it that way.' },
-    { id: 'farm', name: 'Rooftop Coffee Farm', emoji: '🌱', base: 980000, cps: 4200, blurb: 'HR filed a complaint. The beans are worth it.' },
-    { id: 'portal', name: 'Bean Portal', emoji: '🌀', base: 7600000, cps: 28000, blurb: 'It hums. Do not put your hand in it.' },
-    { id: 'singularity', name: 'Caffeine Singularity', emoji: '💥', base: 62000000, cps: 190000, blurb: 'Time is a flat white now.' }
+    { id: 'intern', name: 'Unpaid Intern', icon: 'panic', base: 15, cps: 0.15, blurb: 'Fetches coffee. Slowly. Resentfully.' },
+    { id: 'press', name: 'French Press', icon: 'coffee', base: 110, cps: 1.1, blurb: 'Somebody left it in the sink for a week.' },
+    { id: 'machine', name: 'Vending Machine', icon: 'dice', base: 620, cps: 5.4, blurb: 'Takes your money. Sometimes gives coffee.' },
+    { id: 'barista', name: 'Guy Named Todd', icon: 'panic', base: 3400, cps: 24, blurb: 'Todd has opinions about beans.' },
+    { id: 'robot', name: 'Espresso Robot', icon: 'smart', base: 21000, cps: 130, blurb: 'Four arms. Zero small talk. Perfect.' },
+    { id: 'breakroom', name: 'Second Break Room', icon: 'over', base: 145000, cps: 720, blurb: 'Nobody knows it exists. Keep it that way.' },
+    { id: 'farm', name: 'Rooftop Coffee Farm', icon: 'deskgolf', base: 980000, cps: 4200, blurb: 'HR filed a complaint. The beans are worth it.' },
+    { id: 'portal', name: 'Bean Portal', icon: 'circle', base: 7600000, cps: 28000, blurb: 'It hums. Do not put your hand in it.' },
+    { id: 'singularity', name: 'Caffeine Singularity', icon: 'boom', base: 62000000, cps: 190000, blurb: 'Time is a flat white now.' }
   ];
 
   const EVENTS = [
-    { t: '☕ Somebody took the last cup and did not start a new pot.', mul: -0.08 },
-    { t: '🎉 Free doughnuts in the kitchen! Morale spike!', mul: 0.25 },
-    { t: '🔥 The fire alarm went off. Nobody brewed anything for a bit.', mul: -0.12 },
-    { t: '📦 A mystery box of beans arrived. No note.', mul: 0.4 },
-    { t: '🧊 The machine is making iced coffee only. It is January.', mul: -0.06 },
-    { t: '🏆 You were named Employee Of The Month by nobody in particular.', mul: 0.6 },
-    { t: '💤 Post-lunch slump. Everything is molasses.', mul: -0.15 }
+    { t: 'Somebody took the last cup and did not start a new pot.', mul: -0.08 },
+    { t: 'Free doughnuts in the kitchen! Morale spike!', mul: 0.25 },
+    { t: 'The fire alarm went off. Nobody brewed anything for a bit.', mul: -0.12 },
+    { t: 'A mystery box of beans arrived. No note.', mul: 0.4 },
+    { t: 'The machine is making iced coffee only. It is January.', mul: -0.06 },
+    { t: 'You were named Employee Of The Month by nobody in particular.', mul: 0.6 },
+    { t: 'Post-lunch slump. Everything is molasses.', mul: -0.15 }
   ];
 
   const fmt = (n) => {
@@ -45,12 +45,12 @@
 
     let boost = 0, boostT = 0, eventText = '', eventT = 0, pops = [];
 
-    const pCups = api.pill('☕ 0');
+    const pCups = api.pill('Cups: 0');
     const pRate = api.pill('0.0 /sec');
     const pTotal = api.pill('lifetime 0');
 
     const mug = h('button', { class: 'mug', type: 'button', 'aria-label': 'Brew a cup' },
-      h('span', { class: 'mug-art' }, '☕'),
+      h('span', { class: 'mug-art', html: Icons.svg('coffee', 110) }),
       h('span', { class: 'mug-label' }, 'BREW'));
 
     const popLayer = h('div', { class: 'pop-layer' });
@@ -97,7 +97,7 @@
           class: 'shop-row', type: 'button',
           onclick: (e) => buy(it, e.shiftKey)
         },
-          h('span', { class: 'shop-emoji' }, it.emoji),
+          h('span', { class: 'shop-emoji', html: Icons.svg(it.icon, 24) }),
           h('span', { class: 'shop-body' },
             h('span', { class: 'shop-name' }, it.name),
             h('span', { class: 'shop-blurb' }, it.blurb)),
@@ -131,8 +131,8 @@
     mug.addEventListener('click', brew);
 
     function sync() {
-      pCups.textContent = '☕ ' + fmt(S.cups);
-      pRate.textContent = fmt(cps()) + ' /sec' + (boost ? (boost > 0 ? ' 🔺' : ' 🔻') : '');
+      pCups.textContent = 'Cups: ' + fmt(S.cups);
+      pRate.textContent = fmt(cps()) + ' /sec' + (boost ? (boost > 0 ? ' UP' : ' DOWN') : '');
       pRate.className = 'pill ' + (boost > 0 ? 'good' : boost < 0 ? 'bad' : '');
       pTotal.textContent = 'lifetime ' + fmt(S.total);
       for (const r of rows) {
@@ -183,7 +183,7 @@
   Arcade.register({
     id: 'coffee',
     title: 'Coffee Clicker',
-    emoji: '☕',
+    emoji: 'coffee',
     cat: 'goof',
     order: 60,
     blurb: 'Click mug. Get coffee. Buy an intern to click the mug. Buy a robot to manage the intern. This is how empires start.',

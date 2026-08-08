@@ -371,7 +371,7 @@
   Arcade.register({
     id: 'tetris',
     title: 'Stacker',
-    emoji: '🟦',
+    emoji: 'tetris',
     cat: 'action',
     order: 32,
     blurb: 'Falling blocks with hold, ghost piece, hard drop and a proper 7-bag. You already know exactly what to do here.',

@@ -27,10 +27,10 @@
      Every game multiplies its own knobs by Arcade.dm(): spawn rates, speeds,
      patience, board sizes, lives. One dial, sixteen different flavours of pain. */
   const DIFFS = [
-    { id: 'chill', label: '😌 CHILL', m: 0.7, note: 'Everything is slower and kinder. No shame in it.' },
-    { id: 'normal', label: '🙂 NORMAL', m: 1, note: 'The way these were built.' },
-    { id: 'hard', label: '😰 HARD', m: 1.55, note: 'Faster, meaner, fewer second chances.' },
-    { id: 'nightmare', label: '💀 NIGHTMARE', m: 2.3, note: 'This is a bad idea and you should do it.' }
+    { id: 'chill', label: 'CHILL', m: 0.7, note: 'Everything is slower and kinder. No shame in it.' },
+    { id: 'normal', label: 'NORMAL', m: 1, note: 'The way these were built.' },
+    { id: 'hard', label: 'HARD', m: 1.55, note: 'Faster, meaner, fewer second chances.' },
+    { id: 'nightmare', label: 'NIGHTMARE', m: 2.3, note: 'This is a bad idea and you should do it.' }
   ];
   let diffIdx = 1;
 
@@ -46,7 +46,7 @@
     register(def) {
       if (byId.has(def.id)) { console.warn('duplicate game id', def.id); return; }
       const g = Object.assign(
-        { cat: 'puzzle', emoji: '🎮', blurb: '', how: [], scoreLabel: 'Best', lowerIsBetter: false },
+        { cat: 'puzzle', emoji: 'dice', blurb: '', how: [], scoreLabel: 'Best', lowerIsBetter: false },
         def);
       games.push(g);
       byId.set(g.id, g);
@@ -98,7 +98,8 @@
   Arcade.toggleBig = () => setBig(!bigOn);
 
   let skinSel = null;
-  function syncSkinSel() { if (skinSel) skinSel.value = Boss.skinId(); }
+  let syncWebRow = () => { };
+  function syncSkinSel() { if (skinSel) skinSel.value = Boss.skinId(); syncWebRow(); }
 
   let diffBtn = null;
   function syncDiffBtn() {
@@ -118,7 +119,7 @@
 
     const soundBtn = h('button', { class: 'icon-btn', type: 'button', title: 'Noise on/off' });
     const syncSound = () => {
-      soundBtn.textContent = Engine.audio.muted ? '🔇' : '🔊';
+      soundBtn.innerHTML = Icons.svg(Engine.audio.muted ? 'mute' : 'sound', 19);
       soundBtn.classList.toggle('on', !Engine.audio.muted);
     };
     soundBtn.addEventListener('click', () => {
@@ -140,36 +141,66 @@
 
     const bar = h('header', { class: 'topbar' },
       h('a', { class: 'brand', href: '#' },
-        h('span', { class: 'brand-mark' }, '🕹'),
+        h('span', { class: 'brand-mark', html: Icons.svg('dice', 19) }),
         h('span', { class: 'brand-text' }, 'Cubicle', h('em', null, 'Arcade'), ' 98')),
       h('div', { class: 'topbar-spacer' }),
       diffBtn,
       search,
       h('button', {
         class: 'icon-btn', type: 'button', title: 'Surprise me',
+        html: Icons.svg('dice', 19),
         onclick: () => Arcade.go(Engine.pick(games).id)
-      }, '🎲'),
-      h('button', { class: 'icon-btn', id: 'fsbtn', type: 'button', title: 'Big screen (F)', onclick: () => Arcade.toggleBig() }, '⛶'),
+      }),
+      h('button', { class: 'icon-btn', id: 'fsbtn', type: 'button', title: 'Big screen (F)', html: Icons.svg('expand', 19), onclick: () => Arcade.toggleBig() }),
       soundBtn,
       h('button', {
         class: 'icon-btn', type: 'button',
         title: 'LOOK BUSY (backtick). Shift-click to change disguise.',
+        html: Icons.svg('panic', 19),
         onclick: (e) => { if (e.shiftKey) { Boss.cycle(); syncSkinSel(); } else toggleBoss(); }
-      }, '🕴'));
+      }));
 
     const view = h('main', { id: 'view', class: 'view' });
     skinSel = h('select', {
       class: 'sel', 'aria-label': 'Panic screen disguise',
-      onchange: () => Boss.setSkin(skinSel.value)
+      onchange: () => { Boss.setSkin(skinSel.value); syncWebRow(); }
     }, Boss.SKINS.map((sk) => h('option', { value: sk.id, selected: sk.id === Boss.skinId() ? true : null }, sk.label)));
+
+    const urlInput = h('input', {
+      class: 'boss-url', type: 'text', spellcheck: 'false',
+      placeholder: 'paste any web address', value: Boss.url(),
+      oninput: () => Boss.setUrl(urlInput.value)
+    });
+    const modeSel = h('select', {
+      class: 'sel', 'aria-label': 'How the site opens',
+      onchange: () => { Boss.setMode(modeSel.value); syncWebRow(); }
+    },
+      h('option', { value: 'jump', selected: Boss.mode() === 'jump' ? true : null }, 'Open the site'),
+      h('option', { value: 'embed', selected: Boss.mode() === 'embed' ? true : null }, 'Embed it'));
+
+    const webRow = h('span', { class: 'foot-skin' }, urlInput, modeSel);
+    const webHint = h('span', { class: 'foot-hint' });
+
+    syncWebRow = () => {
+      const isWeb = Boss.skinId() === 'web';
+      webRow.style.display = isWeb ? '' : 'none';
+      webHint.style.display = isWeb ? '' : 'none';
+      webHint.textContent = Boss.mode() === 'jump'
+        ? 'Open the site: the key loads that address in this tab. Works with any website. Your scores are saved, so come back with the back button.'
+        : 'Embed it: the key drops the site into a frame over the games, keeping your game paused underneath. Only works for sites that allow embedding, which most big ones do not.';
+    };
 
     const foot = h('footer', { class: 'foot' },
       h('span', { class: 'foot-skin' },
         h('strong', null, 'PANIC SCREEN:'), skinSel,
         h('button', { class: 'btn tiny', type: 'button', onclick: () => toggleBoss(true) }, 'try it')),
+      webRow,
       h('span', null,
-        h('a', { class: 'foot-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener' }, 'PHANTOM: why traffic jams happen for no reason \u2197')),
-      h('span', null, h('kbd', null, '`'), ' look busy   ', h('kbd', null, 'F'), ' big screen   ', h('kbd', null, '/'), ' search   ', h('kbd', null, 'Esc'), ' back'));
+        h('a', { class: 'foot-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener' }, 'PHANTOM: why traffic jams happen for no reason')),
+      h('span', null, h('kbd', null, '`'), ' look busy   ', h('kbd', null, 'F'), ' big screen   ', h('kbd', null, '/'), ' search   ', h('kbd', null, 'Esc'), ' back'),
+      webHint);
+    syncWebRow();
+
     document.body.append(bar, view, foot);
     document.body.appendChild(h('div', { class: 'bigscreen-note' }, 'big screen on • press F or Esc to shrink'));
     return view;
@@ -291,7 +322,7 @@
     const cards = list.map((g) => {
       const best = Arcade.best(g.id);
       return h('a', { class: 'card cat-' + g.cat, href: '#g/' + g.id },
-        h('span', { class: 'card-emoji' }, g.emoji),
+        h('span', { class: 'card-emoji', html: Icons.svg(g.emoji, 28) }),
         h('span', { class: 'card-cat' }, (CATS.find((c) => c.id === g.cat) || { label: g.cat }).label),
         h('h3', { class: 'card-title' }, g.title),
         h('p', { class: 'card-blurb' }, g.blurb),
@@ -314,7 +345,7 @@
         (!q && (activeCat === 'all' || activeCat === 'sim')) ? h('a', {
           class: 'card card-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener'
         },
-          h('span', { class: 'card-emoji' }, '\U0001F6E3'),
+          h('span', { class: 'card-emoji', html: Icons.svg('road', 28) }),
           h('span', { class: 'card-cat' }, 'Bonus'),
           h('h3', { class: 'card-title' }, 'Phantom'),
           h('p', { class: 'card-blurb' }, 'A traffic jam with no cause at all. One driver taps the brakes and the pulse outlives them, travelling backwards through the traffic forever. Watch it, then go play Gridlock again.'),
@@ -376,7 +407,7 @@
     view.replaceChildren(
       h('div', { class: 'gamehead' },
         h('a', { class: 'back', href: '#' }, '◀ shelf'),
-        h('h2', { class: 'gtitle' }, h('span', { class: 'ge' }, g.emoji), g.title),
+        h('h2', { class: 'gtitle' }, h('span', { class: 'ge', html: Icons.svg(g.emoji, 24) }), g.title),
         g.link ? h('a', { class: 'back rel-link', href: g.link.url, target: '_blank', rel: 'noopener' }, g.link.label + ' \u2197') : null,
         h('div', { class: 'gmeta' },
           h('span', { class: 'pill diff-tag d-' + Arcade.diff().id }, Arcade.diff().label),

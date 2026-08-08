@@ -303,7 +303,7 @@
   Arcade.register({
     id: 'breakout',
     title: 'Brick Break',
-    emoji: '🧱',
+    emoji: 'breakout',
     cat: 'action',
     order: 31,
     blurb: 'Bounce, smash, grab the falling letters. Multiball is a gift right up until the moment it is a punishment.',

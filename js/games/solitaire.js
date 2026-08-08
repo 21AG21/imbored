@@ -490,7 +490,7 @@
   Arcade.register({
     id: 'solitaire',
     title: 'Solitaire',
-    emoji: '🃏',
+    emoji: 'solitaire',
     cat: 'puzzle',
     order: 15,
     blurb: 'Klondike. The one that has been on office computers since 1990 and has outlasted every operating system it shipped with.',

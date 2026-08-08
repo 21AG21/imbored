@@ -11,10 +11,42 @@
 
   const rowY = (r) => TOP + (ROWS - 1 - r) * ROWH;   // row 0 at the bottom
 
+  /* office hazards, drawn rather than typed */
   const HAZARDS = [
-    { emoji: '🪑', w: 46 }, { emoji: '🛒', w: 62 }, { emoji: '🖨️', w: 56 },
-    { emoji: '🧹', w: 44 }, { emoji: '☕', w: 38 }
+    { kind: 'chair', w: 46, col: '#4a4155' },
+    { kind: 'cart', w: 64, col: '#a79e88' },
+    { kind: 'printer', w: 58, col: '#cfc6ae' },
+    { kind: 'trolley', w: 50, col: '#00a6b4' }
   ];
+
+  function drawHazard(ctx, k, w, hgt) {
+    ctx.fillStyle = k.col;
+    if (k.kind === 'chair') {
+      ctx.fillRect(-w / 2, -4, w, 9);
+      ctx.fillRect(-w / 2 + 4, -hgt / 2 + 2, 8, 14);
+      ctx.fillStyle = '#1d1722';
+      ctx.beginPath(); ctx.arc(-w / 2 + 7, 10, 4, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(w / 2 - 7, 10, 4, 0, 7); ctx.fill();
+    } else if (k.kind === 'cart') {
+      ctx.fillRect(-w / 2, -hgt / 2 + 4, w, hgt - 14);
+      ctx.fillStyle = '#1d1722';
+      ctx.fillRect(-w / 2, -hgt / 2 + 4, w, 3);
+      ctx.beginPath(); ctx.arc(-w / 2 + 8, hgt / 2 - 8, 4, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(w / 2 - 8, hgt / 2 - 8, 4, 0, 7); ctx.fill();
+    } else if (k.kind === 'printer') {
+      ctx.fillRect(-w / 2, -10, w, 20);
+      ctx.fillStyle = '#fffdf3';
+      ctx.fillRect(-w / 2 + 6, -16, w - 12, 7);
+      ctx.fillStyle = '#1d1722';
+      ctx.fillRect(-w / 2 + 5, 2, w - 10, 4);
+    } else {
+      ctx.fillRect(-w / 2, -hgt / 2 + 6, w, hgt - 16);
+      ctx.fillStyle = '#1d1722';
+      ctx.fillRect(-w / 2 + 4, -hgt / 2 + 10, w - 8, 4);
+      ctx.beginPath(); ctx.arc(-w / 2 + 9, hgt / 2 - 10, 4, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(w / 2 - 9, hgt / 2 - 10, 4, 0, 7); ctx.fill();
+    }
+  }
 
   function mount(root, api) {
     const bagg = Engine.bag();
@@ -53,7 +85,7 @@
         const gap = W / n;
         const type = pick(HAZARDS);
         for (let i = 0; i < n; i++) {
-          items.push({ x: i * gap + rand(0, gap * 0.4), w: type.w, emoji: type.emoji });
+          items.push({ x: i * gap + rand(0, gap * 0.4), w: type.w, kind: type });
         }
         lanes.push({ r, speed, items });
       }
@@ -201,9 +233,11 @@
         ctx.strokeStyle = '#0c1119';
         ctx.lineWidth = 3;
         ctx.strokeRect(x + 8, rowY(11) + 6, W / 5 - 16, ROWH - 12);
-        ctx.font = '22px system-ui, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(desks[i] ? '🧑‍💻' : '🪑', x + W / 10, rowY(11) + 32);
+        const dx = x + W / 10, dy = rowY(11) + ROWH / 2;
+        ctx.fillStyle = desks[i] ? '#1d1722' : '#cfc6ae';
+        ctx.fillRect(dx - 13, dy - 8, 26, 15);
+        ctx.fillStyle = desks[i] ? '#1d1722' : '#8a6a3a';
+        ctx.fillRect(dx - 4, dy + 7, 8, 5);
       }
 
       /* belts first, so hazards draw over them cleanly */
@@ -223,17 +257,13 @@
         }
       }
 
-      ctx.font = '26px system-ui, sans-serif';
-      ctx.textAlign = 'left';
       for (const l of lanes) {
         const y = rowY(l.r);
         for (const it of l.items) {
           ctx.save();
           ctx.translate(it.x + it.w / 2, y + ROWH / 2);
           if (l.speed < 0) ctx.scale(-1, 1);
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(it.emoji, 0, 2);
+          drawHazard(ctx, it.kind, it.w, ROWH - 8);
           ctx.restore();
         }
       }
@@ -244,10 +274,21 @@
         ctx.save();
         ctx.translate(px, py + ROWH / 2);
         ctx.scale(s, s);
-        ctx.font = '28px system-ui, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(dead ? '💥' : '🚶', 0, 0);
+        if (dead) {
+          ctx.fillStyle = '#e8402a';
+          ctx.beginPath();
+          for (let i = 0; i < 10; i++) {
+            const a = i / 10 * Math.PI * 2, rr = i % 2 ? 7 : 15;
+            i ? ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : ctx.moveTo(Math.cos(a) * rr, Math.sin(a) * rr);
+          }
+          ctx.closePath(); ctx.fill();
+        } else {
+          ctx.fillStyle = '#00a6b4';
+          ctx.beginPath(); ctx.arc(0, -9, 5.5, 0, 7); ctx.fill();
+          ctx.fillRect(-5, -3, 10, 11);
+          ctx.fillRect(-5, 8, 4, 6);
+          ctx.fillRect(1, 8, 4, 6);
+        }
         ctx.restore();
       }
 
@@ -279,7 +320,7 @@
   Arcade.register({
     id: 'commute',
     title: 'The Commute',
-    emoji: '🚶',
+    emoji: 'commute',
     cat: 'action',
     order: 34,
     blurb: 'Cross the open-plan office to an empty desk. Four lanes of rolling chairs first, then the belts, where standing on nothing is fatal.',

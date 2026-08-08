@@ -154,7 +154,7 @@
   Arcade.register({
     id: 'reflex',
     title: 'Reflex Grid',
-    emoji: '🎯',
+    emoji: 'reflex',
     cat: 'brain',
     order: 23,
     blurb: 'Twenty five targets, one number at the end. The most brutally honest game on the shelf.',

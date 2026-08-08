@@ -94,7 +94,7 @@
   Arcade.register({
     id: 'lightsout',
     title: 'Lights Out',
-    emoji: '💡',
+    emoji: 'lightsout',
     cat: 'brain',
     order: 22,
     blurb: 'Every light you poke flips its neighbours too. Looks trivial. Is not. Extremely quiet to play.',

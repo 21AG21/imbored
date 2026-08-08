@@ -269,7 +269,7 @@
   Arcade.register({
     id: 'jam',
     title: 'Jam Escape',
-    emoji: '🚗',
+    emoji: 'jam',
     cat: 'puzzle',
     order: 12,
     blurb: 'Twenty-eight car park jams. Every single one was solved by computer first, so the exit definitely exists. Probably.',

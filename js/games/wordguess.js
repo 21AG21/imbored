@@ -170,7 +170,7 @@
   Arcade.register({
     id: 'wordguess',
     title: 'Word Guess',
-    emoji: '🔤',
+    emoji: 'wordguess',
     cat: 'brain',
     order: 21,
     blurb: 'Five letters, six goes, as many rounds as your meeting lasts. No daily limit, no share button, no waiting until tomorrow.',

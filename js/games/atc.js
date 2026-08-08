@@ -300,7 +300,7 @@
   Arcade.register({
     id: 'atc',
     title: 'Approach Control',
-    emoji: '✈️',
+    emoji: 'atc',
     cat: 'sim',
     order: 4,
     blurb: 'Draw the flight paths with your finger. Keep everyone apart. Land the pink ones on the pink runway. It gets busy fast.',

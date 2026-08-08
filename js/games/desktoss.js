@@ -332,7 +332,7 @@
   Arcade.register({
     id: 'desktoss',
     title: 'Desk Toss',
-    emoji: '🗑️',
+    emoji: 'desktoss',
     cat: 'goof',
     order: 62,
     blurb: 'Crumpled paper, one bin, and an air conditioning vent with a personal grudge. Bin on a desk counts double.',

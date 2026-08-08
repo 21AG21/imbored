@@ -14,7 +14,7 @@
     let diff = api.load('diff', 'easy');
     let W, Hh, M, grid, opened, flags, started, dead, won, t0, timerId, firstDone;
 
-    const pMines = api.pill('💣 0');
+    const pMines = api.pill('Mines: 0');
     const pTime = api.pill('⏱ 0');
     const pBest = api.pill('');
     const boardWrap = h('div', { class: 'ms' });
@@ -163,7 +163,7 @@
       api.sfx.boom();
       banner.style.display = '';
       banner.replaceChildren(
-        h('h3', null, '💥 Boom.'),
+        h('h3', null, 'Boom.'),
         h('p', null, 'That one was a mine. ' + (M - flags) + ' left unfound.'),
         h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'New board'));
     }
@@ -185,14 +185,14 @@
       syncPills();
       banner.style.display = '';
       banner.replaceChildren(
-        h('h3', null, '🚩 Swept.'),
+        h('h3', null, 'Swept.'),
         h('p', null, LEVELS[diff].label.split(' (')[0] + ' cleared in ' + secs + 's' +
           (record ? ' Fastest yet!' : ' (best ' + prev + 's)') + '. Total wins: ' + wins + '.'),
         h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Again'));
     }
 
     function syncPills() {
-      pMines.textContent = '💣 ' + (M - flags);
+      pMines.textContent = 'Mines: ' + (M - flags);
       pTime.textContent = '⏱ ' + (started ? elapsed() : 0);
       const b = api.load('time:' + diff, null);
       pBest.textContent = b == null ? 'no time yet' : 'best ' + b + 's';
@@ -205,11 +205,15 @@
         let txt = '';
         if (c.open) {
           cls += ' open';
-          if (c.mine) { cls += ' mine'; txt = c.boom ? '💥' : '💣'; }
+          if (c.mine) { cls += ' mine'; txt = c.boom ? 'ICON:boom' : 'ICON:mine'; }
           else if (c.n) { cls += ' n' + c.n; txt = c.n; }
-        } else if (c.flag) { cls += ' flag'; txt = '🚩'; }
+        } else if (c.flag) { cls += ' flag'; txt = 'ICON:flag'; }
         if (el.className !== cls) el.className = cls;
-        if (el.textContent !== String(txt)) el.textContent = txt;
+        const want = String(txt);
+        if (el.dataset.shown === want) continue;
+        el.dataset.shown = want;
+        if (want.slice(0, 5) === 'ICON:') el.innerHTML = Icons.svg(want.slice(5), 19);
+        else el.textContent = want;
       }
       syncPills();
     }
@@ -221,7 +225,7 @@
   Arcade.register({
     id: 'minesweeper',
     title: 'Minesweeper',
-    emoji: '💣',
+    emoji: 'minesweeper',
     cat: 'puzzle',
     order: 10,
     blurb: 'The reigning world champion at making you look deep in thought. Three sizes, first click always safe, proper chording.',

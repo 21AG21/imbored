@@ -26,9 +26,9 @@
 
     /* controllable plants */
     const SPECS = [
-      { id: 'coal', name: 'Coal', emoji: '🏭', cap: 62, ramp: 4.5, cost: 26, co2: 0.95, min: 22, note: 'cheap, slow, filthy' },
-      { id: 'gas', name: 'Gas peaker', emoji: '🔥', cap: 46, ramp: 34, cost: 78, co2: 0.42, min: 0, note: 'instant, expensive' },
-      { id: 'hydro', name: 'Hydro', emoji: '💧', cap: 30, ramp: 16, cost: 12, co2: 0, min: 0, note: 'limited reservoir' }
+      { id: 'coal', name: 'Coal', icon: 'over', cap: 62, ramp: 4.5, cost: 26, co2: 0.95, min: 22, note: 'cheap, slow, filthy' },
+      { id: 'gas', name: 'Gas peaker', icon: 'boom', cap: 46, ramp: 34, cost: 78, co2: 0.42, min: 0, note: 'instant, expensive' },
+      { id: 'hydro', name: 'Hydro', icon: 'reports', cap: 30, ramp: 16, cost: 12, co2: 0, min: 0, note: 'limited reservoir' }
     ];
 
     function reset() {
@@ -88,7 +88,7 @@
         sliders[sp.id + ':out'] = outEl;
         sliders[sp.id + ':set'] = setEl;
         panels.appendChild(h('div', { class: 'panel plant' },
-          h('h4', null, sp.emoji + ' ' + sp.name),
+          h('h4', null, Engine.h('span', { class: 'ico-wrap', html: Icons.svg(sp.icon, 16) }), ' ' + sp.name),
           range,
           h('div', { class: 'row' }, h('span', null, 'setpoint'), setEl),
           h('div', { class: 'row' }, h('span', null, 'output'), outEl),
@@ -105,7 +105,7 @@
       sliders['bat:out'] = batOut;
       sliders['bat:charge'] = batCharge;
       panels.appendChild(h('div', { class: 'panel plant' },
-        h('h4', null, '🔋 Battery'),
+        h('h4', null, 'Battery'),
         bat,
         h('div', { class: 'row' }, h('span', null, 'charge ⟷ discharge'), batOut),
         h('div', { class: 'row' }, h('span', null, 'state of charge'), batCharge),
@@ -116,7 +116,7 @@
         }, 'Idle battery')));
 
       const ren = h('div', { class: 'panel plant' },
-        h('h4', null, '☀️ Renewables'),
+        h('h4', null, 'Renewables'),
         h('div', { class: 'row' }, h('span', null, 'solar'), h('span', { class: 'val', id: 'pg-solar' }, '0')),
         h('div', { class: 'row' }, h('span', null, 'wind'), h('span', { class: 'val', id: 'pg-wind' }, '0')),
         h('div', { class: 'row' }, h('span', null, 'reservoir'), h('span', { class: 'val', id: 'pg-res' }, '100%')),
@@ -146,12 +146,12 @@
 
     /* ---------------- events ---------------- */
     const EVENTS = [
-      { text: '☁️  Cloud front rolling in. Solar is dropping.', run: () => { S.cloud = 0.18; S.cloudT = 16; } },
-      { text: '🍃  Wind is dying off.', run: () => { S.wind = 0.08; S.windTrend = 0.02; } },
-      { text: '🌬️  Gusty front. Wind is surging.', run: () => { S.wind = 0.95; S.windTrend = -0.03; } },
-      { text: '🏭  Smelter kicked on. Demand spike incoming.', run: () => { S.surge = 26; S.surgeT = 18; } },
-      { text: '⚠️  Coal unit tripped offline! Restart it.', run: () => { S.tripT = 9; S.out.coal = 0; } },
-      { text: '❄️  Cold snap. Everyone turned the heat up.', run: () => { S.surge = 18; S.surgeT = 26; } }
+      { text: 'Cloud front rolling in. Solar is dropping.', run: () => { S.cloud = 0.18; S.cloudT = 16; } },
+      { text: 'Wind is dying off.', run: () => { S.wind = 0.08; S.windTrend = 0.02; } },
+      { text: 'Gusty front. Wind is surging.', run: () => { S.wind = 0.95; S.windTrend = -0.03; } },
+      { text: 'Smelter kicked on. Demand spike incoming.', run: () => { S.surge = 26; S.surgeT = 18; } },
+      { text: 'Coal unit tripped offline! Restart it.', run: () => { S.tripT = 9; S.out.coal = 0; } },
+      { text: 'Cold snap. Everyone turned the heat up.', run: () => { S.surge = 18; S.surgeT = 26; } }
     ];
     let eventTimer = 14;
 
@@ -165,7 +165,7 @@
       if (Math.floor(S.hour / 24) > Math.floor(prevHour / 24)) {
         S.day++;
         S.reservoir = Math.min(100, S.reservoir + 25);
-        flash('🌅  Day ' + S.day + '. Demand is up again.');
+        flash('Day ' + S.day + '. Demand is up again.');
       }
 
       /* weather drifts */
@@ -241,7 +241,7 @@
       const res = api.submit(hours);
       banner.style.display = '';
       banner.replaceChildren(
-        h('h3', null, '🌑 Blackout.'),
+        h('h3', null, 'Blackout.'),
         h('p', null, 'You held the grid for ' + hours + ' hours (' + (hours / 24).toFixed(1) + ' days), ' +
           'spent $' + S.cost.toFixed(1) + 'M and vented ' + S.co2.toFixed(1) + ' kt of CO₂.' +
           (res.isRecord ? ' New personal best!' : res.isFirst ? '' : ' Best: ' + res.best + ' h.')),
@@ -377,7 +377,7 @@
   Arcade.register({
     id: 'powergrid',
     title: 'Load Balance',
-    emoji: '⚡',
+    emoji: 'powergrid',
     cat: 'sim',
     order: 3,
     blurb: 'Generation has to equal demand every single second or the lights go out. Solar and wind will not be helping.',

@@ -299,7 +299,7 @@
   Arcade.register({
     id: 'asteroids',
     title: 'Rock Field',
-    emoji: '🚀',
+    emoji: 'asteroids',
     cat: 'action',
     order: 33,
     blurb: 'Drifting, shooting, and the slow horror of realising momentum does not stop just because you did.',

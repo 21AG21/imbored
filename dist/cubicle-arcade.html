@@ -269,11 +269,18 @@ kbd {
   width: 46px; height: 46px;
   font-size: 25px;
   line-height: 1;
-  background: var(--label);
+  background: var(--paper2);
   border: 3px solid var(--ink);
   box-shadow: var(--bevel-in);
   margin-bottom: 4px;
 }
+.ico { display: block; }
+.ico-wrap { display: inline-flex; vertical-align: middle; }
+.icon-btn .ico { margin: 0 auto; }
+.gtitle .ge { display: inline-flex; background: var(--banana); border: 2px solid var(--ink); padding: 3px; }
+.gl-buy-icon { display: inline-flex; flex: none; background: var(--paper2); border: 2px solid var(--ink); padding: 3px; }
+.shop-emoji { display: inline-flex; flex: none; }
+.mug-art .ico { width: clamp(70px, 18vw, 130px); height: auto; }
 .card-cat {
   position: absolute;
   top: 10px; right: -6px;
@@ -689,45 +696,119 @@ body.boss-on { overflow: hidden; }
 .btn.tiny { padding: 4px 9px; font-size: 10px; }
 
 /* ---------------- disguise 1: the document ---------------- */
-.docs { background: #f8f9fa; font: 14px/1.5 Roboto, Arial, "Segoe UI", system-ui, sans-serif; color: #202124; }
-.doc-top { display: flex; align-items: center; padding: 7px 14px 3px; background: #fff; }
-.doc-ident { display: flex; gap: 10px; align-items: flex-start; }
-.doc-icon { font-size: 26px; line-height: 1; margin-top: 2px; }
-.doc-name { font-size: 17px; color: #202124; }
-.doc-menu { display: flex; gap: 14px; font-size: 12.5px; color: #444746; margin-top: 2px; }
-.doc-actions { margin-left: auto; display: flex; align-items: center; gap: 14px; font-size: 12.5px; color: #444746; }
-.doc-saved { color: #5f6368; }
-.doc-share { background: #c2e7ff; color: #001d35; padding: 7px 15px; border-radius: 18px; font-weight: 500; }
-.doc-tools {
-  display: flex; align-items: center; gap: 3px;
-  margin: 6px auto 10px; padding: 4px 10px;
-  background: #edf2fa; border-radius: 20px; width: fit-content; max-width: 96%;
+.gdocs {
+  background: #f9fbfd;
+  font: 14px/1.4 Roboto, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  color: #1f1f1f;
+}
+.gd-head { display: flex; align-items: flex-start; gap: 10px; padding: 8px 16px 0; background: #f9fbfd; }
+.gd-logo { flex: none; margin-top: 2px; line-height: 0; }
+.gd-headmid { flex: 1; min-width: 0; }
+.gd-titlerow { display: flex; align-items: center; gap: 8px; }
+.gd-title { font-size: 18px; color: #1f1f1f; line-height: 1.3; }
+.gd-mini { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; line-height: 0; }
+.gd-mini:hover { background: #e8eaed; }
+.gd-menu { display: flex; gap: 2px; margin-top: -1px; }
+.gd-menu span { font-size: 14px; color: #444746; padding: 2px 7px; border-radius: 4px; }
+.gd-menu span:hover { background: #e8eaed; }
+.gd-headright { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+.gd-share {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: #c2e7ff; color: #001d35;
+  padding: 9px 22px 9px 16px; border-radius: 100px;
+  font-size: 14px; font-weight: 500; white-space: nowrap;
+}
+.gd-lock { line-height: 0; }
+.gd-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: #7b4fbd; color: #fff;
+  display: grid; place-items: center; font-size: 14px; font-weight: 500;
+}
+.gd-toolwrap { padding: 6px 16px 0; }
+.gd-tools {
+  display: flex; align-items: center; gap: 2px;
+  background: #edf2fa; border-radius: 100px;
+  padding: 4px 10px; margin: 0 auto; width: fit-content; max-width: 100%;
   overflow: hidden; color: #444746;
 }
-.dtool { display: grid; place-items: center; min-width: 28px; height: 28px; border-radius: 4px; font-size: 13px; }
-.dtool.wide { min-width: auto; padding: 0 10px; font-size: 12.5px; }
-.dtool.num { min-width: 30px; background: #fff; border-radius: 4px; font-size: 12px; }
-.dtool.b { font-weight: 700; } .dtool.i { font-style: italic; } .dtool.u { text-decoration: underline; }
-.dsep { width: 1px; height: 18px; background: #c7c7c7; margin: 0 4px; }
-.doc-page-wrap { flex: 1; overflow: auto; padding: 16px 0 40px; }
-.doc-page {
-  width: min(816px, 94%); margin: 0 auto; min-height: 940px;
-  background: #fff; border: 1px solid #e0e0e0;
-  box-shadow: 0 1px 3px rgba(60,64,67,.25);
-  padding: 74px 88px;
+.gd-tb {
+  display: inline-grid; place-items: center;
+  min-width: 28px; height: 28px; border-radius: 4px;
+  font-size: 14px; line-height: 0;
 }
-.doc-body { min-height: 780px; font-size: 15px; line-height: 1.72; color: #202124; caret-color: #1a73e8; }
-.doc-body h1 { font: 400 27px/1.3 Arial, sans-serif; text-transform: none; margin: 0 0 4px; color: #202124; letter-spacing: 0; }
-.doc-body h2 { font: 400 19px/1.35 Arial, sans-serif; text-transform: none; margin: 24px 0 6px; color: #202124; letter-spacing: 0; }
-.doc-body p { margin: 0 0 12px; }
-.doc-body p.sub { color: #5f6368; font-style: italic; }
-.doc-body ul, .doc-body ol { margin: 0 0 12px; padding-left: 34px; }
-.doc-body li { margin: 3px 0; }
-.doc-status {
-  display: flex; gap: 22px; align-items: center;
-  padding: 6px 16px; background: #f8f9fa; border-top: 1px solid #e0e0e0;
-  font-size: 11.5px; color: #5f6368;
+.gd-tb:hover { background: #dde3ea; }
+.gd-tb.bold { font-weight: 700; line-height: 1; }
+.gd-tb.ital { font-style: italic; font-family: Georgia, serif; line-height: 1; }
+.gd-tb.undl { text-decoration: underline; line-height: 1; }
+.gd-tb.tcol { line-height: 1; border-bottom: 3px solid #1f1f1f; height: 22px; margin-top: 3px; }
+.gd-dd {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 28px; padding: 0 6px 0 10px; border-radius: 4px; font-size: 14px; white-space: nowrap;
 }
+.gd-dd.wide { min-width: 92px; }
+.gd-dd:hover, .gd-zoom:hover, .gd-mode:hover { background: #dde3ea; }
+.gd-caret { display: inline-block; border: 4px solid transparent; border-top-color: #444746; margin-top: 4px; }
+.gd-zoom { display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 6px 0 10px; border-radius: 4px; font-size: 14px; }
+.gd-fontsize {
+  width: 32px; height: 26px; display: grid; place-items: center;
+  background: #fff; border: 1px solid #dadce0; border-radius: 4px; font-size: 13px;
+}
+.gd-sep { width: 1px; height: 20px; background: #c7c7c7; margin: 0 5px; flex: none; }
+.gd-mode { display: inline-flex; align-items: center; gap: 3px; height: 28px; padding: 0 6px; border-radius: 4px; line-height: 0; }
+
+.gd-ruler { padding: 8px 0 0; background: #f9fbfd; }
+.gd-rulerinner {
+  position: relative;
+  width: min(816px, 94%); margin: 0 auto; height: 14px;
+  background: #fff; border: 1px solid #e0e0e0; border-bottom: none;
+  background-image: repeating-linear-gradient(90deg, #b9bdc2 0 1px, transparent 1px 48px);
+  background-position: 96px 0;
+}
+.gd-margin { position: absolute; top: 0; width: 96px; height: 100%; background: #dfe3e8; }
+.gd-margin.left { left: 0; }
+.gd-margin.right { right: 0; }
+
+.gd-canvas { flex: 1; overflow: auto; padding: 0 0 40px; background: #f9fbfd; }
+.gd-page {
+  width: min(816px, 94%); margin: 0 auto; min-height: 1054px;
+  background: #fff; box-shadow: 0 1px 3px 1px rgba(60,64,67,.15);
+  padding: 96px;
+}
+.gd-body {
+  min-height: 860px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14.66px;      /* 11pt, which is what Docs actually uses */
+  line-height: 1.5;
+  color: #000;
+  caret-color: #1a73e8;
+}
+.gd-body h1 { font: 400 26.66px/1.25 Arial, sans-serif; color: #000; text-transform: none; letter-spacing: 0; margin: 0 0 6px; }
+.gd-body h2 { font: 400 21.33px/1.3 Arial, sans-serif; color: #000; text-transform: none; letter-spacing: 0; margin: 18px 0 4px; }
+.gd-body p { margin: 0 0 11px; }
+.gd-body .muted { color: #666; }
+.gd-body ul, .gd-body ol { margin: 0 0 11px; padding-left: 40px; }
+.gd-body li { margin: 2px 0; }
+.gd-foot {
+  padding: 5px 16px; background: #f9fbfd; border-top: 1px solid #e0e0e0;
+  font-size: 12px; color: #5f6368;
+}
+.gd-editnote { color: #5f6368; }
+
+/* ---------------- disguise 5: any website ---------------- */
+.webskin { position: relative; background: #fff; }
+.web-frame { flex: 1; width: 100%; height: 100%; border: 0; display: block; }
+.web-note {
+  position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%);
+  max-width: min(560px, 90%);
+  background: #202124; color: #e8eaed;
+  padding: 12px 16px; border-radius: 8px;
+  font: 13px/1.5 Roboto, Arial, sans-serif;
+  opacity: 0; transition: opacity .4s; pointer-events: none;
+}
+.web-note.show { opacity: .95; }
+.webskin.empty { display: grid; place-items: center; background: #f9fbfd; }
+.web-empty { text-align: center; font: 15px/1.6 Roboto, Arial, sans-serif; color: #444746; }
+.web-empty h3 { font: 400 22px/1.3 Arial, sans-serif; text-transform: none; letter-spacing: 0; margin: 0 0 8px; color: #1f1f1f; }
 
 /* ---------------- disguise 2: the spreadsheet ---------------- */
 .sheet { background: #fff; font: 13px/1.35 "Segoe UI", system-ui, -apple-system, Arial, sans-serif; color: #1b1c1f; }
@@ -944,6 +1025,17 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
 .foot-link { text-decoration: underline; font-weight: 700; }
 .foot-link:hover { background: var(--banana); }
 .rel-link { background: var(--banana); }
+
+/* panic-screen controls in the footer */
+.foot-skin { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.foot-skin strong { font: 700 11px/1 Verdana, sans-serif; letter-spacing: .06em; }
+.boss-url {
+  background: var(--label); border: 3px solid var(--ink);
+  padding: 5px 9px; font: 11px/1 "Courier New", monospace; color: var(--ink);
+  width: min(230px, 46vw); outline: none;
+}
+.boss-url::placeholder { color: var(--ink3); }
+.foot-hint { font-size: 10px; color: var(--ink3); width: 100%; }
 
 </style>
 <script>
@@ -1236,8 +1328,160 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
 
 </script>
 <script>
-/* The panic screen. Four disguises, all of them typeable.
-   Hit the key, land in something that looks like work, and actually type in it. */
+/* Drawn icon set. No emoji anywhere in this build.
+   Everything is a 24x24 flat shape with a heavy 2px outline, to match the
+   chunky bevelled furniture the rest of the page is built from. */
+(function (global) {
+  'use strict';
+
+  const INK = '#1d1722';
+  const P = {
+    yellow: '#ffcb1f', pink: '#ff2d87', teal: '#00a6b4', grape: '#6f3fa8',
+    lime: '#6fcf2f', tomato: '#e8402a', paper: '#fffdf3', grey: '#a79e88',
+    blue: '#2a4bbd', brown: '#8a6a3a', green: '#1c7a4a', dark: '#3a3446'
+  };
+
+  /* helpers keep the path soup readable */
+  const r = (x, y, w, h, f, extra) => '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" fill="' + f + '"' + (extra || '') + '/>';
+  const c = (cx, cy, rad, f) => '<circle cx="' + cx + '" cy="' + cy + '" r="' + rad + '" fill="' + f + '"/>';
+  const p = (d, f) => '<path d="' + d + '" fill="' + f + '"/>';
+  const line = (x1, y1, x2, y2, w, col) => '<path d="M' + x1 + ' ' + y1 + 'L' + x2 + ' ' + y2 + '" stroke="' + (col || INK) + '" stroke-width="' + (w || 2) + '" stroke-linecap="round"/>';
+
+  const ICONS = {
+    /* ---------- simulations ---------- */
+    gridlock:
+      r(7, 2, 10, 20, P.dark) +
+      c(12, 6.5, 2.4, P.tomato) + c(12, 12, 2.4, P.yellow) + c(12, 17.5, 2.4, P.lime) +
+      r(10.5, 21, 3, 2, INK),
+    elevator:
+      r(3, 3, 18, 18, P.grey) + r(5, 5, 6, 14, P.paper) + r(13, 5, 6, 14, P.paper) +
+      p('M8 8l2 3H6z', INK) + p('M16 16l2-3h-4z', INK),
+    powergrid:
+      p('M13 2L5 13h5l-1 9 8-11h-5z', P.yellow),
+    atc:
+      p('M12 2l2 8 8 3-8 1v3l3 2v2l-5-2-5 2v-2l3-2v-3l-8-1 8-3z', P.paper),
+    /* ---------- puzzles ---------- */
+    minesweeper:
+      c(12, 14, 7, P.dark) + line(12, 7, 12, 3, 2, P.brown) + p('M15 4l3-2 1 3z', P.tomato) +
+      c(9.5, 11.5, 1.6, P.paper),
+    '2048':
+      r(2, 2, 9, 9, P.yellow) + r(13, 2, 9, 9, P.paper) +
+      r(2, 13, 9, 9, P.paper) + r(13, 13, 9, 9, P.tomato),
+    jam:
+      p('M3 14h18v5H3z', P.tomato) + p('M6 14l2-5h8l2 5z', P.tomato) +
+      c(7, 19, 2, INK) + c(17, 19, 2, INK) + r(8.5, 10, 7, 3, P.paper),
+    sokoban:
+      r(3, 6, 18, 14, P.brown) + p('M3 6l9-4 9 4z', '#c9a06a') +
+      line(4, 7, 20, 19, 2) + line(20, 7, 4, 19, 2),
+    pipes:
+      p('M2 10h9v4H2z', P.teal) + p('M10 10h4v12h-4z', P.teal) +
+      p('M13 10h9v4h-9z', P.grey) + c(12, 12, 2.6, P.yellow),
+    solitaire:
+      r(3, 4, 12, 16, P.paper, ' transform="rotate(-10 9 12)"') +
+      r(9, 4, 12, 16, P.paper) +
+      p('M15 9c-2 0-3 3 0 5 3-2 2-5 0-5z', P.tomato),
+    /* ---------- brain ---------- */
+    wordguess:
+      r(2, 5, 6, 6, P.lime) + r(9, 5, 6, 6, P.yellow) + r(16, 5, 6, 6, P.grey) +
+      r(2, 13, 6, 6, P.grey) + r(9, 13, 6, 6, P.lime) + r(16, 13, 6, 6, P.yellow),
+    lightsout:
+      c(12, 10, 6, P.yellow) + r(9, 16, 6, 3, P.grey) + r(10, 19, 4, 2, INK) +
+      line(12, 1, 12, 3, 2) + line(3, 5, 5, 6, 2) + line(21, 5, 19, 6, 2),
+    reflex:
+      c(12, 12, 10, P.paper) + c(12, 12, 6.5, P.tomato) + c(12, 12, 3, P.paper) + c(12, 12, 1.4, INK),
+    copycat:
+      p('M12 2a10 10 0 0 1 10 10h-10z', P.lime) +
+      p('M22 12a10 10 0 0 1-10 10v-10z', P.yellow) +
+      p('M12 22a10 10 0 0 1-10-10h10z', P.teal) +
+      p('M2 12a10 10 0 0 1 10-10v10z', P.tomato) +
+      c(12, 12, 3.4, P.paper),
+    connect4:
+      r(2, 4, 20, 18, P.blue) +
+      c(7, 10, 2.6, P.yellow) + c(12, 10, 2.6, '#141a26') + c(17, 10, 2.6, '#141a26') +
+      c(7, 17, 2.6, P.tomato) + c(12, 17, 2.6, P.yellow) + c(17, 17, 2.6, '#141a26'),
+    /* ---------- action ---------- */
+    snake:
+      p('M4 18h8v-6h6V6h4', 'none').replace('fill="none"', 'fill="none" stroke="' + P.lime + '" stroke-width="4" stroke-linecap="square"') +
+      c(21, 6, 2.4, P.lime) + c(6, 8, 2, P.tomato),
+    breakout:
+      r(2, 3, 6, 4, P.tomato) + r(9, 3, 6, 4, P.yellow) + r(16, 3, 6, 4, P.teal) +
+      r(2, 8, 6, 4, P.yellow) + r(9, 8, 6, 4, P.teal) + r(16, 8, 6, 4, P.tomato) +
+      c(15, 16, 2.2, P.paper) + r(6, 19, 12, 3, P.paper),
+    tetris:
+      r(2, 8, 7, 7, P.teal) + r(9, 8, 7, 7, P.teal) + r(16, 8, 7, 7, P.teal) + r(9, 1, 7, 7, P.grape),
+    asteroids:
+      p('M12 3l7 16-7-4-7 4z', P.paper) + c(19, 6, 2.4, P.grey) + c(4, 15, 1.8, P.grey),
+    commute:
+      c(12, 5, 3, P.teal) + p('M9 9h6v7h-2v6h-2v-6H9z', P.teal) +
+      r(1, 18, 22, 2, P.yellow),
+    /* ---------- goofy ---------- */
+    coffee:
+      p('M4 8h13v8a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z', P.paper) +
+      p('M17 10h2a3 3 0 0 1 0 6h-2z', 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="2"') +
+      r(4, 8, 13, 3, P.brown) +
+      line(8, 2, 8, 5, 2, P.grey) + line(13, 2, 13, 5, 2, P.grey),
+    whack:
+      r(2, 4, 20, 18, P.paper) + r(2, 4, 20, 5, P.grape) +
+      r(5, 11, 4, 4, P.teal) + r(10, 11, 4, 4, P.yellow) + r(15, 11, 4, 4, P.teal) +
+      r(5, 16, 4, 4, P.tomato) + r(10, 16, 4, 4, P.teal),
+    desktoss:
+      p('M6 9h12l-1.5 12h-9z', P.grey) + r(5, 6, 14, 3, P.dark) +
+      c(12, 3, 2.6, P.paper),
+    deskgolf:
+      c(6, 20, 3, P.paper) + line(17, 20, 17, 4, 2) + p('M17 4l7 3-7 3z', P.tomato) +
+      r(1, 21, 22, 2, P.green),
+    /* ---------- gridlock shop ---------- */
+    smart: r(4, 4, 16, 16, P.teal) + p('M9 9h6v2h-4v2h4v2H9z', P.paper) + r(4, 4, 16, 16, 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="2"'),
+    circle: '<circle cx="12" cy="12" r="8" fill="none" stroke="' + P.grey + '" stroke-width="5"/>' + c(12, 12, 4, P.green),
+    over: r(2, 9, 20, 6, P.grey) + r(9, 2, 6, 20, P.dark) + r(2, 9, 20, 6, 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="2"'),
+    wider: line(3, 12, 21, 12, 2) + p('M3 12l5-4v8z', INK) + p('M21 12l-5-4v8z', INK),
+    priority: r(3, 9, 15, 8, P.paper) + p('M18 11h3l2 3v3h-5z', P.paper) + c(7, 18, 2, INK) + c(18, 18, 2, INK) + r(8, 11, 5, 4, P.tomato),
+    reports: p('M3 19l5-6 4 3 5-8 4 5', 'none').replace('fill="none"', 'fill="none" stroke="' + P.tomato + '" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"'),
+    /* ---------- chrome ---------- */
+    dice: r(3, 3, 18, 18, P.paper) + c(8, 8, 1.9, INK) + c(16, 16, 1.9, INK) + c(12, 12, 1.9, INK) + c(16, 8, 1.9, INK) + c(8, 16, 1.9, INK),
+    expand: p('M3 3h8v3H6v5H3zM21 21h-8v-3h5v-5h3z', P.paper),
+    sound: p('M4 9h4l5-4v14l-5-4H4z', P.paper) + p('M16 8a5 5 0 0 1 0 8', 'none').replace('fill="none"', 'fill="none" stroke="' + P.lime + '" stroke-width="2" stroke-linecap="round"'),
+    mute: p('M4 9h4l5-4v14l-5-4H4z', P.paper) + line(16, 9, 22, 15, 2.4, P.tomato) + line(22, 9, 16, 15, 2.4, P.tomato),
+    panic: c(12, 5, 3.4, P.paper) + p('M8 10h8l2 8h-3l-1 5h-4l-1-5H6z', P.dark),
+    /* ---------- panic screens ---------- */
+    docs: r(4, 2, 14, 20, P.paper) + p('M18 2l4 4h-4z', P.grey) + line(7, 8, 15, 8, 1.6, P.teal) + line(7, 12, 15, 12, 1.6, P.grey) + line(7, 16, 12, 16, 1.6, P.grey),
+    sheet: r(3, 3, 18, 18, P.paper) + r(3, 3, 18, 4, P.green) + line(9, 7, 9, 21, 1.4, P.grey) + line(15, 7, 15, 21, 1.4, P.grey) + line(3, 12, 21, 12, 1.4, P.grey) + line(3, 17, 21, 17, 1.4, P.grey),
+    inbox: r(2, 5, 20, 14, P.paper) + p('M2 5l10 8 10-8', 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round"'),
+    term: r(2, 4, 20, 16, P.dark) + r(2, 4, 20, 3.5, P.grey) + p('M6 12l3 2.5-3 2.5', 'none').replace('fill="none"', 'fill="none" stroke="' + P.lime + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"') + line(12, 17, 17, 17, 2, P.lime),
+    web: c(12, 12, 9, P.teal) + '<ellipse cx="12" cy="12" rx="4" ry="9" fill="none" stroke="' + INK + '" stroke-width="1.6"/>' + line(3, 12, 21, 12, 1.6) + line(4.5, 7, 19.5, 7, 1.4) + line(4.5, 17, 19.5, 17, 1.4),
+    /* ---------- misc ---------- */
+    road: p('M7 2h4l-1 20H5zM17 2h-4l1 20h5z', P.grey) + line(12, 3, 12, 7, 2.5, P.yellow) + line(12, 11, 12, 15, 2.5, P.yellow) + line(12, 19, 12, 22, 2.5, P.yellow),
+    mine: c(12, 12, 6.5, INK) + line(12, 2, 12, 5.5, 2) + line(12, 18.5, 12, 22, 2) + line(2, 12, 5.5, 12, 2) + line(18.5, 12, 22, 12, 2) + c(9.5, 9.5, 1.5, P.paper),
+    flag: line(7, 3, 7, 21, 2) + p('M7 4l11 4-11 4z', P.tomato),
+    boom: p('M12 1l3 6 6-3-3 6 6 3-6 3 3 6-6-3-3 6-3-6-6 3 3-6-6-3 6-3-3-6 6 3z', P.tomato) + c(12, 12, 3, P.yellow)
+  };
+
+  const Icons = {
+    has: (name) => Object.prototype.hasOwnProperty.call(ICONS, name),
+    svg(name, size, cls) {
+      const body = ICONS[name];
+      const s = size || 24;
+      if (!body) return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" fill="' + P.grey + '"/></svg>';
+      /* one dark outline over the whole set keeps pale shapes readable on pale
+         panels, and matches the heavy borders everywhere else on the page */
+      return '<svg class="ico' + (cls ? ' ' + cls : '') + '" width="' + s + '" height="' + s +
+        '" viewBox="0 0 24 24" aria-hidden="true">' +
+        '<g stroke="' + INK + '" stroke-width="1.4" stroke-linejoin="round">' + body + '</g></svg>';
+    },
+    /* an <span> wrapper, for places that want a node rather than markup */
+    el(name, size, cls) {
+      return Engine.h('span', { class: 'ico-wrap ' + (cls || ''), html: Icons.svg(name, size) });
+    },
+    palette: P
+  };
+
+  global.Icons = Icons;
+})(window);
+
+</script>
+<script>
+/* The panic screen. Five disguises, all typeable, plus one that loads any site you name.
+   Hit the key and land in something that looks like work. */
 (function (global) {
   'use strict';
   const h = Engine.h;
@@ -1248,47 +1492,67 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   };
 
   let skinId = store.get('bossskin', 'docs');
-  let host = null;
-  let on = false;
-  let current = null;
+  let webUrl = store.get('bossurl', '');
+  let webMode = store.get('bossmode', 'jump');
+  let host = null, on = false, current = null;
 
-  /* ============================ DOCS ============================ */
+  /* tiny inline glyphs so the toolbars are drawn, not typed */
+  const g = (d, o) => '<svg viewBox="0 0 24 24" width="' + (o && o.s || 20) + '" height="' + (o && o.s || 20) + '" fill="none" stroke="' + (o && o.c || '#444746') + '" stroke-width="' + (o && o.w || 1.7) + '" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
+  const GL = {
+    undo: g('<path d="M4 9h11a5 5 0 0 1 0 10h-6"/><path d="M8 5L4 9l4 4"/>'),
+    redo: g('<path d="M20 9H9a5 5 0 0 0 0 10h6"/><path d="M16 5l4 4-4 4"/>'),
+    print: g('<path d="M7 9V4h10v5"/><rect x="4" y="9" width="16" height="7" rx="1"/><path d="M7 16h10v5H7z"/>'),
+    spell: g('<path d="M5 17L9 6l4 11"/><path d="M6.4 13.5h5.2"/><path d="M15 15l2.5 2.5L22 12"/>'),
+    paint: g('<rect x="4" y="4" width="12" height="6" rx="1"/><path d="M10 10v4H8v7h4v-7h-2"/>'),
+    zoom: g('<circle cx="11" cy="11" r="6"/><path d="M15.5 15.5L21 21"/>'),
+    link: g('<path d="M9.5 14.5l5-5"/><path d="M11 7l1.5-1.5a3.5 3.5 0 0 1 5 5L16 12"/><path d="M13 17l-1.5 1.5a3.5 3.5 0 0 1-5-5L8 12"/>'),
+    comment: g('<path d="M4 5h16v11H9l-5 4z"/>'),
+    image: g('<rect x="3" y="5" width="18" height="14" rx="1"/><circle cx="8.5" cy="10" r="1.5"/><path d="M4 17l5-5 4 4 3-3 4 4"/>'),
+    alignLeft: g('<path d="M4 6h16M4 10h10M4 14h16M4 18h10"/>'),
+    spacing: g('<path d="M9 6h11M9 12h11M9 18h11"/><path d="M5 8l0 8"/><path d="M3 9l2-2 2 2"/><path d="M3 15l2 2 2-2"/>'),
+    check: g('<path d="M4 7l2 2 3-3"/><path d="M4 15l2 2 3-3"/><path d="M12 8h8M12 16h8"/>'),
+    bullet: g('<circle cx="5" cy="7" r="1.4" fill="#444746"/><circle cx="5" cy="12" r="1.4" fill="#444746"/><circle cx="5" cy="17" r="1.4" fill="#444746"/><path d="M10 7h10M10 12h10M10 17h10"/>'),
+    number: g('<path d="M10 7h10M10 12h10M10 17h10"/><text x="3" y="9" font-size="7" fill="#444746" stroke="none">1</text><text x="3" y="14" font-size="7" fill="#444746" stroke="none">2</text><text x="3" y="19" font-size="7" fill="#444746" stroke="none">3</text>'),
+    outdent: g('<path d="M4 6h16M9 10h11M9 14h11M4 18h16"/><path d="M7 12l-3-2v4z" fill="#444746"/>'),
+    indent: g('<path d="M4 6h16M9 10h11M9 14h11M4 18h16"/><path d="M4 12l3-2v4z" fill="#444746"/>'),
+    clear: g('<path d="M6 18h12"/><path d="M8 15L15 5l4 3-6 7z"/>'),
+    pencil: g('<path d="M4 20l4-1L20 7l-3-3L5 16z"/>'),
+    star: g('<path d="M12 4l2.4 5 5.6.7-4 3.9 1 5.4-5-2.7-5 2.7 1-5.4-4-3.9 5.6-.7z"/>'),
+    folder: g('<path d="M3 7h6l2 2h10v10H3z"/>'),
+    cloud: g('<path d="M7 18h10a4 4 0 0 0 0-8 6 6 0 0 0-11.7 1.6A3.5 3.5 0 0 0 7 18z"/>'),
+    lock: g('<rect x="6" y="11" width="12" height="9" rx="1.5" stroke="#001d35"/><path d="M9 11V8a3 3 0 0 1 6 0v3" stroke="#001d35"/>', { c: '#001d35' }),
+    menu: g('<path d="M4 7h16M4 12h16M4 17h16"/>'),
+    sidebar: g('<rect x="3" y="5" width="18" height="14" rx="1"/><path d="M9 5v14"/>')
+  };
+  const DOC_BLUE = '#4285f4';
+
+  /* ============================ 1. DOC ============================ */
   const DOC_TITLE = 'Q3 Planning Notes';
   const DOC_BODY =
     '<h1>Q3 Planning Notes</h1>' +
-    '<p class="sub">Draft. Shared with the working group. Comments welcome by Friday.</p>' +
+    '<p><span class="muted"><i>Draft. Shared with the working group. Comments welcome by Friday.</i></span></p>' +
     '<h2>Where we landed</h2>' +
-    '<p>Carrying three workstreams into Q3 rather than five. The two we are pausing were not failing, they were just competing for the same two people. We will revisit both at the September checkpoint.</p>' +
+    '<p>Carrying three workstreams into Q3 rather than five. The two we are pausing were not failing, they were competing for the same two people. Both get revisited at the September checkpoint.</p>' +
     '<h2>Open questions</h2>' +
-    '<ul>' +
-    '<li>Who owns the migration once the contractor rolls off?</li>' +
+    '<ul><li>Who owns the migration once the contractor rolls off?</li>' +
     '<li>Do we still need the weekly sync, or is the written update enough?</li>' +
-    '<li>Budget line for tooling has not been confirmed. Chasing.</li>' +
-    '</ul>' +
+    '<li>Budget line for tooling has not been confirmed. Chasing.</li></ul>' +
     '<h2>Actions</h2>' +
-    '<ol>' +
-    '<li>Draft the one-pager and circulate before the review.</li>' +
+    '<ol><li>Draft the one-pager and circulate it before the review.</li>' +
     '<li>Confirm headcount assumptions with Finance.</li>' +
-    '<li>Book the follow-up. Thirty minutes, not sixty.</li>' +
-    '</ol>' +
+    '<li>Book the follow-up. Thirty minutes, not sixty.</li></ol>' +
     '<h2>Notes from the room</h2>' +
     '<p>General agreement that scope crept because nobody was empowered to say no. Proposal is to name a single decision owner per workstream. No objections raised.</p>' +
     '<p><br></p>';
 
   function buildDocs() {
-    const body = h('div', {
-      class: 'doc-body', contenteditable: 'true', spellcheck: 'false',
-      html: DOC_BODY
-    });
-    const words = h('span', null, '0 words');
-    const recount = () => {
-      const t = (body.innerText || '').trim();
-      words.textContent = (t ? t.split(/\s+/).length : 0) + ' words';
-    };
-    body.addEventListener('input', recount);
-    setTimeout(recount, 0);
+    const body = h('div', { class: 'gd-body', contenteditable: 'true', spellcheck: 'false', html: DOC_BODY });
+    const editNote = h('span', { class: 'gd-editnote' }, 'Last edit was seconds ago');
+    body.addEventListener('input', () => { editNote.textContent = 'Last edit was seconds ago'; });
 
-    const tool = (label, cls) => h('span', { class: 'dtool ' + (cls || '') }, label);
+    const tb = (glyph, extra) => h('span', { class: 'gd-tb' + (extra ? ' ' + extra : ''), html: glyph });
+    const sep = () => h('span', { class: 'gd-sep' });
+    const dd = (label, wide) => h('span', { class: 'gd-dd' + (wide ? ' wide' : '') }, label, h('i', { class: 'gd-caret' }));
 
     return {
       focus: () => {
@@ -1300,34 +1564,62 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
         s.removeAllRanges();
         s.addRange(r);
       },
-      el: h('div', { class: 'skin docs' },
-        h('div', { class: 'doc-top' },
-          h('div', { class: 'doc-ident' },
-            h('span', { class: 'doc-icon' }, '📄'),
-            h('div', null,
-              h('div', { class: 'doc-name' }, DOC_TITLE),
-              h('div', { class: 'doc-menu' }, ['File', 'Edit', 'View', 'Insert', 'Format', 'Tools', 'Extensions', 'Help'].map((m) => h('span', null, m))))),
-          h('div', { class: 'doc-actions' },
-            h('span', { class: 'doc-saved' }, '✓ Saved to Drive'),
-            h('span', { class: 'doc-share' }, '🔒 Share'))),
-        h('div', { class: 'doc-tools' },
-          tool('↶'), tool('↷'), tool('🖨'), tool('🔍'),
-          h('span', { class: 'dsep' }),
-          h('span', { class: 'dtool wide' }, 'Normal text ▾'),
-          h('span', { class: 'dsep' }),
-          h('span', { class: 'dtool wide' }, 'Arial ▾'),
-          h('span', { class: 'dsep' }),
-          tool('−'), h('span', { class: 'dtool num' }, '11'), tool('+'),
-          h('span', { class: 'dsep' }),
-          tool('B', 'b'), tool('I', 'i'), tool('U', 'u'),
-          h('span', { class: 'dsep' }),
-          tool('☰'), tool('•'), tool('1.')),
-        h('div', { class: 'doc-page-wrap' }, h('div', { class: 'doc-page' }, body)),
-        h('div', { class: 'doc-status' }, words, h('span', null, 'Page 1 of 1'), h('span', null, 'Last edit was seconds ago')))
+      el: h('div', { class: 'skin gdocs' },
+        h('div', { class: 'gd-head' },
+          h('span', {
+            class: 'gd-logo', html:
+              '<svg viewBox="0 0 40 54" width="34" height="40"><path d="M4 0h22l14 14v36a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4z" fill="#4285f4"/><path d="M26 0l14 14H30a4 4 0 0 1-4-4z" fill="#a1c2fa"/><g fill="#fff"><rect x="9" y="22" width="22" height="2.6" rx="1.3"/><rect x="9" y="29" width="22" height="2.6" rx="1.3"/><rect x="9" y="36" width="22" height="2.6" rx="1.3"/><rect x="9" y="43" width="14" height="2.6" rx="1.3"/></g></svg>'
+          }),
+          h('div', { class: 'gd-headmid' },
+            h('div', { class: 'gd-titlerow' },
+              h('span', { class: 'gd-title' }, DOC_TITLE),
+              h('span', { class: 'gd-mini', html: GL.star }),
+              h('span', { class: 'gd-mini', html: GL.folder }),
+              h('span', { class: 'gd-mini', html: GL.cloud })),
+            h('div', { class: 'gd-menu' },
+              ['File', 'Edit', 'View', 'Insert', 'Format', 'Tools', 'Extensions', 'Help'].map((m) => h('span', null, m)))),
+          h('div', { class: 'gd-headright' },
+            h('span', { class: 'gd-mini', html: GL.comment }),
+            h('span', { class: 'gd-share' }, h('span', { class: 'gd-lock', html: GL.lock }), 'Share'),
+            h('span', { class: 'gd-avatar' }, 'K'))),
+
+        h('div', { class: 'gd-toolwrap' },
+          h('div', { class: 'gd-tools' },
+            tb(GL.undo), tb(GL.redo), tb(GL.print), tb(GL.spell), tb(GL.paint),
+            h('span', { class: 'gd-zoom' }, '100%', h('i', { class: 'gd-caret' })),
+            sep(),
+            dd('Normal text', true),
+            sep(),
+            dd('Arial', true),
+            sep(),
+            h('span', { class: 'gd-tb' }, '−'),
+            h('span', { class: 'gd-fontsize' }, '11'),
+            h('span', { class: 'gd-tb' }, '+'),
+            sep(),
+            h('span', { class: 'gd-tb bold' }, 'B'),
+            h('span', { class: 'gd-tb ital' }, 'I'),
+            h('span', { class: 'gd-tb undl' }, 'U'),
+            h('span', { class: 'gd-tb tcol' }, 'A'),
+            sep(),
+            tb(GL.link), tb(GL.comment), tb(GL.image),
+            sep(),
+            tb(GL.alignLeft), tb(GL.spacing), tb(GL.check), tb(GL.bullet), tb(GL.number),
+            tb(GL.outdent), tb(GL.indent), tb(GL.clear),
+            h('span', { class: 'gd-mode' }, h('span', { html: GL.pencil }), h('i', { class: 'gd-caret' })))),
+
+        h('div', { class: 'gd-ruler' },
+          h('div', { class: 'gd-rulerinner' },
+            h('span', { class: 'gd-margin left' }),
+            h('span', { class: 'gd-margin right' }))),
+
+        h('div', { class: 'gd-canvas' },
+          h('div', { class: 'gd-page' }, body)),
+
+        h('div', { class: 'gd-foot' }, editNote))
     };
   }
 
-  /* ============================ SHEET ============================ */
+  /* ============================ 2. SHEET ============================ */
   const ROWS_DATA = [
     ['Northeast', 'Enterprise', 1284900, 1402350, 9.1, 'On track'],
     ['Northeast', 'Mid-Market', 842100, 811200, -3.7, 'At risk'],
@@ -1356,11 +1648,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
     const mkCell = (txt, cls, col, row) => {
       const td = h('td', {
         class: cls || '', contenteditable: 'true', spellcheck: 'false',
-        onfocus: () => {
-          cellRef.textContent = COLS[col] + row;
-          formula.textContent = td.textContent;
-          td.classList.add('sel');
-        },
+        onfocus: () => { cellRef.textContent = COLS[col] + row; formula.textContent = td.textContent; td.classList.add('sel'); },
         onblur: () => td.classList.remove('sel'),
         oninput: () => { formula.textContent = td.textContent; }
       }, txt);
@@ -1371,28 +1659,20 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
     const head = h('tr', null, h('th', { class: 'rowhead' }, ''), COLS.map((l) => h('th', null, l)));
     const rows = [h('tr', null, h('td', { class: 'rowhead' }, '1'),
       ['Region', 'Segment', 'FY Plan', 'FY Actual', 'Var %', 'Status', 'Owner'].map((t, i) => mkCell(t, 'hcell', i, 1)))];
-
     ROWS_DATA.forEach((r, i) => {
       const rn = i + 2;
-      rows.push(h('tr', null,
-        h('td', { class: 'rowhead' }, rn),
-        mkCell(r[0], '', 0, rn),
-        mkCell(r[1], '', 1, rn),
-        mkCell(money(r[2]), 'num', 2, rn),
-        mkCell(money(r[3]), 'num', 3, rn),
+      rows.push(h('tr', null, h('td', { class: 'rowhead' }, rn),
+        mkCell(r[0], '', 0, rn), mkCell(r[1], '', 1, rn),
+        mkCell(money(r[2]), 'num', 2, rn), mkCell(money(r[3]), 'num', 3, rn),
         mkCell((r[4] > 0 ? '+' : '') + r[4].toFixed(1) + '%', 'num ' + (r[4] < 0 ? 'neg' : 'pos'), 4, rn),
-        mkCell(r[5], '', 5, rn),
-        mkCell('', '', 6, rn)));
+        mkCell(r[5], '', 5, rn), mkCell('', '', 6, rn)));
     });
-
     const tot = ROWS_DATA.length + 2;
-    rows.push(h('tr', { class: 'total' },
-      h('td', { class: 'rowhead' }, tot),
+    rows.push(h('tr', { class: 'total' }, h('td', { class: 'rowhead' }, tot),
       mkCell('TOTAL', '', 0, tot), mkCell('', '', 1, tot),
       mkCell(money(ROWS_DATA.reduce((a, r) => a + r[2], 0)), 'num', 2, tot),
       mkCell(money(ROWS_DATA.reduce((a, r) => a + r[3], 0)), 'num', 3, tot),
       mkCell('+3.4%', 'num pos', 4, tot), mkCell('', '', 5, tot), mkCell('', '', 6, tot)));
-
     for (let i = 0; i < 10; i++) {
       const rn = tot + 1 + i;
       rows.push(h('tr', null, h('td', { class: 'rowhead' }, rn), COLS.map((_, c) => mkCell('', '', c, rn))));
@@ -1407,19 +1687,17 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
         h('div', { class: 'sh-formula' }, cellRef, h('span', { class: 'fx' }, 'fx'), formula),
         h('div', { class: 'sh-grid' }, h('table', null, h('thead', null, head), h('tbody', null, rows))),
         h('div', { class: 'sh-tabs' },
-          h('span', { class: 'tab active' }, 'Summary'),
-          h('span', { class: 'tab' }, 'By Region'),
-          h('span', { class: 'tab' }, 'Pipeline'),
-          h('span', { class: 'tab' }, 'Assumptions'),
+          h('span', { class: 'tab active' }, 'Summary'), h('span', { class: 'tab' }, 'By Region'),
+          h('span', { class: 'tab' }, 'Pipeline'), h('span', { class: 'tab' }, 'Assumptions'),
           h('span', { class: 'tab' }, 'Sheet4')))
     };
   }
 
-  /* ============================ INBOX ============================ */
+  /* ============================ 3. INBOX ============================ */
   const MAIL = [
-    { f: 'Facilities', s: 'Kitchen fridge will be emptied Friday', t: '9:14 AM', p: 'Anything left after 5pm goes in the bin, including the containers. This is the fourth notice.' },
-    { f: 'R. Patel', s: 'RE: RE: RE: quick question', t: '9:02 AM', p: 'Sorry, resending with the right attachment this time. Ignore the last two.' },
-    { f: 'IT Helpdesk', s: 'Scheduled maintenance window', t: '8:47 AM', p: 'Systems may be unavailable Saturday 02:00 to 06:00. No action needed from you.' },
+    { f: 'Facilities', s: 'Kitchen fridge will be emptied Friday', t: '9:14 AM', p: 'Anything left after 5pm goes in the bin, including the containers. Fourth notice.' },
+    { f: 'R. Patel', s: 'RE: RE: RE: quick question', t: '9:02 AM', p: 'Resending with the right attachment this time. Ignore the last two.' },
+    { f: 'IT Helpdesk', s: 'Scheduled maintenance window', t: '8:47 AM', p: 'Systems may be unavailable Saturday 02:00 to 06:00. No action needed.' },
     { f: 'S. Okafor', s: 'Notes from yesterday', t: '8:31 AM', p: 'Wrote up what we agreed. Shout if I mangled anything.' },
     { f: 'All Staff', s: 'Reminder: complete your training module', t: 'Yesterday', p: 'The deadline has been extended. Again. Please do it.' },
     { f: 'M. Duarte', s: 'Lunch?', t: 'Yesterday', p: 'The place with the soup. 12:15?' },
@@ -1428,10 +1706,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   ];
 
   function buildInbox() {
-    const reply = h('div', {
-      class: 'mail-reply', contenteditable: 'true', spellcheck: 'false',
-      html: '<p>Thanks for flagging this.</p><p><br></p>'
-    });
+    const reply = h('div', { class: 'mail-reply', contenteditable: 'true', spellcheck: 'false', html: '<p>Thanks for flagging this.</p><p><br></p>' });
     const subject = h('div', { class: 'mail-subject' }, MAIL[3].s);
     const from = h('div', { class: 'mail-from' }, MAIL[3].f, h('span', null, ' to me'));
     const bodyText = h('div', { class: 'mail-body' },
@@ -1468,69 +1743,47 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
       },
       el: h('div', { class: 'skin inbox' },
         h('div', { class: 'mail-top' },
-          h('span', { class: 'mail-logo' }, '✉ Mail'),
+          h('span', { class: 'mail-logo' }, 'Mail'),
           h('span', { class: 'mail-search' }, 'Search mail'),
           h('span', { class: 'mail-avatar' }, 'K')),
         h('div', { class: 'mail-cols' },
           h('div', { class: 'mail-side' },
-            h('div', { class: 'mail-compose' }, '✏ Compose'),
+            h('div', { class: 'mail-compose' }, 'Compose'),
             ['Inbox 3', 'Starred', 'Snoozed', 'Sent', 'Drafts 2', 'Archive', 'Spam'].map((f, i) =>
               h('div', { class: 'mail-folder' + (i === 0 ? ' active' : '') }, f))),
           list,
-          h('div', { class: 'mail-read' },
-            subject,
-            from,
-            bodyText,
+          h('div', { class: 'mail-read' }, subject, from, bodyText,
             h('div', { class: 'mail-reply-wrap' },
               h('div', { class: 'mail-reply-head' }, 'Reply to ' + MAIL[3].f),
               reply,
-              h('div', { class: 'mail-reply-foot' }, h('span', { class: 'mail-send' }, 'Send'), h('span', null, '📎'), h('span', null, '🙂'))))))
+              h('div', { class: 'mail-reply-foot' }, h('span', { class: 'mail-send' }, 'Send'))))))
     };
   }
 
-  /* ============================ TERMINAL ============================ */
+  /* ============================ 4. TERMINAL ============================ */
   const BOOT = [
-    '$ npm run build',
-    '',
-    '> platform@4.12.0 build',
-    '> tsc -p tsconfig.json && vite build',
-    '',
-    'vite v5.4.2 building for production...',
-    'transforming (412) src/index.ts',
-    '✓ 1284 modules transformed.',
-    'dist/assets/index-9f2a1c.css     42.18 kB │ gzip:  8.02 kB',
-    'dist/assets/index-4b71ee.js     612.44 kB │ gzip: 184.91 kB',
-    '✓ built in 7.42s',
-    '',
-    '$ npm test -- --run',
-    '',
+    '$ npm run build', '',
+    '> platform@4.12.0 build', '> tsc -p tsconfig.json && vite build', '',
+    'vite v5.4.2 building for production...', 'transforming (412) src/index.ts',
+    '1284 modules transformed.',
+    'dist/assets/index-9f2a1c.css     42.18 kB | gzip:  8.02 kB',
+    'dist/assets/index-4b71ee.js     612.44 kB | gzip: 184.91 kB',
+    'built in 7.42s', '',
+    '$ npm test -- --run', '',
     ' PASS  src/lib/parser.test.ts (24 tests) 412ms',
     ' PASS  src/lib/queue.test.ts (18 tests) 288ms',
-    ' PASS  src/api/routes.test.ts (31 tests) 1.02s',
-    '',
-    'Test Files  3 passed (3)',
-    '     Tests  73 passed (73)',
-    '  Duration  2.31s',
-    ''
+    ' PASS  src/api/routes.test.ts (31 tests) 1.02s', '',
+    'Test Files  3 passed (3)', '     Tests  73 passed (73)', '  Duration  2.31s', ''
   ];
-  const REPLIES = [
-    'ok',
-    'done.',
-    'nothing to commit, working tree clean',
-    'Already up to date.',
-    'warning: 1 deprecation notice (use --verbose for details)',
-    'Compiled successfully in 1.8s',
-    'no changes added to commit',
-    '2 files changed, 47 insertions(+), 12 deletions(-)',
-    'Watching for file changes...'
-  ];
+  const REPLIES = ['ok', 'done.', 'nothing to commit, working tree clean', 'Already up to date.',
+    'warning: 1 deprecation notice (use --verbose for details)', 'Compiled successfully in 1.8s',
+    'no changes added to commit', '2 files changed, 47 insertions(+), 12 deletions(-)', 'Watching for file changes...'];
 
   function buildTerm() {
-    const out = h('div', { class: 'term-out' }, BOOT.map((l) => h('div', { class: 'tline' }, l || ' ')));
+    const out = h('div', { class: 'term-out' }, BOOT.map((l) => h('div', { class: 'tline' }, l || ' ')));
     const input = h('span', { class: 'term-in', contenteditable: 'true', spellcheck: 'false' });
     const line = h('div', { class: 'term-line' }, h('span', { class: 'term-ps' }, '~/work/platform $ '), input, h('span', { class: 'term-caret' }));
     const scroller = h('div', { class: 'term-scroll' }, out, line);
-
     input.addEventListener('keydown', (e) => {
       if (e.key !== 'Enter') return;
       e.preventDefault();
@@ -1540,30 +1793,66 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
       input.textContent = '';
       scroller.scrollTop = scroller.scrollHeight;
     });
-
     return {
       focus: () => { input.focus(); scroller.scrollTop = scroller.scrollHeight; },
       el: h('div', { class: 'skin term' },
-        h('div', { class: 'term-bar' },
-          h('span', { class: 'tdots' }, h('i'), h('i'), h('i')),
-          h('span', null, 'bash - 118x34 - ~/work/platform')),
+        h('div', { class: 'term-bar' }, h('span', { class: 'tdots' }, h('i'), h('i'), h('i')), h('span', null, 'bash - 118x34 - ~/work/platform')),
         scroller)
     };
   }
 
+  /* ============================ 5. ANY WEBSITE ============================ */
+  function buildWeb() {
+    const url = normalise(webUrl);
+    if (!url) {
+      return {
+        focus: () => { },
+        el: h('div', { class: 'skin webskin empty' },
+          h('div', { class: 'web-empty' },
+            h('h3', null, 'No site set yet'),
+            h('p', null, 'Put a web address in the PANIC SCREEN box at the bottom of the arcade and this becomes that site.')))
+      };
+    }
+    const frame = h('iframe', {
+      class: 'web-frame', src: url, title: 'workspace',
+      referrerpolicy: 'no-referrer'
+    });
+    /* most real sites refuse to be framed, so say so rather than showing a white void */
+    const note = h('div', { class: 'web-note' },
+      h('b', null, 'If this stayed blank, that site blocks embedding.'),
+      ' Nearly all big sites do. Switch the panic screen mode to "Open the site" and the key will load it properly instead.');
+    setTimeout(() => note.classList.add('show'), 2600);
+    return { focus: () => { }, el: h('div', { class: 'skin webskin' }, frame, note) };
+  }
+
+  function normalise(u) {
+    u = (u || '').trim();
+    if (!u) return '';
+    if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
+    try { new URL(u); return u; } catch (e) { return ''; }
+  }
+  function hostOf(u) {
+    try { return new URL(normalise(u)).hostname.replace(/^www\./, ''); } catch (e) { return 'workspace'; }
+  }
+
   /* ============================ shell ============================ */
   const SKINS = [
-    { id: 'docs', label: '📄 Doc', title: 'Q3 Planning Notes - Docs', build: buildDocs },
-    { id: 'sheet', label: '📊 Spreadsheet', title: 'Q3_Regional_Forecast_v7_FINAL.xlsx', build: buildSheet },
-    { id: 'inbox', label: '✉️ Inbox', title: 'Inbox (3) - Mail', build: buildInbox },
-    { id: 'term', label: '💻 Terminal', title: 'bash - ~/work/platform', build: buildTerm }
+    { id: 'docs', label: 'Doc', icon: 'docs', title: () => DOC_TITLE + ' - Google Docs', build: buildDocs },
+    { id: 'sheet', label: 'Spreadsheet', icon: 'sheet', title: () => 'Q3_Regional_Forecast_v7_FINAL.xlsx', build: buildSheet },
+    { id: 'inbox', label: 'Inbox', icon: 'inbox', title: () => 'Inbox (3) - Mail', build: buildInbox },
+    { id: 'term', label: 'Terminal', icon: 'term', title: () => 'bash - ~/work/platform', build: buildTerm },
+    { id: 'web', label: 'Any website', icon: 'web', title: () => hostOf(webUrl), build: buildWeb }
   ];
   const skin = () => SKINS.find((s) => s.id === skinId) || SKINS[0];
 
   const Boss = {
     SKINS,
     skinId: () => skinId,
-    title: () => skin().title,
+    title: () => skin().title(),
+    url: () => webUrl,
+    mode: () => webMode,
+    setUrl(u) { webUrl = u; store.set('bossurl', u); if (on && skinId === 'web') { render(); } },
+    setMode(m) { webMode = m === 'embed' ? 'embed' : 'jump'; store.set('bossmode', webMode); },
     setSkin(id) {
       if (!SKINS.some((s) => s.id === id)) return;
       skinId = id;
@@ -1589,7 +1878,14 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   };
 
   Boss.toggle = function toggle(force) {
-    on = force === undefined ? !on : force;
+    const want = force === undefined ? !on : force;
+    /* "open the site" mode genuinely navigates, which is the only thing that
+       works for sites that refuse to be embedded */
+    if (want && skinId === 'web' && webMode === 'jump') {
+      const u = normalise(webUrl);
+      if (u) { location.href = u; return false; }
+    }
+    on = want;
     if (on) render();
     host.classList.toggle('hidden', !on);
     host.setAttribute('aria-hidden', on ? 'false' : 'true');
@@ -1633,10 +1929,10 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
      Every game multiplies its own knobs by Arcade.dm(): spawn rates, speeds,
      patience, board sizes, lives. One dial, sixteen different flavours of pain. */
   const DIFFS = [
-    { id: 'chill', label: '😌 CHILL', m: 0.7, note: 'Everything is slower and kinder. No shame in it.' },
-    { id: 'normal', label: '🙂 NORMAL', m: 1, note: 'The way these were built.' },
-    { id: 'hard', label: '😰 HARD', m: 1.55, note: 'Faster, meaner, fewer second chances.' },
-    { id: 'nightmare', label: '💀 NIGHTMARE', m: 2.3, note: 'This is a bad idea and you should do it.' }
+    { id: 'chill', label: 'CHILL', m: 0.7, note: 'Everything is slower and kinder. No shame in it.' },
+    { id: 'normal', label: 'NORMAL', m: 1, note: 'The way these were built.' },
+    { id: 'hard', label: 'HARD', m: 1.55, note: 'Faster, meaner, fewer second chances.' },
+    { id: 'nightmare', label: 'NIGHTMARE', m: 2.3, note: 'This is a bad idea and you should do it.' }
   ];
   let diffIdx = 1;
 
@@ -1652,7 +1948,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
     register(def) {
       if (byId.has(def.id)) { console.warn('duplicate game id', def.id); return; }
       const g = Object.assign(
-        { cat: 'puzzle', emoji: '🎮', blurb: '', how: [], scoreLabel: 'Best', lowerIsBetter: false },
+        { cat: 'puzzle', emoji: 'dice', blurb: '', how: [], scoreLabel: 'Best', lowerIsBetter: false },
         def);
       games.push(g);
       byId.set(g.id, g);
@@ -1704,7 +2000,8 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.toggleBig = () => setBig(!bigOn);
 
   let skinSel = null;
-  function syncSkinSel() { if (skinSel) skinSel.value = Boss.skinId(); }
+  let syncWebRow = () => { };
+  function syncSkinSel() { if (skinSel) skinSel.value = Boss.skinId(); syncWebRow(); }
 
   let diffBtn = null;
   function syncDiffBtn() {
@@ -1724,7 +2021,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
 
     const soundBtn = h('button', { class: 'icon-btn', type: 'button', title: 'Noise on/off' });
     const syncSound = () => {
-      soundBtn.textContent = Engine.audio.muted ? '🔇' : '🔊';
+      soundBtn.innerHTML = Icons.svg(Engine.audio.muted ? 'mute' : 'sound', 19);
       soundBtn.classList.toggle('on', !Engine.audio.muted);
     };
     soundBtn.addEventListener('click', () => {
@@ -1746,36 +2043,66 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
 
     const bar = h('header', { class: 'topbar' },
       h('a', { class: 'brand', href: '#' },
-        h('span', { class: 'brand-mark' }, '🕹'),
+        h('span', { class: 'brand-mark', html: Icons.svg('dice', 19) }),
         h('span', { class: 'brand-text' }, 'Cubicle', h('em', null, 'Arcade'), ' 98')),
       h('div', { class: 'topbar-spacer' }),
       diffBtn,
       search,
       h('button', {
         class: 'icon-btn', type: 'button', title: 'Surprise me',
+        html: Icons.svg('dice', 19),
         onclick: () => Arcade.go(Engine.pick(games).id)
-      }, '🎲'),
-      h('button', { class: 'icon-btn', id: 'fsbtn', type: 'button', title: 'Big screen (F)', onclick: () => Arcade.toggleBig() }, '⛶'),
+      }),
+      h('button', { class: 'icon-btn', id: 'fsbtn', type: 'button', title: 'Big screen (F)', html: Icons.svg('expand', 19), onclick: () => Arcade.toggleBig() }),
       soundBtn,
       h('button', {
         class: 'icon-btn', type: 'button',
         title: 'LOOK BUSY (backtick). Shift-click to change disguise.',
+        html: Icons.svg('panic', 19),
         onclick: (e) => { if (e.shiftKey) { Boss.cycle(); syncSkinSel(); } else toggleBoss(); }
-      }, '🕴'));
+      }));
 
     const view = h('main', { id: 'view', class: 'view' });
     skinSel = h('select', {
       class: 'sel', 'aria-label': 'Panic screen disguise',
-      onchange: () => Boss.setSkin(skinSel.value)
+      onchange: () => { Boss.setSkin(skinSel.value); syncWebRow(); }
     }, Boss.SKINS.map((sk) => h('option', { value: sk.id, selected: sk.id === Boss.skinId() ? true : null }, sk.label)));
+
+    const urlInput = h('input', {
+      class: 'boss-url', type: 'text', spellcheck: 'false',
+      placeholder: 'paste any web address', value: Boss.url(),
+      oninput: () => Boss.setUrl(urlInput.value)
+    });
+    const modeSel = h('select', {
+      class: 'sel', 'aria-label': 'How the site opens',
+      onchange: () => { Boss.setMode(modeSel.value); syncWebRow(); }
+    },
+      h('option', { value: 'jump', selected: Boss.mode() === 'jump' ? true : null }, 'Open the site'),
+      h('option', { value: 'embed', selected: Boss.mode() === 'embed' ? true : null }, 'Embed it'));
+
+    const webRow = h('span', { class: 'foot-skin' }, urlInput, modeSel);
+    const webHint = h('span', { class: 'foot-hint' });
+
+    syncWebRow = () => {
+      const isWeb = Boss.skinId() === 'web';
+      webRow.style.display = isWeb ? '' : 'none';
+      webHint.style.display = isWeb ? '' : 'none';
+      webHint.textContent = Boss.mode() === 'jump'
+        ? 'Open the site: the key loads that address in this tab. Works with any website. Your scores are saved, so come back with the back button.'
+        : 'Embed it: the key drops the site into a frame over the games, keeping your game paused underneath. Only works for sites that allow embedding, which most big ones do not.';
+    };
 
     const foot = h('footer', { class: 'foot' },
       h('span', { class: 'foot-skin' },
         h('strong', null, 'PANIC SCREEN:'), skinSel,
         h('button', { class: 'btn tiny', type: 'button', onclick: () => toggleBoss(true) }, 'try it')),
+      webRow,
       h('span', null,
-        h('a', { class: 'foot-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener' }, 'PHANTOM: why traffic jams happen for no reason \u2197')),
-      h('span', null, h('kbd', null, '`'), ' look busy   ', h('kbd', null, 'F'), ' big screen   ', h('kbd', null, '/'), ' search   ', h('kbd', null, 'Esc'), ' back'));
+        h('a', { class: 'foot-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener' }, 'PHANTOM: why traffic jams happen for no reason')),
+      h('span', null, h('kbd', null, '`'), ' look busy   ', h('kbd', null, 'F'), ' big screen   ', h('kbd', null, '/'), ' search   ', h('kbd', null, 'Esc'), ' back'),
+      webHint);
+    syncWebRow();
+
     document.body.append(bar, view, foot);
     document.body.appendChild(h('div', { class: 'bigscreen-note' }, 'big screen on • press F or Esc to shrink'));
     return view;
@@ -1897,7 +2224,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
     const cards = list.map((g) => {
       const best = Arcade.best(g.id);
       return h('a', { class: 'card cat-' + g.cat, href: '#g/' + g.id },
-        h('span', { class: 'card-emoji' }, g.emoji),
+        h('span', { class: 'card-emoji', html: Icons.svg(g.emoji, 28) }),
         h('span', { class: 'card-cat' }, (CATS.find((c) => c.id === g.cat) || { label: g.cat }).label),
         h('h3', { class: 'card-title' }, g.title),
         h('p', { class: 'card-blurb' }, g.blurb),
@@ -1920,7 +2247,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
         (!q && (activeCat === 'all' || activeCat === 'sim')) ? h('a', {
           class: 'card card-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener'
         },
-          h('span', { class: 'card-emoji' }, '\U0001F6E3'),
+          h('span', { class: 'card-emoji', html: Icons.svg('road', 28) }),
           h('span', { class: 'card-cat' }, 'Bonus'),
           h('h3', { class: 'card-title' }, 'Phantom'),
           h('p', { class: 'card-blurb' }, 'A traffic jam with no cause at all. One driver taps the brakes and the pulse outlives them, travelling backwards through the traffic forever. Watch it, then go play Gridlock again.'),
@@ -1982,7 +2309,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
     view.replaceChildren(
       h('div', { class: 'gamehead' },
         h('a', { class: 'back', href: '#' }, '◀ shelf'),
-        h('h2', { class: 'gtitle' }, h('span', { class: 'ge' }, g.emoji), g.title),
+        h('h2', { class: 'gtitle' }, h('span', { class: 'ge', html: Icons.svg(g.emoji, 24) }), g.title),
         g.link ? h('a', { class: 'back rel-link', href: g.link.url, target: '_blank', rel: 'noopener' }, g.link.label + ' \u2197') : null,
         h('div', { class: 'gmeta' },
           h('span', { class: 'pill diff-tag d-' + Arcade.diff().id }, Arcade.diff().label),
@@ -2079,28 +2406,52 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
 
 </script>
 <script>
-/* Gridlock. Twelve intersections, one rush hour, one very stressed player. */
+/* Gridlock. Twelve junctions, a working day, and a budget.
+   Cars route themselves and queue behind each other. You own the signals,
+   the money, and the blame. */
 (function () {
   'use strict';
   const { h, clamp, rand, randInt, pick } = Engine;
 
-  const W = 960, H = 560;
+  const W = 980, H = 600;
   const ROWS = 3, COLS = 4;
-  const X0 = 150, DX = 220;
-  const Y0 = 120, DY = 170;
-  const OFF = 70;                 // how far off-canvas roads run
-  const LANE = 9;                 // lane offset from road centre
-  const ROAD = 38;                // road width
-  const HALF_INT = 24;            // half intersection, for stop lines
-  const CAR_L = 21, CAR_W = 11;
-  const VMAX = 92;                // px/s
-  const ACC = 140, DEC = 320;
-  const FOLLOW = 30;              // desired bumper gap
-
-  const COLORS = ['#ff5c8f', '#38e1ff', '#9dff5c', '#ffc043', '#c08cff', '#ff8f4d', '#59f0d0', '#f0f4ff'];
+  const X0 = 152, DX = 226;
+  const Y0 = 132, DY = 176;
+  const OFF = 80;
+  const LANE = 9;
+  const ROAD = 38;
+  const HALF_INT = 25;
+  const CIRCLE_R = 46;
 
   const nodeX = (c) => X0 + c * DX;
   const nodeY = (r) => Y0 + r * DY;
+
+  /* ---------------- vehicle classes ---------------- */
+  const KINDS = {
+    car: { len: 21, wid: 11, vmax: 92, acc: 150, dec: 330, fee: 1, weight: 68 },
+    truck: { len: 34, wid: 13, vmax: 72, acc: 78, dec: 260, fee: 4, weight: 13 },
+    bus: { len: 40, wid: 14, vmax: 78, acc: 96, dec: 280, fee: 9, weight: 12, stops: true },
+    ambulance: { len: 27, wid: 12, vmax: 124, acc: 210, dec: 400, fee: 30, weight: 7 }
+  };
+  const CAR_COLORS = ['#ff5c8f', '#38e1ff', '#9dff5c', '#ffcb1f', '#c08cff', '#ff8f4d', '#59f0d0', '#f0f4ff'];
+
+  /* ---------------- what you can buy ---------------- */
+  const SHOP = [
+    { id: 'smart', name: 'Smart Signal', cost: 140, place: true, desc: 'Times itself off the queue lengths. Stops being your problem.' },
+    { id: 'circle', name: 'Roundabout', cost: 260, place: true, desc: 'No signal at all. Brilliant until it is busy, then it is a car park.' },
+    { id: 'over', name: 'Overpass', cost: 560, place: true, desc: 'Grade separation. Nobody ever stops here again. Costs a fortune.' },
+    { id: 'wider', name: 'Wider Roads', cost: 190, repeat: 3, desc: 'Higher limit and tighter following, everywhere at once.' },
+    { id: 'priority', name: 'Ambulance Priority', cost: 230, desc: 'Signals turn green for a siren before it arrives.' },
+    { id: 'reports', name: 'Congestion Reports', cost: 120, desc: 'Paints the queues red so you can see trouble coming.' }
+  ];
+
+  /* a day is three shifts, each pushing traffic a different way */
+  const SHIFTS = [
+    { name: 'MORNING PEAK', until: 38, inWeight: { W: 4, N: 3, E: 1, S: 1 }, rate: 0.85 },
+    { name: 'MIDDAY', until: 70, inWeight: { W: 1, N: 1, E: 1, S: 1 }, rate: 1.25 },
+    { name: 'EVENING PEAK', until: 104, inWeight: { W: 1, N: 1, E: 4, S: 3 }, rate: 0.8 }
+  ];
+  const DAY_LEN = 104;
 
   function mount(root, api) {
     const bagg = Engine.bag();
@@ -2108,46 +2459,70 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
     const ctx = cv.ctx;
     const dm = api.dm;
 
-    const pDelivered = api.pill('Through: 0');
-    const pWave = api.pill('Wave 1');
-    const pJam = api.pill('Jammed: 0');
-    const meterWrap = h('div', { class: 'panel', style: { width: 'min(560px,100%)' } },
+    let nodes, cars, money, day, dayT, delivered, rage, over, prefill;
+    let upgrades, placing, shopOpen, tripSum, tripN, spawnT, ambT, autoMode;
+    let drag, hint, hintT;
+
+    const pDay = api.pill('');
+    const pMoney = api.pill('');
+    const pThrough = api.pill('');
+    const pTrip = api.pill('');
+
+    const meterWrap = h('div', { class: 'panel', style: { width: 'min(620px,100%)' } },
       h('h4', null, 'Commuter rage'),
       h('div', { class: 'meter' }, h('i', { style: { width: '0%' } })));
-    root.appendChild(meterWrap);
     const meter = meterWrap.querySelector('i');
 
-    let lights, cars, delivered, rage, wave, waveT, spawnT, over, elapsed, autoMode, prefill;
+    const shopEl = h('div', { class: 'panel gl-shop', style: { display: 'none' } });
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+    root.append(meterWrap, shopEl, banner);
 
     function reset() {
-      lights = [];
+      nodes = [];
       for (let r = 0; r < ROWS; r++) {
-        lights.push([]);
+        nodes.push([]);
         for (let c = 0; c < COLS; c++) {
-          lights[r].push({ phase: (r + c) % 2 ? 'NS' : 'EW', t: rand(0, 6), red: 0, pending: null, flash: 0 });
+          nodes[r].push({
+            r, c, type: 'light',
+            phase: (r + c) % 2 ? 'NS' : 'EW',
+            t: rand(0, 6), red: 0, pending: null, flash: 0,
+            peds: 0, pedWait: 0, qNS: 0, qEW: 0, minGreen: 0
+          });
         }
       }
       cars = [];
-      delivered = 0; rage = 0; wave = 1; waveT = 0; spawnT = 0.2; elapsed = 0;
-      over = false; autoMode = true;
-
-      /* run the sim forward a little so you arrive to a city already in motion */
-      prefill = true;
-      for (let i = 0; i < 420; i++) update(1 / 30);
-      prefill = false;
-      delivered = 0; rage = 0; wave = 1; waveT = 0; elapsed = 0;
-
-      api.status('Click any intersection to flip its lights. Green light = that direction goes.');
+      money = 0; day = 1; dayT = 0; delivered = 0; rage = 0;
+      tripSum = 0; tripN = 0;
+      upgrades = { wider: 0, priority: 0, reports: 0 };
+      placing = null; shopOpen = false; over = false;
+      spawnT = 0.2; ambT = rand(18, 34);
+      autoMode = true;
+      drag = null; hint = ''; hintT = 0;
+      shopEl.style.display = 'none';
       banner.style.display = 'none';
-      sync();
+
+      prefill = true;
+      for (let i = 0; i < 400; i++) update(1 / 30);
+      prefill = false;
+      delivered = 0; rage = 0; money = 0; dayT = 0; tripSum = 0; tripN = 0;
+
+      api.status('Click a junction to flip it. Drag along a row or column for a green wave. Survive the day, then spend the takings.');
+      sync(0);
     }
 
-    /* ---------- route building ---------- */
-    function buildPath() {
-      const sides = ['W', 'E', 'N', 'S'];
-      const inSide = pick(sides);
-      let outSide = pick(sides.filter((s) => s !== inSide));
+    const speedScale = () => 1 + upgrades.wider * 0.11;
+    const followGap = () => 30 - upgrades.wider * 2.4;
 
+    /* ---------------- routing ---------------- */
+    function weightedSide(wmap) {
+      const entries = Object.entries(wmap);
+      const total = entries.reduce((a, [, w]) => a + w, 0);
+      let x = Math.random() * total;
+      for (const [k, w] of entries) { x -= w; if (x <= 0) return k; }
+      return entries[0][0];
+    }
+
+    function buildPath(inSide, outSide) {
       let sr, sc, er, ec;
       if (inSide === 'W') { sr = randInt(0, ROWS - 1); sc = 0; }
       else if (inSide === 'E') { sr = randInt(0, ROWS - 1); sc = COLS - 1; }
@@ -2161,27 +2536,20 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
 
       const horizIn = inSide === 'W' || inSide === 'E';
       const horizOut = outSide === 'W' || outSide === 'E';
-      const nodes = [];
+      const list = [];
       const push = (r, c) => {
-        const last = nodes[nodes.length - 1];
-        if (!last || last[0] !== r || last[1] !== c) nodes.push([r, c]);
+        const last = list[list.length - 1];
+        if (!last || last[0] !== r || last[1] !== c) list.push([r, c]);
       };
-      const runH = (r, from, to) => { const st = to > from ? 1 : -1; for (let c = from; ; c += st) { push(r, c); if (c === to) break; } };
-      const runV = (c, from, to) => { const st = to > from ? 1 : -1; for (let r = from; ; r += st) { push(r, c); if (r === to) break; } };
+      const runH = (r, a, b) => { const s = b > a ? 1 : -1; for (let c = a; ; c += s) { push(r, c); if (c === b) break; } };
+      const runV = (c, a, b) => { const s = b > a ? 1 : -1; for (let r = a; ; r += s) { push(r, c); if (r === b) break; } };
 
-      if (horizIn && horizOut) {
-        const mid = randInt(0, COLS - 1);
-        runH(sr, sc, mid); runV(mid, sr, er); runH(er, mid, ec);
-      } else if (horizIn && !horizOut) {
-        runH(sr, sc, ec); runV(ec, sr, er);
-      } else if (!horizIn && !horizOut) {
-        const mid = randInt(0, ROWS - 1);
-        runV(sc, sr, mid); runH(mid, sc, ec); runV(ec, mid, er);
-      } else {
-        runV(sc, sr, er); runH(er, sc, ec);
-      }
+      if (horizIn && horizOut) { const m = randInt(0, COLS - 1); runH(sr, sc, m); runV(m, sr, er); runH(er, m, ec); }
+      else if (horizIn) { runH(sr, sc, ec); runV(ec, sr, er); }
+      else if (!horizOut) { const m = randInt(0, ROWS - 1); runV(sc, sr, m); runH(m, sc, ec); runV(ec, m, er); }
+      else { runV(sc, sr, er); runH(er, sc, ec); }
 
-      const pts = nodes.map(([r, c]) => ({ x: nodeX(c), y: nodeY(r), r, c }));
+      const pts = list.map(([r, c]) => ({ x: nodeX(c), y: nodeY(r), r, c }));
       const first = pts[0], last = pts[pts.length - 1];
       const entry = inSide === 'W' ? { x: -OFF, y: first.y } : inSide === 'E' ? { x: W + OFF, y: first.y }
         : inSide === 'N' ? { x: first.x, y: -OFF } : { x: first.x, y: H + OFF };
@@ -2189,8 +2557,6 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
         : outSide === 'N' ? { x: last.x, y: -OFF } : { x: last.x, y: H + OFF };
 
       const raw = [entry].concat(pts, [exit]);
-
-      /* drop zero-length segments (can happen when entry and first node coincide) */
       const clean = [raw[0]];
       for (let i = 1; i < raw.length; i++) {
         const p = raw[i], q = clean[clean.length - 1];
@@ -2199,14 +2565,13 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
       }
       if (clean.length < 2) return null;
 
-      /* lane-offset the polyline so the whole route stays continuous */
       const dirs = [];
       for (let i = 0; i < clean.length - 1; i++) {
         const dx = clean[i + 1].x - clean[i].x, dy = clean[i + 1].y - clean[i].y;
         const len = Math.hypot(dx, dy);
         dirs.push({ x: dx / len, y: dy / len });
       }
-      const nrm = (d) => ({ x: -d.y, y: d.x });   // right-hand side, screen coords
+      const nrm = (d) => ({ x: -d.y, y: d.x });
       const out = [];
       for (let i = 0; i < clean.length; i++) {
         const p = clean[i];
@@ -2227,29 +2592,48 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
       for (let i = 0; i < out.length - 1; i++) {
         cum.push(cum[i] + Math.hypot(out[i + 1].x - out[i].x, out[i + 1].y - out[i].y));
       }
-
       const stops = [];
       for (let i = 1; i < out.length - 1; i++) {
         if (out[i].r === undefined) continue;
         const d = out[i].dirIn;
-        stops.push({ s: cum[i] - HALF_INT, r: out[i].r, c: out[i].c, axis: Math.abs(d.x) > 0.5 ? 'EW' : 'NS' });
+        stops.push({ s: cum[i] - HALF_INT, at: cum[i], r: out[i].r, c: out[i].c, axis: Math.abs(d.x) > 0.5 ? 'EW' : 'NS' });
       }
       return { pts: out, cum, total: cum[cum.length - 1], stops, dir0: dirs[0] };
     }
 
-    function spawn() {
-      if (cars.length > 78) return;
-      const p = buildPath();
+    function spawn(kindName) {
+      if (cars.length > 92) return;
+      const shift = SHIFTS.find((s) => dayT < s.until) || SHIFTS[SHIFTS.length - 1];
+      const inSide = weightedSide(shift.inWeight);
+      const opp = { W: 'E', E: 'W', N: 'S', S: 'N' };
+      const outMap = {};
+      for (const k of ['W', 'E', 'N', 'S']) if (k !== inSide) outMap[k] = shift.inWeight[opp[k]];
+      const outSide = weightedSide(outMap);
+
+      const p = buildPath(inSide, outSide);
       if (!p) return;
       const head = p.pts[0];
-      for (const c of cars) {
-        if (Math.hypot(c.x - head.x, c.y - head.y) < 46) return;   // don't stack on the on-ramp
-      }
-      cars.push({
-        path: p, s: 0, seg: 0, v: VMAX * 0.6, wait: 0, stopIdx: 0,
+      for (const c of cars) if (Math.hypot(c.x - head.x, c.y - head.y) < 54) return;
+
+      const name = kindName || pickKind();
+      const K = KINDS[name];
+      const car = {
+        kind: name, K, path: p, s: 0, seg: 0, v: K.vmax * 0.55, wait: 0, stopIdx: 0,
         x: head.x, y: head.y, dx: p.dir0.x, dy: p.dir0.y,
-        color: pick(COLORS), age: 0
-      });
+        color: name === 'ambulance' ? '#fffdf3' : name === 'bus' ? '#ffcb1f' : name === 'truck' ? '#8f9ab8' : pick(CAR_COLORS),
+        born: 0, dwell: 0, stopsLeft: null
+      };
+      if (K.stops && p.stops.length > 1) car.stopsLeft = [p.stops[randInt(0, p.stops.length - 1)].at];
+      if (name === 'ambulance') car.deadline = p.total / 70 + 6;
+      cars.push(car);
+    }
+
+    function pickKind() {
+      const names = Object.keys(KINDS).filter((n) => n !== 'ambulance');
+      const total = names.reduce((a, n) => a + KINDS[n].weight, 0);
+      let x = Math.random() * total;
+      for (const n of names) { x -= KINDS[n].weight; if (x <= 0) return n; }
+      return 'car';
     }
 
     function place(car) {
@@ -2267,98 +2651,304 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
       car.dy = (b.y - a.y) / segLen;
     }
 
-    const speedFor = (gap) => clamp(gap * 2.1 - 8, 0, VMAX);
+    const speedFor = (gap) => clamp(gap * 2.1 - 8, 0, 999);
 
-    function isGreen(r, c, axis) {
-      const L = lights[r][c];
-      return L.red <= 0 && L.phase === axis;
+    function mayPass(node, axis, car) {
+      if (node.type === 'over') return true;
+      if (node.type === 'circle') {
+        for (const o of cars) {
+          if (o === car) continue;
+          if (Math.hypot(o.x - nodeX(node.c), o.y - nodeY(node.r)) < CIRCLE_R) return false;
+        }
+        return true;
+      }
+      if (car && car.kind === 'ambulance') return true;
+      return node.red <= 0 && node.phase === axis;
     }
 
-    /* ---------- update ---------- */
-    function update(dt) {
-      if (over) return;
-      elapsed += dt;
-      waveT += dt;
-      if (waveT > 34) { waveT = 0; wave++; api.sfx.blip(880); }
+    function switchLight(node, force) {
+      if (node.type !== 'light' && node.type !== 'smart' && !force) return;
+      const want = node.phase === 'NS' ? 'EW' : 'NS';
+      if (node.pending === want) return;
+      node.pending = want;
+      node.red = 0.85;
+      node.flash = 0.35;
+      node.minGreen = 3.5;
+      /* the all-red is when people finally get to cross */
+      node.peds = 0;
+      node.pedWait = 0;
+    }
 
-      /* lights */
-      for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-          const L = lights[r][c];
-          L.flash = Math.max(0, L.flash - dt);
-          if (L.red > 0) {
-            L.red -= dt;
-            if (L.red <= 0 && L.pending) { L.phase = L.pending; L.pending = null; L.t = 0; }
-          } else {
-            L.t += dt;
-            if (autoMode && L.t > 11 / dm) switchLight(r, c);
-          }
+    function setAxis(node, axis) {
+      if (node.type === 'over' || node.type === 'circle') return;
+      if (node.phase !== axis) switchLight(node, true);
+    }
+
+    /* ---------------- the day ---------------- */
+    function update(dt) {
+      if (over || shopOpen) return;
+      dayT += dt;
+      if (dayT >= DAY_LEN && !prefill) return endDay();
+
+      const shift = SHIFTS.find((s) => dayT < s.until) || SHIFTS[SHIFTS.length - 1];
+
+      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+        const n = nodes[r][c];
+        n.flash = Math.max(0, n.flash - dt);
+        n.minGreen = Math.max(0, n.minGreen - dt);
+        if (n.type === 'over' || n.type === 'circle') { n.peds = 0; n.pedWait = 0; continue; }
+
+        if (n.red > 0) {
+          n.red -= dt;
+          if (n.red <= 0 && n.pending) { n.phase = n.pending; n.pending = null; n.t = 0; }
+        } else {
+          n.t += dt;
+          if (n.type === 'smart') {
+            const cur = n.phase === 'NS' ? n.qNS : n.qEW;
+            const oth = n.phase === 'NS' ? n.qEW : n.qNS;
+            if (!n.minGreen && (oth > cur + 1 || n.t > 16)) switchLight(n);
+          } else if (autoMode && n.t > 11 / dm) switchLight(n);
         }
+        n.peds += dt * 0.16 * dm;
+        if (n.peds > 0.9) n.pedWait += dt; else n.pedWait = 0;
       }
 
-      /* spawn */
       spawnT -= dt;
       if (spawnT <= 0) {
         spawn();
-        spawnT = Math.max(0.38, 1.35 - wave * 0.09) * rand(0.7, 1.4) / dm;
+        spawnT = clamp(shift.rate - day * 0.045, 0.3, 3) * rand(0.65, 1.4) / dm;
+      }
+      ambT -= dt;
+      if (ambT <= 0 && !prefill) {
+        spawn('ambulance');
+        ambT = rand(26, 48) / dm;
+        flash('An ambulance is on the network. Clear it a path.');
       }
 
       for (const car of cars) place(car);
 
-      /* decide speeds */
+      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) { nodes[r][c].qNS = 0; nodes[r][c].qEW = 0; }
+      for (const a of cars) {
+        const st = a.path.stops[a.stopIdx];
+        if (!st || a.v > 22) continue;
+        const d = st.s - a.s;
+        if (d < 0 || d > 150) continue;
+        const n = nodes[st.r][st.c];
+        if (st.axis === 'NS') n.qNS++; else n.qEW++;
+      }
+
       let jammed = 0;
       for (const a of cars) {
-        let allowed = VMAX;
+        a.born += dt;
+        let allowed = a.K.vmax * speedScale();
+        if (a.dwell > 0) { a.dwell -= dt; allowed = 0; }
 
-        /* car ahead (this also stops cars from driving into a blocked box) */
         for (const b of cars) {
           if (b === a) continue;
           const vx = b.x - a.x, vy = b.y - a.y;
           const fwd = vx * a.dx + vy * a.dy;
-          if (fwd <= 0 || fwd > 110) continue;
+          if (fwd <= 0 || fwd > 120) continue;
           const lat = Math.abs(vx * -a.dy + vy * a.dx);
-          if (lat > 12) continue;
-          allowed = Math.min(allowed, speedFor(fwd - FOLLOW));
+          if (lat > 13) continue;
+          const gap = fwd - followGap() - (b.K.len - 21) * 0.5;
+          allowed = Math.min(allowed, speedFor(a.kind === 'ambulance' ? gap + 10 : gap));
         }
 
-        /* red light ahead */
         while (a.stopIdx < a.path.stops.length && a.s > a.path.stops[a.stopIdx].s + 6) a.stopIdx++;
         const st = a.path.stops[a.stopIdx];
         if (st) {
+          const node = nodes[st.r][st.c];
           const d = st.s - a.s;
-          if (d >= 0 && d < 130 && !isGreen(st.r, st.c, st.axis)) allowed = Math.min(allowed, speedFor(d));
+          if (d >= 0 && d < 140 && !mayPass(node, st.axis, a)) allowed = Math.min(allowed, speedFor(d));
+          if (node.type === 'circle' && d < 60 && d > -30) allowed = Math.min(allowed, 52);
+          if (upgrades.priority && a.kind === 'ambulance' && d > 0 && d < 240 &&
+            (node.type === 'light' || node.type === 'smart') && node.phase !== st.axis && node.red <= 0) {
+            switchLight(node);
+          }
         }
 
-        a.v += clamp(allowed - a.v, -DEC * dt, ACC * dt);
-        a.v = clamp(a.v, 0, VMAX);
+        if (a.stopsLeft && a.stopsLeft.length) {
+          const target = a.stopsLeft[0];
+          if (a.s > target - 6 && a.dwell <= 0) { a.stopsLeft.shift(); a.dwell = 2.2; }
+        }
+
+        a.v += clamp(allowed - a.v, -a.K.dec * dt, a.K.acc * dt);
+        a.v = clamp(a.v, 0, a.K.vmax * speedScale());
         a.s += a.v * dt;
-        a.age += dt;
         if (a.v < 8) { a.wait += dt; if (a.wait > 3) jammed++; }
         else a.wait = Math.max(0, a.wait - dt * 2.5);
       }
 
       for (let i = cars.length - 1; i >= 0; i--) {
-        if (cars[i].s >= cars[i].path.total) { cars.splice(i, 1); delivered++; }
+        const a = cars[i];
+        if (a.s < a.path.total) continue;
+        cars.splice(i, 1);
+        delivered++;
+        tripSum += a.born;
+        tripN++;
+        let fee = a.K.fee;
+        if (a.kind === 'ambulance') {
+          if (a.born <= a.deadline) flash('Ambulance through in time. Plus $' + fee);
+          else { fee = 4; rage = clamp(rage + 14, 0, 100); flash('The ambulance was stuck in your traffic.'); }
+        }
+        money += fee;
       }
 
-      rage = clamp(rage + dt * (jammed * 0.85 * dm - 2.6 / dm), 0, 100);
-      if (rage >= 100 && !prefill) endGame();
+      let pedAnger = 0;
+      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) if (nodes[r][c].pedWait > 13) pedAnger++;
 
-      pJam.textContent = 'Jammed: ' + jammed;
-      pDelivered.textContent = 'Through: ' + delivered;
-      pWave.textContent = 'Wave ' + wave;
+      rage = clamp(rage + dt * (jammed * 0.8 * dm + pedAnger * 0.9 - 2.6 / dm), 0, 100);
+      if (rage >= 100 && !prefill) return endGame();
+
+      if (hintT > 0) hintT -= dt;
+      if (!prefill) sync(jammed);
+    }
+
+    function flash(text) { hint = text; hintT = 4; api.sfx.blip(760); }
+
+    function sync(jammed) {
+      const shift = SHIFTS.find((s) => dayT < s.until) || SHIFTS[SHIFTS.length - 1];
+      pDay.textContent = 'Day ' + day + '  ' + shift.name;
+      pMoney.textContent = '$' + money;
+      pMoney.className = 'pill good';
+      pThrough.textContent = 'Through: ' + delivered + (jammed ? '  (' + jammed + ' stuck)' : '');
+      pTrip.textContent = tripN ? 'Avg trip ' + (tripSum / tripN).toFixed(1) + 's' : 'Avg trip --';
       meter.style.width = rage.toFixed(0) + '%';
-      meterWrap.classList.toggle('warn', rage > 60);
     }
 
-    function switchLight(r, c) {
-      const L = lights[r][c];
-      const want = L.phase === 'NS' ? 'EW' : 'NS';
-      if (L.pending === want) return;
-      L.pending = want;
-      L.red = 0.85;
-      L.flash = 0.35;
+    function endDay() {
+      shopOpen = true;
+      api.sfx.great();
+      renderShop();
     }
+
+    function startDay() {
+      shopOpen = false;
+      placing = null;
+      day++;
+      dayT = 0;
+      tripSum = 0; tripN = 0;
+      ambT = rand(16, 30);
+      rage = Math.max(0, rage - 30);
+      shopEl.style.display = 'none';
+      api.status('Day ' + day + '. Busier than yesterday, so spend the money.');
+      sync(0);
+    }
+
+    const owned = (id) => upgrades[id] || 0;
+
+    function renderShop() {
+      const rows = SHOP.map((it) => {
+        const n = owned(it.id);
+        const maxed = it.repeat ? n >= it.repeat : (!it.place && n > 0);
+        const afford = money >= it.cost && !maxed;
+        return h('button', {
+          class: 'gl-buy' + (afford ? ' afford' : '') + (placing === it.id ? ' picking' : ''),
+          type: 'button', onclick: () => buy(it)
+        },
+          h('span', { class: 'gl-buy-icon', html: Icons.svg(it.id, 30) }),
+          h('span', { class: 'gl-buy-body' },
+            h('b', null, it.name + (it.repeat ? '  ' + n + '/' + it.repeat : maxed ? '  OWNED' : '')),
+            h('span', null, it.desc)),
+          h('span', { class: 'gl-buy-cost' }, '$' + it.cost));
+      });
+
+      shopEl.style.display = '';
+      shopEl.replaceChildren(
+        h('h4', null, 'END OF DAY ' + day + '  ·  $' + money + ' IN THE BUDGET'),
+        h('p', { class: 'gl-shop-note' },
+          delivered + ' vehicles through so far. ' +
+          (tripN ? 'Average trip today was ' + (tripSum / tripN).toFixed(1) + ' seconds. ' : '') +
+          'Junction upgrades need a junction: buy one, then click where it goes.'),
+        h('div', { class: 'gl-shop-grid' }, rows),
+        h('button', { class: 'btn primary', type: 'button', onclick: startDay }, 'Open the roads for day ' + (day + 1)));
+    }
+
+    function buy(it) {
+      const n = owned(it.id);
+      const maxed = it.repeat ? n >= it.repeat : (!it.place && n > 0);
+      if (maxed || money < it.cost) { api.sfx.bad(); return; }
+      if (it.place) {
+        placing = placing === it.id ? null : it.id;
+        api.sfx.click();
+        renderShop();
+        api.status(placing ? 'Now click the junction that gets the ' + it.name.toLowerCase() + '.' : 'Cancelled.');
+        return;
+      }
+      money -= it.cost;
+      upgrades[it.id] = n + 1;
+      api.sfx.good();
+      renderShop();
+    }
+
+    /* ---------------- input ---------------- */
+    bagg.listen(cv.el, 'pointerdown', (e) => {
+      if (over) return;
+      const p = cv.pos(e);
+      cv.el.setPointerCapture(e.pointerId);
+      drag = { x0: p.x, y0: p.y, x: p.x, y: p.y };
+    });
+    bagg.listen(cv.el, 'pointermove', (e) => {
+      if (!drag) return;
+      const p = cv.pos(e);
+      drag.x = p.x; drag.y = p.y;
+    });
+    function release() {
+      if (!drag) return;
+      const d = drag;
+      drag = null;
+      const dx = d.x - d.x0, dy = d.y - d.y0;
+
+      if (Math.hypot(dx, dy) > 70) {
+        if (Math.abs(dx) > Math.abs(dy)) {
+          let br = 0, bd = 1e9;
+          for (let r = 0; r < ROWS; r++) { const dd = Math.abs(d.y0 - nodeY(r)); if (dd < bd) { bd = dd; br = r; } }
+          if (bd < 110) {
+            for (let c = 0; c < COLS; c++) setAxis(nodes[br][c], 'EW');
+            flash('Green wave across row ' + (br + 1) + '.');
+            api.sfx.good();
+          }
+        } else {
+          let bc = 0, bd = 1e9;
+          for (let c = 0; c < COLS; c++) { const dd = Math.abs(d.x0 - nodeX(c)); if (dd < bd) { bd = dd; bc = c; } }
+          if (bd < 130) {
+            for (let r = 0; r < ROWS; r++) setAxis(nodes[r][bc], 'NS');
+            flash('Green wave down column ' + (bc + 1) + '.');
+            api.sfx.good();
+          }
+        }
+        return;
+      }
+
+      let bd = 1e9, br = -1, bc = -1;
+      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+        const dd = Math.hypot(d.x0 - nodeX(c), d.y0 - nodeY(r));
+        if (dd < bd) { bd = dd; br = r; bc = c; }
+      }
+      if (bd > 66) return;
+      const node = nodes[br][bc];
+
+      if (placing) {
+        const it = SHOP.find((s) => s.id === placing);
+        if (node.type === placing) { flash('That junction already has one.'); api.sfx.bad(); return; }
+        if (money < it.cost) { api.sfx.bad(); return; }
+        money -= it.cost;
+        node.type = placing;
+        node.red = 0;
+        node.pending = null;
+        placing = null;
+        api.sfx.great();
+        flash(it.name + ' built at junction ' + (br + 1) + '-' + (bc + 1) + '.');
+        renderShop();
+        return;
+      }
+      if (shopOpen) return;
+      if (node.type === 'circle' || node.type === 'over') { flash('Nothing to switch here. That is rather the point of it.'); return; }
+      switchLight(node);
+      api.sfx.click();
+    }
+    bagg.listen(cv.el, 'pointerup', release);
+    bagg.listen(cv.el, 'pointercancel', release);
 
     function endGame() {
       over = true;
@@ -2366,36 +2956,44 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
       api.sfx.bad();
       banner.style.display = '';
       banner.replaceChildren(
-        h('h3', null, 'Total gridlock.'),
-        h('p', null, delivered + ' commuters made it through in ' + Engine.fmtTime(elapsed) + '.' +
-          (res.isRecord ? ' New personal best!' : res.isFirst ? '' : ' Best: ' + res.best + '.')),
-        h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Try again'));
+        h('h3', null, 'The city has had enough.'),
+        h('p', null, delivered + ' vehicles delivered across ' + day + ' day' + (day === 1 ? '' : 's') +
+          ', $' + money + ' left unspent' +
+          (tripN ? ', average trip ' + (tripSum / tripN).toFixed(1) + 's' : '') + '.' +
+          (res.isRecord ? ' Best run yet!' : res.isFirst ? '' : ' Best: ' + res.best + '.')),
+        h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Take the job again'));
     }
 
-    /* ---------- render ---------- */
+    /* ---------------- render ---------------- */
     function draw() {
-      ctx.fillStyle = '#0c1220';
+      ctx.fillStyle = '#0f1729';
       ctx.fillRect(0, 0, W, H);
 
-      /* blocks between the roads */
-      ctx.fillStyle = '#0f1729';
-      for (let r = -1; r < ROWS; r++) {
-        for (let c = -1; c < COLS; c++) {
-          const x = c < 0 ? -OFF : nodeX(c) + ROAD / 2;
-          const y = r < 0 ? -OFF : nodeY(r) + ROAD / 2;
-          const x2 = c + 1 >= COLS ? W + OFF : nodeX(c + 1) - ROAD / 2;
-          const y2 = r + 1 >= ROWS ? H + OFF : nodeY(r + 1) - ROAD / 2;
-          Engine.roundRect(ctx, x + 6, y + 6, x2 - x - 12, y2 - y - 12, 8);
-          ctx.fill();
-        }
+      ctx.fillStyle = '#131c30';
+      for (let r = -1; r < ROWS; r++) for (let c = -1; c < COLS; c++) {
+        const x = c < 0 ? -OFF : nodeX(c) + ROAD / 2;
+        const y = r < 0 ? -OFF : nodeY(r) + ROAD / 2;
+        const x2 = c + 1 >= COLS ? W + OFF : nodeX(c + 1) - ROAD / 2;
+        const y2 = r + 1 >= ROWS ? H + OFF : nodeY(r + 1) - ROAD / 2;
+        ctx.fillRect(x + 7, y + 7, x2 - x - 14, y2 - y - 14);
       }
 
-      /* asphalt */
       ctx.fillStyle = '#28324a';
       for (let r = 0; r < ROWS; r++) ctx.fillRect(-OFF, nodeY(r) - ROAD / 2, W + OFF * 2, ROAD);
       for (let c = 0; c < COLS; c++) ctx.fillRect(nodeX(c) - ROAD / 2, -OFF, ROAD, H + OFF * 2);
 
-      /* lane dashes */
+      if (upgrades.reports) {
+        for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+          const n = nodes[r][c];
+          const q = Math.max(n.qNS, n.qEW);
+          if (q < 2) continue;
+          ctx.fillStyle = 'rgba(232,64,42,' + clamp((q - 1) / 7, 0, 0.55).toFixed(2) + ')';
+          ctx.beginPath();
+          ctx.arc(nodeX(c), nodeY(r), 90, 0, 7);
+          ctx.fill();
+        }
+      }
+
       ctx.strokeStyle = '#59648a';
       ctx.lineWidth = 1.5;
       ctx.setLineDash([11, 13]);
@@ -2405,132 +3003,213 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
       ctx.stroke();
       ctx.setLineDash([]);
 
-      /* intersections + signals */
-      for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-          const x = nodeX(c), y = nodeY(r), L = lights[r][c];
+      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+        const n = nodes[r][c];
+        const x = nodeX(c), y = nodeY(r);
+
+        if (n.type === 'over') {
+          ctx.fillStyle = '#3d4a6d';
+          ctx.fillRect(x - ROAD / 2 - 28, y - ROAD / 2 - 4, ROAD + 56, ROAD + 8);
+          ctx.strokeStyle = '#0c1119';
+          ctx.lineWidth = 3;
+          ctx.strokeRect(x - ROAD / 2 - 28, y - ROAD / 2 - 4, ROAD + 56, ROAD + 8);
+        } else {
           ctx.fillStyle = '#323d59';
           ctx.fillRect(x - ROAD / 2, y - ROAD / 2, ROAD, ROAD);
-          if (L.flash > 0) {
-            ctx.strokeStyle = 'rgba(56,225,255,' + (L.flash / 0.35 * 0.9).toFixed(2) + ')';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(x - ROAD / 2 - 3, y - ROAD / 2 - 3, ROAD + 6, ROAD + 6);
-          }
-          const ns = L.red > 0 ? '#ffb020' : (L.phase === 'NS' ? '#4ade5e' : '#ff4d5e');
-          const ew = L.red > 0 ? '#ffb020' : (L.phase === 'EW' ? '#4ade5e' : '#ff4d5e');
-          const d = ROAD / 2 + 5;
+        }
+
+        if (n.type === 'circle') {
+          ctx.strokeStyle = '#8f9ab8';
+          ctx.lineWidth = 12;
+          ctx.beginPath();
+          ctx.arc(x, y, 24, 0, 7);
+          ctx.stroke();
+          ctx.fillStyle = '#1e6b3a';
+          ctx.beginPath();
+          ctx.arc(x, y, 15, 0, 7);
+          ctx.fill();
+        }
+
+        if (n.flash > 0) {
+          ctx.strokeStyle = 'rgba(255,203,31,' + (n.flash / 0.35).toFixed(2) + ')';
+          ctx.lineWidth = 3;
+          ctx.strokeRect(x - ROAD / 2 - 5, y - ROAD / 2 - 5, ROAD + 10, ROAD + 10);
+        }
+
+        if (n.type === 'light' || n.type === 'smart') {
+          const ns = n.red > 0 ? '#ffb020' : (n.phase === 'NS' ? '#4ade5e' : '#ff4d5e');
+          const ew = n.red > 0 ? '#ffb020' : (n.phase === 'EW' ? '#4ade5e' : '#ff4d5e');
+          const d = ROAD / 2 + 6;
           const dot = (px, py, col) => {
             ctx.fillStyle = col;
             ctx.beginPath();
-            ctx.arc(px, py, 3.4, 0, 7);
+            ctx.arc(px, py, 3.6, 0, 7);
             ctx.fill();
           };
           dot(x - 4, y - d, ns); dot(x + 4, y + d, ns);
           dot(x - d, y + 4, ew); dot(x + d, y - 4, ew);
+
+          if (n.type === 'smart') {
+            ctx.fillStyle = '#38e1ff';
+            ctx.font = 'bold 10px Verdana, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('AUTO', x, y + 4);
+            ctx.textAlign = 'left';
+          }
+          if (n.peds > 0.9) {
+            ctx.fillStyle = n.pedWait > 10 ? '#ff4d5e' : '#cfc6ae';
+            for (let i = 0; i < Math.min(4, Math.floor(n.peds)); i++) {
+              ctx.beginPath();
+              ctx.arc(x - ROAD / 2 - 12, y - 14 + i * 9, 3, 0, 7);
+              ctx.fill();
+            }
+          }
         }
       }
 
-      /* cars */
-      for (const car of cars) {
+      for (const a of cars) {
+        const L = a.K.len, Wd = a.K.wid;
         ctx.save();
-        ctx.translate(car.x, car.y);
-        ctx.rotate(Math.atan2(car.dy, car.dx));
-        ctx.fillStyle = 'rgba(0,0,0,.35)';
-        Engine.roundRect(ctx, -CAR_L / 2 + 1.5, -CAR_W / 2 + 2, CAR_L, CAR_W, 3);
+        ctx.translate(a.x, a.y);
+        ctx.rotate(Math.atan2(a.dy, a.dx));
+        ctx.fillStyle = 'rgba(0,0,0,.4)';
+        Engine.roundRect(ctx, -L / 2 + 1.5, -Wd / 2 + 2, L, Wd, 3);
         ctx.fill();
-        ctx.fillStyle = car.color;
-        Engine.roundRect(ctx, -CAR_L / 2, -CAR_W / 2, CAR_L, CAR_W, 3);
+        ctx.fillStyle = a.color;
+        Engine.roundRect(ctx, -L / 2, -Wd / 2, L, Wd, 3);
         ctx.fill();
-        ctx.fillStyle = 'rgba(10,14,24,.55)';
-        Engine.roundRect(ctx, -1, -CAR_W / 2 + 1.5, 7, CAR_W - 3, 2);
-        ctx.fill();
-        if (car.v < 6) {
+
+        if (a.kind === 'bus') {
+          ctx.fillStyle = 'rgba(10,14,24,.5)';
+          for (let i = 0; i < 4; i++) ctx.fillRect(-L / 2 + 5 + i * 8, -Wd / 2 + 2, 5, Wd - 4);
+        } else if (a.kind === 'ambulance') {
+          ctx.fillStyle = '#e8402a';
+          ctx.fillRect(-L / 2 + 3, -Wd / 2, 5, Wd);
+          ctx.fillStyle = Math.floor(Date.now() / 130) % 2 ? '#38a0ff' : '#ff4d5e';
+          ctx.fillRect(-2, -Wd / 2 - 3, 6, 3);
+        } else {
+          ctx.fillStyle = 'rgba(10,14,24,.55)';
+          Engine.roundRect(ctx, -1, -Wd / 2 + 1.5, 7, Wd - 3, 2);
+          ctx.fill();
+        }
+        if (a.v < 6) {
           ctx.fillStyle = '#ff3b3b';
-          ctx.fillRect(-CAR_L / 2 - 1, -CAR_W / 2 + 1, 2, CAR_W - 2);
+          ctx.fillRect(-L / 2 - 1, -Wd / 2 + 1, 2, Wd - 2);
         }
         ctx.restore();
-        if (car.wait > 4) {
-          const a = clamp((car.wait - 4) / 5, 0, 1);
-          ctx.fillStyle = 'rgba(255,80,80,' + (0.35 + a * 0.55).toFixed(2) + ')';
-          ctx.font = 'bold 13px system-ui';
-          ctx.textAlign = 'center';
-          ctx.fillText('!', car.x, car.y - 11);
+
+        if (a.kind === 'ambulance') {
+          ctx.strokeStyle = 'rgba(56,160,255,.5)';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(a.x, a.y, 14 + Math.sin(Date.now() / 90) * 3, 0, 7);
+          ctx.stroke();
         }
+        if (a.wait > 4) {
+          ctx.fillStyle = 'rgba(255,80,80,' + (0.35 + clamp((a.wait - 4) / 5, 0, 1) * 0.55).toFixed(2) + ')';
+          ctx.font = 'bold 13px Verdana, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('!', a.x, a.y - 12);
+          ctx.textAlign = 'left';
+        }
+      }
+
+      if (drag && Math.hypot(drag.x - drag.x0, drag.y - drag.y0) > 70) {
+        ctx.strokeStyle = 'rgba(111,207,47,.75)';
+        ctx.lineWidth = 10;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(drag.x0, drag.y0);
+        ctx.lineTo(drag.x, drag.y);
+        ctx.stroke();
+        ctx.lineCap = 'butt';
+      }
+
+      ctx.fillStyle = 'rgba(12,17,25,.82)';
+      ctx.fillRect(0, 0, W, 26);
+      ctx.fillStyle = '#6fcf2f';
+      ctx.fillRect(0, 0, W * clamp(dayT / DAY_LEN, 0, 1), 26);
+      ctx.fillStyle = '#0c1119';
+      ctx.font = 'bold 12px Verdana, sans-serif';
+      const shift = SHIFTS.find((s) => dayT < s.until) || SHIFTS[SHIFTS.length - 1];
+      ctx.fillText('DAY ' + day + '   ' + shift.name, 10, 18);
+      ctx.textAlign = 'right';
+      ctx.fillText('$' + money, W - 10, 18);
+      ctx.textAlign = 'left';
+
+      if (hintT > 0) {
+        ctx.globalAlpha = clamp(hintT, 0, 1);
+        ctx.fillStyle = 'rgba(12,17,25,.92)';
+        ctx.fillRect(W / 2 - 240, H - 52, 480, 30);
+        ctx.strokeStyle = '#ffcb1f';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(W / 2 - 240, H - 52, 480, 30);
+        ctx.fillStyle = '#ffcb1f';
+        ctx.font = 'bold 13px Verdana, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(hint, W / 2, H - 32);
+        ctx.textAlign = 'left';
+        ctx.globalAlpha = 1;
+      }
+
+      if (placing) {
+        ctx.fillStyle = 'rgba(255,203,31,.14)';
+        ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = '#ffcb1f';
+        ctx.font = '26px Impact, Haettenschweiler, Arial Black, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('CLICK A JUNCTION TO BUILD', W / 2, 62);
+        ctx.textAlign = 'left';
       }
 
       if (Engine.paused && !over) {
-        ctx.fillStyle = 'rgba(8,11,20,.62)';
+        ctx.fillStyle = 'rgba(12,17,25,.66)';
         ctx.fillRect(0, 0, W, H);
-        ctx.fillStyle = '#e8ecf7';
-        ctx.font = 'bold 24px system-ui';
+        ctx.fillStyle = '#ded6c2';
+        ctx.font = '30px Impact, Haettenschweiler, Arial Black, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('paused', W / 2, H / 2);
+        ctx.fillText('PAUSED', W / 2, H / 2);
+        ctx.textAlign = 'left';
       }
     }
 
-    /* the pause overlay needs to render while the sim is frozen */
-    let rafId = 0;
-    (function paintLoop() {
-      rafId = requestAnimationFrame(paintLoop);
-      if (Engine.paused) draw();
-    })();
-    bagg.add(() => cancelAnimationFrame(rafId));
-
-    const banner = h('div', { class: 'banner', style: { display: 'none' } });
-    root.appendChild(banner);
-
-    bagg.listen(cv.el, 'pointerdown', (e) => {
-      if (over) return;
-      const p = cv.pos(e);
-      let bestD = 1e9, br = -1, bc = -1;
-      for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-          const d = Math.hypot(p.x - nodeX(c), p.y - nodeY(r));
-          if (d < bestD) { bestD = d; br = r; bc = c; }
-        }
-      }
-      if (bestD < 62) { switchLight(br, bc); api.sfx.click(); }
-    });
-
-    api.button('Restart', reset);
+    api.button('New job', reset);
     const autoBtn = api.button('Auto-cycle: on', () => {
       autoMode = !autoMode;
       autoBtn.textContent = 'Auto-cycle: ' + (autoMode ? 'on' : 'off');
       autoBtn.classList.toggle('on', autoMode);
     }, 'on');
-    api.button('All lights E–W', () => {
-      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) if (lights[r][c].phase !== 'EW') switchLight(r, c);
-    });
-    api.button('All lights N–S', () => {
-      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) if (lights[r][c].phase !== 'NS') switchLight(r, c);
-    });
-
-    function sync() { meter.style.width = '0%'; }
+    api.button('All E-W', () => { for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) setAxis(nodes[r][c], 'EW'); });
+    api.button('All N-S', () => { for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) setAxis(nodes[r][c], 'NS'); });
 
     reset();
     bagg.add(Engine.loop((dt) => { update(dt); draw(); }));
+    let rafId = 0;
+    (function paint() { rafId = requestAnimationFrame(paint); if (Engine.paused || shopOpen) draw(); })();
+    bagg.add(() => cancelAnimationFrame(rafId));
     return () => bagg.dispose();
   }
 
   Arcade.register({
     id: 'gridlock',
     title: 'Gridlock',
-    emoji: '🚦',
+    emoji: 'gridlock',
     cat: 'sim',
     order: 1,
-    blurb: 'Twelve intersections. One rush hour. You are the lights. Nobody voted for you and everybody is going to blame you.',
-    scoreLabel: 'Cars through',
+    blurb: 'Twelve junctions, a full working day and a budget. Cars, buses, trucks and ambulances all want through, and you own every signal in the city.',
+    scoreLabel: 'Vehicles through',
     link: {
       url: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd',
       label: 'See why real jams start'
     },
-    tags: ['traffic', 'jam', 'city', 'lights'],
+    tags: ['traffic', 'jam', 'city', 'lights', 'management'],
     how: [
-      'Click an intersection to flip which way gets the green.',
-      'Every flip runs a short all-red first, so think one beat ahead or you will just move the jam somewhere else.',
-      'Auto-cycle flips lights on a timer. Switch it off when you want total control and total responsibility.',
-      'Cars stuck in traffic fill the commuter rage bar. Fill it and the city turns on you.',
-      'It gets busier every 34 seconds. Score is cars that made it off the map.'
+      'Click a junction to flip which way gets the green. Each flip runs a short all-red, and that all-red is when the pedestrians finally get to cross.',
+      'Drag a line along a row or column to set a green wave down the whole corridor. This is the good move.',
+      'Buses pull in at a stop and pay nine. Trucks are slow and pay four. Ambulances run red lights and pay thirty if they get there in time, or hurt you badly if they do not.',
+      'Traffic direction swings through the day: inbound at the morning peak, outbound in the evening, and heavier every day you survive.',
+      'You are paid per vehicle delivered. At the end of each day you can buy smart signals, roundabouts, overpasses, wider roads, ambulance priority and a congestion map.',
+      'Queued drivers and stranded pedestrians both fill the rage bar. Fill it and you are out of a job.'
     ],
     mount
   });
@@ -2834,7 +3513,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'elevator',
     title: 'Elevator Rush',
-    emoji: '🛗',
+    emoji: 'elevator',
     cat: 'sim',
     order: 2,
     blurb: 'Three lifts. Eight floors. A lobby full of people who are already late and have decided that is your fault.',
@@ -2881,9 +3560,9 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
 
     /* controllable plants */
     const SPECS = [
-      { id: 'coal', name: 'Coal', emoji: '🏭', cap: 62, ramp: 4.5, cost: 26, co2: 0.95, min: 22, note: 'cheap, slow, filthy' },
-      { id: 'gas', name: 'Gas peaker', emoji: '🔥', cap: 46, ramp: 34, cost: 78, co2: 0.42, min: 0, note: 'instant, expensive' },
-      { id: 'hydro', name: 'Hydro', emoji: '💧', cap: 30, ramp: 16, cost: 12, co2: 0, min: 0, note: 'limited reservoir' }
+      { id: 'coal', name: 'Coal', icon: 'over', cap: 62, ramp: 4.5, cost: 26, co2: 0.95, min: 22, note: 'cheap, slow, filthy' },
+      { id: 'gas', name: 'Gas peaker', icon: 'boom', cap: 46, ramp: 34, cost: 78, co2: 0.42, min: 0, note: 'instant, expensive' },
+      { id: 'hydro', name: 'Hydro', icon: 'reports', cap: 30, ramp: 16, cost: 12, co2: 0, min: 0, note: 'limited reservoir' }
     ];
 
     function reset() {
@@ -2943,7 +3622,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
         sliders[sp.id + ':out'] = outEl;
         sliders[sp.id + ':set'] = setEl;
         panels.appendChild(h('div', { class: 'panel plant' },
-          h('h4', null, sp.emoji + ' ' + sp.name),
+          h('h4', null, Engine.h('span', { class: 'ico-wrap', html: Icons.svg(sp.icon, 16) }), ' ' + sp.name),
           range,
           h('div', { class: 'row' }, h('span', null, 'setpoint'), setEl),
           h('div', { class: 'row' }, h('span', null, 'output'), outEl),
@@ -2960,7 +3639,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
       sliders['bat:out'] = batOut;
       sliders['bat:charge'] = batCharge;
       panels.appendChild(h('div', { class: 'panel plant' },
-        h('h4', null, '🔋 Battery'),
+        h('h4', null, 'Battery'),
         bat,
         h('div', { class: 'row' }, h('span', null, 'charge ⟷ discharge'), batOut),
         h('div', { class: 'row' }, h('span', null, 'state of charge'), batCharge),
@@ -2971,7 +3650,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
         }, 'Idle battery')));
 
       const ren = h('div', { class: 'panel plant' },
-        h('h4', null, '☀️ Renewables'),
+        h('h4', null, 'Renewables'),
         h('div', { class: 'row' }, h('span', null, 'solar'), h('span', { class: 'val', id: 'pg-solar' }, '0')),
         h('div', { class: 'row' }, h('span', null, 'wind'), h('span', { class: 'val', id: 'pg-wind' }, '0')),
         h('div', { class: 'row' }, h('span', null, 'reservoir'), h('span', { class: 'val', id: 'pg-res' }, '100%')),
@@ -3001,12 +3680,12 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
 
     /* ---------------- events ---------------- */
     const EVENTS = [
-      { text: '☁️  Cloud front rolling in. Solar is dropping.', run: () => { S.cloud = 0.18; S.cloudT = 16; } },
-      { text: '🍃  Wind is dying off.', run: () => { S.wind = 0.08; S.windTrend = 0.02; } },
-      { text: '🌬️  Gusty front. Wind is surging.', run: () => { S.wind = 0.95; S.windTrend = -0.03; } },
-      { text: '🏭  Smelter kicked on. Demand spike incoming.', run: () => { S.surge = 26; S.surgeT = 18; } },
-      { text: '⚠️  Coal unit tripped offline! Restart it.', run: () => { S.tripT = 9; S.out.coal = 0; } },
-      { text: '❄️  Cold snap. Everyone turned the heat up.', run: () => { S.surge = 18; S.surgeT = 26; } }
+      { text: 'Cloud front rolling in. Solar is dropping.', run: () => { S.cloud = 0.18; S.cloudT = 16; } },
+      { text: 'Wind is dying off.', run: () => { S.wind = 0.08; S.windTrend = 0.02; } },
+      { text: 'Gusty front. Wind is surging.', run: () => { S.wind = 0.95; S.windTrend = -0.03; } },
+      { text: 'Smelter kicked on. Demand spike incoming.', run: () => { S.surge = 26; S.surgeT = 18; } },
+      { text: 'Coal unit tripped offline! Restart it.', run: () => { S.tripT = 9; S.out.coal = 0; } },
+      { text: 'Cold snap. Everyone turned the heat up.', run: () => { S.surge = 18; S.surgeT = 26; } }
     ];
     let eventTimer = 14;
 
@@ -3020,7 +3699,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
       if (Math.floor(S.hour / 24) > Math.floor(prevHour / 24)) {
         S.day++;
         S.reservoir = Math.min(100, S.reservoir + 25);
-        flash('🌅  Day ' + S.day + '. Demand is up again.');
+        flash('Day ' + S.day + '. Demand is up again.');
       }
 
       /* weather drifts */
@@ -3096,7 +3775,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
       const res = api.submit(hours);
       banner.style.display = '';
       banner.replaceChildren(
-        h('h3', null, '🌑 Blackout.'),
+        h('h3', null, 'Blackout.'),
         h('p', null, 'You held the grid for ' + hours + ' hours (' + (hours / 24).toFixed(1) + ' days), ' +
           'spent $' + S.cost.toFixed(1) + 'M and vented ' + S.co2.toFixed(1) + ' kt of CO₂.' +
           (res.isRecord ? ' New personal best!' : res.isFirst ? '' : ' Best: ' + res.best + ' h.')),
@@ -3232,7 +3911,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'powergrid',
     title: 'Load Balance',
-    emoji: '⚡',
+    emoji: 'powergrid',
     cat: 'sim',
     order: 3,
     blurb: 'Generation has to equal demand every single second or the lights go out. Solar and wind will not be helping.',
@@ -3553,7 +4232,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'atc',
     title: 'Approach Control',
-    emoji: '✈️',
+    emoji: 'atc',
     cat: 'sim',
     order: 4,
     blurb: 'Draw the flight paths with your finger. Keep everyone apart. Land the pink ones on the pink runway. It gets busy fast.',
@@ -3588,7 +4267,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
     let diff = api.load('diff', 'easy');
     let W, Hh, M, grid, opened, flags, started, dead, won, t0, timerId, firstDone;
 
-    const pMines = api.pill('💣 0');
+    const pMines = api.pill('Mines: 0');
     const pTime = api.pill('⏱ 0');
     const pBest = api.pill('');
     const boardWrap = h('div', { class: 'ms' });
@@ -3737,7 +4416,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
       api.sfx.boom();
       banner.style.display = '';
       banner.replaceChildren(
-        h('h3', null, '💥 Boom.'),
+        h('h3', null, 'Boom.'),
         h('p', null, 'That one was a mine. ' + (M - flags) + ' left unfound.'),
         h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'New board'));
     }
@@ -3759,14 +4438,14 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
       syncPills();
       banner.style.display = '';
       banner.replaceChildren(
-        h('h3', null, '🚩 Swept.'),
+        h('h3', null, 'Swept.'),
         h('p', null, LEVELS[diff].label.split(' (')[0] + ' cleared in ' + secs + 's' +
           (record ? ' Fastest yet!' : ' (best ' + prev + 's)') + '. Total wins: ' + wins + '.'),
         h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Again'));
     }
 
     function syncPills() {
-      pMines.textContent = '💣 ' + (M - flags);
+      pMines.textContent = 'Mines: ' + (M - flags);
       pTime.textContent = '⏱ ' + (started ? elapsed() : 0);
       const b = api.load('time:' + diff, null);
       pBest.textContent = b == null ? 'no time yet' : 'best ' + b + 's';
@@ -3779,11 +4458,15 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
         let txt = '';
         if (c.open) {
           cls += ' open';
-          if (c.mine) { cls += ' mine'; txt = c.boom ? '💥' : '💣'; }
+          if (c.mine) { cls += ' mine'; txt = c.boom ? 'ICON:boom' : 'ICON:mine'; }
           else if (c.n) { cls += ' n' + c.n; txt = c.n; }
-        } else if (c.flag) { cls += ' flag'; txt = '🚩'; }
+        } else if (c.flag) { cls += ' flag'; txt = 'ICON:flag'; }
         if (el.className !== cls) el.className = cls;
-        if (el.textContent !== String(txt)) el.textContent = txt;
+        const want = String(txt);
+        if (el.dataset.shown === want) continue;
+        el.dataset.shown = want;
+        if (want.slice(0, 5) === 'ICON:') el.innerHTML = Icons.svg(want.slice(5), 19);
+        else el.textContent = want;
       }
       syncPills();
     }
@@ -3795,7 +4478,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'minesweeper',
     title: 'Minesweeper',
-    emoji: '💣',
+    emoji: 'minesweeper',
     cat: 'puzzle',
     order: 10,
     blurb: 'The reigning world champion at making you look deep in thought. Three sizes, first click always safe, proper chording.',
@@ -3973,7 +4656,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: '2048',
     title: '2048',
-    emoji: '🔢',
+    emoji: '2048',
     cat: 'puzzle',
     order: 11,
     blurb: 'Slide, merge, and lose forty minutes without noticing. Now with exactly one undo, because you have earned it.',
@@ -4263,7 +4946,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'jam',
     title: 'Jam Escape',
-    emoji: '🚗',
+    emoji: 'jam',
     cat: 'puzzle',
     order: 12,
     blurb: 'Twenty-eight car park jams. Every single one was solved by computer first, so the exit definitely exists. Probably.',
@@ -4476,7 +5159,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'sokoban',
     title: 'Crate Pusher',
-    emoji: '📦',
+    emoji: 'sokoban',
     cat: 'puzzle',
     order: 13,
     blurb: 'Push crates onto the markers. You can push. You cannot pull. One thoughtless shove and the level is quietly unwinnable.',
@@ -4710,7 +5393,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'pipes',
     title: 'Pipe Dream',
-    emoji: '🔧',
+    emoji: 'pipes',
     cat: 'puzzle',
     order: 14,
     blurb: 'Spin every pipe until the whole grid lights up from one glowing source. Endless levels, all of them definitely solvable.',
@@ -5221,7 +5904,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'solitaire',
     title: 'Solitaire',
-    emoji: '🃏',
+    emoji: 'solitaire',
     cat: 'puzzle',
     order: 15,
     blurb: 'Klondike. The one that has been on office computers since 1990 and has outlasted every operating system it shipped with.',
@@ -5412,7 +6095,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'wordguess',
     title: 'Word Guess',
-    emoji: '🔤',
+    emoji: 'wordguess',
     cat: 'brain',
     order: 21,
     blurb: 'Five letters, six goes, as many rounds as your meeting lasts. No daily limit, no share button, no waiting until tomorrow.',
@@ -5528,7 +6211,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'lightsout',
     title: 'Lights Out',
-    emoji: '💡',
+    emoji: 'lightsout',
     cat: 'brain',
     order: 22,
     blurb: 'Every light you poke flips its neighbours too. Looks trivial. Is not. Extremely quiet to play.',
@@ -5702,7 +6385,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'reflex',
     title: 'Reflex Grid',
-    emoji: '🎯',
+    emoji: 'reflex',
     cat: 'brain',
     order: 23,
     blurb: 'Twenty five targets, one number at the end. The most brutally honest game on the shelf.',
@@ -5923,7 +6606,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'copycat',
     title: 'Copycat',
-    emoji: '🎺',
+    emoji: 'copycat',
     cat: 'brain',
     order: 24,
     blurb: 'It plays a little tune. You play it back. Then it adds one more note, forever, until your brain gives out.',
@@ -6226,7 +6909,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'connect4',
     title: 'Four In A Row',
-    emoji: '🔴',
+    emoji: 'connect4',
     cat: 'brain',
     order: 25,
     blurb: 'Drop discs, get four in a line, try to beat a computer that is genuinely quite good at this once you turn the dial up.',
@@ -6467,7 +7150,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'snake',
     title: 'Snake',
-    emoji: '🐍',
+    emoji: 'snake',
     cat: 'action',
     order: 30,
     blurb: 'The one everybody already knows, plus a golden apple worth five ordinary ones and a wall toggle for cowards.',
@@ -6791,7 +7474,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'breakout',
     title: 'Brick Break',
-    emoji: '🧱',
+    emoji: 'breakout',
     cat: 'action',
     order: 31,
     blurb: 'Bounce, smash, grab the falling letters. Multiball is a gift right up until the moment it is a punishment.',
@@ -7183,7 +7866,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'tetris',
     title: 'Stacker',
-    emoji: '🟦',
+    emoji: 'tetris',
     cat: 'action',
     order: 32,
     blurb: 'Falling blocks with hold, ghost piece, hard drop and a proper 7-bag. You already know exactly what to do here.',
@@ -7503,7 +8186,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'asteroids',
     title: 'Rock Field',
-    emoji: '🚀',
+    emoji: 'asteroids',
     cat: 'action',
     order: 33,
     blurb: 'Drifting, shooting, and the slow horror of realising momentum does not stop just because you did.',
@@ -7535,10 +8218,42 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
 
   const rowY = (r) => TOP + (ROWS - 1 - r) * ROWH;   // row 0 at the bottom
 
+  /* office hazards, drawn rather than typed */
   const HAZARDS = [
-    { emoji: '🪑', w: 46 }, { emoji: '🛒', w: 62 }, { emoji: '🖨️', w: 56 },
-    { emoji: '🧹', w: 44 }, { emoji: '☕', w: 38 }
+    { kind: 'chair', w: 46, col: '#4a4155' },
+    { kind: 'cart', w: 64, col: '#a79e88' },
+    { kind: 'printer', w: 58, col: '#cfc6ae' },
+    { kind: 'trolley', w: 50, col: '#00a6b4' }
   ];
+
+  function drawHazard(ctx, k, w, hgt) {
+    ctx.fillStyle = k.col;
+    if (k.kind === 'chair') {
+      ctx.fillRect(-w / 2, -4, w, 9);
+      ctx.fillRect(-w / 2 + 4, -hgt / 2 + 2, 8, 14);
+      ctx.fillStyle = '#1d1722';
+      ctx.beginPath(); ctx.arc(-w / 2 + 7, 10, 4, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(w / 2 - 7, 10, 4, 0, 7); ctx.fill();
+    } else if (k.kind === 'cart') {
+      ctx.fillRect(-w / 2, -hgt / 2 + 4, w, hgt - 14);
+      ctx.fillStyle = '#1d1722';
+      ctx.fillRect(-w / 2, -hgt / 2 + 4, w, 3);
+      ctx.beginPath(); ctx.arc(-w / 2 + 8, hgt / 2 - 8, 4, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(w / 2 - 8, hgt / 2 - 8, 4, 0, 7); ctx.fill();
+    } else if (k.kind === 'printer') {
+      ctx.fillRect(-w / 2, -10, w, 20);
+      ctx.fillStyle = '#fffdf3';
+      ctx.fillRect(-w / 2 + 6, -16, w - 12, 7);
+      ctx.fillStyle = '#1d1722';
+      ctx.fillRect(-w / 2 + 5, 2, w - 10, 4);
+    } else {
+      ctx.fillRect(-w / 2, -hgt / 2 + 6, w, hgt - 16);
+      ctx.fillStyle = '#1d1722';
+      ctx.fillRect(-w / 2 + 4, -hgt / 2 + 10, w - 8, 4);
+      ctx.beginPath(); ctx.arc(-w / 2 + 9, hgt / 2 - 10, 4, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(w / 2 - 9, hgt / 2 - 10, 4, 0, 7); ctx.fill();
+    }
+  }
 
   function mount(root, api) {
     const bagg = Engine.bag();
@@ -7577,7 +8292,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
         const gap = W / n;
         const type = pick(HAZARDS);
         for (let i = 0; i < n; i++) {
-          items.push({ x: i * gap + rand(0, gap * 0.4), w: type.w, emoji: type.emoji });
+          items.push({ x: i * gap + rand(0, gap * 0.4), w: type.w, kind: type });
         }
         lanes.push({ r, speed, items });
       }
@@ -7725,9 +8440,11 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
         ctx.strokeStyle = '#0c1119';
         ctx.lineWidth = 3;
         ctx.strokeRect(x + 8, rowY(11) + 6, W / 5 - 16, ROWH - 12);
-        ctx.font = '22px system-ui, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(desks[i] ? '🧑‍💻' : '🪑', x + W / 10, rowY(11) + 32);
+        const dx = x + W / 10, dy = rowY(11) + ROWH / 2;
+        ctx.fillStyle = desks[i] ? '#1d1722' : '#cfc6ae';
+        ctx.fillRect(dx - 13, dy - 8, 26, 15);
+        ctx.fillStyle = desks[i] ? '#1d1722' : '#8a6a3a';
+        ctx.fillRect(dx - 4, dy + 7, 8, 5);
       }
 
       /* belts first, so hazards draw over them cleanly */
@@ -7747,17 +8464,13 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
         }
       }
 
-      ctx.font = '26px system-ui, sans-serif';
-      ctx.textAlign = 'left';
       for (const l of lanes) {
         const y = rowY(l.r);
         for (const it of l.items) {
           ctx.save();
           ctx.translate(it.x + it.w / 2, y + ROWH / 2);
           if (l.speed < 0) ctx.scale(-1, 1);
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(it.emoji, 0, 2);
+          drawHazard(ctx, it.kind, it.w, ROWH - 8);
           ctx.restore();
         }
       }
@@ -7768,10 +8481,21 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
         ctx.save();
         ctx.translate(px, py + ROWH / 2);
         ctx.scale(s, s);
-        ctx.font = '28px system-ui, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(dead ? '💥' : '🚶', 0, 0);
+        if (dead) {
+          ctx.fillStyle = '#e8402a';
+          ctx.beginPath();
+          for (let i = 0; i < 10; i++) {
+            const a = i / 10 * Math.PI * 2, rr = i % 2 ? 7 : 15;
+            i ? ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : ctx.moveTo(Math.cos(a) * rr, Math.sin(a) * rr);
+          }
+          ctx.closePath(); ctx.fill();
+        } else {
+          ctx.fillStyle = '#00a6b4';
+          ctx.beginPath(); ctx.arc(0, -9, 5.5, 0, 7); ctx.fill();
+          ctx.fillRect(-5, -3, 10, 11);
+          ctx.fillRect(-5, 8, 4, 6);
+          ctx.fillRect(1, 8, 4, 6);
+        }
         ctx.restore();
       }
 
@@ -7803,7 +8527,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'commute',
     title: 'The Commute',
-    emoji: '🚶',
+    emoji: 'commute',
     cat: 'action',
     order: 34,
     blurb: 'Cross the open-plan office to an empty desk. Four lanes of rolling chairs first, then the belts, where standing on nothing is fatal.',
@@ -7828,25 +8552,25 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   const { h, clamp, rand, pick } = Engine;
 
   const SHOP = [
-    { id: 'intern', name: 'Unpaid Intern', emoji: '🧑‍🎓', base: 15, cps: 0.15, blurb: 'Fetches coffee. Slowly. Resentfully.' },
-    { id: 'press', name: 'French Press', emoji: '🫖', base: 110, cps: 1.1, blurb: 'Somebody left it in the sink for a week.' },
-    { id: 'machine', name: 'Vending Machine', emoji: '🎰', base: 620, cps: 5.4, blurb: 'Takes your money. Sometimes gives coffee.' },
-    { id: 'barista', name: 'Guy Named Todd', emoji: '🧔', base: 3400, cps: 24, blurb: 'Todd has opinions about beans.' },
-    { id: 'robot', name: 'Espresso Robot', emoji: '🤖', base: 21000, cps: 130, blurb: 'Four arms. Zero small talk. Perfect.' },
-    { id: 'breakroom', name: 'Second Break Room', emoji: '🚪', base: 145000, cps: 720, blurb: 'Nobody knows it exists. Keep it that way.' },
-    { id: 'farm', name: 'Rooftop Coffee Farm', emoji: '🌱', base: 980000, cps: 4200, blurb: 'HR filed a complaint. The beans are worth it.' },
-    { id: 'portal', name: 'Bean Portal', emoji: '🌀', base: 7600000, cps: 28000, blurb: 'It hums. Do not put your hand in it.' },
-    { id: 'singularity', name: 'Caffeine Singularity', emoji: '💥', base: 62000000, cps: 190000, blurb: 'Time is a flat white now.' }
+    { id: 'intern', name: 'Unpaid Intern', icon: 'panic', base: 15, cps: 0.15, blurb: 'Fetches coffee. Slowly. Resentfully.' },
+    { id: 'press', name: 'French Press', icon: 'coffee', base: 110, cps: 1.1, blurb: 'Somebody left it in the sink for a week.' },
+    { id: 'machine', name: 'Vending Machine', icon: 'dice', base: 620, cps: 5.4, blurb: 'Takes your money. Sometimes gives coffee.' },
+    { id: 'barista', name: 'Guy Named Todd', icon: 'panic', base: 3400, cps: 24, blurb: 'Todd has opinions about beans.' },
+    { id: 'robot', name: 'Espresso Robot', icon: 'smart', base: 21000, cps: 130, blurb: 'Four arms. Zero small talk. Perfect.' },
+    { id: 'breakroom', name: 'Second Break Room', icon: 'over', base: 145000, cps: 720, blurb: 'Nobody knows it exists. Keep it that way.' },
+    { id: 'farm', name: 'Rooftop Coffee Farm', icon: 'deskgolf', base: 980000, cps: 4200, blurb: 'HR filed a complaint. The beans are worth it.' },
+    { id: 'portal', name: 'Bean Portal', icon: 'circle', base: 7600000, cps: 28000, blurb: 'It hums. Do not put your hand in it.' },
+    { id: 'singularity', name: 'Caffeine Singularity', icon: 'boom', base: 62000000, cps: 190000, blurb: 'Time is a flat white now.' }
   ];
 
   const EVENTS = [
-    { t: '☕ Somebody took the last cup and did not start a new pot.', mul: -0.08 },
-    { t: '🎉 Free doughnuts in the kitchen! Morale spike!', mul: 0.25 },
-    { t: '🔥 The fire alarm went off. Nobody brewed anything for a bit.', mul: -0.12 },
-    { t: '📦 A mystery box of beans arrived. No note.', mul: 0.4 },
-    { t: '🧊 The machine is making iced coffee only. It is January.', mul: -0.06 },
-    { t: '🏆 You were named Employee Of The Month by nobody in particular.', mul: 0.6 },
-    { t: '💤 Post-lunch slump. Everything is molasses.', mul: -0.15 }
+    { t: 'Somebody took the last cup and did not start a new pot.', mul: -0.08 },
+    { t: 'Free doughnuts in the kitchen! Morale spike!', mul: 0.25 },
+    { t: 'The fire alarm went off. Nobody brewed anything for a bit.', mul: -0.12 },
+    { t: 'A mystery box of beans arrived. No note.', mul: 0.4 },
+    { t: 'The machine is making iced coffee only. It is January.', mul: -0.06 },
+    { t: 'You were named Employee Of The Month by nobody in particular.', mul: 0.6 },
+    { t: 'Post-lunch slump. Everything is molasses.', mul: -0.15 }
   ];
 
   const fmt = (n) => {
@@ -7869,12 +8593,12 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
 
     let boost = 0, boostT = 0, eventText = '', eventT = 0, pops = [];
 
-    const pCups = api.pill('☕ 0');
+    const pCups = api.pill('Cups: 0');
     const pRate = api.pill('0.0 /sec');
     const pTotal = api.pill('lifetime 0');
 
     const mug = h('button', { class: 'mug', type: 'button', 'aria-label': 'Brew a cup' },
-      h('span', { class: 'mug-art' }, '☕'),
+      h('span', { class: 'mug-art', html: Icons.svg('coffee', 110) }),
       h('span', { class: 'mug-label' }, 'BREW'));
 
     const popLayer = h('div', { class: 'pop-layer' });
@@ -7921,7 +8645,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
           class: 'shop-row', type: 'button',
           onclick: (e) => buy(it, e.shiftKey)
         },
-          h('span', { class: 'shop-emoji' }, it.emoji),
+          h('span', { class: 'shop-emoji', html: Icons.svg(it.icon, 24) }),
           h('span', { class: 'shop-body' },
             h('span', { class: 'shop-name' }, it.name),
             h('span', { class: 'shop-blurb' }, it.blurb)),
@@ -7955,8 +8679,8 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
     mug.addEventListener('click', brew);
 
     function sync() {
-      pCups.textContent = '☕ ' + fmt(S.cups);
-      pRate.textContent = fmt(cps()) + ' /sec' + (boost ? (boost > 0 ? ' 🔺' : ' 🔻') : '');
+      pCups.textContent = 'Cups: ' + fmt(S.cups);
+      pRate.textContent = fmt(cps()) + ' /sec' + (boost ? (boost > 0 ? ' UP' : ' DOWN') : '');
       pRate.className = 'pill ' + (boost > 0 ? 'good' : boost < 0 ? 'bad' : '');
       pTotal.textContent = 'lifetime ' + fmt(S.total);
       for (const r of rows) {
@@ -8007,7 +8731,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'coffee',
     title: 'Coffee Clicker',
-    emoji: '☕',
+    emoji: 'coffee',
     cat: 'goof',
     order: 60,
     blurb: 'Click mug. Get coffee. Buy an intern to click the mug. Buy a robot to manage the intern. This is how empires start.',
@@ -8246,7 +8970,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'whack',
     title: 'Whack-a-Meeting',
-    emoji: '📅',
+    emoji: 'whack',
     cat: 'goof',
     order: 61,
     blurb: 'Meeting invites pop up. Click them to decline. But the gold ones are payroll and your own review, so leave those alone.',
@@ -8599,7 +9323,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'desktoss',
     title: 'Desk Toss',
-    emoji: '🗑️',
+    emoji: 'desktoss',
     cat: 'goof',
     order: 62,
     blurb: 'Crumpled paper, one bin, and an air conditioning vent with a personal grudge. Bin on a desk counts double.',
@@ -8939,7 +9663,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   Arcade.register({
     id: 'deskgolf',
     title: 'Desk Golf',
-    emoji: '⛳',
+    emoji: 'deskgolf',
     cat: 'goof',
     order: 63,
     blurb: 'Nine holes of putting across the office carpet. Desks bounce, mousepads drag, and someone has spilled coffee absolutely everywhere.',

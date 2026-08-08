@@ -198,7 +198,7 @@
   Arcade.register({
     id: 'copycat',
     title: 'Copycat',
-    emoji: '🎺',
+    emoji: 'copycat',
     cat: 'brain',
     order: 24,
     blurb: 'It plays a little tune. You play it back. Then it adds one more note, forever, until your brain gives out.',

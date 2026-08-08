@@ -1,5 +1,5 @@
-/* The panic screen. Four disguises, all of them typeable.
-   Hit the key, land in something that looks like work, and actually type in it. */
+/* The panic screen. Five disguises, all typeable, plus one that loads any site you name.
+   Hit the key and land in something that looks like work. */
 (function (global) {
   'use strict';
   const h = Engine.h;
@@ -10,47 +10,67 @@
   };
 
   let skinId = store.get('bossskin', 'docs');
-  let host = null;
-  let on = false;
-  let current = null;
+  let webUrl = store.get('bossurl', '');
+  let webMode = store.get('bossmode', 'jump');
+  let host = null, on = false, current = null;
 
-  /* ============================ DOCS ============================ */
+  /* tiny inline glyphs so the toolbars are drawn, not typed */
+  const g = (d, o) => '<svg viewBox="0 0 24 24" width="' + (o && o.s || 20) + '" height="' + (o && o.s || 20) + '" fill="none" stroke="' + (o && o.c || '#444746') + '" stroke-width="' + (o && o.w || 1.7) + '" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
+  const GL = {
+    undo: g('<path d="M4 9h11a5 5 0 0 1 0 10h-6"/><path d="M8 5L4 9l4 4"/>'),
+    redo: g('<path d="M20 9H9a5 5 0 0 0 0 10h6"/><path d="M16 5l4 4-4 4"/>'),
+    print: g('<path d="M7 9V4h10v5"/><rect x="4" y="9" width="16" height="7" rx="1"/><path d="M7 16h10v5H7z"/>'),
+    spell: g('<path d="M5 17L9 6l4 11"/><path d="M6.4 13.5h5.2"/><path d="M15 15l2.5 2.5L22 12"/>'),
+    paint: g('<rect x="4" y="4" width="12" height="6" rx="1"/><path d="M10 10v4H8v7h4v-7h-2"/>'),
+    zoom: g('<circle cx="11" cy="11" r="6"/><path d="M15.5 15.5L21 21"/>'),
+    link: g('<path d="M9.5 14.5l5-5"/><path d="M11 7l1.5-1.5a3.5 3.5 0 0 1 5 5L16 12"/><path d="M13 17l-1.5 1.5a3.5 3.5 0 0 1-5-5L8 12"/>'),
+    comment: g('<path d="M4 5h16v11H9l-5 4z"/>'),
+    image: g('<rect x="3" y="5" width="18" height="14" rx="1"/><circle cx="8.5" cy="10" r="1.5"/><path d="M4 17l5-5 4 4 3-3 4 4"/>'),
+    alignLeft: g('<path d="M4 6h16M4 10h10M4 14h16M4 18h10"/>'),
+    spacing: g('<path d="M9 6h11M9 12h11M9 18h11"/><path d="M5 8l0 8"/><path d="M3 9l2-2 2 2"/><path d="M3 15l2 2 2-2"/>'),
+    check: g('<path d="M4 7l2 2 3-3"/><path d="M4 15l2 2 3-3"/><path d="M12 8h8M12 16h8"/>'),
+    bullet: g('<circle cx="5" cy="7" r="1.4" fill="#444746"/><circle cx="5" cy="12" r="1.4" fill="#444746"/><circle cx="5" cy="17" r="1.4" fill="#444746"/><path d="M10 7h10M10 12h10M10 17h10"/>'),
+    number: g('<path d="M10 7h10M10 12h10M10 17h10"/><text x="3" y="9" font-size="7" fill="#444746" stroke="none">1</text><text x="3" y="14" font-size="7" fill="#444746" stroke="none">2</text><text x="3" y="19" font-size="7" fill="#444746" stroke="none">3</text>'),
+    outdent: g('<path d="M4 6h16M9 10h11M9 14h11M4 18h16"/><path d="M7 12l-3-2v4z" fill="#444746"/>'),
+    indent: g('<path d="M4 6h16M9 10h11M9 14h11M4 18h16"/><path d="M4 12l3-2v4z" fill="#444746"/>'),
+    clear: g('<path d="M6 18h12"/><path d="M8 15L15 5l4 3-6 7z"/>'),
+    pencil: g('<path d="M4 20l4-1L20 7l-3-3L5 16z"/>'),
+    star: g('<path d="M12 4l2.4 5 5.6.7-4 3.9 1 5.4-5-2.7-5 2.7 1-5.4-4-3.9 5.6-.7z"/>'),
+    folder: g('<path d="M3 7h6l2 2h10v10H3z"/>'),
+    cloud: g('<path d="M7 18h10a4 4 0 0 0 0-8 6 6 0 0 0-11.7 1.6A3.5 3.5 0 0 0 7 18z"/>'),
+    lock: g('<rect x="6" y="11" width="12" height="9" rx="1.5" stroke="#001d35"/><path d="M9 11V8a3 3 0 0 1 6 0v3" stroke="#001d35"/>', { c: '#001d35' }),
+    menu: g('<path d="M4 7h16M4 12h16M4 17h16"/>'),
+    sidebar: g('<rect x="3" y="5" width="18" height="14" rx="1"/><path d="M9 5v14"/>')
+  };
+  const DOC_BLUE = '#4285f4';
+
+  /* ============================ 1. DOC ============================ */
   const DOC_TITLE = 'Q3 Planning Notes';
   const DOC_BODY =
     '<h1>Q3 Planning Notes</h1>' +
-    '<p class="sub">Draft. Shared with the working group. Comments welcome by Friday.</p>' +
+    '<p><span class="muted"><i>Draft. Shared with the working group. Comments welcome by Friday.</i></span></p>' +
     '<h2>Where we landed</h2>' +
-    '<p>Carrying three workstreams into Q3 rather than five. The two we are pausing were not failing, they were just competing for the same two people. We will revisit both at the September checkpoint.</p>' +
+    '<p>Carrying three workstreams into Q3 rather than five. The two we are pausing were not failing, they were competing for the same two people. Both get revisited at the September checkpoint.</p>' +
     '<h2>Open questions</h2>' +
-    '<ul>' +
-    '<li>Who owns the migration once the contractor rolls off?</li>' +
+    '<ul><li>Who owns the migration once the contractor rolls off?</li>' +
     '<li>Do we still need the weekly sync, or is the written update enough?</li>' +
-    '<li>Budget line for tooling has not been confirmed. Chasing.</li>' +
-    '</ul>' +
+    '<li>Budget line for tooling has not been confirmed. Chasing.</li></ul>' +
     '<h2>Actions</h2>' +
-    '<ol>' +
-    '<li>Draft the one-pager and circulate before the review.</li>' +
+    '<ol><li>Draft the one-pager and circulate it before the review.</li>' +
     '<li>Confirm headcount assumptions with Finance.</li>' +
-    '<li>Book the follow-up. Thirty minutes, not sixty.</li>' +
-    '</ol>' +
+    '<li>Book the follow-up. Thirty minutes, not sixty.</li></ol>' +
     '<h2>Notes from the room</h2>' +
     '<p>General agreement that scope crept because nobody was empowered to say no. Proposal is to name a single decision owner per workstream. No objections raised.</p>' +
     '<p><br></p>';
 
   function buildDocs() {
-    const body = h('div', {
-      class: 'doc-body', contenteditable: 'true', spellcheck: 'false',
-      html: DOC_BODY
-    });
-    const words = h('span', null, '0 words');
-    const recount = () => {
-      const t = (body.innerText || '').trim();
-      words.textContent = (t ? t.split(/\s+/).length : 0) + ' words';
-    };
-    body.addEventListener('input', recount);
-    setTimeout(recount, 0);
+    const body = h('div', { class: 'gd-body', contenteditable: 'true', spellcheck: 'false', html: DOC_BODY });
+    const editNote = h('span', { class: 'gd-editnote' }, 'Last edit was seconds ago');
+    body.addEventListener('input', () => { editNote.textContent = 'Last edit was seconds ago'; });
 
-    const tool = (label, cls) => h('span', { class: 'dtool ' + (cls || '') }, label);
+    const tb = (glyph, extra) => h('span', { class: 'gd-tb' + (extra ? ' ' + extra : ''), html: glyph });
+    const sep = () => h('span', { class: 'gd-sep' });
+    const dd = (label, wide) => h('span', { class: 'gd-dd' + (wide ? ' wide' : '') }, label, h('i', { class: 'gd-caret' }));
 
     return {
       focus: () => {
@@ -62,34 +82,62 @@
         s.removeAllRanges();
         s.addRange(r);
       },
-      el: h('div', { class: 'skin docs' },
-        h('div', { class: 'doc-top' },
-          h('div', { class: 'doc-ident' },
-            h('span', { class: 'doc-icon' }, '📄'),
-            h('div', null,
-              h('div', { class: 'doc-name' }, DOC_TITLE),
-              h('div', { class: 'doc-menu' }, ['File', 'Edit', 'View', 'Insert', 'Format', 'Tools', 'Extensions', 'Help'].map((m) => h('span', null, m))))),
-          h('div', { class: 'doc-actions' },
-            h('span', { class: 'doc-saved' }, '✓ Saved to Drive'),
-            h('span', { class: 'doc-share' }, '🔒 Share'))),
-        h('div', { class: 'doc-tools' },
-          tool('↶'), tool('↷'), tool('🖨'), tool('🔍'),
-          h('span', { class: 'dsep' }),
-          h('span', { class: 'dtool wide' }, 'Normal text ▾'),
-          h('span', { class: 'dsep' }),
-          h('span', { class: 'dtool wide' }, 'Arial ▾'),
-          h('span', { class: 'dsep' }),
-          tool('−'), h('span', { class: 'dtool num' }, '11'), tool('+'),
-          h('span', { class: 'dsep' }),
-          tool('B', 'b'), tool('I', 'i'), tool('U', 'u'),
-          h('span', { class: 'dsep' }),
-          tool('☰'), tool('•'), tool('1.')),
-        h('div', { class: 'doc-page-wrap' }, h('div', { class: 'doc-page' }, body)),
-        h('div', { class: 'doc-status' }, words, h('span', null, 'Page 1 of 1'), h('span', null, 'Last edit was seconds ago')))
+      el: h('div', { class: 'skin gdocs' },
+        h('div', { class: 'gd-head' },
+          h('span', {
+            class: 'gd-logo', html:
+              '<svg viewBox="0 0 40 54" width="34" height="40"><path d="M4 0h22l14 14v36a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4z" fill="#4285f4"/><path d="M26 0l14 14H30a4 4 0 0 1-4-4z" fill="#a1c2fa"/><g fill="#fff"><rect x="9" y="22" width="22" height="2.6" rx="1.3"/><rect x="9" y="29" width="22" height="2.6" rx="1.3"/><rect x="9" y="36" width="22" height="2.6" rx="1.3"/><rect x="9" y="43" width="14" height="2.6" rx="1.3"/></g></svg>'
+          }),
+          h('div', { class: 'gd-headmid' },
+            h('div', { class: 'gd-titlerow' },
+              h('span', { class: 'gd-title' }, DOC_TITLE),
+              h('span', { class: 'gd-mini', html: GL.star }),
+              h('span', { class: 'gd-mini', html: GL.folder }),
+              h('span', { class: 'gd-mini', html: GL.cloud })),
+            h('div', { class: 'gd-menu' },
+              ['File', 'Edit', 'View', 'Insert', 'Format', 'Tools', 'Extensions', 'Help'].map((m) => h('span', null, m)))),
+          h('div', { class: 'gd-headright' },
+            h('span', { class: 'gd-mini', html: GL.comment }),
+            h('span', { class: 'gd-share' }, h('span', { class: 'gd-lock', html: GL.lock }), 'Share'),
+            h('span', { class: 'gd-avatar' }, 'K'))),
+
+        h('div', { class: 'gd-toolwrap' },
+          h('div', { class: 'gd-tools' },
+            tb(GL.undo), tb(GL.redo), tb(GL.print), tb(GL.spell), tb(GL.paint),
+            h('span', { class: 'gd-zoom' }, '100%', h('i', { class: 'gd-caret' })),
+            sep(),
+            dd('Normal text', true),
+            sep(),
+            dd('Arial', true),
+            sep(),
+            h('span', { class: 'gd-tb' }, '−'),
+            h('span', { class: 'gd-fontsize' }, '11'),
+            h('span', { class: 'gd-tb' }, '+'),
+            sep(),
+            h('span', { class: 'gd-tb bold' }, 'B'),
+            h('span', { class: 'gd-tb ital' }, 'I'),
+            h('span', { class: 'gd-tb undl' }, 'U'),
+            h('span', { class: 'gd-tb tcol' }, 'A'),
+            sep(),
+            tb(GL.link), tb(GL.comment), tb(GL.image),
+            sep(),
+            tb(GL.alignLeft), tb(GL.spacing), tb(GL.check), tb(GL.bullet), tb(GL.number),
+            tb(GL.outdent), tb(GL.indent), tb(GL.clear),
+            h('span', { class: 'gd-mode' }, h('span', { html: GL.pencil }), h('i', { class: 'gd-caret' })))),
+
+        h('div', { class: 'gd-ruler' },
+          h('div', { class: 'gd-rulerinner' },
+            h('span', { class: 'gd-margin left' }),
+            h('span', { class: 'gd-margin right' }))),
+
+        h('div', { class: 'gd-canvas' },
+          h('div', { class: 'gd-page' }, body)),
+
+        h('div', { class: 'gd-foot' }, editNote))
     };
   }
 
-  /* ============================ SHEET ============================ */
+  /* ============================ 2. SHEET ============================ */
   const ROWS_DATA = [
     ['Northeast', 'Enterprise', 1284900, 1402350, 9.1, 'On track'],
     ['Northeast', 'Mid-Market', 842100, 811200, -3.7, 'At risk'],
@@ -118,11 +166,7 @@
     const mkCell = (txt, cls, col, row) => {
       const td = h('td', {
         class: cls || '', contenteditable: 'true', spellcheck: 'false',
-        onfocus: () => {
-          cellRef.textContent = COLS[col] + row;
-          formula.textContent = td.textContent;
-          td.classList.add('sel');
-        },
+        onfocus: () => { cellRef.textContent = COLS[col] + row; formula.textContent = td.textContent; td.classList.add('sel'); },
         onblur: () => td.classList.remove('sel'),
         oninput: () => { formula.textContent = td.textContent; }
       }, txt);
@@ -133,28 +177,20 @@
     const head = h('tr', null, h('th', { class: 'rowhead' }, ''), COLS.map((l) => h('th', null, l)));
     const rows = [h('tr', null, h('td', { class: 'rowhead' }, '1'),
       ['Region', 'Segment', 'FY Plan', 'FY Actual', 'Var %', 'Status', 'Owner'].map((t, i) => mkCell(t, 'hcell', i, 1)))];
-
     ROWS_DATA.forEach((r, i) => {
       const rn = i + 2;
-      rows.push(h('tr', null,
-        h('td', { class: 'rowhead' }, rn),
-        mkCell(r[0], '', 0, rn),
-        mkCell(r[1], '', 1, rn),
-        mkCell(money(r[2]), 'num', 2, rn),
-        mkCell(money(r[3]), 'num', 3, rn),
+      rows.push(h('tr', null, h('td', { class: 'rowhead' }, rn),
+        mkCell(r[0], '', 0, rn), mkCell(r[1], '', 1, rn),
+        mkCell(money(r[2]), 'num', 2, rn), mkCell(money(r[3]), 'num', 3, rn),
         mkCell((r[4] > 0 ? '+' : '') + r[4].toFixed(1) + '%', 'num ' + (r[4] < 0 ? 'neg' : 'pos'), 4, rn),
-        mkCell(r[5], '', 5, rn),
-        mkCell('', '', 6, rn)));
+        mkCell(r[5], '', 5, rn), mkCell('', '', 6, rn)));
     });
-
     const tot = ROWS_DATA.length + 2;
-    rows.push(h('tr', { class: 'total' },
-      h('td', { class: 'rowhead' }, tot),
+    rows.push(h('tr', { class: 'total' }, h('td', { class: 'rowhead' }, tot),
       mkCell('TOTAL', '', 0, tot), mkCell('', '', 1, tot),
       mkCell(money(ROWS_DATA.reduce((a, r) => a + r[2], 0)), 'num', 2, tot),
       mkCell(money(ROWS_DATA.reduce((a, r) => a + r[3], 0)), 'num', 3, tot),
       mkCell('+3.4%', 'num pos', 4, tot), mkCell('', '', 5, tot), mkCell('', '', 6, tot)));
-
     for (let i = 0; i < 10; i++) {
       const rn = tot + 1 + i;
       rows.push(h('tr', null, h('td', { class: 'rowhead' }, rn), COLS.map((_, c) => mkCell('', '', c, rn))));
@@ -169,19 +205,17 @@
         h('div', { class: 'sh-formula' }, cellRef, h('span', { class: 'fx' }, 'fx'), formula),
         h('div', { class: 'sh-grid' }, h('table', null, h('thead', null, head), h('tbody', null, rows))),
         h('div', { class: 'sh-tabs' },
-          h('span', { class: 'tab active' }, 'Summary'),
-          h('span', { class: 'tab' }, 'By Region'),
-          h('span', { class: 'tab' }, 'Pipeline'),
-          h('span', { class: 'tab' }, 'Assumptions'),
+          h('span', { class: 'tab active' }, 'Summary'), h('span', { class: 'tab' }, 'By Region'),
+          h('span', { class: 'tab' }, 'Pipeline'), h('span', { class: 'tab' }, 'Assumptions'),
           h('span', { class: 'tab' }, 'Sheet4')))
     };
   }
 
-  /* ============================ INBOX ============================ */
+  /* ============================ 3. INBOX ============================ */
   const MAIL = [
-    { f: 'Facilities', s: 'Kitchen fridge will be emptied Friday', t: '9:14 AM', p: 'Anything left after 5pm goes in the bin, including the containers. This is the fourth notice.' },
-    { f: 'R. Patel', s: 'RE: RE: RE: quick question', t: '9:02 AM', p: 'Sorry, resending with the right attachment this time. Ignore the last two.' },
-    { f: 'IT Helpdesk', s: 'Scheduled maintenance window', t: '8:47 AM', p: 'Systems may be unavailable Saturday 02:00 to 06:00. No action needed from you.' },
+    { f: 'Facilities', s: 'Kitchen fridge will be emptied Friday', t: '9:14 AM', p: 'Anything left after 5pm goes in the bin, including the containers. Fourth notice.' },
+    { f: 'R. Patel', s: 'RE: RE: RE: quick question', t: '9:02 AM', p: 'Resending with the right attachment this time. Ignore the last two.' },
+    { f: 'IT Helpdesk', s: 'Scheduled maintenance window', t: '8:47 AM', p: 'Systems may be unavailable Saturday 02:00 to 06:00. No action needed.' },
     { f: 'S. Okafor', s: 'Notes from yesterday', t: '8:31 AM', p: 'Wrote up what we agreed. Shout if I mangled anything.' },
     { f: 'All Staff', s: 'Reminder: complete your training module', t: 'Yesterday', p: 'The deadline has been extended. Again. Please do it.' },
     { f: 'M. Duarte', s: 'Lunch?', t: 'Yesterday', p: 'The place with the soup. 12:15?' },
@@ -190,10 +224,7 @@
   ];
 
   function buildInbox() {
-    const reply = h('div', {
-      class: 'mail-reply', contenteditable: 'true', spellcheck: 'false',
-      html: '<p>Thanks for flagging this.</p><p><br></p>'
-    });
+    const reply = h('div', { class: 'mail-reply', contenteditable: 'true', spellcheck: 'false', html: '<p>Thanks for flagging this.</p><p><br></p>' });
     const subject = h('div', { class: 'mail-subject' }, MAIL[3].s);
     const from = h('div', { class: 'mail-from' }, MAIL[3].f, h('span', null, ' to me'));
     const bodyText = h('div', { class: 'mail-body' },
@@ -230,69 +261,47 @@
       },
       el: h('div', { class: 'skin inbox' },
         h('div', { class: 'mail-top' },
-          h('span', { class: 'mail-logo' }, '✉ Mail'),
+          h('span', { class: 'mail-logo' }, 'Mail'),
           h('span', { class: 'mail-search' }, 'Search mail'),
           h('span', { class: 'mail-avatar' }, 'K')),
         h('div', { class: 'mail-cols' },
           h('div', { class: 'mail-side' },
-            h('div', { class: 'mail-compose' }, '✏ Compose'),
+            h('div', { class: 'mail-compose' }, 'Compose'),
             ['Inbox 3', 'Starred', 'Snoozed', 'Sent', 'Drafts 2', 'Archive', 'Spam'].map((f, i) =>
               h('div', { class: 'mail-folder' + (i === 0 ? ' active' : '') }, f))),
           list,
-          h('div', { class: 'mail-read' },
-            subject,
-            from,
-            bodyText,
+          h('div', { class: 'mail-read' }, subject, from, bodyText,
             h('div', { class: 'mail-reply-wrap' },
               h('div', { class: 'mail-reply-head' }, 'Reply to ' + MAIL[3].f),
               reply,
-              h('div', { class: 'mail-reply-foot' }, h('span', { class: 'mail-send' }, 'Send'), h('span', null, '📎'), h('span', null, '🙂'))))))
+              h('div', { class: 'mail-reply-foot' }, h('span', { class: 'mail-send' }, 'Send'))))))
     };
   }
 
-  /* ============================ TERMINAL ============================ */
+  /* ============================ 4. TERMINAL ============================ */
   const BOOT = [
-    '$ npm run build',
-    '',
-    '> platform@4.12.0 build',
-    '> tsc -p tsconfig.json && vite build',
-    '',
-    'vite v5.4.2 building for production...',
-    'transforming (412) src/index.ts',
-    '✓ 1284 modules transformed.',
-    'dist/assets/index-9f2a1c.css     42.18 kB │ gzip:  8.02 kB',
-    'dist/assets/index-4b71ee.js     612.44 kB │ gzip: 184.91 kB',
-    '✓ built in 7.42s',
-    '',
-    '$ npm test -- --run',
-    '',
+    '$ npm run build', '',
+    '> platform@4.12.0 build', '> tsc -p tsconfig.json && vite build', '',
+    'vite v5.4.2 building for production...', 'transforming (412) src/index.ts',
+    '1284 modules transformed.',
+    'dist/assets/index-9f2a1c.css     42.18 kB | gzip:  8.02 kB',
+    'dist/assets/index-4b71ee.js     612.44 kB | gzip: 184.91 kB',
+    'built in 7.42s', '',
+    '$ npm test -- --run', '',
     ' PASS  src/lib/parser.test.ts (24 tests) 412ms',
     ' PASS  src/lib/queue.test.ts (18 tests) 288ms',
-    ' PASS  src/api/routes.test.ts (31 tests) 1.02s',
-    '',
-    'Test Files  3 passed (3)',
-    '     Tests  73 passed (73)',
-    '  Duration  2.31s',
-    ''
+    ' PASS  src/api/routes.test.ts (31 tests) 1.02s', '',
+    'Test Files  3 passed (3)', '     Tests  73 passed (73)', '  Duration  2.31s', ''
   ];
-  const REPLIES = [
-    'ok',
-    'done.',
-    'nothing to commit, working tree clean',
-    'Already up to date.',
-    'warning: 1 deprecation notice (use --verbose for details)',
-    'Compiled successfully in 1.8s',
-    'no changes added to commit',
-    '2 files changed, 47 insertions(+), 12 deletions(-)',
-    'Watching for file changes...'
-  ];
+  const REPLIES = ['ok', 'done.', 'nothing to commit, working tree clean', 'Already up to date.',
+    'warning: 1 deprecation notice (use --verbose for details)', 'Compiled successfully in 1.8s',
+    'no changes added to commit', '2 files changed, 47 insertions(+), 12 deletions(-)', 'Watching for file changes...'];
 
   function buildTerm() {
-    const out = h('div', { class: 'term-out' }, BOOT.map((l) => h('div', { class: 'tline' }, l || ' ')));
+    const out = h('div', { class: 'term-out' }, BOOT.map((l) => h('div', { class: 'tline' }, l || ' ')));
     const input = h('span', { class: 'term-in', contenteditable: 'true', spellcheck: 'false' });
     const line = h('div', { class: 'term-line' }, h('span', { class: 'term-ps' }, '~/work/platform $ '), input, h('span', { class: 'term-caret' }));
     const scroller = h('div', { class: 'term-scroll' }, out, line);
-
     input.addEventListener('keydown', (e) => {
       if (e.key !== 'Enter') return;
       e.preventDefault();
@@ -302,30 +311,66 @@
       input.textContent = '';
       scroller.scrollTop = scroller.scrollHeight;
     });
-
     return {
       focus: () => { input.focus(); scroller.scrollTop = scroller.scrollHeight; },
       el: h('div', { class: 'skin term' },
-        h('div', { class: 'term-bar' },
-          h('span', { class: 'tdots' }, h('i'), h('i'), h('i')),
-          h('span', null, 'bash - 118x34 - ~/work/platform')),
+        h('div', { class: 'term-bar' }, h('span', { class: 'tdots' }, h('i'), h('i'), h('i')), h('span', null, 'bash - 118x34 - ~/work/platform')),
         scroller)
     };
   }
 
+  /* ============================ 5. ANY WEBSITE ============================ */
+  function buildWeb() {
+    const url = normalise(webUrl);
+    if (!url) {
+      return {
+        focus: () => { },
+        el: h('div', { class: 'skin webskin empty' },
+          h('div', { class: 'web-empty' },
+            h('h3', null, 'No site set yet'),
+            h('p', null, 'Put a web address in the PANIC SCREEN box at the bottom of the arcade and this becomes that site.')))
+      };
+    }
+    const frame = h('iframe', {
+      class: 'web-frame', src: url, title: 'workspace',
+      referrerpolicy: 'no-referrer'
+    });
+    /* most real sites refuse to be framed, so say so rather than showing a white void */
+    const note = h('div', { class: 'web-note' },
+      h('b', null, 'If this stayed blank, that site blocks embedding.'),
+      ' Nearly all big sites do. Switch the panic screen mode to "Open the site" and the key will load it properly instead.');
+    setTimeout(() => note.classList.add('show'), 2600);
+    return { focus: () => { }, el: h('div', { class: 'skin webskin' }, frame, note) };
+  }
+
+  function normalise(u) {
+    u = (u || '').trim();
+    if (!u) return '';
+    if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
+    try { new URL(u); return u; } catch (e) { return ''; }
+  }
+  function hostOf(u) {
+    try { return new URL(normalise(u)).hostname.replace(/^www\./, ''); } catch (e) { return 'workspace'; }
+  }
+
   /* ============================ shell ============================ */
   const SKINS = [
-    { id: 'docs', label: '📄 Doc', title: 'Q3 Planning Notes - Docs', build: buildDocs },
-    { id: 'sheet', label: '📊 Spreadsheet', title: 'Q3_Regional_Forecast_v7_FINAL.xlsx', build: buildSheet },
-    { id: 'inbox', label: '✉️ Inbox', title: 'Inbox (3) - Mail', build: buildInbox },
-    { id: 'term', label: '💻 Terminal', title: 'bash - ~/work/platform', build: buildTerm }
+    { id: 'docs', label: 'Doc', icon: 'docs', title: () => DOC_TITLE + ' - Google Docs', build: buildDocs },
+    { id: 'sheet', label: 'Spreadsheet', icon: 'sheet', title: () => 'Q3_Regional_Forecast_v7_FINAL.xlsx', build: buildSheet },
+    { id: 'inbox', label: 'Inbox', icon: 'inbox', title: () => 'Inbox (3) - Mail', build: buildInbox },
+    { id: 'term', label: 'Terminal', icon: 'term', title: () => 'bash - ~/work/platform', build: buildTerm },
+    { id: 'web', label: 'Any website', icon: 'web', title: () => hostOf(webUrl), build: buildWeb }
   ];
   const skin = () => SKINS.find((s) => s.id === skinId) || SKINS[0];
 
   const Boss = {
     SKINS,
     skinId: () => skinId,
-    title: () => skin().title,
+    title: () => skin().title(),
+    url: () => webUrl,
+    mode: () => webMode,
+    setUrl(u) { webUrl = u; store.set('bossurl', u); if (on && skinId === 'web') { render(); } },
+    setMode(m) { webMode = m === 'embed' ? 'embed' : 'jump'; store.set('bossmode', webMode); },
     setSkin(id) {
       if (!SKINS.some((s) => s.id === id)) return;
       skinId = id;
@@ -351,7 +396,14 @@
   };
 
   Boss.toggle = function toggle(force) {
-    on = force === undefined ? !on : force;
+    const want = force === undefined ? !on : force;
+    /* "open the site" mode genuinely navigates, which is the only thing that
+       works for sites that refuse to be embedded */
+    if (want && skinId === 'web' && webMode === 'jump') {
+      const u = normalise(webUrl);
+      if (u) { location.href = u; return false; }
+    }
+    on = want;
     if (on) render();
     host.classList.toggle('hidden', !on);
     host.setAttribute('aria-hidden', on ? 'false' : 'true');

@@ -221,7 +221,7 @@
   Arcade.register({
     id: 'snake',
     title: 'Snake',
-    emoji: '🐍',
+    emoji: 'snake',
     cat: 'action',
     order: 30,
     blurb: 'The one everybody already knows, plus a golden apple worth five ordinary ones and a wall toggle for cowards.',

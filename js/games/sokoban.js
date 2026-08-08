@@ -193,7 +193,7 @@
   Arcade.register({
     id: 'sokoban',
     title: 'Crate Pusher',
-    emoji: '📦',
+    emoji: 'sokoban',
     cat: 'puzzle',
     order: 13,
     blurb: 'Push crates onto the markers. You can push. You cannot pull. One thoughtless shove and the level is quietly unwinnable.',

@@ -213,7 +213,7 @@
   Arcade.register({
     id: 'pipes',
     title: 'Pipe Dream',
-    emoji: '🔧',
+    emoji: 'pipes',
     cat: 'puzzle',
     order: 14,
     blurb: 'Spin every pipe until the whole grid lights up from one glowing source. Endless levels, all of them definitely solvable.',

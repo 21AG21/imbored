@@ -294,7 +294,7 @@
   Arcade.register({
     id: 'elevator',
     title: 'Elevator Rush',
-    emoji: '🛗',
+    emoji: 'elevator',
     cat: 'sim',
     order: 2,
     blurb: 'Three lifts. Eight floors. A lobby full of people who are already late and have decided that is your fault.',

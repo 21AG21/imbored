@@ -157,7 +157,7 @@
   Arcade.register({
     id: '2048',
     title: '2048',
-    emoji: '🔢',
+    emoji: '2048',
     cat: 'puzzle',
     order: 11,
     blurb: 'Slide, merge, and lose forty minutes without noticing. Now with exactly one undo, because you have earned it.',
