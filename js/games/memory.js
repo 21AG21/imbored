@@ -19,7 +19,7 @@
     const cfg = SIZES[api.diffId] || SIZES.normal;
     const pairs = cfg.cols * cfg.rows / 2;
 
-    let deck, first, busy, matched, moves, startedAt, done, tick;
+    let deck, first, busy, matched, moves, startedAt, done, tick, mode = '1p', turn = 1, p1 = 0, p2 = 0;
 
     const pMoves = api.pill('Moves: 0');
     const pPairs = api.pill('');
@@ -33,10 +33,24 @@
       const chosen = shuffle(FACES).slice(0, pairs);
       deck = shuffle(chosen.concat(chosen)).map((face, i) => ({ face, i, matched: false }));
       first = null; busy = false; matched = 0; moves = 0; done = false;
+      turn = 1; p1 = 0; p2 = 0;
       startedAt = Date.now();
       banner.style.display = 'none';
       render();
-      api.status('Flip two cards. If they match they stay up. Find every pair.');
+      sync();
+      api.status(mode === '2p'
+        ? 'Hotseat: take turns flipping two cards. Match a pair and you go again; miss and the turn passes. Most pairs wins.'
+        : 'Flip two cards. If they match they stay up. Find every pair.');
+    }
+
+    function sync() {
+      if (mode === '2p') {
+        pMoves.textContent = 'P1 ' + p1 + ' – ' + p2 + ' P2';
+        pPairs.textContent = (turn === 1 ? 'Player 1' : 'Player 2') + '’s turn';
+      } else {
+        pMoves.textContent = 'Moves: ' + moves;
+        pPairs.textContent = cfg.label;
+      }
     }
 
     function render() {
@@ -64,7 +78,7 @@
       if (!first) { first = card; return; }
 
       moves++;
-      pMoves.textContent = 'Moves: ' + moves;
+      sync();
 
       if (first.face === card.face) {
         first.matched = card.matched = true;
@@ -72,23 +86,35 @@
         card.el.classList.add('matched');
         first = null;
         matched++;
+        if (mode === '2p') { if (turn === 1) p1++; else p2++; }
         api.sfx.good();
+        sync();
         if (matched === pairs) win();
       } else {
         busy = true;
         const a = first, b = card;
         first = null;
+        api.sfx.thud();
         setTimeout(() => {
           a.el.classList.remove('flipped');
           b.el.classList.remove('flipped');
           busy = false;
+          if (mode === '2p') { turn = turn === 1 ? 2 : 1; sync(); }
         }, 720);
-        api.sfx.thud();
       }
     }
 
     function win() {
       done = true;
+      if (mode === '2p') {
+        api.sfx.great();
+        banner.style.display = '';
+        banner.replaceChildren(
+          h('h3', null, p1 > p2 ? 'Player 1 wins.' : p2 > p1 ? 'Player 2 wins.' : 'Dead heat.'),
+          h('p', null, 'Final pairs: Player 1 ' + p1 + ', Player 2 ' + p2 + '.'),
+          h('button', { class: 'btn primary', type: 'button', onclick: start }, 'Rematch'));
+        return;
+      }
       const secs = Math.round((Date.now() - startedAt) / 1000);
       /* fewer moves is better; a perfect game is one move per pair */
       const best = api.load('best:' + cfg.cols + 'x' + cfg.rows, null);
@@ -107,6 +133,7 @@
     }
 
     api.button('New game', start);
+    api.select('Players', [{ value: '1p', label: '1 player' }, { value: '2p', label: '2 players (hotseat)' }], '1p', (v) => { mode = v; start(); });
     pPairs.textContent = cfg.label;
 
     tick = setInterval(() => {
@@ -133,7 +160,8 @@
       'A matching pair stays face up. A mismatch flips both back down.',
       'Find every pair to win. You cannot lose, so the goal is to do it in as few moves as possible.',
       'Your fewest-moves record is kept for each board size.',
-      'The difficulty dial only changes the board size: 6 pairs on Chill up to 18 on Nightmare.'
+      'The difficulty dial only changes the board size: 6 pairs on Chill up to 18 on Nightmare.',
+      'Set Players to 2 for hotseat: take turns, a matched pair lets you go again, and the most pairs wins.'
     ],
     mount
   });
