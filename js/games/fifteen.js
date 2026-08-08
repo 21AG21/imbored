@@ -129,10 +129,11 @@
     lowerIsBetter: true,
     tags: ['sliding', 'tiles', '15-puzzle'],
     how: [
-      'Click any tile next to the empty gap to slide it in.',
-      'Arrow keys or WASD slide tiles too.',
-      'Get them in order, 1 through 15, with the gap in the last spot.',
-      'Every scramble is solvable. Fewer moves beats your record.'
+      'Click or tap any tile next to the empty gap and it slides in, leaving the gap where it sat.',
+      'Arrow keys, WASD, or a swipe slide tiles too, on desktop or phone.',
+      'Put them in order, 1 through 15, gap in the bottom-right. A tile turns green once it is home, so you can watch your progress.',
+      'Every scramble is built by shuffling a solved board, so a solution always exists — you can never jam it.',
+      'Your score is the fewest moves you have ever solved it in, and harder settings scramble it further from solved.'
     ],
     mount
   });

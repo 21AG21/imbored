@@ -99,10 +99,11 @@
     scoreLabel: 'Level',
     tags: ['grid', 'toggle', 'logic'],
     how: [
-      'Clicking a light toggles it and the four lights around it.',
-      'You want the whole board dark.',
-      'Boards are made by scrambling a solved one, so there is always a way back.',
-      'Par is how many presses scrambled it. Beating par means you found a shortcut.'
+      'Click or tap any light. It flips itself and its four orthogonal neighbours — a cross of five.',
+      'The goal is to turn every light off. It looks like it should be easy. It is not.',
+      'Flips cancel out, so the order never matters and pressing the same light twice undoes it — that is the whole key to planning.',
+      'Boards are made by scrambling a solved one, so there is always a route back to all-dark.',
+      'Par is how many presses did the scrambling. Beating it means you found a shorter route than the machine used.'
     ],
     mount
   });

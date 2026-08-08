@@ -313,10 +313,11 @@
     scoreLabel: 'Wins',
     tags: ['connect four', 'strategy', 'computer opponent', 'board'],
     how: [
-      'Click a column to drop your yellow disc. It falls to the lowest free slot.',
-      'Four in a row wins: across, up and down, or either diagonal.',
-      'The computer searches ahead with alpha-beta pruning. Chill looks one move ahead and plays sloppily on purpose. Nightmare looks eight and does not.',
-      'Your win-loss record is kept between visits.'
+      'Click or tap a column to drop your yellow disc. It falls to the lowest free slot.',
+      'Four in a row wins: across, up and down, or on either diagonal.',
+      'The computer searches ahead with alpha-beta pruning. Chill looks one move ahead and plays loose on purpose; nightmare looks eight moves ahead and does not.',
+      'Your win-loss record against the computer is kept between visits.',
+      'Set Players to 2 for hotseat: two people on one keyboard, yellow versus red, with a running series score.'
     ],
     mount
   });

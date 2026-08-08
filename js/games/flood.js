@@ -91,10 +91,11 @@
     lowerIsBetter: true,
     tags: ['flood-it', 'colour', 'fill'],
     how: [
-      'Your blob starts in the top-left corner.',
-      'Choose a colour and the blob repaints, absorbing every tile of that colour it now touches.',
-      'Keep going until the entire board is a single colour.',
-      'Par is a rough target. Beat it and you were thinking ahead.'
+      'Your territory starts as the single tile in the top-left corner.',
+      'Click or tap a colour button. Your whole territory repaints to it and swallows every neighbouring tile of that colour, growing in one flood.',
+      'The trick: spreading wide early gives every later flood more edge to eat. Chasing one colour into a corner is a trap.',
+      'Fill the entire board with one colour to win. Your score is how many floods it took — fewer is better.',
+      'Par is a rough target for the board, and it tightens on harder settings. Beat it and you were planning two floods ahead.'
     ],
     mount
   });

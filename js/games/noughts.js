@@ -162,10 +162,11 @@
     scoreLabel: 'Win streak',
     tags: ['tic-tac-toe', 'xo', 'vs-cpu'],
     how: [
-      'You are X. Click a square to move; the machine replies at once.',
-      'Three in a row wins.',
-      'Your score is your current win streak. A loss resets it; a draw keeps it.',
-      'Harder settings make the AI blunder less often. On nightmare it never blunders — so it can only be drawn.'
+      'You are X. Click or tap a square to move; the machine replies at once.',
+      'Get three of your marks in a line — across, down, or diagonally — to win.',
+      'Your score is your current win streak. A loss resets it to zero; a draw leaves it untouched.',
+      'Harder settings make the AI blunder less often. On nightmare it never blunders, so a draw is the best you can force.',
+      'Set Players to 2 for hotseat: Player 1 is X, Player 2 is O, taking turns on one screen with a running series score.'
     ],
     mount
   });

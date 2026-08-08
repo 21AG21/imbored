@@ -138,10 +138,11 @@
     scoreLabel: 'Height',
     tags: ['doodle', 'jump', 'platform'],
     how: [
-      'You bounce automatically. Steering is the only job.',
-      'Mouse side, arrow keys, or A/D move you left and right. Walk off one edge to appear on the other.',
-      'Orange shelves slide around. Land on top of any shelf to bounce higher.',
-      'Fall off the bottom and the run is over. Height is your score.'
+      'You bounce on your own, forever. Steering left and right is the only thing you control.',
+      'Move with the arrow keys, A/D, or by holding the mouse to either side of the field. Walk off one edge and you reappear on the other.',
+      'You only bounce when falling onto the top of a shelf, so aim your descent. Green shelves sit still; orange ones slide, and harder settings deal more of the moving kind.',
+      'The screen scrolls up as you gain height and never comes back down. Fall off the bottom and the run ends.',
+      'Your score is how high you climbed before gravity won.'
     ],
     mount
   });

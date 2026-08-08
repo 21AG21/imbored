@@ -310,7 +310,7 @@
     scoreLabel: 'Score',
     tags: ['breakout', 'arkanoid', 'paddle', 'ball'],
     how: [
-      'Mouse or arrow keys move the paddle. Space or click launches.',
+      'Mouse, drag, or arrow keys move the paddle. Space, click, or tap launches.',
       'Where the ball hits the paddle decides where it goes. Edges fire it out wide.',
       'Falling tiles: W widens the paddle, 3 splits the ball, S slows time, and the heart is a spare life.',
       'Clear every brick for a 250 point bonus, then it does it again but worse.',

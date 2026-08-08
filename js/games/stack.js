@@ -127,10 +127,11 @@
     scoreLabel: 'Height',
     tags: ['stacker', 'timing', 'tower'],
     how: [
-      'A slab slides back and forth. Click, tap, or Space drops it.',
-      'Anything hanging past the slab below is sliced off, so precision keeps you wide.',
-      'A perfect drop keeps the full width and plays a happier note.',
-      'It speeds up as you climb. Height is your score.'
+      'A slab slides back and forth across the top. Click, tap, or press Space to drop it onto the tower.',
+      'Whatever overhangs the slab below is sliced off and falls away, so every sloppy drop leaves the next slab narrower.',
+      'A perfect drop — edges lined up exactly — keeps the full width and rewards you with a brighter note. It is the only way to stay wide.',
+      'There are no lives and no timer. You lose the instant a drop misses the tower completely.',
+      'Each slab slides a little faster than the last, and harder settings start it moving quicker. Height is your score.'
     ],
     mount
   });

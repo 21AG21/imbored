@@ -191,10 +191,11 @@
     scoreLabel: 'Most discs',
     tags: ['othello', 'reversi', 'vs-cpu'],
     how: [
-      'You are the dark discs. Legal squares glow.',
-      'Placing a disc flips every straight run of light discs pinned between it and another dark disc.',
-      'If you have no legal move, your turn is passed automatically.',
-      'When neither side can move, the most discs wins. Fight for the corners.'
+      'You are the dark discs. Every square you are allowed to play glows — click or tap one.',
+      'Your disc flips every straight run of light discs pinned between it and another of your dark discs, in all directions at once.',
+      'No legal move means your turn passes automatically. Corners can never be flipped back, so they are worth everything.',
+      'When neither side can move, whoever has more discs wins.',
+      'Set Players to 2 for hotseat: Player 1 is dark, Player 2 is light, sharing one screen. The difficulty dial only tunes the CPU, so it is ignored in two-player.'
     ],
     mount
   });

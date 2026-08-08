@@ -139,10 +139,10 @@
     scoreLabel: 'Score',
     tags: ['flappy', 'one-button', 'tap'],
     how: [
-      'Click, tap, or press Space to flap upward.',
-      'Gravity is always winning — keep tapping.',
-      'Fit through the gap in each pipe. Touching anything at all ends the run.',
-      'Harder settings tighten the gaps and speed up the scroll.'
+      'Click, tap, or press Space for one flap upward. Every flap is exactly the same size.',
+      'Gravity keeps pulling you down between flaps, so you are constantly correcting.',
+      'Thread the gap in each pipe. Touching a pipe, the floor, or the ceiling ends the run instantly.',
+      'Your score is the number of pipes you clear. Harder settings tighten the gaps and speed up the scroll.'
     ],
     mount
   });
