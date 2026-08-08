@@ -1450,6 +1450,212 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
   .theme-pop { position: fixed; top: auto; bottom: 12px; left: 12px; right: 12px; width: auto; }
 }
 
+/* ============ wave 1 games ============ */
+
+/* mastermind */
+.mastermind { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.mm-board { display: flex; flex-direction: column; gap: 4px; background: var(--crt); padding: 10px; border: 5px solid var(--ink); box-shadow: var(--hard); }
+.mm-row { display: flex; align-items: center; gap: 10px; padding: 3px 7px; border-radius: 5px; }
+.mm-row.active { background: rgba(255, 203, 31, 0.14); outline: 2px dashed var(--banana); }
+.mm-row.mm-shake { animation: mm-shake 0.32s; }
+.mm-num { width: 16px; text-align: right; font: 700 12px/1 Verdana, sans-serif; color: var(--paper2); }
+.mm-guess { display: flex; gap: 6px; }
+.mm-slot { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--ink); background: #3a3446; display: grid; place-items: center; font: 700 12px/1 Verdana, sans-serif; color: var(--paper2); box-shadow: var(--bevel-in); }
+.mm-slot.mm-peg { box-shadow: var(--bevel-out); }
+.mm-slot.mm-next { outline: 2px solid var(--banana); outline-offset: 1px; }
+.mm-feedback { display: grid; grid-template-columns: repeat(2, 9px); grid-template-rows: repeat(2, 9px); gap: 3px; margin-left: 2px; }
+.mm-fb { width: 9px; height: 9px; border-radius: 50%; border: 1px solid #6b6478; background: transparent; }
+.mm-fb.black { background: #1d1722; border-color: #1d1722; }
+.mm-fb.white { background: #fffdf3; border-color: #fffdf3; }
+.mm-palette { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; max-width: 340px; }
+.mm-swatch { width: 38px; height: 38px; border-radius: 50%; border: 3px solid var(--ink); cursor: pointer; box-shadow: var(--bevel-out); font: 700 14px/1 Verdana, sans-serif; display: grid; place-items: center; }
+.mm-swatch:active { box-shadow: var(--bevel-in); transform: translate(1px, 1px); }
+.mm-controls { display: flex; gap: 10px; }
+.mm-reveal { justify-content: center; margin: 8px 0; }
+.mastermind .banner .mm-sub { font-size: 12px; opacity: 0.8; }
+@keyframes mm-shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+/* blackjack */
+.blackjack { max-width: 640px; margin: 0 auto; }
+.blackjack .bj-felt {
+  background:
+    radial-gradient(120% 90% at 50% -12%, rgba(111,207,47,.28), transparent 62%),
+    linear-gradient(180deg, #1c7a4a, #14603a);
+  border: 3px solid var(--ink);
+  box-shadow: var(--hard);
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+.blackjack .bj-row { display: flex; align-items: center; gap: 16px; min-height: 104px; }
+.blackjack .bj-row + .bj-row { margin-top: 10px; border-top: 2px dashed rgba(255,253,243,.22); padding-top: 12px; }
+.blackjack .bj-side { flex: 0 0 84px; color: var(--label); }
+.blackjack .bj-who { display: block; font: 700 11px/1 Verdana, sans-serif; text-transform: uppercase; letter-spacing: .6px; opacity: .82; }
+.blackjack .bj-score { display: inline-block; margin-top: 8px; min-width: 34px; text-align: center; font: 800 20px/1 Impact, Arial Black, sans-serif; color: var(--label); background: rgba(0,0,0,.3); padding: 4px 10px; border-radius: 20px; }
+.blackjack .bj-hand { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; min-height: 90px; }
+.blackjack .bj-empty { color: rgba(255,253,243,.5); font: 700 22px Verdana, sans-serif; }
+.blackjack .bj-card {
+  position: relative; flex: none;
+  width: 60px; height: 86px;
+  background: var(--label); color: var(--ink);
+  border: 2px solid var(--ink); border-radius: 8px;
+  box-shadow: 2px 3px 0 rgba(0,0,0,.32);
+  font-family: Verdana, Geneva, sans-serif;
+}
+.blackjack .bj-card.red { color: #d1252b; }
+.blackjack .bj-corner { position: absolute; font: 700 11px/1.05 Verdana, sans-serif; text-align: center; }
+.blackjack .bj-corner.tl { top: 5px; left: 6px; }
+.blackjack .bj-corner.br { bottom: 5px; right: 6px; transform: rotate(180deg); }
+.blackjack .bj-pip { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 32px; line-height: 1; }
+.blackjack .bj-card.back {
+  color: transparent;
+  background: repeating-linear-gradient(45deg, #2a4bbd, #2a4bbd 5px, #22409e 5px, #22409e 10px);
+  border-color: #0c1119;
+}
+.blackjack .bj-back-mark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: rgba(255,253,243,.85); font: 800 30px/1 Impact, Arial Black, sans-serif; }
+.blackjack .bj-msg { margin: 12px auto 0; text-align: center; min-height: 26px; font: 800 20px/1.1 Impact, Arial Black, sans-serif; letter-spacing: .5px; text-transform: uppercase; color: var(--label); }
+.blackjack .bj-msg.win { color: var(--lime); }
+.blackjack .bj-msg.bj { color: var(--banana); }
+.blackjack .bj-msg.push { color: var(--banana); }
+.blackjack .bj-msg.lose { color: #ff7a68; }
+@media (max-width: 480px) {
+  .blackjack .bj-card { width: 50px; height: 72px; }
+  .blackjack .bj-pip { font-size: 26px; }
+  .blackjack .bj-side { flex-basis: 68px; }
+}
+
+/* match3 */
+.board.match3{grid-template-columns:repeat(8,1fr);gap:4px;width:100%;max-width:460px;margin:0 auto;padding:6px;background:var(--crt);border-radius:10px;box-shadow:var(--bevel-in)}
+.match3 .cell{aspect-ratio:1;min-width:0;border:none;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:clamp(13px,3.4vw,22px);font-weight:800;line-height:1;padding:0;color:#1d1722;cursor:pointer;box-shadow:var(--bevel-out);transition:transform .07s ease}
+.match3 .cell:active{transform:scale(.92)}
+.match3 .cell.sel{outline:3px solid var(--label);outline-offset:-3px;transform:scale(.86);z-index:1}
+.match3 .cell.clearing{animation:m3pop .2s ease-out forwards}
+@keyframes m3pop{to{transform:scale(.15);opacity:.1}}
+.match3 .g0{background:#ffcb1f}
+.match3 .g1{background:#e8402a;color:#fffdf3}
+.match3 .g2{background:#00a6b4;color:#fffdf3}
+.match3 .g3{background:#6f3fa8;color:#fffdf3}
+.match3 .g4{background:#6fcf2f}
+.match3 .g5{background:#2a4bbd;color:#fffdf3}
+.match3 .g6{background:#ff2d87;color:#fffdf3}
+
+/* checkers */
+.board.checkers { gap: 0; background: #4a3221; padding: 7px; border: 5px solid var(--ink); box-shadow: var(--hard); }
+.checkers .cell { width: 46px; height: 46px; padding: 0; border: 0; border-radius: 0; box-shadow: none; position: relative; background: #e6d6ac; cursor: default; overflow: visible; }
+.checkers .cell.dk { background: #7a5230; }
+.checkers .cell.can, .checkers .cell.sel, .checkers .cell.target { cursor: pointer; }
+.checkers .cell.can::before { content: ''; position: absolute; inset: 4px; box-shadow: inset 0 0 0 3px rgba(255, 203, 31, .9); border-radius: 5px; pointer-events: none; }
+.checkers .cell.sel::after { content: ''; position: absolute; inset: 2px; box-shadow: inset 0 0 0 4px var(--teal); border-radius: 5px; pointer-events: none; }
+.checkers .cell .pc { position: absolute; inset: 14%; border-radius: 50%; box-shadow: inset 0 -3px 5px rgba(0, 0, 0, .45), 0 2px 3px rgba(0, 0, 0, .5); }
+.checkers .cell .pc.red { background: radial-gradient(circle at 38% 32%, #ff7a5f, #e8402a 62%, #a5241a); }
+.checkers .cell .pc.blk { background: radial-gradient(circle at 38% 32%, #4c4557, #26212e 62%, #0d0a12); }
+.checkers .cell .pc.king::after { content: ''; position: absolute; inset: 27%; border-radius: 50%; border: 3px solid var(--banana); box-shadow: 0 0 2px rgba(0, 0, 0, .5); }
+.checkers .cell .dot { position: absolute; inset: 33%; border-radius: 50%; background: var(--banana); opacity: .9; box-shadow: 0 1px 2px rgba(0, 0, 0, .45); pointer-events: none; }
+@media (max-width: 560px) { .checkers .cell { width: min(46px, 10.6vw); height: min(46px, 10.6vw); } }
+
+/* nonogram */
+.nono { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.nono-wrap {
+  overflow: auto;
+  max-height: 74vh;
+  max-width: 100%;
+  border: 3px solid var(--ink);
+  background: #fbfaf4;
+  box-shadow: var(--hard);
+}
+.nono-grid {
+  display: grid;
+  width: max-content;
+  font-family: "Courier New", monospace;
+  background: #fbfaf4;
+}
+.nono-grid > div {
+  border-right: 1px solid #b9b4a2;
+  border-bottom: 1px solid #b9b4a2;
+  box-sizing: border-box;
+}
+.nono-grid > div.band-r { border-right: 2px solid var(--ink); }
+.nono-grid > div.band-b { border-bottom: 2px solid var(--ink); }
+.nono-hcell {
+  display: flex;
+  color: #4a4636;
+  font-weight: 700;
+  line-height: 1;
+  background: #e7e3d4;
+  user-select: none;
+}
+.colclue {
+  position: sticky; top: 0; z-index: 2;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 2px;
+  padding: 3px 0 4px;
+  font-size: calc(var(--cs) * 0.4);
+}
+.rowclue {
+  position: sticky; left: 0; z-index: 2;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 5px;
+  padding: 0 7px;
+  min-width: max-content;
+  height: var(--cs);
+  font-size: calc(var(--cs) * 0.4);
+}
+.corner {
+  position: sticky; top: 0; left: 0; z-index: 3;
+  align-items: center; justify-content: center;
+  background: #d7d2be;
+  color: #6b6552;
+  font-style: italic;
+  font-size: calc(var(--cs) * 0.42);
+}
+.gcell {
+  width: var(--cs);
+  height: var(--cs);
+  background: #fffdf3;
+  cursor: pointer;
+  touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.gcell:hover { box-shadow: inset 0 0 0 3px var(--banana); }
+.gcell.filled { background: var(--ink); }
+.gcell.marked::after {
+  content: "\00d7";
+  color: #b0392a;
+  font-weight: 700;
+  font-size: calc(var(--cs) * 0.62);
+  line-height: 1;
+}
+.gcell.error { background: var(--tomato); box-shadow: inset 0 0 0 2px #7a1206; }
+
+/* firedrill (percolation) */
+.fire-panel { width: min(560px, 92vw); display: flex; justify-content: center; margin-top: 4px; }
+.fire-plot { width: 100%; max-width: 520px; border: 4px solid var(--ink); box-shadow: var(--hard); background: #12100c; }
+
+/* battleship */
+.battleship { --bsc: 27px; width: 100%; }
+.battleship .panelrow { align-items: flex-start; gap: 20px; }
+.battleship .bs-side { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.bs-board { display: grid; grid-template-columns: 18px repeat(10, var(--bsc)); grid-auto-rows: var(--bsc); gap: 2px; background: var(--ink); padding: 6px; border: 4px solid var(--ink); box-shadow: var(--hard); }
+.bs-board .bs-lab { display: grid; place-items: center; font: 700 11px Verdana, sans-serif; color: var(--label); }
+.bs-board .cell { background: #1c3a5c; border: 1px solid #0c1119; cursor: default; }
+.bs-them .cell.water.live { cursor: pointer; }
+.bs-them .cell.water.live:hover { background: #295a8a; }
+.cell.miss { position: relative; background: #24303c; }
+.cell.miss::after { content: ""; position: absolute; inset: 38%; border-radius: 50%; background: rgba(255,255,255,.55); }
+.cell.hit { background: var(--tomato); }
+.cell.sunk { background: #7a1d14; }
+.battleship .bs-me .cell.ship { background: #6a7280; }
+.cell.ghost { background: #2b3a2b; }
+.cell.prev-ok { background: #2f7a3a; }
+.cell.prev-bad { background: #8a2a1a; }
+@media (max-width: 640px) { .battleship { --bsc: min(27px, 7vw); } .battleship .panelrow { gap: 10px; } }
+
 </style>
 </head>
 <body>
@@ -1943,6 +2149,16 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       r(2, 2, 20, 20, P.dark) +
       c(8, 8, 3.2, P.teal) + c(16, 9, 2.2, P.lime) + c(9, 16, 2.4, P.yellow) +
       c(16, 16, 3.4, P.teal) + c(12, 12, 1.6, P.lime) + c(19, 14, 1.6, P.yellow),
+    /* ---------- wave 1b ---------- */
+    firedrill: "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" fill=\"#141019\"/><rect x=\"4\" y=\"14\" width=\"4\" height=\"4\" fill=\"#d9c9a0\"/><rect x=\"10\" y=\"15\" width=\"4\" height=\"4\" fill=\"#d9c9a0\"/><rect x=\"16\" y=\"6\" width=\"4\" height=\"4\" fill=\"#a79e88\"/><path d=\"M8 12 C7 8 12 7 11 3 C15 6 14 10 12 12 Z\" fill=\"#e8402a\"/><path d=\"M9.6 12 C9.2 9.6 11 9 10.6 6.6 C12.4 8.4 12 10.6 11 12 Z\" fill=\"#ffcb1f\"/>",
+    battleship: "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" fill=\"#1c3a5c\"/><path d=\"M2 8h20M2 14h20M8 2v20M14 2v20\" fill=\"none\" stroke=\"#0c1119\" stroke-width=\"1\"/><circle cx=\"5\" cy=\"5\" r=\"1.7\" fill=\"#e8402a\"/><circle cx=\"17\" cy=\"11\" r=\"1.7\" fill=\"#fffdf3\"/><circle cx=\"11\" cy=\"17\" r=\"1.7\" fill=\"#e8402a\"/>",
+    /* ---------- wave 1 ---------- */
+    mastermind: "<path d=\"M8 8 V5.5 a4 4 0 0 1 8 0 V8\" fill=\"none\"/><rect x=\"3\" y=\"8\" width=\"18\" height=\"11\" rx=\"2\" fill=\"#ffcb1f\"/><circle cx=\"7\" cy=\"13.5\" r=\"1.9\" fill=\"#e8402a\"/><circle cx=\"11\" cy=\"13.5\" r=\"1.9\" fill=\"#00a6b4\"/><circle cx=\"15\" cy=\"13.5\" r=\"1.9\" fill=\"#6f3fa8\"/><circle cx=\"19\" cy=\"13.5\" r=\"1.9\" fill=\"#fffdf3\"/>",
+    blackjack: "<rect x=\"3\" y=\"6\" width=\"11\" height=\"15\" rx=\"1.6\" fill=\"#fffdf3\"/><path d=\"M8.2 14.4 C4.8 11.6 6.2 9.4 8.2 11.2 C10.2 9.4 11.6 11.6 8.2 14.4 Z\" fill=\"#e8402a\"/><rect x=\"10\" y=\"4\" width=\"11\" height=\"15\" rx=\"1.6\" fill=\"#fffdf3\"/><path d=\"M15.6 6.6 C12.2 9.4 13.6 11.6 15.6 9.8 C17.6 11.6 19 9.4 15.6 6.6 Z\" fill=\"#1d1722\"/><path d=\"M15.6 10 L14.7 13.4 H16.5 Z\" fill=\"#1d1722\"/>",
+    invaders: "<rect x=\"3\" y=\"6\" width=\"18\" height=\"13\" rx=\"1\" fill=\"#6fcf2f\"/><path d=\"M3 6 L12 13 L21 6\" fill=\"none\"/><circle cx=\"9\" cy=\"14\" r=\"1.4\" fill=\"#1d1722\"/><circle cx=\"15\" cy=\"14\" r=\"1.4\" fill=\"#1d1722\"/><rect x=\"7\" y=\"2\" width=\"2\" height=\"3\" fill=\"#e8402a\"/><rect x=\"15\" y=\"2\" width=\"2\" height=\"3\" fill=\"#e8402a\"/>",
+    match3: "<rect x=\"2.5\" y=\"2.5\" width=\"8.5\" height=\"8.5\" rx=\"2\" fill=\"#ffcb1f\"/><rect x=\"13\" y=\"2.5\" width=\"8.5\" height=\"8.5\" rx=\"2\" fill=\"#00a6b4\"/><rect x=\"2.5\" y=\"13\" width=\"8.5\" height=\"8.5\" rx=\"2\" fill=\"#e8402a\"/><rect x=\"13\" y=\"13\" width=\"8.5\" height=\"8.5\" rx=\"2\" fill=\"#6f3fa8\"/><circle cx=\"6.75\" cy=\"6.75\" r=\"1.7\" fill=\"#fffdf3\"/><circle cx=\"17.25\" cy=\"17.25\" r=\"1.7\" fill=\"#fffdf3\"/>",
+    checkers: "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" fill=\"#8a6a3a\"/><rect x=\"2\" y=\"2\" width=\"10\" height=\"10\" fill=\"#fffdf3\"/><rect x=\"12\" y=\"12\" width=\"10\" height=\"10\" fill=\"#fffdf3\"/><circle cx=\"7\" cy=\"17\" r=\"3.6\" fill=\"#e8402a\"/><circle cx=\"17\" cy=\"7\" r=\"3.6\" fill=\"#1d1722\"/>",
+    nonogram: "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" fill=\"#fffdf3\"/><rect x=\"2\" y=\"2\" width=\"20\" height=\"5\" fill=\"#a79e88\"/><rect x=\"2\" y=\"2\" width=\"5\" height=\"20\" fill=\"#a79e88\"/><rect x=\"7\" y=\"7\" width=\"5\" height=\"5\" fill=\"#00a6b4\"/><rect x=\"12\" y=\"7\" width=\"5\" height=\"5\" fill=\"#fffdf3\"/><rect x=\"17\" y=\"7\" width=\"5\" height=\"5\" fill=\"#ffcb1f\"/><rect x=\"7\" y=\"12\" width=\"5\" height=\"5\" fill=\"#fffdf3\"/><rect x=\"12\" y=\"12\" width=\"5\" height=\"5\" fill=\"#e8402a\"/><rect x=\"17\" y=\"12\" width=\"5\" height=\"5\" fill=\"#fffdf3\"/><rect x=\"7\" y=\"17\" width=\"5\" height=\"5\" fill=\"#6f3fa8\"/><rect x=\"12\" y=\"17\" width=\"5\" height=\"5\" fill=\"#fffdf3\"/><rect x=\"17\" y=\"17\" width=\"5\" height=\"5\" fill=\"#6fcf2f\"/>",
     /* ---------- added arcade ---------- */
     pong:
       r(3, 7, 3, 10, P.paper) + r(18, 7, 3, 10, P.paper) +
@@ -3381,6 +3597,219 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       'The Pattern menu jumps to (f, k) values measured to settle into spots, coral, mazes or self-dividing cells.',
       'Slide feed and kill to explore the map yourself — the band that makes patterns is thin, and just outside it everything goes uniform.',
       'Drag on the field to paint in reagent and watch the front invade.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Fire Drill — 2D site percolation.
+ *
+ * Fill a grid: each desk holds flammable paper independently with probability p.
+ * Light every occupied desk in the top row and let fire spread to orthogonally
+ * adjacent occupied desks — one uniform rule, no special cases. Below a critical
+ * density the fire dies in a corner; above it, it rips clear across. The knife-
+ * edge is the site-percolation threshold p_c ~ 0.5927 for the square lattice
+ * (Stauffer & Aharony) — the default is parked right on it so the transition is
+ * visible. The reference curve on the panel is measured live from the model, and
+ * the window.__fire seam lets a headless sweep bisect to p_c (tools/sweep-firedrill.mjs).
+ */
+(function () {
+  'use strict';
+  const { h, clamp } = Engine;
+  const W = 560, H = 560, N = 90;               // 90x90 desks
+  const PC = 0.5927;                            // known critical density
+  const CELL = W / N;
+  const EMPTY = 0, TREE = 1, FIRE = 2, BURNT = 3;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    const grid = new Uint8Array(N * N);
+    let frontier = [];
+    let p = 0.60, trees = 0, burnt = 0, running = false, spanned = false, done = false, peak = 0;
+    const samples = [];                          // {p, burned} the player has ignited
+    let ref = [];                                // measured reference curve
+
+    const cv = Engine.canvas(root, W, H, { maxHeight: '62vh' });
+    const ctx = cv.ctx;
+    const plot = h('canvas', { class: 'fire-plot', width: 520, height: 200 });
+    root.appendChild(h('div', { class: 'fire-panel' }, plot));
+    const pctx = plot.getContext('2d');
+
+    const pDensity = api.pill('Density p: 0.60');
+    const pBurn = api.pill('Burned: 0%');
+    const pSpan = api.pill('Spanned: no');
+
+    const slider = h('input', { type: 'range', min: '0.30', max: '0.85', step: '0.005', value: '0.60', class: 'slider' });
+    slider.addEventListener('input', () => { p = parseFloat(slider.value); regen(); });
+    api.toolbar.appendChild(h('label', { class: 'sel-wrap' }, h('span', null, 'density'), slider));
+    const igniteBtn = api.button('Ignite', ignite);
+    api.button('Reset', regen);
+
+    function regen() {
+      for (let i = 0; i < grid.length; i++) grid[i] = Math.random() < p ? TREE : EMPTY;
+      trees = 0;
+      for (let i = 0; i < grid.length; i++) if (grid[i] === TREE) trees++;
+      frontier = []; burnt = 0; running = false; spanned = false; done = false;
+      igniteBtn.disabled = false;
+      syncPills();
+      api.status('Set the paper density and hit Ignite. Below about ' + PC + ' the fire fizzles; above it, it sweeps the floor.');
+    }
+
+    function ignite() {
+      if (done || frontier.length) return;
+      for (let x = 0; x < N; x++) if (grid[x] === TREE) { grid[x] = FIRE; frontier.push(x); }
+      running = true;
+      igniteBtn.disabled = true;
+      if (!frontier.length) finish();
+    }
+
+    /* one BFS layer of the fire; the ONLY rule in the model */
+    function stepBurn() {
+      const next = [];
+      for (let k = 0; k < frontier.length; k++) {
+        const i = frontier[k];
+        const x = i % N, y = (i / N) | 0;
+        if (y === N - 1) spanned = true;
+        const nb = [x > 0 ? i - 1 : -1, x < N - 1 ? i + 1 : -1, y > 0 ? i - N : -1, y < N - 1 ? i + N : -1];
+        for (let d = 0; d < 4; d++) {
+          const j = nb[d];
+          if (j >= 0 && grid[j] === TREE) { grid[j] = FIRE; next.push(j); }
+        }
+        grid[i] = BURNT; burnt++;
+      }
+      frontier = next;
+      return frontier.length > 0;
+    }
+
+    function runToEnd() { while (frontier.length) stepBurn(); if (running) finish(); }
+
+    function finish() {
+      running = false; done = true;
+      const frac = trees ? burnt / trees : 0;
+      samples.push({ p, burned: frac });
+      if (frac > peak) { peak = frac; api.submit(Math.round(peak * 100)); }
+      syncPills();
+      api.status('Burned ' + Math.round(frac * 100) + '% of the paper. ' +
+        (spanned ? 'The fire reached the far wall.' : 'It stopped short — under the threshold, it cannot cross.'));
+    }
+
+    function syncPills() {
+      const frac = trees ? burnt / trees : 0;
+      pDensity.textContent = 'Density p: ' + p.toFixed(3);
+      pBurn.textContent = 'Burned: ' + Math.round(frac * 100) + '%';
+      pSpan.textContent = 'Spanned: ' + (spanned ? 'yes' : 'no');
+      pSpan.className = 'pill ' + (spanned ? 'warn' : '');
+    }
+
+    /* a quick, real sweep of the model to draw the reference S-curve */
+    function measureReference() {
+      const g = new Uint8Array(40 * 40);
+      const out = [];
+      for (let pi = 0; pi <= 24; pi++) {
+        const pp = 0.30 + (0.85 - 0.30) * pi / 24;
+        let acc = 0;
+        for (let t = 0; t < 4; t++) {
+          for (let i = 0; i < g.length; i++) g[i] = Math.random() < pp ? 1 : 0;
+          let tr = 0; for (let i = 0; i < g.length; i++) if (g[i] === 1) tr++;
+          let fr = [];
+          for (let x = 0; x < 40; x++) if (g[x] === 1) { g[x] = 2; fr.push(x); }
+          let bt = 0;
+          while (fr.length) {
+            const nx = [];
+            for (const i of fr) {
+              const x = i % 40, y = (i / 40) | 0;
+              const nb = [x > 0 ? i - 1 : -1, x < 39 ? i + 1 : -1, y > 0 ? i - 40 : -1, y < 39 ? i + 40 : -1];
+              for (const j of nb) if (j >= 0 && g[j] === 1) { g[j] = 2; nx.push(j); }
+              g[i] = 3; bt++;
+            }
+            fr = nx;
+          }
+          acc += tr ? bt / tr : 0;
+        }
+        out.push({ p: pp, burned: acc / 4 });
+      }
+      return out;
+    }
+
+    function drawPlot() {
+      const w = plot.width, hh = plot.height, m = 26;
+      pctx.clearRect(0, 0, w, hh);
+      pctx.fillStyle = '#12100c'; pctx.fillRect(0, 0, w, hh);
+      const X = (pp) => m + (pp - 0.30) / (0.85 - 0.30) * (w - m - 8);
+      const Y = (f) => hh - m - f * (hh - m - 8);
+      /* axes */
+      pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
+      pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(1)); pctx.stroke();
+      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillText('burned', 2, 12); pctx.fillText('density p', w - 62, hh - 8);
+      /* p_c line */
+      pctx.strokeStyle = 'rgba(232,64,42,.8)'; pctx.setLineDash([4, 3]);
+      pctx.beginPath(); pctx.moveTo(X(PC), Y(0)); pctx.lineTo(X(PC), Y(1)); pctx.stroke();
+      pctx.setLineDash([]);
+      pctx.fillStyle = '#e8402a'; pctx.fillText('p_c ' + PC, X(PC) + 3, Y(1) + 10);
+      /* reference curve */
+      if (ref.length) {
+        pctx.strokeStyle = '#00a6b4'; pctx.lineWidth = 2; pctx.beginPath();
+        ref.forEach((s, i) => { const x = X(s.p), y = Y(s.burned); i ? pctx.lineTo(x, y) : pctx.moveTo(x, y); });
+        pctx.stroke();
+      }
+      /* your samples */
+      for (const s of samples) {
+        pctx.fillStyle = '#ffcb1f';
+        pctx.beginPath(); pctx.arc(X(s.p), Y(s.burned), 3, 0, 7); pctx.fill();
+      }
+      /* current p marker */
+      pctx.fillStyle = '#fffdf3';
+      pctx.beginPath(); pctx.moveTo(X(p), Y(0) + 2); pctx.lineTo(X(p) - 4, Y(0) + 9); pctx.lineTo(X(p) + 4, Y(0) + 9); pctx.fill();
+    }
+
+    function draw() {
+      for (let i = 0; i < grid.length; i++) {
+        const s = grid[i];
+        ctx.fillStyle = s === EMPTY ? '#141019' : s === TREE ? '#d9c9a0' : s === FIRE ? '#ff5a2a' : '#4a4038';
+        ctx.fillRect((i % N) * CELL, ((i / N) | 0) * CELL, CELL + 1, CELL + 1);
+      }
+      drawPlot();
+    }
+
+    /* ---- test seam: lets a headless sweep bisect to p_c ---- */
+    window.__fire = {
+      reset(opts) { if (opts && opts.p != null) { p = opts.p; slider.value = String(p); } regen(); },
+      ignite() { ignite(); },
+      runToEnd() { if (!frontier.length && !done) ignite(); runToEnd(); },
+      stats() { return { trees: trees, burned: burnt, burnedFraction: trees ? burnt / trees : 0, spanned: spanned }; },
+      setRunning(v) { running = !!v; }
+    };
+    bagg.add(() => { if (window.__fire) delete window.__fire; });
+
+    ref = measureReference();
+    regen();
+    bagg.add(Engine.loop(() => {
+      if (running && frontier.length) { for (let s = 0; s < 3; s++) if (frontier.length) stepBurn(); if (!frontier.length) finish(); }
+      syncPills();
+      draw();
+    }));
+
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'firedrill',
+    title: 'Fire Drill',
+    emoji: 'firedrill',
+    cat: 'sim',
+    order: 6,
+    blurb: 'Scatter flammable paper across the desks at a density you choose, light one edge, and find the knife-edge where a corner fire turns into a floor fire. It is a real percolation threshold, not a vibe.',
+    scoreLabel: 'Biggest burn',
+    tags: ['percolation', 'phase-transition', 'emergence'],
+    how: [
+      'Each desk gets flammable paper with probability p (the density slider). Ignite lights every papered desk in the top row.',
+      'Fire spreads to orthogonally touching papered desks — one rule, applied everywhere, no scripting.',
+      'Below the critical density the fire dies in a corner; above it, it spans the whole floor. The change is astonishingly sharp.',
+      'The panel plots burned-fraction against density, measured live from the model, with the known threshold p_c = 0.5927 marked. Your ignitions drop as yellow dots.',
+      'Your score is the biggest burn fraction you manage to trigger. The interesting play is right at the edge.'
     ],
     mount
   });
@@ -5908,6 +6337,630 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
 
 </script>
 <script>
+/* Supply Closet. Swap office supplies into rows of three before the buzzer. */
+(function () {
+  'use strict';
+  const { h, randInt } = Engine;
+
+  const SIZE = 8;
+  const N = SIZE * SIZE;
+  const GLYPH = ['◆', '●', '■', '▲', '★', '✦', '♥'];
+
+  const SWAP_T = 0.14;   /* how long a swap animation shows */
+  const CLEAR_T = 0.2;   /* how long clearing gems fade */
+  const SETTLE_T = 0.12; /* pause after gravity before next cascade check */
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    const NCOLORS = api.diffId === 'nightmare' ? 7 : 6;
+    const DURATION = Math.max(24, Math.round(60 / api.dm));
+
+    const grid = new Array(N).fill(0);
+    let selected = -1;
+    let score = 0;
+    let timeLeft = DURATION;
+    let running = false;
+    let phase = 'idle';   /* idle | swap | clearing | settle */
+    let phaseT = 0;
+    let mult = 1;
+    let clearMask = null;
+    let lastSwap = { a: -1, b: -1 };
+
+    /* ---- toolbar ---- */
+    const pTime = api.pill('Time ' + DURATION);
+    const pScore = api.pill('Score 0');
+    const pMult = api.pill('Chain x1');
+    api.button('New round', () => startRound());
+
+    /* ---- board ---- */
+    const board = h('div', { class: 'board match3' });
+    const cellEls = [];
+    for (let i = 0; i < N; i++) {
+      const b = h('button', { class: 'cell', type: 'button' });
+      cellEls.push(b);
+      board.appendChild(b);
+      bagg.listen(b, 'click', () => onCell(i));
+    }
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+    root.append(board, banner);
+
+    /* ---- pure grid helpers ---- */
+    function randColor() { return randInt(0, NCOLORS - 1); }
+
+    function swapCells(g, a, b) { const t = g[a]; g[a] = g[b]; g[b] = t; }
+
+    function findMatches(g) {
+      const clear = new Array(N).fill(false);
+      for (let r = 0; r < SIZE; r++) {
+        let c = 0;
+        while (c < SIZE) {
+          const v = g[r * SIZE + c];
+          let c2 = c + 1;
+          while (c2 < SIZE && v !== null && g[r * SIZE + c2] === v) c2++;
+          if (v !== null && c2 - c >= 3) for (let k = c; k < c2; k++) clear[r * SIZE + k] = true;
+          c = c2;
+        }
+      }
+      for (let c = 0; c < SIZE; c++) {
+        let r = 0;
+        while (r < SIZE) {
+          const v = g[r * SIZE + c];
+          let r2 = r + 1;
+          while (r2 < SIZE && v !== null && g[r2 * SIZE + c] === v) r2++;
+          if (v !== null && r2 - r >= 3) for (let k = r; k < r2; k++) clear[k * SIZE + c] = true;
+          r = r2;
+        }
+      }
+      return clear;
+    }
+
+    function anyMatch(g) {
+      const cl = findMatches(g);
+      for (let i = 0; i < N; i++) if (cl[i]) return true;
+      return false;
+    }
+
+    function collapse(g) {
+      for (let c = 0; c < SIZE; c++) {
+        const col = [];
+        for (let r = SIZE - 1; r >= 0; r--) if (g[r * SIZE + c] !== null) col.push(g[r * SIZE + c]);
+        let i = 0;
+        for (let r = SIZE - 1; r >= 0; r--, i++) g[r * SIZE + c] = i < col.length ? col[i] : randColor();
+      }
+    }
+
+    function hasLegalMove(g) {
+      for (let r = 0; r < SIZE; r++) {
+        for (let c = 0; c < SIZE; c++) {
+          const i = r * SIZE + c;
+          if (c < SIZE - 1) {
+            swapCells(g, i, i + 1);
+            const m = anyMatch(g);
+            swapCells(g, i, i + 1);
+            if (m) return true;
+          }
+          if (r < SIZE - 1) {
+            swapCells(g, i, i + SIZE);
+            const m = anyMatch(g);
+            swapCells(g, i, i + SIZE);
+            if (m) return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    function newBoard(g) {
+      let guard = 0;
+      do {
+        guard++;
+        for (let r = 0; r < SIZE; r++) {
+          for (let c = 0; c < SIZE; c++) {
+            let v, tries = 0;
+            do {
+              v = randColor();
+              tries++;
+            } while (tries < 40 && (
+              (c >= 2 && g[r * SIZE + c - 1] === v && g[r * SIZE + c - 2] === v) ||
+              (r >= 2 && g[(r - 1) * SIZE + c] === v && g[(r - 2) * SIZE + c] === v)
+            ));
+            g[r * SIZE + c] = v;
+          }
+        }
+      } while (guard < 60 && !hasLegalMove(g));
+    }
+
+    function adjacent(a, b) {
+      const ra = Math.floor(a / SIZE), ca = a % SIZE;
+      const rb = Math.floor(b / SIZE), cb = b % SIZE;
+      return (ra === rb && Math.abs(ca - cb) === 1) || (ca === cb && Math.abs(ra - rb) === 1);
+    }
+
+    /* ---- rendering ---- */
+    function render() {
+      for (let i = 0; i < N; i++) {
+        const v = grid[i];
+        const el = cellEls[i];
+        el.className = 'cell g' + v + (i === selected ? ' sel' : '');
+        el.textContent = GLYPH[v];
+      }
+    }
+
+    function markClearing() {
+      for (let i = 0; i < N; i++) if (clearMask[i]) cellEls[i].classList.add('clearing');
+    }
+
+    /* ---- flow ---- */
+    function onCell(i) {
+      if (!running || phase !== 'idle') return;
+      if (selected === -1) {
+        selected = i;
+        api.sfx.blip(620);
+        render();
+        return;
+      }
+      if (i === selected) {
+        selected = -1;
+        api.sfx.click();
+        render();
+        return;
+      }
+      if (adjacent(selected, i)) {
+        const a = selected;
+        selected = -1;
+        attemptSwap(a, i);
+        return;
+      }
+      selected = i;
+      api.sfx.blip(620);
+      render();
+    }
+
+    function attemptSwap(a, b) {
+      lastSwap = { a: a, b: b };
+      swapCells(grid, a, b);
+      render();
+      api.sfx.click();
+      phase = 'swap';
+      phaseT = 0;
+    }
+
+    function beginClear() {
+      clearMask = findMatches(grid);
+      let count = 0;
+      for (let i = 0; i < N; i++) if (clearMask[i]) count++;
+      let pts = count * 10 + Math.max(0, count - 3) * 15;
+      pts = pts * mult;
+      score += pts;
+      pScore.textContent = 'Score ' + score;
+      pMult.textContent = 'Chain x' + mult;
+      pMult.className = 'pill ' + (mult >= 3 ? 'good' : mult >= 2 ? 'warn' : '');
+      if (mult >= 2) api.sfx.great(); else api.sfx.good();
+      render();
+      markClearing();
+      phase = 'clearing';
+      phaseT = 0;
+    }
+
+    function finishResolve() {
+      phase = 'idle';
+      mult = 1;
+      pMult.textContent = 'Chain x1';
+      pMult.className = 'pill';
+      if (!hasLegalMove(grid)) {
+        api.status('No moves left. Restocking the supply closet.');
+        newBoard(grid);
+        render();
+      }
+    }
+
+    function step(dt) {
+      phaseT += dt;
+      if (phase === 'swap') {
+        if (phaseT < SWAP_T) return;
+        if (anyMatch(grid)) {
+          mult = 1;
+          beginClear();
+        } else {
+          swapCells(grid, lastSwap.a, lastSwap.b);
+          render();
+          api.sfx.bad();
+          phase = 'idle';
+        }
+      } else if (phase === 'clearing') {
+        if (phaseT < CLEAR_T) return;
+        for (let i = 0; i < N; i++) if (clearMask[i]) grid[i] = null;
+        collapse(grid);
+        render();
+        phase = 'settle';
+        phaseT = 0;
+      } else if (phase === 'settle') {
+        if (phaseT < SETTLE_T) return;
+        if (anyMatch(grid)) {
+          mult++;
+          beginClear();
+        } else {
+          finishResolve();
+        }
+      }
+    }
+
+    function endRound() {
+      running = false;
+      selected = -1;
+      phase = 'idle';
+      render();
+      api.sfx.boom();
+      const res = api.submit(score);
+      Engine.autoAdvance(
+        banner,
+        'Buzzer.',
+        'You cleared ' + score + ' points of office supplies.' +
+          (res.isRecord ? ' New record.' : res.isFirst ? '' : ' Best: ' + res.best + '.'),
+        'Restock',
+        () => startRound()
+      );
+    }
+
+    function startRound() {
+      newBoard(grid);
+      selected = -1;
+      score = 0;
+      timeLeft = DURATION;
+      running = true;
+      phase = 'idle';
+      phaseT = 0;
+      mult = 1;
+      banner.style.display = 'none';
+      pScore.textContent = 'Score 0';
+      pTime.textContent = 'Time ' + DURATION;
+      pTime.className = 'pill';
+      pMult.textContent = 'Chain x1';
+      pMult.className = 'pill';
+      api.status('Tap a supply, then an adjacent one, to swap. Line up three or more of a kind.');
+      render();
+    }
+
+    /* ---- main loop ---- */
+    bagg.add(Engine.loop((dt) => {
+      if (!running) return;
+      timeLeft -= dt;
+      if (timeLeft <= 0) {
+        timeLeft = 0;
+        pTime.textContent = 'Time 0';
+        endRound();
+        return;
+      }
+      pTime.textContent = 'Time ' + Math.ceil(timeLeft);
+      pTime.className = 'pill ' + (timeLeft <= 10 ? 'bad' : timeLeft <= 20 ? 'warn' : '');
+      if (phase !== 'idle') step(dt);
+    }));
+
+    startRound();
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'match3',
+    title: 'Supply Closet',
+    emoji: 'match3',
+    cat: 'puzzle',
+    order: 12,
+    blurb: 'The supply closet is overflowing. Swap staplers and sticky notes into rows of three and clear the shelves before the buzzer.',
+    scoreLabel: 'Points',
+    tags: ['match-3', 'bejeweled', 'gems', 'timed'],
+    how: [
+      'Goal: clear as many office supplies as you can in one 60-second round.',
+      'Controls: click or tap a supply, then a neighbour, to swap the two.',
+      'A swap only sticks if it makes a line of three or more of one kind, otherwise it snaps back.',
+      'Cleared supplies fall, fresh stock drops from the top, and chain reactions stack a rising multiplier.',
+      'Longer lines and deeper chains pay more; run out of legal moves and the closet auto-restocks.',
+      'Harder settings shorten the clock, and nightmare adds a seventh kind of supply.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Cond. Format. A nonogram dressed up as a spreadsheet with the legend lost. */
+(function () {
+  'use strict';
+  const { h } = Engine;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+
+    const SIZES = { chill: 5, normal: 10, hard: 12, nightmare: 15 };
+    const N = SIZES[api.diffId] || 10;
+    const FILL = 0.55;
+
+    function cellSize() {
+      if (N <= 5) return 46;
+      if (N <= 10) return 34;
+      if (N <= 12) return 30;
+      return 26;
+    }
+
+    let target = new Array(N * N).fill(0); /* the hidden picture: 1 filled, 0 blank */
+    let state = new Array(N * N).fill(0);  /* player marks: 0 empty, 1 filled, 2 X   */
+    let rowCluesArr = [];
+    let colCluesArr = [];
+    let cellEls = [];
+    let gridEl = null;
+
+    let markMode = false;
+    let solved = false;
+    let started = false;
+    let startPerf = 0;
+    let lastSec = -1;
+    let errTimer = 0;
+
+    let dragging = false;
+    let dragSet = 0;
+    let lastIdx = -1;
+
+    const defaultHint = 'Fill the runs the numbers describe. Left-click fills a cell, right-click marks a blank with an X.';
+
+    /* ---------- shell ---------- */
+    const wrapEl = h('div', { class: 'nono-wrap' });
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+    const container = h('div', { class: 'nono' }, wrapEl, banner);
+    root.appendChild(container);
+    container.style.setProperty('--cs', cellSize() + 'px');
+
+    /* ---------- toolbar ---------- */
+    const timePill = api.pill('Time 0:00');
+    const markBtn = api.button('Mark: off', function () {
+      markMode = !markMode;
+      markBtn.textContent = 'Mark: ' + (markMode ? 'on' : 'off');
+      markBtn.classList.toggle('on', markMode);
+      api.status(markMode
+        ? 'Mark mode on: tap places an X. Right-click still fills.'
+        : 'Fill mode: tap fills. Right-click places an X.');
+    });
+    api.button('Check', doCheck);
+    api.button('New', newPuzzle);
+
+    /* ---------- generation ---------- */
+    function genTarget() {
+      const t = new Array(N * N);
+      let count = 0;
+      for (let i = 0; i < N * N; i++) {
+        const v = Math.random() < FILL ? 1 : 0;
+        t[i] = v;
+        count += v;
+      }
+      if (count === 0) t[Math.floor(Math.random() * N * N)] = 1;
+      return t;
+    }
+    function clueFor(get) {
+      const arr = [];
+      let run = 0;
+      for (let i = 0; i < N; i++) {
+        if (get(i)) run++;
+        else if (run) { arr.push(run); run = 0; }
+      }
+      if (run) arr.push(run);
+      if (!arr.length) arr.push(0);
+      return arr;
+    }
+    function computeClues() {
+      rowCluesArr = [];
+      colCluesArr = [];
+      for (let r = 0; r < N; r++) {
+        rowCluesArr.push(clueFor(function (c) { return target[r * N + c]; }));
+      }
+      for (let c = 0; c < N; c++) {
+        colCluesArr.push(clueFor(function (r) { return target[r * N + c]; }));
+      }
+    }
+
+    /* ---------- rendering ---------- */
+    function buildGrid() {
+      cellEls = new Array(N * N);
+      const kids = [];
+      kids.push(h('div', { class: 'nono-hcell corner' }, 'fx'));
+      for (let c = 0; c < N; c++) {
+        let cls = 'nono-hcell colclue';
+        if ((c + 1) % 5 === 0 && c !== N - 1) cls += ' band-r';
+        kids.push(h('div', { class: cls },
+          ...colCluesArr[c].map(function (n) { return h('span', { text: String(n) }); })));
+      }
+      for (let r = 0; r < N; r++) {
+        let rcls = 'nono-hcell rowclue';
+        if ((r + 1) % 5 === 0 && r !== N - 1) rcls += ' band-b';
+        kids.push(h('div', { class: rcls },
+          ...rowCluesArr[r].map(function (n) { return h('span', { text: String(n) }); })));
+        for (let c = 0; c < N; c++) {
+          const i = r * N + c;
+          let ccls = 'gcell';
+          if ((c + 1) % 5 === 0 && c !== N - 1) ccls += ' band-r';
+          if ((r + 1) % 5 === 0 && r !== N - 1) ccls += ' band-b';
+          const el = h('div', { class: ccls, data: { idx: String(i) } });
+          cellEls[i] = el;
+          kids.push(el);
+        }
+      }
+      return h('div', {
+        class: 'nono-grid',
+        style: { gridTemplateColumns: 'auto repeat(' + N + ', var(--cs))' }
+      }, ...kids);
+    }
+    function updateCellEl(i) {
+      const el = cellEls[i];
+      el.classList.toggle('filled', state[i] === 1);
+      el.classList.toggle('marked', state[i] === 2);
+      if (state[i] !== 1) el.classList.remove('error');
+    }
+
+    /* ---------- interaction ---------- */
+    function primaryKind(button) {
+      const right = button === 2;
+      const mark = right ? !markMode : markMode;
+      return mark ? 'mark' : 'fill';
+    }
+    function toggledState(i, kind) {
+      const cur = state[i];
+      if (kind === 'fill') return cur === 1 ? 0 : 1;
+      return cur === 2 ? 0 : 2;
+    }
+    function setCell(i, v) {
+      if (state[i] === v) return;
+      state[i] = v;
+      updateCellEl(i);
+    }
+    function cellIndexAt(x, y) {
+      const el = document.elementFromPoint(x, y);
+      if (!el || !el.closest) return -1;
+      const c = el.closest('.gcell');
+      if (!c || c.dataset.idx == null) return -1;
+      return +c.dataset.idx;
+    }
+    function onDown(e) {
+      if (solved) return;
+      const cell = e.target && e.target.closest ? e.target.closest('.gcell') : null;
+      if (!cell) return;
+      e.preventDefault();
+      if (!started) { started = true; startPerf = performance.now(); }
+      const i = +cell.dataset.idx;
+      const kind = primaryKind(e.button);
+      const res = toggledState(i, kind);
+      dragging = true;
+      dragSet = res;
+      lastIdx = i;
+      setCell(i, res);
+      api.sfx.blip(res === 0 ? 220 : (kind === 'fill' ? 540 : 360));
+    }
+    function onMove(e) {
+      if (!dragging) return;
+      const i = cellIndexAt(e.clientX, e.clientY);
+      if (i < 0 || i === lastIdx) return;
+      lastIdx = i;
+      setCell(i, dragSet);
+    }
+    function onUp() {
+      if (!dragging) return;
+      dragging = false;
+      lastIdx = -1;
+      afterChange();
+    }
+
+    function afterChange() {
+      if (solved) return;
+      if (isSolved()) win();
+    }
+    function isSolved() {
+      for (let i = 0; i < N * N; i++) {
+        if ((state[i] === 1) !== (target[i] === 1)) return false;
+      }
+      return true;
+    }
+
+    function clearErrors() {
+      for (let i = 0; i < N * N; i++) if (cellEls[i]) cellEls[i].classList.remove('error');
+    }
+    function doCheck() {
+      if (solved) return;
+      let bad = 0;
+      for (let i = 0; i < N * N; i++) {
+        if (state[i] === 1 && target[i] === 0) {
+          cellEls[i].classList.add('error');
+          bad++;
+        }
+      }
+      if (bad) {
+        api.sfx.bad();
+        api.status(bad + (bad === 1 ? ' cell breaks' : ' cells break') + ' the clues. Flagged red for a moment.');
+        if (errTimer) clearTimeout(errTimer);
+        errTimer = setTimeout(function () { clearErrors(); errTimer = 0; }, 1500);
+      } else {
+        api.sfx.good();
+        api.status('No contradictions so far. Keep going.');
+      }
+    }
+
+    function round1(t) { return Math.round(t * 10) / 10; }
+    function win() {
+      solved = true;
+      dragging = false;
+      if (errTimer) { clearTimeout(errTimer); errTimer = 0; }
+      clearErrors();
+      const t = (performance.now() - startPerf) / 1000;
+      const res = api.submit(round1(t));
+      api.sfx.great();
+      let body = 'Sheet reconstructed in ' + Engine.fmtTime(t) + '.';
+      if (res && res.isRecord) body += ' New personal best for this size.';
+      else if (res && res.best != null) body += ' Best: ' + Engine.fmtTime(res.best) + '.';
+      Engine.autoAdvance(banner, 'CONDITIONS MET', body, 'New sheet', newPuzzle, 6);
+    }
+
+    function newPuzzle() {
+      banner.style.display = 'none';
+      if (errTimer) { clearTimeout(errTimer); errTimer = 0; }
+      target = genTarget();
+      computeClues();
+      state = new Array(N * N).fill(0);
+      const g = buildGrid();
+      if (gridEl) gridEl.remove();
+      gridEl = g;
+      wrapEl.appendChild(g);
+      solved = false;
+      started = false;
+      startPerf = 0;
+      lastSec = -1;
+      dragging = false;
+      lastIdx = -1;
+      timePill.textContent = 'Time 0:00';
+      api.status(defaultHint);
+    }
+
+    /* ---------- wiring ---------- */
+    bagg.listen(wrapEl, 'pointerdown', onDown);
+    bagg.listen(wrapEl, 'contextmenu', function (e) { e.preventDefault(); });
+    bagg.listen(window, 'pointermove', onMove);
+    bagg.listen(window, 'pointerup', onUp);
+    bagg.listen(window, 'pointercancel', onUp);
+    bagg.add(function () { if (errTimer) clearTimeout(errTimer); });
+
+    bagg.add(Engine.loop(function () {
+      if (solved || !started) return;
+      const s = Math.floor((performance.now() - startPerf) / 1000);
+      if (s !== lastSec) {
+        lastSec = s;
+        timePill.textContent = 'Time ' + Engine.fmtTime(s);
+      }
+    }));
+
+    newPuzzle();
+
+    return function () { bagg.dispose(); };
+  }
+
+  Arcade.register({
+    id: 'nonogram',
+    title: 'Cond. Format',
+    emoji: 'nonogram',
+    cat: 'puzzle',
+    order: 13,
+    blurb: 'Someone left conditional formatting on and lost the legend. Fill the cells the row and column numbers demand.',
+    scoreLabel: 'solve time (s)',
+    lowerIsBetter: true,
+    tags: ['puzzle', 'logic', 'picross', 'grid'],
+    how: [
+      'Goal: rebuild the hidden picture. Each number is a run of filled cells in that row or column, in order, with a gap between runs.',
+      'Left-click or tap a cell to fill it; right-click to mark a definite blank with an X. Drag to paint a whole streak.',
+      'On a touchscreen, flip the Mark button to place X marks instead of fills.',
+      'Check flags any filled cell that cannot belong to the answer (turns it red). New deals a fresh sheet.',
+      'You solve the instant your filled cells match the target exactly. Blank cells never need an X.',
+      'Harder difficulty means a bigger grid: 5, 10, 12 or 15 cells square. Your score is the time, so lower is better.'
+    ],
+    mount: mount
+  });
+})();
+
+</script>
+<script>
 /* Jam Escape. Slide the blockers, drive the red car out.
    Every level below was generated and solved by breadth-first search, so the
    shortest solution length after the "|" is exact. */
@@ -8183,6 +9236,242 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
 
 </script>
 <script>
+/* Password Reset. Mastermind, reframed as guessing your own login before IT calls back. */
+(function () {
+  'use strict';
+  const { h, randInt } = Engine;
+
+  const ROWS = 10;
+  /* Peg palette. light = use light text on the peg so the number stays legible. */
+  const COLORS = [
+    { hex: '#ffcb1f', light: false },
+    { hex: '#e8402a', light: true },
+    { hex: '#00a6b4', light: false },
+    { hex: '#6f3fa8', light: true },
+    { hex: '#6fcf2f', light: false },
+    { hex: '#ff2d87', light: true },
+    { hex: '#2a4bbd', light: true },
+    { hex: '#ff8a1f', light: false }
+  ];
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    const numColors = api.diffId === 'nightmare' ? 8 : api.diffId === 'hard' ? 7 : 6;
+    const STATUS = 'Pick colours 1-' + numColors + ' to fill four slots, then Guess. Black peg = right colour and spot, white = right colour, wrong spot.';
+
+    let secret, rows, cur, done, streak;
+    streak = api.load('streak', 0);
+
+    const pStreak = api.pill('Streak: ' + streak);
+    const pRow = api.pill('Guess 1/' + ROWS);
+    const pColors = api.pill('Colours: ' + numColors);
+
+    const boardEl = h('div', { class: 'mm-board' });
+    const palette = h('div', { class: 'mm-palette' });
+    const guessBtn = h('button', { class: 'btn primary', type: 'button', onclick: () => guess() }, 'Guess');
+    const clearBtn = h('button', { class: 'btn', type: 'button', onclick: () => { if (!done && cur.length) { cur = []; render(); api.sfx.click(); } } }, 'Clear');
+    const controls = h('div', { class: 'mm-controls' }, guessBtn, clearBtn);
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+    root.append(boardEl, palette, controls, banner);
+
+    for (let i = 0; i < numColors; i++) {
+      const c = COLORS[i];
+      palette.appendChild(h('button', {
+        class: 'mm-swatch', type: 'button',
+        style: { background: c.hex, color: c.light ? '#fffdf3' : '#1d1722' },
+        onclick: () => place(i)
+      }, String(i + 1)));
+    }
+
+    api.button('New code', newCode);
+    api.button('Give up', () => {
+      if (done) return;
+      done = true;
+      streak = 0;
+      api.save('streak', 0);
+      api.sfx.bad();
+      finish(false);
+      render();
+    });
+
+    /* Standard non-double-counting scoring: blacks first, then whites from what is left. */
+    function score(guessArr, code) {
+      let black = 0, white = 0;
+      const sLeft = [], gLeft = [];
+      for (let i = 0; i < 4; i++) {
+        if (guessArr[i] === code[i]) black++;
+        else { sLeft.push(code[i]); gLeft.push(guessArr[i]); }
+      }
+      for (let i = 0; i < gLeft.length; i++) {
+        const idx = sLeft.indexOf(gLeft[i]);
+        if (idx >= 0) { white++; sLeft.splice(idx, 1); }
+      }
+      return { black: black, white: white };
+    }
+
+    function makeSlot(ci, isNext, onClick) {
+      const attrs = { class: 'mm-slot' + (ci >= 0 ? ' mm-peg' : '') + (isNext ? ' mm-next' : '') };
+      if (onClick) attrs.onclick = onClick;
+      const el = h('div', attrs, ci >= 0 ? String(ci + 1) : '');
+      if (ci >= 0) {
+        const c = COLORS[ci];
+        el.style.background = c.hex;
+        el.style.color = c.light ? '#fffdf3' : '#1d1722';
+      }
+      return el;
+    }
+
+    function place(i) {
+      if (done) return;
+      if (cur.length >= 4) { api.sfx.thud(); return; }
+      cur.push(i);
+      api.sfx.click();
+      render();
+    }
+
+    function guess() {
+      if (done) return;
+      if (cur.length < 4) { shake(); api.status('Fill all four slots first.'); return; }
+      const fb = score(cur, secret);
+      rows.push({ pegs: cur.slice(), black: fb.black, white: fb.white });
+      api.sfx.blip(360 + fb.black * 90);
+      cur = [];
+      if (fb.black === 4) {
+        done = true;
+        streak++;
+        api.save('streak', streak);
+        api.submit(streak);
+        api.sfx.great();
+        finish(true);
+        render();
+        return;
+      }
+      if (rows.length >= ROWS) {
+        done = true;
+        streak = 0;
+        api.save('streak', 0);
+        api.sfx.bad();
+        finish(false);
+        render();
+        return;
+      }
+      api.status(STATUS);
+      render();
+    }
+
+    function finish(won) {
+      const codeRow = h('div', { class: 'mm-guess mm-reveal' });
+      for (let i = 0; i < 4; i++) codeRow.appendChild(makeSlot(secret[i], false, null));
+      banner.style.display = '';
+      banner.replaceChildren(
+        h('h3', null, won ? 'Access granted.' : 'Locked out.'),
+        h('p', null, won
+          ? ('Cracked in ' + rows.length + (rows.length === 1 ? ' guess.' : ' guesses.'))
+          : 'The password was:'),
+        codeRow,
+        h('p', { class: 'mm-sub' }, won
+          ? ('Streak: ' + streak + '. Best: ' + (api.best() || streak) + '. IT stands down.')
+          : 'Streak reset to zero. IT is already dialling your extension.'),
+        h('button', { class: 'btn primary', type: 'button', onclick: () => reset() }, 'New password'));
+    }
+
+    function shake() {
+      const row = boardEl.querySelector('.mm-row.active');
+      if (row) {
+        row.classList.remove('mm-shake');
+        void row.offsetWidth;
+        row.classList.add('mm-shake');
+      }
+      api.sfx.bad();
+    }
+
+    function render() {
+      boardEl.replaceChildren();
+      const activeIdx = done ? -1 : rows.length;
+      for (let r = 0; r < ROWS; r++) {
+        const data = rows[r];
+        const isActive = r === activeIdx;
+        const guessWrap = h('div', { class: 'mm-guess' });
+        for (let i = 0; i < 4; i++) {
+          let ci = -1;
+          if (data) ci = data.pegs[i];
+          else if (isActive && i < cur.length) ci = cur[i];
+          const isNext = isActive && i === cur.length;
+          const idx = i;
+          const onClick = isActive
+            ? function () { if (idx < cur.length) { cur = cur.slice(0, idx); render(); api.sfx.click(); } }
+            : null;
+          guessWrap.appendChild(makeSlot(ci, isNext, onClick));
+        }
+        const fbEl = h('div', { class: 'mm-feedback' });
+        for (let k = 0; k < 4; k++) {
+          let cls = 'mm-fb';
+          if (data) {
+            if (k < data.black) cls += ' black';
+            else if (k < data.black + data.white) cls += ' white';
+          }
+          fbEl.appendChild(h('div', { class: cls }));
+        }
+        boardEl.appendChild(h('div', { class: 'mm-row' + (isActive ? ' active' : '') },
+          h('div', { class: 'mm-num' }, String(r + 1)), guessWrap, fbEl));
+      }
+      pStreak.textContent = 'Streak: ' + streak;
+      pRow.textContent = 'Guess ' + Math.min(done ? rows.length : rows.length + 1, ROWS) + '/' + ROWS;
+    }
+
+    function reset() {
+      secret = [];
+      for (let i = 0; i < 4; i++) secret.push(randInt(0, numColors - 1));
+      rows = [];
+      cur = [];
+      done = false;
+      banner.style.display = 'none';
+      api.status(STATUS);
+      render();
+    }
+
+    function newCode() {
+      if (!done && rows.length > 0) {
+        streak = 0;
+        api.save('streak', 0);
+      }
+      reset();
+    }
+
+    bagg.add(Engine.onKey((e) => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.key === 'Enter') { guess(); return true; }
+      if (e.key === 'Backspace') { if (!done && cur.length) { cur.pop(); render(); } return true; }
+      const n = parseInt(e.key, 10);
+      if (!isNaN(n) && n >= 1 && n <= numColors) { place(n - 1); return true; }
+    }));
+
+    reset();
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'mastermind',
+    title: 'Password Reset',
+    emoji: 'mastermind',
+    cat: 'brain',
+    order: 23,
+    blurb: 'You have forgotten your own login again. Deduce the four-colour code before the help desk picks up. Ten tries, no hints, mild shame.',
+    scoreLabel: 'Win streak',
+    tags: ['mastermind', 'logic', 'code', 'deduction'],
+    how: [
+      'Crack the hidden four-peg password before IT phones back. You get ten guesses.',
+      'Tap a colour from the palette or press 1-8 to fill the next slot. Backspace clears the last peg, tap a filled slot to edit from there, then hit Guess or Enter.',
+      'After each guess a black feedback peg means right colour in the right slot; a white peg means right colour but wrong slot. Colours can repeat in the code.',
+      'Solve it and your win streak grows by one. That streak is your score, saved between visits. A loss resets it to zero.',
+      'Chill and normal use six colours, hard uses seven, nightmare uses eight. More colours, more possibilities, more sweat.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
 /* Reflex Grid. How fast are you, really? */
 (function () {
   'use strict';
@@ -9111,6 +10400,816 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
 
 </script>
 <script>
+/* Board Meeting. English draughts: forced jumps, mandatory multi-jumps, crown at the back rank. */
+(function () {
+  'use strict';
+  const { h, shuffle } = Engine;
+
+  const RED = 1, BLK = 2;                 /* sides */
+  const RMAN = 1, RKING = 2, BMAN = 3, BKING = 4;  /* piece codes */
+  const DEPTH = { chill: 2, normal: 4, hard: 6, nightmare: 8 };
+  const BUDGET = { chill: 15000, normal: 70000, hard: 200000, nightmare: 500000 };
+  const WIN = 1e6;
+
+  function colorOf(p) { return p === 0 ? 0 : (p <= 2 ? RED : BLK); }
+  function isKing(p) { return p === RKING || p === BKING; }
+  function king(p) { return p === RMAN ? RKING : (p === BMAN ? BKING : p); }
+  function crownRow(p) { return colorOf(p) === RED ? 0 : 7; }   /* red climbs to row 0, black sinks to row 7 */
+  function other(side) { return side === RED ? BLK : RED; }
+  function inb(r, c) { return r >= 0 && r < 8 && c >= 0 && c < 8; }
+
+  const UP = [[-1, -1], [-1, 1]];
+  const DOWN = [[1, -1], [1, 1]];
+  const ALL = [[-1, -1], [-1, 1], [1, -1], [1, 1]];
+  function dirsFor(p) { return isKing(p) ? ALL : (colorOf(p) === RED ? UP : DOWN); }
+
+  /* --- move generation ------------------------------------------------- */
+  function captureMoves(board, r, c) {
+    const start = board[r][c];
+    function dfs(cr, cc, cp, capList, path) {
+      const res = [];
+      for (const d of dirsFor(cp)) {
+        const mr = cr + d[0], mc = cc + d[1], lr = cr + d[0] * 2, lc = cc + d[1] * 2;
+        if (!inb(lr, lc)) continue;
+        const mid = board[mr][mc];
+        if (mid === 0 || colorOf(mid) === colorOf(cp)) continue;
+        if (board[lr][lc] !== 0) continue;
+        /* apply this hop on the working board so chained hops see it vacated */
+        board[cr][cc] = 0; board[mr][mc] = 0;
+        let np = cp, crowned = false;
+        if (!isKing(cp) && lr === crownRow(cp)) { np = king(cp); crowned = true; }
+        board[lr][lc] = np;
+        const nc = capList.concat([[mr, mc]]);
+        const npath = path.concat([[lr, lc]]);
+        const cont = crowned ? [] : dfs(lr, lc, np, nc, npath);  /* crowning ends the turn */
+        if (cont.length) { for (const s of cont) res.push(s); }
+        else res.push({ from: [r, c], to: [lr, lc], path: npath, captures: nc, crowned: crowned });
+        /* undo */
+        board[lr][lc] = 0; board[mr][mc] = mid; board[cr][cc] = cp;
+      }
+      return res;
+    }
+    return dfs(r, c, start, [], [[r, c]]);
+  }
+
+  function simpleMoves(board, r, c) {
+    const p = board[r][c], out = [];
+    for (const d of dirsFor(p)) {
+      const nr = r + d[0], nc = c + d[1];
+      if (!inb(nr, nc) || board[nr][nc] !== 0) continue;
+      out.push({ from: [r, c], to: [nr, nc], path: [[r, c], [nr, nc]], captures: [], crowned: !isKing(p) && nr === crownRow(p) });
+    }
+    return out;
+  }
+
+  function genMoves(board, side) {
+    const caps = [], simp = [];
+    for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+      const p = board[r][c];
+      if (p === 0 || colorOf(p) !== side) continue;
+      const cs = captureMoves(board, r, c);
+      if (cs.length) { for (const m of cs) caps.push(m); }
+      else { const ss = simpleMoves(board, r, c); for (const m of ss) simp.push(m); }
+    }
+    return caps.length ? caps : simp;   /* captures are forced */
+  }
+
+  function applyMove(board, mv) {
+    const fr = mv.path[0][0], fc = mv.path[0][1], tr = mv.to[0], tc = mv.to[1];
+    const p = board[fr][fc];
+    const capVals = mv.captures.map(function (cp) { return board[cp[0]][cp[1]]; });
+    board[fr][fc] = 0;
+    for (const cp of mv.captures) board[cp[0]][cp[1]] = 0;
+    board[tr][tc] = mv.crowned ? king(p) : p;
+    return { p: p, capVals: capVals };
+  }
+  function undoMove(board, mv, rec) {
+    const fr = mv.path[0][0], fc = mv.path[0][1], tr = mv.to[0], tc = mv.to[1];
+    board[tr][tc] = 0;
+    mv.captures.forEach(function (cp, i) { board[cp[0]][cp[1]] = rec.capVals[i]; });
+    board[fr][fc] = rec.p;
+  }
+
+  /* --- evaluation + alpha-beta ---------------------------------------- */
+  function evaluate(board) {   /* positive favours red */
+    let s = 0;
+    for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+      const p = board[r][c];
+      if (p === RMAN) s += 100 + (7 - r) * 3;
+      else if (p === RKING) s += 175;
+      else if (p === BMAN) s -= 100 + r * 3;
+      else if (p === BKING) s -= 175;
+    }
+    return s;
+  }
+  function sideVal(board, side) { return side === RED ? evaluate(board) : -evaluate(board); }
+
+  function makeSearch() {
+    let nodes = 0, cap = 0;
+    function search(board, side, depth, alpha, beta) {
+      if (nodes > cap) return sideVal(board, side);
+      nodes++;
+      const moves = genMoves(board, side);
+      if (moves.length === 0) return -(WIN + depth);   /* side to move is stuck -> loses */
+      if (depth === 0) return sideVal(board, side);
+      let best = -Infinity;
+      for (const m of moves) {
+        const rec = applyMove(board, m);
+        const v = -search(board, other(side), depth - 1, -beta, -alpha);
+        undoMove(board, m, rec);
+        if (v > best) best = v;
+        if (best > alpha) alpha = best;
+        if (alpha >= beta) break;
+      }
+      return best;
+    }
+    return function pick(board, side, diffId) {
+      const moves = genMoves(board, side);
+      if (moves.length <= 1) return moves[0] || null;
+      nodes = 0; cap = BUDGET[diffId] || 70000;
+      const depth = DEPTH[diffId] || 4;
+      const ord = shuffle(moves);
+      let best = ord[0], bestVal = -Infinity, alpha = -Infinity;
+      for (const m of ord) {
+        const rec = applyMove(board, m);
+        const v = -search(board, other(side), depth - 1, -Infinity, -alpha);
+        undoMove(board, m, rec);
+        if (v > bestVal) { bestVal = v; best = m; }
+        if (v > alpha) alpha = v;
+      }
+      return best;
+    };
+  }
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    const pickAI = makeSearch();
+    let board, turn, mode = '1p', selected = null, legalMoves = [], done = false, busy = false, alive = true;
+    let wins = api.load('wins', 0);
+
+    const pRed = api.pill('Red: 12');
+    const pBlk = api.pill('Black: 12');
+    const pTurn = api.pill('Turn: Red');
+
+    const boardEl = h('div', { class: 'board checkers', style: { gridTemplateColumns: 'repeat(8, auto)' } });
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+    const cells = [];
+    for (let i = 0; i < 64; i++) {
+      const r = Math.floor(i / 8), c = i % 8;
+      const cell = h('button', { class: 'cell', type: 'button' });
+      bagg.listen(cell, 'click', function () { onClick(r, c); });
+      cells.push(cell);
+      boardEl.appendChild(cell);
+    }
+    root.append(boardEl, banner);
+
+    api.button('New game', reset);
+    api.select('Players', [
+      { value: '1p', label: '1 player (vs CPU)' },
+      { value: '2p', label: '2 players (hotseat)' }
+    ], '1p', function (v) { mode = v; reset(); });
+    bagg.add(function () { alive = false; });
+
+    function nameOf(side) {
+      if (mode === '2p') return side === RED ? 'Player 1 (red)' : 'Player 2 (black)';
+      return side === RED ? 'You (red)' : 'CPU (black)';
+    }
+
+    function reset() {
+      board = [];
+      for (let r = 0; r < 8; r++) board.push(new Array(8).fill(0));
+      for (let r = 0; r < 3; r++) for (let c = 0; c < 8; c++) if ((r + c) % 2 === 1) board[r][c] = BMAN;
+      for (let r = 5; r < 8; r++) for (let c = 0; c < 8; c++) if ((r + c) % 2 === 1) board[r][c] = RMAN;
+      turn = RED; selected = null; done = false; busy = false;
+      banner.style.display = 'none';
+      api.status(mode === '2p'
+        ? 'Hotseat draughts. Red moves first. Jumps are compulsory; a piece that can keep jumping must.'
+        : 'You are red at the bottom. Click a piece, then a glowing square. Jumps are compulsory.');
+      beginTurn();
+    }
+
+    function beginTurn() {
+      legalMoves = genMoves(board, turn);
+      if (legalMoves.length === 0) { finish(turn); return; }
+      if (mode === '1p' && turn === BLK && !done) {
+        busy = true; selected = null; render();
+        bagg.timer(aiTurn, 320);
+        return;
+      }
+      busy = false;
+      const forced = legalMoves.length && legalMoves[0].captures.length > 0;
+      if (!done) api.status(nameOf(turn) + ' to move.' + (forced ? ' A jump is available — you must take it.' : ''));
+      render();
+    }
+
+    function aiTurn() {
+      if (!alive || done) return;
+      const mv = pickAI(board, BLK, api.diffId);
+      if (!mv) { finish(BLK); return; }
+      doMove(mv, BLK);
+    }
+
+    function doMove(mv, who) {
+      const takes = mv.captures.length;
+      applyMove(board, mv);
+      if (mv.crowned) api.sfx.great();
+      else if (takes) api.sfx.good();
+      else api.sfx.click();
+      selected = null;
+      turn = other(who);
+      beginTurn();
+    }
+
+    function movesFrom(r, c) {
+      return legalMoves.filter(function (m) { return m.from[0] === r && m.from[1] === c; });
+    }
+
+    function onClick(r, c) {
+      if (done || busy) return;
+      if (mode === '1p' && turn !== RED) return;
+      if (selected) {
+        const matches = movesFrom(selected[0], selected[1]).filter(function (m) { return m.to[0] === r && m.to[1] === c; });
+        if (matches.length) {
+          /* if two capture routes end on the same square, take the one that grabs the most */
+          let best = matches[0];
+          for (const m of matches) if (m.captures.length > best.captures.length) best = m;
+          doMove(best, turn);
+          return;
+        }
+      }
+      const p = board[r][c];
+      if (p !== 0 && colorOf(p) === turn && movesFrom(r, c).length) {
+        selected = [r, c];
+        api.sfx.blip(320);
+        render();
+        return;
+      }
+      if (selected) { selected = null; render(); }
+    }
+
+    function counts() {
+      let R = 0, B = 0;
+      for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+        const col = colorOf(board[r][c]);
+        if (col === RED) R++; else if (col === BLK) B++;
+      }
+      return { R: R, B: B };
+    }
+
+    function finish(loser) {
+      done = true; busy = false; selected = null;
+      const winner = other(loser);
+      render();
+      let extra = '';
+      if (mode === '1p' && winner === RED) {
+        wins += 1; api.save('wins', wins);
+        const res = api.submit(wins);
+        extra = res && res.isRecord ? ' New career best.' : '';
+        api.sfx.great();
+      } else if (mode === '1p') {
+        api.sfx.bad();
+      } else {
+        api.sfx.great();
+      }
+      const cc = counts();
+      let title;
+      if (mode === '2p') title = (winner === RED ? 'Player 1 (red) wins.' : 'Player 2 (black) wins.');
+      else title = (winner === RED ? 'You win the board meeting.' : 'The CPU adjourns you.');
+      banner.style.display = '';
+      banner.replaceChildren(
+        h('h3', null, title),
+        h('p', null, 'Red ' + cc.R + ', black ' + cc.B + '.' + (mode === '1p' && winner === RED ? ' Career wins: ' + wins + '.' + extra : '')),
+        h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Play again'));
+    }
+
+    function render() {
+      const cc = counts();
+      pRed.textContent = (mode === '2p' ? 'P1 red: ' : 'Red: ') + cc.R;
+      pBlk.textContent = (mode === '2p' ? 'P2 black: ' : 'Black: ') + cc.B;
+      pTurn.textContent = done ? 'Turn: —' : 'Turn: ' + (turn === RED ? 'Red' : 'Black');
+
+      const humanTurn = !done && !busy && (mode === '2p' || turn === RED);
+      const movable = new Set();
+      if (humanTurn) for (const m of legalMoves) movable.add(m.from[0] * 8 + m.from[1]);
+      const targets = new Set();
+      if (humanTurn && selected) for (const m of movesFrom(selected[0], selected[1])) targets.add(m.to[0] * 8 + m.to[1]);
+
+      for (let i = 0; i < 64; i++) {
+        const r = Math.floor(i / 8), c = i % 8, dark = (r + c) % 2 === 1;
+        const cell = cells[i];
+        cell.replaceChildren();
+        let cls = 'cell' + (dark ? ' dk' : '');
+        const p = board[r][c];
+        if (p !== 0) {
+          cell.appendChild(h('i', { class: 'pc ' + (colorOf(p) === RED ? 'red' : 'blk') + (isKing(p) ? ' king' : '') }));
+        }
+        if (selected && selected[0] === r && selected[1] === c) cls += ' sel';
+        else if (movable.has(i)) cls += ' can';
+        if (targets.has(i)) { cls += ' target'; cell.appendChild(h('i', { class: 'dot' })); }
+        cell.className = cls;
+      }
+    }
+
+    reset();
+    return function () { bagg.dispose(); };
+  }
+
+  Arcade.register({
+    id: 'checkers',
+    title: 'Board Meeting',
+    emoji: 'checkers',
+    cat: 'brain',
+    order: 28,
+    blurb: 'English draughts on company time. Jumps are compulsory, so is that 4pm sync. Chain your captures and crown a king before the CPU does.',
+    scoreLabel: 'Wins',
+    tags: ['checkers', 'draughts', 'board', 'vs-cpu'],
+    how: [
+      'You are red at the bottom; the CPU is black at the top. Reduce the other side to no pieces or no legal move.',
+      'Click or tap one of your pieces, then click a glowing square to move it there. Men step diagonally forward, kings step either way.',
+      'Captures are forced: if any jump exists you must take one, and a piece that can keep jumping keeps jumping in the same turn.',
+      'Reach the far back rank and the piece is crowned a king. Career wins are your score.',
+      'Difficulty sets how deep the CPU thinks: chill barely plans ahead, nightmare reads eight plies. Set Players to 2 for hotseat and the CPU steps aside.'
+    ],
+    usesLetters: false,
+    mount: mount
+  });
+})();
+</script>
+<script>
+/* Battleship. A floor-by-floor asset audit dressed up as naval warfare. */
+(function () {
+  'use strict';
+  const { h, randInt, pick } = Engine;
+
+  /* the standard fleet, relabelled as things you'd account for in a drill */
+  const FLEET = [
+    { name: 'Server rack', size: 5 },
+    { name: 'Boardroom table', size: 4 },
+    { name: 'Water cooler', size: 3 },
+    { name: 'Filing cabinet', size: 3 },
+    { name: 'Fax machine', size: 2 }
+  ];
+  const N = 10;
+  const COLS = 'ABCDEFGHIJ';
+
+  const inb = (r, c) => r >= 0 && r < N && c >= 0 && c < N;
+
+  function footprint(r, c, size, o) {
+    const out = [];
+    for (let i = 0; i < size; i++) out.push(o === 'h' ? [r, c + i] : [r + i, c]);
+    return out;
+  }
+  function emptyBoard() { return { grid: new Array(N * N).fill(-1), ships: [] }; }
+  function canPlace(board, cells) {
+    for (const cc of cells) {
+      const r = cc[0], c = cc[1];
+      if (!inb(r, c)) return false;
+      if (board.grid[r * N + c] !== -1) return false;
+    }
+    return true;
+  }
+  function addShip(board, spec, cells) {
+    const ship = { name: spec.name, size: spec.size, cells: cells, hits: 0, sunk: false };
+    const idx = board.ships.length;
+    board.ships.push(ship);
+    for (const cc of cells) board.grid[cc[0] * N + cc[1]] = idx;
+    return ship;
+  }
+  function randomBoard() {
+    const b = emptyBoard();
+    for (const spec of FLEET) {
+      let placed = false, tries = 0;
+      while (!placed && tries < 800) {
+        tries++;
+        const o = Math.random() < 0.5 ? 'h' : 'v';
+        const r = o === 'h' ? randInt(0, 9) : randInt(0, N - spec.size);
+        const c = o === 'h' ? randInt(0, N - spec.size) : randInt(0, 9);
+        const cells = footprint(r, c, spec.size, o);
+        if (canPlace(b, cells)) { addShip(b, spec, cells); placed = true; }
+      }
+      if (!placed) {
+        /* exhaustive fallback; practically never needed on a 10x10 */
+        for (let rr = 0; rr < N && !placed; rr++)
+          for (let cc = 0; cc < N && !placed; cc++)
+            for (let oi = 0; oi < 2 && !placed; oi++) {
+              const cells = footprint(rr, cc, spec.size, oi ? 'v' : 'h');
+              if (canPlace(b, cells)) { addShip(b, spec, cells); placed = true; }
+            }
+      }
+    }
+    return b;
+  }
+  function allSunk(board) { return board.ships.every((s) => s.sunk); }
+  function unsunk(board) { let n = 0; for (const s of board.ships) if (!s.sunk) n++; return n; }
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+
+    let phase = 'setup';       /* setup | battle | over */
+    let turn = 'player';       /* player | cpu */
+    let busy = false;
+    let reveal = false;
+    let playerBoard, enemyBoard;
+    let pShots, eShots;        /* shots taken AT a board: 0 unknown, 1 miss, 2 hit */
+    let setupIdx = 0;
+    let orient = 'h';
+    let hoverCell = null;
+    let wins = api.load('wins', 0);
+    let streak = api.load('streak', 0);
+
+    let alive = true;
+    const timers = new Set();
+    function after(ms, fn) {
+      const id = setTimeout(function () { timers.delete(id); if (alive) fn(); }, ms);
+      timers.add(id);
+      return id;
+    }
+    bagg.add(function () { alive = false; timers.forEach(clearTimeout); timers.clear(); });
+
+    /* ---------------- DOM ---------------- */
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+
+    function buildBoard(kind) {
+      const el = h('div', { class: 'bs-board bs-' + kind });
+      const cells = new Array(N * N);
+      el.appendChild(h('div', { class: 'bs-lab corner' }));
+      for (let c = 0; c < N; c++) el.appendChild(h('div', { class: 'bs-lab' }, COLS[c]));
+      for (let r = 0; r < N; r++) {
+        el.appendChild(h('div', { class: 'bs-lab' }, String(r + 1)));
+        for (let c = 0; c < N; c++) {
+          const cell = h('div', { class: 'cell', data: { r: String(r), c: String(c) } });
+          cells[r * N + c] = cell;
+          el.appendChild(cell);
+        }
+      }
+      return { el: el, cells: cells };
+    }
+    const me = buildBoard('me');
+    const them = buildBoard('them');
+    const wrap = h('div', { class: 'battleship' },
+      h('div', { class: 'panelrow' },
+        h('div', { class: 'bs-side' }, h('h4', null, 'Your floor'), me.el),
+        h('div', { class: 'bs-side' }, h('h4', null, 'Enemy floor'), them.el)));
+    root.append(banner, wrap);
+
+    /* ---------------- toolbar ---------------- */
+    const pTurn = api.pill('Setup');
+    const pEnemy = api.pill('Targets left: 5');
+    const pStreak = api.pill('Streak 0', 'best');
+
+    const btnNew = api.button('New game', newGame);
+    const btnRandom = api.button('Re-roll fleet', randomiseSetup);
+    const btnClear = api.button('Place by hand', clearSetup);
+    const btnRotate = api.button('Rotate (R)', rotate);
+    const btnStart = api.button('Start battle', startBattle, 'primary');
+    const setupBtns = [btnRandom, btnClear, btnRotate, btnStart];
+    void btnNew;
+
+    /* ---------------- listeners ---------------- */
+    bagg.listen(them.el, 'click', function (e) {
+      const t = e.target.closest('.cell');
+      if (!t) return;
+      if (phase !== 'battle' || busy || turn !== 'player') return;
+      playerFire(+t.dataset.r, +t.dataset.c);
+    });
+    bagg.listen(me.el, 'click', function (e) {
+      if (phase !== 'setup') return;
+      const t = e.target.closest('.cell');
+      if (!t) return;
+      placeAt(+t.dataset.r, +t.dataset.c);
+    });
+    bagg.listen(me.el, 'pointermove', function (e) {
+      if (phase !== 'setup' || setupIdx >= FLEET.length) return;
+      const t = e.target.closest('.cell');
+      const nc = t ? [+t.dataset.r, +t.dataset.c] : null;
+      if ((nc && hoverCell && nc[0] === hoverCell[0] && nc[1] === hoverCell[1]) || (!nc && !hoverCell)) return;
+      hoverCell = nc;
+      renderMe();
+    });
+    bagg.listen(me.el, 'pointerleave', function () {
+      if (!hoverCell) return;
+      hoverCell = null;
+      renderMe();
+    });
+    bagg.add(Engine.onKey(function (e) {
+      if (phase === 'setup' && (e.code === 'KeyR' || e.key === 'r' || e.key === 'R')) { rotate(); return true; }
+      return false;
+    }));
+
+    /* ---------------- setup phase ---------------- */
+    function newGame() { banner.style.display = 'none'; newSetup(); }
+
+    function newSetup() {
+      phase = 'setup'; turn = 'player'; busy = false; reveal = false;
+      hoverCell = null; orient = 'h';
+      playerBoard = emptyBoard();
+      enemyBoard = randomBoard();
+      pShots = new Array(N * N).fill(0);
+      eShots = new Array(N * N).fill(0);
+      setupIdx = 0;
+      randomiseSetup();
+    }
+
+    function randomiseSetup() {
+      if (phase !== 'setup') return;
+      playerBoard = randomBoard();
+      setupIdx = FLEET.length;
+      hoverCell = null;
+      api.sfx.click();
+      api.status('Fleet moored. Re-roll, place it by hand, or start the drill.');
+      updateToolbar(); updatePills(); renderAll();
+    }
+
+    function clearSetup() {
+      if (phase !== 'setup') return;
+      playerBoard = emptyBoard();
+      setupIdx = 0; hoverCell = null;
+      api.sfx.click();
+      api.status('Placing your ' + FLEET[0].name + ' (' + FLEET[0].size + '). Click a square; press R to rotate.');
+      updateToolbar(); updatePills(); renderAll();
+    }
+
+    function rotate() {
+      if (phase !== 'setup') return;
+      orient = orient === 'h' ? 'v' : 'h';
+      api.sfx.blip(440);
+      renderMe();
+    }
+
+    function placeAt(r, c) {
+      if (setupIdx >= FLEET.length) return;
+      const spec = FLEET[setupIdx];
+      const cells = footprint(r, c, spec.size, orient);
+      if (!canPlace(playerBoard, cells)) {
+        api.sfx.bad();
+        api.status('That will not fit. Try another square or rotate with R.');
+        return;
+      }
+      addShip(playerBoard, spec, cells);
+      setupIdx++;
+      api.sfx.click();
+      if (setupIdx >= FLEET.length) api.status('Fleet ready. Hit Start battle.');
+      else api.status('Now placing ' + FLEET[setupIdx].name + ' (' + FLEET[setupIdx].size + '). Press R to rotate.');
+      updateToolbar(); renderMe();
+    }
+
+    function startBattle() {
+      if (phase !== 'setup' || setupIdx < FLEET.length) return;
+      phase = 'battle'; turn = 'player'; busy = false; reveal = false; hoverCell = null;
+      api.sfx.good();
+      api.status('Battle stations. Click a square on the enemy floor to fire.');
+      updateToolbar(); updatePills(); renderAll();
+    }
+
+    /* ---------------- combat ---------------- */
+    function resolveShot(board, shots, r, c) {
+      const i = r * N + c;
+      const shipIdx = board.grid[i];
+      if (shipIdx >= 0) {
+        shots[i] = 2;
+        const ship = board.ships[shipIdx];
+        ship.hits++;
+        if (ship.hits >= ship.size) { ship.sunk = true; api.sfx.boom(); return { hit: true, sunk: true, name: ship.name, size: ship.size }; }
+        api.sfx.thud();
+        return { hit: true, sunk: false, name: ship.name, size: ship.size };
+      }
+      shots[i] = 1;
+      api.sfx.blip(240);
+      return { hit: false, sunk: false };
+    }
+
+    function playerFire(r, c) {
+      const i = r * N + c;
+      if (eShots[i] !== 0) return;
+      const res = resolveShot(enemyBoard, eShots, r, c);
+      if (res.sunk) api.status('Cleared their ' + res.name + ' (' + res.size + '). ' + unsunk(enemyBoard) + ' asset(s) left.');
+      else if (res.hit) api.status('Direct hit on the enemy floor.');
+      else api.status('Splash. Nothing there.');
+      renderThem(); updatePills();
+      if (allSunk(enemyBoard)) { endGame(true); return; }
+      turn = 'cpu'; busy = true;
+      updatePills(); renderThem();
+      after(560, cpuTurn);
+    }
+
+    function cpuTurn() {
+      if (!alive || phase !== 'battle') return;
+      const shot = cpuPick();
+      if (!shot) { turn = 'player'; busy = false; renderThem(); return; }
+      const res = resolveShot(playerBoard, pShots, shot[0], shot[1]);
+      renderMe(); updatePills();
+      if (allSunk(playerBoard)) { endGame(false); return; }
+      turn = 'player'; busy = false;
+      if (res.sunk) api.status('The CPU cleared your ' + res.name + ' (' + res.size + '). Your move.');
+      else if (res.hit) api.status('The CPU tagged one of your assets. Your move.');
+      else api.status('The CPU missed. Your move.');
+      updatePills(); renderThem();
+    }
+
+    /* ---------------- CPU intelligence ---------------- */
+    function allUnknown() {
+      const a = [];
+      for (let i = 0; i < N * N; i++) if (pShots[i] === 0) a.push([Math.floor(i / N), i % N]);
+      return a;
+    }
+    function activeHits() {
+      const out = [];
+      for (const s of playerBoard.ships) {
+        if (s.sunk) continue;
+        for (const cc of s.cells) if (pShots[cc[0] * N + cc[1]] === 2) out.push(cc);
+      }
+      return out;
+    }
+    function cpuPick() {
+      if (api.diffId === 'nightmare') return densityPick() || pick(allUnknown() ) || null;
+      if (api.diffId !== 'chill') {
+        const t = targetPick();
+        if (t) return t;
+      }
+      return huntPick();
+    }
+    function targetPick() {
+      const hits = activeHits();
+      if (!hits.length) return null;
+      const H = new Set(hits.map((k) => k[0] * N + k[1]));
+      const dirs = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+      const strong = [];
+      for (const hc of hits) {
+        const r = hc[0], c = hc[1];
+        for (const d of dirs) {
+          const dr = d[0], dc = d[1];
+          if (!H.has((r + dr) * N + (c + dc))) continue;
+          /* a line exists in this direction: aim just past each end */
+          let er = r, ec = c;
+          while (inb(er + dr, ec + dc) && H.has((er + dr) * N + (ec + dc))) { er += dr; ec += dc; }
+          if (inb(er + dr, ec + dc) && pShots[(er + dr) * N + (ec + dc)] === 0) strong.push([er + dr, ec + dc]);
+          let br = r, bc = c;
+          while (inb(br - dr, bc - dc) && H.has((br - dr) * N + (bc - dc))) { br -= dr; bc -= dc; }
+          if (inb(br - dr, bc - dc) && pShots[(br - dr) * N + (bc - dc)] === 0) strong.push([br - dr, bc - dc]);
+        }
+      }
+      if (strong.length) return pick(strong);
+      const weak = [];
+      for (const hc of hits) {
+        for (const d of dirs) {
+          const nr = hc[0] + d[0], ncc = hc[1] + d[1];
+          if (inb(nr, ncc) && pShots[nr * N + ncc] === 0) weak.push([nr, ncc]);
+        }
+      }
+      return weak.length ? pick(weak) : null;
+    }
+    function huntPick() {
+      const all = [], par = [];
+      for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+        if (pShots[r * N + c] === 0) { all.push([r, c]); if ((r + c) % 2 === 0) par.push([r, c]); }
+      }
+      if (!all.length) return null;
+      if (api.diffId === 'hard' && par.length) return pick(par);
+      return pick(all);
+    }
+    function densityPick() {
+      const rem = playerBoard.ships.filter((s) => !s.sunk).map((s) => s.size);
+      if (!rem.length) return null;
+      const activeSet = new Set(activeHits().map((k) => k[0] * N + k[1]));
+      const avail = new Array(N * N);
+      for (let i = 0; i < N * N; i++) {
+        if (pShots[i] === 1) avail[i] = false;
+        else if (pShots[i] === 2) avail[i] = !playerBoard.ships[playerBoard.grid[i]].sunk;
+        else avail[i] = true;
+      }
+      const heat = new Array(N * N).fill(0);
+      for (const size of rem) {
+        for (let r = 0; r < N; r++) for (let c = 0; c <= N - size; c++) {
+          let ok = true, cov = 0;
+          for (let k = 0; k < size; k++) { const i = r * N + (c + k); if (!avail[i]) { ok = false; break; } if (activeSet.has(i)) cov++; }
+          if (!ok) continue;
+          const w = cov > 0 ? Math.pow(80, cov) : 1;
+          for (let k = 0; k < size; k++) { const i = r * N + (c + k); if (pShots[i] === 0) heat[i] += w; }
+        }
+        for (let c = 0; c < N; c++) for (let r = 0; r <= N - size; r++) {
+          let ok = true, cov = 0;
+          for (let k = 0; k < size; k++) { const i = (r + k) * N + c; if (!avail[i]) { ok = false; break; } if (activeSet.has(i)) cov++; }
+          if (!ok) continue;
+          const w = cov > 0 ? Math.pow(80, cov) : 1;
+          for (let k = 0; k < size; k++) { const i = (r + k) * N + c; if (pShots[i] === 0) heat[i] += w; }
+        }
+      }
+      let bi = -1, bv = -1;
+      for (let i = 0; i < N * N; i++) { if (pShots[i] === 0 && heat[i] > bv) { bv = heat[i]; bi = i; } }
+      if (bi < 0) return null;
+      return [Math.floor(bi / N), bi % N];
+    }
+
+    /* ---------------- end ---------------- */
+    function endGame(playerWon) {
+      phase = 'over'; busy = true; turn = null; reveal = true;
+      updateToolbar(); updatePills(); renderAll();
+      banner.style.display = '';
+      if (playerWon) {
+        wins++; streak++;
+        api.save('wins', wins); api.save('streak', streak);
+        const res = api.submit(streak);
+        api.sfx.great();
+        banner.replaceChildren(
+          h('h3', null, 'Floor cleared.'),
+          h('p', null, 'Every enemy asset accounted for. Career wins: ' + wins + '. Win streak: ' + streak + '.' +
+            (res && res.isRecord ? ' New best streak.' : '')),
+          h('button', { class: 'btn primary', type: 'button', onclick: newGame }, 'Run it again'));
+      } else {
+        streak = 0; api.save('streak', 0);
+        api.sfx.bad();
+        banner.replaceChildren(
+          h('h3', null, 'You got audited.'),
+          h('p', null, 'The CPU cleared your last asset. Streak reset to zero. Career wins: ' + wins + '.'),
+          h('button', { class: 'btn primary', type: 'button', onclick: newGame }, 'Try again'));
+      }
+      updatePills();
+    }
+
+    /* ---------------- rendering ---------------- */
+    function setCls(el, cls) { if (el.className !== cls) el.className = cls; }
+
+    function renderMe() {
+      let prev = null, prevOk = false;
+      if (phase === 'setup' && setupIdx < FLEET.length && hoverCell) {
+        const cells = footprint(hoverCell[0], hoverCell[1], FLEET[setupIdx].size, orient);
+        prevOk = canPlace(playerBoard, cells);
+        prev = new Set();
+        for (const cc of cells) if (inb(cc[0], cc[1])) prev.add(cc[0] * N + cc[1]);
+      }
+      for (let i = 0; i < N * N; i++) {
+        let cls = 'cell';
+        const shipIdx = playerBoard.grid[i];
+        if (pShots[i] === 2) cls += playerBoard.ships[shipIdx].sunk ? ' sunk' : ' hit';
+        else if (pShots[i] === 1) cls += ' miss';
+        else if (shipIdx >= 0) cls += ' ship';
+        if (prev && prev.has(i)) cls += prevOk ? ' prev-ok' : ' prev-bad';
+        setCls(me.cells[i], cls);
+      }
+    }
+
+    function renderThem() {
+      const live = phase === 'battle' && turn === 'player' && !busy;
+      for (let i = 0; i < N * N; i++) {
+        let cls = 'cell';
+        if (eShots[i] === 2) cls += enemyBoard.ships[enemyBoard.grid[i]].sunk ? ' sunk' : ' hit';
+        else if (eShots[i] === 1) cls += ' miss';
+        else {
+          cls += ' water';
+          if (reveal && enemyBoard.grid[i] >= 0) cls += ' ghost';
+          if (live) cls += ' live';
+        }
+        setCls(them.cells[i], cls);
+      }
+    }
+
+    function renderAll() { renderMe(); renderThem(); }
+
+    function updatePills() {
+      pTurn.textContent = phase === 'setup' ? 'Setup'
+        : phase === 'over' ? 'Game over'
+          : (turn === 'player' ? 'Your move' : 'CPU firing');
+      pTurn.className = 'pill' + (phase === 'battle' && turn === 'player' ? ' good'
+        : phase === 'battle' && turn === 'cpu' ? ' warn' : '');
+      pEnemy.textContent = 'Targets left: ' + (enemyBoard ? unsunk(enemyBoard) : FLEET.length);
+      const b = api.best();
+      pStreak.textContent = 'Streak ' + streak + (b ? ' · best ' + b : '');
+    }
+
+    function updateToolbar() {
+      const setup = phase === 'setup';
+      wrap.classList.toggle('setup-mode', setup);
+      for (const b of setupBtns) b.style.display = setup ? '' : 'none';
+      btnStart.disabled = !(setup && setupIdx >= FLEET.length);
+    }
+
+    newSetup();
+    return function () { bagg.dispose(); };
+  }
+
+  Arcade.register({
+    id: 'battleship',
+    title: 'Battleship',
+    emoji: 'battleship',
+    cat: 'brain',
+    order: 24,
+    blurb: 'Classic salvo warfare relabelled as a floor-by-floor asset audit. Moor your fleet, call your shots, and out-sink a CPU that gets meaner the higher you crank it.',
+    scoreLabel: 'Win streak',
+    tags: ['battleship', 'strategy', 'vs-cpu', 'grid'],
+    how: [
+      'Two 10x10 floors. Sink every asset on the enemy floor before the CPU clears yours.',
+      'Click or tap a square on the enemy grid to fire. During setup, use Re-roll fleet, or Place by hand and press R (or Rotate) to turn the ship.',
+      'A hit that fills a whole ship clears it. The CPU fires blind until it lands a hit, then works along the line it has uncovered.',
+      'Each win extends your streak; a loss resets it to zero. Your best streak is the score to beat.',
+      'Chill fires purely at random. Hard adds a checkerboard search; nightmare runs a probability map that hunts your fleet without mercy.'
+    ],
+    usesLetters: true,
+    mount: mount
+  });
+})();
+
+</script>
+<script>
 /* Memory Match. Flip two, keep the pairs. Always winnable, no way to get stuck. */
 (function () {
   'use strict';
@@ -9456,6 +11555,433 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
   });
 })();
 
+</script>
+<script>
+(function () {
+  'use strict';
+  const { clamp, rand, pick } = Engine;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    const W = 760, H = 560;
+    const cv = Engine.canvas(root, W, H, { maxHeight: '78vh' });
+    const ctx = cv.ctx;
+
+    const COLS = 9, ROWS = 5, TOTAL = COLS * ROWS;
+    const invW = 38, invH = 24, colStep = 60, rowStep = 40;
+    const x0 = Math.round((W - ((COLS - 1) * colStep + invW)) / 2);
+    const rowColors = ['#e8402a', '#6f3fa8', '#00a6b4', '#6fcf2f', '#ffcb1f'];
+    const margin = 16;
+    const shipY = H - 40, shipW = 46, shipH = 16;
+    const breachLine = H - 74;
+
+    const startLives = api.diffId === 'nightmare' ? 2 : (api.diffId === 'chill' ? 4 : 3);
+    const maxShots = api.diffId === 'chill' ? 4 : (api.hard ? 2 : 3);
+    const bunkerCount = api.hard ? 3 : 4;
+    const speedDm = 0.9 + (api.dm - 1) * 0.45;
+
+    const scorePill = api.pill('Score 0');
+    const livesPill = api.pill('Lives ' + startLives);
+    const wavePill = api.pill('Wave 1');
+    api.status('Arrow keys or A/D to strafe, Space to fire. Touch: D-pad, FIRE in the center.');
+
+    const keys = Engine.keys(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'Space', 'KeyA', 'KeyD']);
+    bagg.add(keys.dispose);
+
+    let inv, dir, fx, fy, shots, bombs, bunkers, ufo, ufoTimer;
+    let ship, aimX, lives, score, wave, fireCd, bombCd, state, breakT, respawnT, overCd, fireQueued, result;
+
+    function buildBunkers() {
+      bunkers = [];
+      const cols = 12, rows = 8, cell = 5;
+      const bw = cols * cell;
+      const by = H - 150;
+      const gap = W / (bunkerCount + 1);
+      for (let i = 0; i < bunkerCount; i++) {
+        const bx = Math.round(gap * (i + 1) - bw / 2);
+        const grid = [];
+        for (let r = 0; r < rows; r++) {
+          const rowArr = [];
+          for (let c = 0; c < cols; c++) rowArr.push(true);
+          grid.push(rowArr);
+        }
+        // round the top corners
+        grid[0][0] = grid[0][1] = grid[0][cols - 1] = grid[0][cols - 2] = false;
+        grid[1][0] = grid[1][cols - 1] = false;
+        // carve a doorway at the bottom center
+        for (let r = rows - 3; r < rows; r++) {
+          for (let c = 4; c < 8; c++) grid[r][c] = false;
+        }
+        bunkers.push({ x: bx, y: by, cols: cols, rows: rows, cell: cell, grid: grid });
+      }
+    }
+
+    function spawnWave(n) {
+      inv = [];
+      const startY = 60 + Math.min(6, n - 1) * 14;
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          inv.push({ col: c, row: r, alive: true, color: rowColors[r], points: (ROWS - r) * 10 });
+        }
+      }
+      dir = 1; fx = 0; fy = startY;
+      shots = []; bombs = []; ufo = null;
+      ufoTimer = rand(8, 16);
+      bombCd = rand(0.6, 1.4);
+    }
+
+    function invX(iv) { return x0 + iv.col * colStep + fx; }
+    function invY(iv) { return iv.row * rowStep + fy; }
+
+    function reset() {
+      lives = startLives; score = 0; wave = 1;
+      ship = { x: (W - shipW) / 2 };
+      aimX = ship.x;
+      fireCd = 0; respawnT = 0; overCd = 0; fireQueued = false;
+      state = 'play'; breakT = 0; result = null;
+      buildBunkers();
+      spawnWave(1);
+      updateHud();
+    }
+
+    function updateHud() {
+      scorePill.textContent = 'Score ' + score;
+      livesPill.textContent = 'Lives ' + Math.max(0, lives);
+      wavePill.textContent = 'Wave ' + wave;
+    }
+
+    function aliveList() { return inv.filter(function (v) { return v.alive; }); }
+
+    function fire() {
+      shots.push({ x: ship.x + shipW / 2, y: shipY - 6 });
+      fireCd = 0.30;
+      api.sfx.tone({ freq: 660, to: 900, dur: 0.08, type: 'square', vol: 0.5 });
+    }
+
+    function hitBunker(px, py) {
+      for (let i = 0; i < bunkers.length; i++) {
+        const b = bunkers[i];
+        if (px < b.x || px >= b.x + b.cols * b.cell) continue;
+        if (py < b.y || py >= b.y + b.rows * b.cell) continue;
+        const ci = Math.floor((px - b.x) / b.cell);
+        const ri = Math.floor((py - b.y) / b.cell);
+        if (!b.grid[ri] || !b.grid[ri][ci]) continue;
+        const rad = 1;
+        for (let dy = -rad; dy <= rad; dy++) {
+          for (let dx = -rad; dx <= rad; dx++) {
+            const nr = ri + dy, nc = ci + dx;
+            if (b.grid[nr] && b.grid[nr][nc] && (Math.abs(dx) + Math.abs(dy) <= rad || Math.random() < 0.4)) {
+              b.grid[nr][nc] = false;
+            }
+          }
+        }
+        return true;
+      }
+      return false;
+    }
+
+    function loseLife(reason) {
+      lives--;
+      updateHud();
+      api.sfx.bad();
+      bombs = [];
+      if (lives <= 0) {
+        gameOver();
+      } else {
+        respawnT = 1.1;
+        if (reason === 'breach') fy = 60;
+        ship.x = (W - shipW) / 2;
+        aimX = ship.x;
+      }
+    }
+
+    function gameOver() {
+      state = 'over';
+      overCd = 0.7;
+      api.sfx.thud();
+      api.sfx.boom();
+      result = api.submit(score);
+    }
+
+    function rectHit(ax, ay, aw, ah, bx, by, bw, bh) {
+      return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
+    }
+
+    function update(dt) {
+      if (state === 'over') {
+        if (overCd > 0) overCd -= dt;
+        return;
+      }
+      if (state === 'break') {
+        breakT -= dt;
+        if (breakT <= 0) {
+          wave++;
+          updateHud();
+          spawnWave(wave);
+          state = 'play';
+        }
+        return;
+      }
+
+      const spd = 300;
+      const left = keys.get('ArrowLeft', 'a', 'A');
+      const right = keys.get('ArrowRight', 'd', 'D');
+      if (left || right) {
+        ship.x += (right ? 1 : 0) * spd * dt - (left ? 1 : 0) * spd * dt;
+        ship.x = clamp(ship.x, margin, W - margin - shipW);
+        aimX = ship.x;
+      } else {
+        const d = clamp(aimX - ship.x, -spd * dt, spd * dt);
+        ship.x = clamp(ship.x + d, margin, W - margin - shipW);
+      }
+      aimX = clamp(aimX, margin, W - margin - shipW);
+
+      if (respawnT > 0) respawnT -= dt;
+      fireCd -= dt;
+      const wantFire = keys.get('Space', ' ') || fireQueued;
+      if (wantFire && fireCd <= 0 && shots.length < maxShots) {
+        fire();
+        fireQueued = false;
+      }
+
+      // player shots
+      for (let i = shots.length - 1; i >= 0; i--) {
+        const s = shots[i];
+        s.y -= 470 * dt;
+        if (s.y < -12) { shots.splice(i, 1); continue; }
+        if (hitBunker(s.x, s.y)) { shots.splice(i, 1); continue; }
+        if (ufo && rectHit(s.x - 2, s.y, 4, 10, ufo.x, ufo.y, ufo.w, ufo.h)) {
+          score += ufo.points; updateHud(); api.sfx.great();
+          ufo = null; shots.splice(i, 1); continue;
+        }
+        const list = aliveList();
+        let done = false;
+        for (let j = 0; j < list.length; j++) {
+          const v = list[j];
+          const vx = invX(v), vy = invY(v);
+          if (rectHit(s.x - 2, s.y, 4, 10, vx, vy, invW, invH)) {
+            v.alive = false;
+            score += v.points; updateHud();
+            api.sfx.blip(700 + v.row * 60);
+            shots.splice(i, 1); done = true; break;
+          }
+        }
+        if (done) continue;
+      }
+
+      // wave cleared?
+      const alive = aliveList();
+      if (alive.length === 0) {
+        state = 'break'; breakT = 1.2;
+        api.sfx.great();
+        return;
+      }
+
+      // march the formation
+      const frac = alive.length / TOTAL;
+      const waveFactor = 1 + (wave - 1) * 0.1;
+      const speed = (22 + (1 - frac) * 95) * speedDm * waveFactor;
+      fx += dir * speed * dt;
+      let minC = COLS, maxC = 0, maxR = 0;
+      for (let k = 0; k < alive.length; k++) {
+        if (alive[k].col < minC) minC = alive[k].col;
+        if (alive[k].col > maxC) maxC = alive[k].col;
+        if (alive[k].row > maxR) maxR = alive[k].row;
+      }
+      const groupLeft = x0 + minC * colStep + fx;
+      const groupRight = x0 + maxC * colStep + invW + fx;
+      if (dir > 0 && groupRight >= W - margin) { dir = -1; fy += 16; }
+      else if (dir < 0 && groupLeft <= margin) { dir = 1; fy += 16; }
+
+      // breach at the bottom
+      const lowest = maxR * rowStep + fy + invH;
+      if (lowest >= breachLine) {
+        loseLife('breach');
+        if (state === 'over') return;
+      }
+
+      // invader bombs, dropped from the lowest of a random column
+      bombCd -= dt;
+      const maxBombs = (api.hard ? 5 : 3) + (wave - 1);
+      if (bombCd <= 0 && bombs.length < maxBombs) {
+        const byCol = {};
+        for (let k = 0; k < alive.length; k++) {
+          const v = alive[k];
+          if (!byCol[v.col] || v.row > byCol[v.col].row) byCol[v.col] = v;
+        }
+        const shooters = Object.keys(byCol).map(function (kk) { return byCol[kk]; });
+        const shooter = pick(shooters);
+        bombs.push({ x: invX(shooter) + invW / 2, y: invY(shooter) + invH });
+        bombCd = rand(0.7, 1.7) / (speedDm * waveFactor);
+      }
+      const bombSpd = 210 * (0.85 + 0.15 * api.dm);
+      for (let i = bombs.length - 1; i >= 0; i--) {
+        const b = bombs[i];
+        b.y += bombSpd * dt;
+        if (b.y > H) { bombs.splice(i, 1); continue; }
+        if (hitBunker(b.x, b.y)) { bombs.splice(i, 1); continue; }
+        if (respawnT <= 0 && rectHit(b.x - 2, b.y, 4, 10, ship.x, shipY, shipW, shipH)) {
+          bombs.splice(i, 1);
+          loseLife('hit');
+          if (state === 'over') return;
+        }
+      }
+
+      // urgent bonus invader
+      if (ufo) {
+        ufo.x += ufo.vx * dt;
+        if (ufo.x > W + 60 || ufo.x < -60) ufo = null;
+      } else {
+        ufoTimer -= dt;
+        if (ufoTimer <= 0 && alive.length > 2) {
+          const fromLeft = Math.random() < 0.5;
+          ufo = {
+            x: fromLeft ? -50 : W + 50,
+            y: 30, w: 60, h: 18,
+            vx: (fromLeft ? 1 : -1) * 130,
+            points: pick([50, 100, 150, 200])
+          };
+          ufoTimer = rand(12, 22);
+        }
+      }
+    }
+
+    function drawInv(ix, iy, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(ix, iy, invW, invH);
+      ctx.strokeStyle = '#1d1722';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(ix, iy, invW, invH);
+      ctx.beginPath();
+      ctx.moveTo(ix, iy);
+      ctx.lineTo(ix + invW / 2, iy + invH * 0.55);
+      ctx.lineTo(ix + invW, iy);
+      ctx.stroke();
+    }
+
+    function drawShip() {
+      ctx.fillStyle = '#00a6b4';
+      ctx.fillRect(ship.x, shipY + 4, shipW, shipH - 4);
+      ctx.fillRect(ship.x + shipW / 2 - 3, shipY - 6, 6, 10);
+      ctx.strokeStyle = '#1d1722';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(ship.x, shipY + 4, shipW, shipH - 4);
+    }
+
+    function draw() {
+      cv.clear('#0c1119');
+      ctx.fillStyle = 'rgba(255,255,255,0.22)';
+      for (let i = 0; i < 40; i++) {
+        const sx = (i * 97 + 13) % W;
+        const sy = (i * 53 + 29) % (H - 120);
+        ctx.fillRect(sx, sy, 2, 2);
+      }
+      for (let i = 0; i < bunkers.length; i++) {
+        const b = bunkers[i];
+        ctx.fillStyle = '#6fcf2f';
+        for (let r = 0; r < b.rows; r++) {
+          for (let c = 0; c < b.cols; c++) {
+            if (b.grid[r][c]) ctx.fillRect(b.x + c * b.cell, b.y + r * b.cell, b.cell, b.cell);
+          }
+        }
+      }
+      const alive = aliveList();
+      for (let i = 0; i < alive.length; i++) {
+        drawInv(invX(alive[i]), invY(alive[i]), alive[i].color);
+      }
+      if (ufo) {
+        ctx.fillStyle = '#ff2d87';
+        ctx.fillRect(ufo.x, ufo.y, ufo.w, ufo.h);
+        ctx.strokeStyle = '#1d1722';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(ufo.x, ufo.y, ufo.w, ufo.h);
+        ctx.fillStyle = '#fffdf3';
+        ctx.font = 'bold 12px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('URGENT', ufo.x + ufo.w / 2, ufo.y + ufo.h / 2 + 1);
+      }
+      ctx.fillStyle = '#ffcb1f';
+      for (let i = 0; i < shots.length; i++) ctx.fillRect(shots[i].x - 2, shots[i].y, 4, 10);
+      ctx.fillStyle = '#e8402a';
+      for (let i = 0; i < bombs.length; i++) ctx.fillRect(bombs[i].x - 2, bombs[i].y, 4, 10);
+
+      if (!(respawnT > 0 && Math.floor(respawnT * 10) % 2 === 0)) drawShip();
+
+      if (state === 'over') {
+        ctx.fillStyle = 'rgba(12,17,25,0.8)';
+        ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = '#ffcb1f';
+        ctx.font = 'bold 44px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('GAME OVER', W / 2, H / 2 - 40);
+        ctx.fillStyle = '#fffdf3';
+        ctx.font = 'bold 20px monospace';
+        ctx.fillText('Final Score ' + score, W / 2, H / 2 + 4);
+        if (result && result.isRecord) {
+          ctx.fillStyle = '#6fcf2f';
+          ctx.fillText('NEW RECORD', W / 2, H / 2 + 34);
+        }
+        ctx.fillStyle = '#cfc6ae';
+        ctx.font = '15px monospace';
+        ctx.fillText('Press Space or New Game to retry', W / 2, H / 2 + 70);
+      }
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
+    }
+
+    Engine.dpad(root, function (d) {
+      if (state === 'over') {
+        if (d === 'action' && overCd <= 0) reset();
+        return;
+      }
+      if (d === 'left') aimX = clamp(aimX - 70, margin, W - margin - shipW);
+      else if (d === 'right') aimX = clamp(aimX + 70, margin, W - margin - shipW);
+      else if (d === 'action') fireQueued = true;
+    }, { center: 'FIRE', class: 'touch-only' });
+
+    bagg.add(Engine.onKey(function (e) {
+      if (state === 'over' && overCd <= 0 && (e.code === 'Space' || e.key === ' ' || e.code === 'Enter')) {
+        reset();
+        return true;
+      }
+      return false;
+    }));
+
+    api.button('New Game', function () { reset(); });
+
+    reset();
+
+    bagg.add(Engine.loop(function (dt) {
+      update(dt);
+      draw();
+    }));
+
+    return function () { bagg.dispose(); };
+  }
+
+  Arcade.register({
+    id: 'invaders',
+    title: 'Inbox Invaders',
+    emoji: 'invaders',
+    cat: 'action',
+    order: 30,
+    blurb: 'The unread count is descending in formation. Clear it before it lands on your desk.',
+    scoreLabel: 'Score',
+    tags: ['shooter', 'arcade', 'reflex'],
+    how: [
+      'Goal: shoot every email invader before the formation reaches the bottom.',
+      'Move with Left/Right or A/D and fire with Space; on touch use the D-pad and the center FIRE button.',
+      'The fewer invaders left, the faster they march and drop. The Out-of-Office bunkers absorb fire but erode away.',
+      'Score by shooting invaders; the URGENT banner sweeping the top is worth a fat bonus.',
+      'You get three lives and lose one if an invader lands or a bomb hits you; a cleared wave respawns faster and lower.',
+      'Harder settings mean quicker invaders, more bombs, and fewer bunkers; nightmare starts with fewer lives.'
+    ],
+    usesLetters: true,
+    mount: mount
+  });
+})();
 </script>
 <script>
 /* Snake, with a golden apple worth chasing. */
@@ -11731,6 +14257,335 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
       'Your progress saves automatically to this browser. Harder difficulties make everything cost more.'
     ],
     mount
+  });
+})();
+
+</script>
+<script>
+/* Twenty-One. Betting your unspent PTO against a dealer who has never once blinked. */
+(function () {
+  'use strict';
+  const { h, shuffle } = Engine;
+
+  const SUITS = ['♠', '♥', '♦', '♣'];   /* spade heart diamond club */
+  const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+  const START = 200;
+  const BETS = [5, 10, 25];
+
+  const isRed = (s) => s === 1 || s === 2;
+
+  function handValue(cards) {
+    let total = 0, aces = 0;
+    for (const c of cards) {
+      if (c.r === 0) { aces++; total += 11; }
+      else total += (c.r >= 9 ? 10 : c.r + 1);
+    }
+    while (total > 21 && aces > 0) { total -= 10; aces--; }
+    return { total: total, soft: aces > 0 };
+  }
+  const isBlackjack = (cards) => cards.length === 2 && handValue(cards).total === 21;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+
+    const numDecks = api.hard ? 4 : 1;
+    const hitSoft17 = api.hard;                 /* dealer hits soft 17 only on hard/nightmare */
+    const RESHUFFLE = Math.max(12, Math.floor(numDecks * 52 * 0.22));
+
+    let shoe = [];
+    let player = [];
+    let dealer = [];
+    let phase = 'ready';        /* ready | player | dealer */
+    let revealHole = false;
+    let stake = 0;
+    let dealerTimer = null;
+
+    let bankroll = api.load('chips', START);
+    if (typeof bankroll !== 'number' || bankroll < 0) bankroll = START;
+    let curBet = api.load('bet', 10);
+    if (BETS.indexOf(curBet) < 0) curBet = 10;
+
+    /* ---------------- toolbar ---------------- */
+    const pChips = api.pill('Chips: ' + bankroll);
+    const pShoe = api.pill('Shoe: 0');
+    api.select('Bet', BETS.map((b) => ({ value: String(b), label: b + ' chips' })), String(curBet), (v) => {
+      curBet = parseInt(v, 10) || 10;
+      api.save('bet', curBet);
+      updateButtons();
+    });
+
+    const dealBtn = api.button('Deal', () => deal(), 'primary');
+    const hitBtn = api.button('Hit', () => playerHit());
+    const standBtn = api.button('Stand', () => stand());
+    const dblBtn = api.button('Double', () => double());
+    api.button('PTO advance', () => advance());
+
+    /* ---------------- felt ---------------- */
+    const dealerScore = h('span', { class: 'bj-score' }, '');
+    const playerScore = h('span', { class: 'bj-score' }, '');
+    const dealerHand = h('div', { class: 'bj-hand' });
+    const playerHand = h('div', { class: 'bj-hand' });
+    const felt = h('div', { class: 'bj-felt' },
+      h('div', { class: 'bj-row' },
+        h('div', { class: 'bj-side' }, h('span', { class: 'bj-who' }, 'Dealer'), dealerScore),
+        dealerHand),
+      h('div', { class: 'bj-row' },
+        h('div', { class: 'bj-side' }, h('span', { class: 'bj-who' }, 'You'), playerScore),
+        playerHand));
+    const msgEl = h('div', { class: 'bj-msg' }, '');
+    root.appendChild(h('div', { class: 'blackjack' }, felt, msgEl));
+
+    /* ---------------- deck ---------------- */
+    function buildShoe(announce) {
+      const cards = [];
+      for (let d = 0; d < numDecks; d++)
+        for (let s = 0; s < 4; s++)
+          for (let r = 0; r < 13; r++) cards.push({ r: r, s: s });
+      shoe = shuffle(cards);
+      if (announce) api.status('Fresh ' + numDecks + '-deck shoe shuffled. The count you were keeping is now worthless.');
+    }
+    function drawCard() {
+      if (!shoe.length) buildShoe(false);
+      return shoe.pop();
+    }
+    buildShoe(false);
+
+    /* ---------------- rendering ---------------- */
+    function cardEl(c) {
+      const r = RANKS[c.r], su = SUITS[c.s];
+      return h('div', { class: 'bj-card' + (isRed(c.s) ? ' red' : '') },
+        h('span', { class: 'bj-corner tl' }, r, h('br'), su),
+        h('span', { class: 'bj-pip' }, su),
+        h('span', { class: 'bj-corner br' }, r, h('br'), su));
+    }
+    function backEl() {
+      return h('div', { class: 'bj-card back' }, h('span', { class: 'bj-back-mark' }, '?'));
+    }
+
+    function render() {
+      dealerHand.replaceChildren();
+      playerHand.replaceChildren();
+
+      if (!dealer.length) dealerHand.appendChild(h('span', { class: 'bj-empty' }, '—'));
+      else {
+        const show = revealHole ? dealer : [dealer[0]];
+        show.forEach((c) => dealerHand.appendChild(cardEl(c)));
+        if (!revealHole && dealer.length > 1) dealerHand.appendChild(backEl());
+      }
+
+      if (!player.length) playerHand.appendChild(h('span', { class: 'bj-empty' }, '—'));
+      else player.forEach((c) => playerHand.appendChild(cardEl(c)));
+
+      if (dealer.length) {
+        const dv = revealHole ? handValue(dealer) : handValue([dealer[0]]);
+        dealerScore.textContent = revealHole ? String(dv.total) : dv.total + ' + ?';
+      } else dealerScore.textContent = '';
+
+      if (player.length) {
+        const pv = handValue(player);
+        playerScore.textContent = (pv.soft && pv.total < 21 ? 'soft ' : '') + pv.total;
+      } else playerScore.textContent = '';
+    }
+
+    function updatePills() {
+      pChips.textContent = 'Chips: ' + bankroll;
+      pChips.className = 'pill ' + (bankroll >= START ? 'good' : bankroll < curBet ? 'bad' : '');
+      pShoe.textContent = 'Shoe: ' + shoe.length;
+    }
+
+    function updateButtons() {
+      dealBtn.disabled = phase !== 'ready' || bankroll < curBet;
+      hitBtn.disabled = phase !== 'player';
+      standBtn.disabled = phase !== 'player';
+      dblBtn.disabled = !(phase === 'player' && player.length === 2 && bankroll >= stake);
+    }
+
+    function setMsg(text, kind) {
+      msgEl.textContent = text || '';
+      msgEl.className = 'bj-msg' + (kind ? ' ' + kind : '');
+    }
+
+    /* ---------------- round flow ---------------- */
+    function deal() {
+      if (phase !== 'ready') return;
+      if (bankroll < curBet) {
+        setMsg('Not enough chips.', 'lose');
+        api.status('You are short. Lower the bet or take a PTO advance.');
+        return;
+      }
+      if (shoe.length < RESHUFFLE) buildShoe(true);
+      else api.status('Hit, stand, or double down.');
+
+      player = []; dealer = [];
+      stake = curBet;
+      bankroll -= stake;             /* the bet goes onto the felt */
+      player.push(drawCard()); dealer.push(drawCard());
+      player.push(drawCard()); dealer.push(drawCard());
+      revealHole = false;
+      phase = 'player';
+      setMsg('', '');
+      api.sfx.blip(520);
+      updatePills();
+      render();
+      updateButtons();
+
+      const pBJ = isBlackjack(player);
+      const dBJ = isBlackjack(dealer);
+      if (pBJ || dBJ) {
+        revealHole = true;
+        if (pBJ && dBJ) finishRound(stake, 'Push.', 'push', 'You both had blackjack. Nothing changes hands.');
+        else if (pBJ) finishRound(stake + Math.round(stake * 1.5), 'Blackjack!', 'bj', 'Twenty-one off the deal. Pays three to two.');
+        else finishRound(0, 'Dealer blackjack.', 'lose', 'The hole card was exactly what you feared.');
+      }
+    }
+
+    function playerHit() {
+      if (phase !== 'player') return;
+      player.push(drawCard());
+      api.sfx.blip(620);
+      updatePills();
+      render();
+      const hv = handValue(player);
+      if (hv.total > 21) {
+        revealHole = true;
+        finishRound(0, 'Bust.', 'lose', 'Over twenty-one. The dealer wins by doing absolutely nothing.');
+      } else if (hv.total === 21) {
+        stand();
+      } else {
+        updateButtons();
+      }
+    }
+
+    function double() {
+      if (phase !== 'player' || player.length !== 2 || bankroll < stake) return;
+      bankroll -= stake;             /* match the original bet */
+      stake *= 2;
+      player.push(drawCard());
+      api.sfx.blip(600);
+      updatePills();
+      render();
+      const hv = handValue(player);
+      if (hv.total > 21) {
+        revealHole = true;
+        finishRound(0, 'Bust.', 'lose', 'Doubled, then busted. Bold. Wrong, but bold.');
+      } else {
+        phase = 'dealer';
+        updateButtons();
+        dealerPlay();
+      }
+    }
+
+    function stand() {
+      if (phase !== 'player') return;
+      phase = 'dealer';
+      updateButtons();
+      dealerPlay();
+    }
+
+    function dealerShouldHit(hv) {
+      if (hv.total < 17) return true;
+      if (hv.total === 17 && hv.soft && hitSoft17) return true;
+      return false;
+    }
+
+    function dealerPlay() {
+      revealHole = true;
+      render();
+      updatePills();
+      function step() {
+        const hv = handValue(dealer);
+        if (dealerShouldHit(hv)) {
+          dealer.push(drawCard());
+          api.sfx.blip(420);
+          render();
+          updatePills();
+          dealerTimer = setTimeout(step, 640);
+        } else {
+          settle();
+        }
+      }
+      dealerTimer = setTimeout(step, 640);
+    }
+
+    function settle() {
+      const p = handValue(player).total;
+      const d = handValue(dealer).total;
+      if (d > 21) return finishRound(stake * 2, 'Dealer busts.', 'win', 'The dealer overcooked it on ' + d + '. You take ' + stake + ' chips.');
+      if (p > d) return finishRound(stake * 2, 'You win.', 'win', 'Your ' + p + ' beats their ' + d + '. Up ' + stake + ' chips.');
+      if (p < d) return finishRound(0, 'Dealer wins.', 'lose', 'Their ' + d + ' tops your ' + p + '. The ' + stake + ' chips are gone.');
+      return finishRound(stake, 'Push.', 'push', 'Both sitting on ' + p + '. Your chips come home untouched.');
+    }
+
+    function finishRound(delta, title, kind, sub) {
+      bankroll += delta;
+      phase = 'ready';
+      revealHole = true;
+      api.save('chips', bankroll);
+      const res = api.submit(bankroll);        /* keeps the high-water mark */
+
+      if (kind === 'bj') api.sfx.great();
+      else if (kind === 'win') api.sfx.good();
+      else if (kind === 'push') api.sfx.click();
+      else api.sfx.bad();
+
+      setMsg(title, kind);
+      updatePills();
+      render();
+      updateButtons();
+      const note = res.isRecord ? ' New PTO high of ' + res.best + ' chips.' : '';
+      api.status(sub + note + ' Press Deal for another hand.');
+    }
+
+    function advance() {
+      if (phase !== 'ready') return;
+      if (bankroll >= curBet) { api.status('You still have chips. Spend those first.'); return; }
+      bankroll = START;              /* an advance is not a score, so it is not submitted */
+      api.save('chips', bankroll);
+      setMsg('', '');
+      updatePills();
+      updateButtons();
+      api.sfx.click();
+      api.status('HR advanced you ' + START + ' chips against next year. Try not to think about it.');
+    }
+
+    /* ---------------- keyboard ---------------- */
+    bagg.add(Engine.onKey((e) => {
+      const k = e.key.toLowerCase();
+      if (k === 'h') { playerHit(); return true; }
+      if (k === 's') { stand(); return true; }
+      if (k === 'd') { double(); return true; }
+      if (k === ' ' || k === 'enter') { if (phase === 'ready') deal(); return true; }
+      return;
+    }));
+
+    bagg.add(() => { if (dealerTimer) clearTimeout(dealerTimer); });
+
+    updatePills();
+    render();
+    updateButtons();
+    api.status('Get to twenty-one without going over, and beat the dealer. Deal, then Hit or Stand. Blackjack pays three to two.');
+
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'blackjack',
+    title: 'Twenty-One',
+    emoji: 'blackjack',
+    cat: 'goof',
+    order: 6,
+    blurb: 'Single-deck blackjack against a dealer with a fixed policy and no tells. You are betting your unspent PTO. It is not real. Please relax.',
+    scoreLabel: 'Chip high',
+    tags: ['cards', 'blackjack', 'dealer', 'chips'],
+    usesLetters: true,
+    how: [
+      'Get closer to twenty-one than the dealer without going over. Aces are eleven or one, whichever helps.',
+      'Buttons: Deal, Hit, Stand, Double. Keys: H hit, S stand, D double, Space deals. Pick a bet from the dropdown.',
+      'The dealer hits sixteen and stands on seventeen, then flips the hole card once you stand. Blackjack pays three to two.',
+      'Your chip bankroll persists and is the score kept. Broke? A PTO advance tops you back up, but that will not count toward a record.',
+      'Chill and Normal use one deck and the dealer stands on soft seventeen. Hard and Nightmare deal four decks and the dealer hits soft seventeen.'
+    ],
+    mount: mount
   });
 })();
 
