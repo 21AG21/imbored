@@ -1,0 +1,237 @@
+/* Minesweeper — the original meeting game. */
+(function () {
+  'use strict';
+  const { h, randInt } = Engine;
+
+  const LEVELS = {
+    easy: { w: 9, h: 9, m: 10, label: 'Coffee break (9×9, 10)' },
+    medium: { w: 16, h: 16, m: 40, label: 'Standup (16×16, 40)' },
+    hard: { w: 22, h: 14, m: 75, label: 'All-hands (22×14, 75)' }
+  };
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let diff = api.load('diff', 'easy');
+    let W, Hh, M, grid, opened, flags, started, dead, won, t0, timerId, firstDone;
+
+    const pMines = api.pill('💣 0');
+    const pTime = api.pill('⏱ 0');
+    const pBest = api.pill('');
+    const boardWrap = h('div', { class: 'ms' });
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+    root.append(boardWrap, banner);
+
+    api.select('Board', Object.keys(LEVELS).map((k) => ({ value: k, label: LEVELS[k].label })), diff, (v) => {
+      diff = v; api.save('diff', v); reset();
+    });
+    api.button('New board', () => reset());
+
+    const idx = (x, y) => y * W + x;
+    const inB = (x, y) => x >= 0 && y >= 0 && x < W && y < Hh;
+    function* nbrs(x, y) {
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+        if (!dx && !dy) continue;
+        if (inB(x + dx, y + dy)) yield [x + dx, y + dy];
+      }
+    }
+
+    function reset() {
+      const L = LEVELS[diff];
+      W = L.w; Hh = L.h; M = L.m;
+      grid = new Array(W * Hh).fill(0).map(() => ({ mine: false, open: false, flag: false, n: 0 }));
+      opened = 0; flags = 0; started = false; dead = false; won = false; firstDone = false;
+      clearInterval(timerId);
+      timerId = 0;
+      banner.style.display = 'none';
+      buildBoard();
+      syncPills();
+      api.status('Left click to dig. Right click to flag. Right click a number with enough flags around it to sweep its neighbours.');
+    }
+
+    function layMines(sx, sy) {
+      const safe = new Set([idx(sx, sy)]);
+      for (const [x, y] of nbrs(sx, sy)) safe.add(idx(x, y));
+      let placed = 0;
+      while (placed < M) {
+        const i = randInt(0, W * Hh - 1);
+        if (grid[i].mine || safe.has(i)) continue;
+        grid[i].mine = true;
+        placed++;
+      }
+      for (let y = 0; y < Hh; y++) for (let x = 0; x < W; x++) {
+        let n = 0;
+        for (const [nx, ny] of nbrs(x, y)) if (grid[idx(nx, ny)].mine) n++;
+        grid[idx(x, y)].n = n;
+      }
+      firstDone = true;
+    }
+
+    let cellEls;
+    function buildBoard() {
+      boardWrap.replaceChildren();
+      const b = h('div', { class: 'board', style: { gridTemplateColumns: 'repeat(' + W + ', 30px)' } });
+      cellEls = [];
+      for (let y = 0; y < Hh; y++) {
+        for (let x = 0; x < W; x++) {
+          const el = h('div', { class: 'cell', data: { x, y } });
+          cellEls.push(el);
+          b.appendChild(el);
+        }
+      }
+      b.addEventListener('contextmenu', (e) => e.preventDefault());
+      b.addEventListener('pointerdown', (e) => {
+        const t = e.target.closest('.cell');
+        if (!t || dead || won) return;
+        const x = +t.dataset.x, y = +t.dataset.y;
+        if (e.button === 2) { toggleFlag(x, y); }
+        else if (e.button === 0) { dig(x, y); }
+        render();
+      });
+      /* long-press flags on touch */
+      let holdT = 0;
+      b.addEventListener('touchstart', (e) => {
+        const t = e.target.closest('.cell');
+        if (!t) return;
+        holdT = setTimeout(() => {
+          toggleFlag(+t.dataset.x, +t.dataset.y);
+          render();
+          holdT = 0;
+        }, 420);
+      }, { passive: true });
+      b.addEventListener('touchend', () => { if (holdT) clearTimeout(holdT); holdT = 0; }, { passive: true });
+      boardWrap.appendChild(b);
+      render();
+    }
+
+    function startTimer() {
+      if (started) return;
+      started = true;
+      t0 = Date.now();
+      timerId = setInterval(() => { pTime.textContent = '⏱ ' + elapsed(); }, 250);
+      bagg.add(() => clearInterval(timerId));
+    }
+    const elapsed = () => Math.floor((Date.now() - t0) / 1000);
+
+    function toggleFlag(x, y) {
+      const c = grid[idx(x, y)];
+      if (c.open) { chord(x, y); return; }
+      c.flag = !c.flag;
+      flags += c.flag ? 1 : -1;
+      api.sfx.click();
+      syncPills();
+    }
+
+    function chord(x, y) {
+      const c = grid[idx(x, y)];
+      if (!c.open || !c.n) return;
+      let f = 0;
+      for (const [nx, ny] of nbrs(x, y)) if (grid[idx(nx, ny)].flag) f++;
+      if (f !== c.n) return;
+      for (const [nx, ny] of nbrs(x, y)) {
+        const nc = grid[idx(nx, ny)];
+        if (!nc.flag && !nc.open) dig(nx, ny);
+      }
+    }
+
+    function dig(x, y) {
+      const c = grid[idx(x, y)];
+      if (c.flag) return;
+      if (c.open) { chord(x, y); return; }
+      if (!firstDone) layMines(x, y);
+      startTimer();
+      if (c.mine) return boom(x, y);
+
+      const stack = [[x, y]];
+      while (stack.length) {
+        const [cx, cy] = stack.pop();
+        const cc = grid[idx(cx, cy)];
+        if (cc.open || cc.flag) continue;
+        cc.open = true;
+        opened++;
+        if (cc.n === 0) for (const [nx, ny] of nbrs(cx, cy)) stack.push([nx, ny]);
+      }
+      api.sfx.blip(520);
+      if (opened === W * Hh - M) win();
+    }
+
+    function boom(x, y) {
+      dead = true;
+      grid[idx(x, y)].boom = true;
+      for (const c of grid) if (c.mine) c.open = true;
+      clearInterval(timerId);
+      api.sfx.boom();
+      banner.style.display = '';
+      banner.replaceChildren(
+        h('h3', null, '💥 Boom.'),
+        h('p', null, 'That one was a mine. ' + (M - flags) + ' left unfound.'),
+        h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'New board'));
+    }
+
+    function win() {
+      won = true;
+      clearInterval(timerId);
+      const secs = elapsed();
+      const bestKey = 'time:' + diff;
+      const prev = api.load(bestKey, null);
+      const record = prev == null || secs < prev;
+      if (record) api.save(bestKey, secs);
+      const wins = api.load('wins', 0) + 1;
+      api.save('wins', wins);
+      api.submit(wins);
+      api.sfx.great();
+      for (const c of grid) if (c.mine) c.flag = true;
+      flags = M;
+      syncPills();
+      banner.style.display = '';
+      banner.replaceChildren(
+        h('h3', null, '🚩 Swept.'),
+        h('p', null, LEVELS[diff].label.split(' (')[0] + ' cleared in ' + secs + 's' +
+          (record ? ' — fastest yet!' : ' (best ' + prev + 's)') + '. Total wins: ' + wins + '.'),
+        h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Again'));
+    }
+
+    function syncPills() {
+      pMines.textContent = '💣 ' + (M - flags);
+      pTime.textContent = '⏱ ' + (started ? elapsed() : 0);
+      const b = api.load('time:' + diff, null);
+      pBest.textContent = b == null ? 'no time yet' : 'best ' + b + 's';
+    }
+
+    function render() {
+      for (let i = 0; i < grid.length; i++) {
+        const c = grid[i], el = cellEls[i];
+        let cls = 'cell';
+        let txt = '';
+        if (c.open) {
+          cls += ' open';
+          if (c.mine) { cls += ' mine'; txt = c.boom ? '💥' : '💣'; }
+          else if (c.n) { cls += ' n' + c.n; txt = c.n; }
+        } else if (c.flag) { cls += ' flag'; txt = '🚩'; }
+        if (el.className !== cls) el.className = cls;
+        if (el.textContent !== String(txt)) el.textContent = txt;
+      }
+      syncPills();
+    }
+
+    reset();
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'minesweeper',
+    title: 'Minesweeper',
+    emoji: '💣',
+    cat: 'puzzle',
+    order: 10,
+    blurb: 'The undisputed champion of looking like you are concentrating. Three board sizes, chording included.',
+    scoreLabel: 'Wins',
+    tags: ['mines', 'classic', 'logic'],
+    how: [
+      'Left click digs. The first dig is always safe.',
+      'Right click plants a flag (long-press on touch).',
+      'Right click or left click an already-open number that has the right number of flags around it to sweep its remaining neighbours.',
+      'Clear every non-mine square to win. Your fastest time per board size is kept.'
+    ],
+    mount
+  });
+})();

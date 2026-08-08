@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cubicle Arcade</title>
+<meta name="description" content="Games and fix-the-system simulations for when the meeting has no agenda. Runs entirely in your browser, no account, no network.">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a0d16'/%3E%3Ctext x='16' y='23' font-size='19' text-anchor='middle'%3E%F0%9F%95%B9%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/arcade.css">
+</head>
+<body>
+<noscript><p style="padding:24px">Cubicle Arcade needs JavaScript. It is all client-side — nothing is sent anywhere.</p></noscript>
+
+<script src="js/core/engine.js"></script>
+<script src="js/core/arcade.js"></script>
+
+<!-- simulations -->
+<script src="js/games/gridlock.js"></script>
+<script src="js/games/elevator.js"></script>
+<script src="js/games/powergrid.js"></script>
+<script src="js/games/atc.js"></script>
+
+<!-- puzzles -->
+<script src="js/games/minesweeper.js"></script>
+<script src="js/games/g2048.js"></script>
+<script src="js/games/jam.js"></script>
+<script src="js/games/sokoban.js"></script>
+<script src="js/games/pipes.js"></script>
+
+<!-- brain -->
+<script src="js/games/wordguess.js"></script>
+<script src="js/games/lightsout.js"></script>
+<script src="js/games/reflex.js"></script>
+
+<!-- action -->
+<script src="js/games/snake.js"></script>
+<script src="js/games/breakout.js"></script>
+<script src="js/games/tetris.js"></script>
+<script src="js/games/asteroids.js"></script>
+
+<script>Arcade.start();</script>
+</body>
+</html>

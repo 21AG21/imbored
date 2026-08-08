@@ -1,0 +1,100 @@
+# Cubicle Arcade
+
+Sixteen games and fix-the-system simulations for when the meeting has no agenda.
+
+No build step, no dependencies, no network calls, no accounts. It is plain HTML, CSS
+and JavaScript — **double-click `index.html` and it runs**, straight off the disk.
+
+## The games
+
+### Simulations — something is broken, you fix it
+| | | |
+|---|---|---|
+| 🚦 **Gridlock** | Twelve intersections in rush hour. Click any intersection to flip its lights, watch queues build, and keep commuter rage off the boil. Every switch runs an all-red clearance first, so you have to plan a beat ahead. | *cars delivered* |
+| 🛗 **Elevator Rush** | Three lifts, eight floors, a lobby of people who are already late. You choose which lift answers which floor; passengers press their own buttons once aboard. Five walk-offs ends the shift. | *people delivered* |
+| ⚡ **Load Balance** | Generation must equal demand every second of every day. Coal ramps slowly, gas costs a fortune, solar and wind do as they please, and the battery is small. Let frequency drift off 50 Hz for too long and the lights go out. | *hours online* |
+| ✈️ **Approach Control** | Drag flight paths on a radar screen. Land each aircraft on its matching runway from the correct end, and never let two get closer than the separation ring. | *landings* |
+
+### Puzzles
+| | | |
+|---|---|---|
+| 💣 **Minesweeper** | Three board sizes, first click always safe, proper chording. | *wins + best time per size* |
+| 🔢 **2048** | Slide and merge, with one level of undo. | *score* |
+| 🚗 **Jam Escape** | 28 sliding-car jams. Every level was generated and solved by breadth-first search, so the listed "par" is the provably shortest solution. | *levels solved* |
+| 📦 **Crate Pusher** | Sokoban. 13 warehouses, all BFS-verified as solvable before shipping. Undo is free. | *levels solved* |
+| 🔧 **Pipe Dream** | Rotate every pipe until the whole grid is fed from one source. Boards are built from a random spanning tree, so a solution always exists. Endless levels. | *level reached* |
+
+### Brain
+| | | |
+|---|---|---|
+| 🔤 **Word Guess** | Five letters, six tries, as many rounds as your meeting lasts. No daily limit. | *best streak* |
+| 💡 **Lights Out** | Each light you touch flips its neighbours too. | *level reached* |
+| 🎯 **Reflex Grid** | 25 targets, one honest number at the end. | *best average, in ms* |
+
+### Action
+| | | |
+|---|---|---|
+| 🐍 **Snake** | Plus a timed golden apple worth five ordinary ones, and a wall toggle. | *score* |
+| 🧱 **Brick Break** | Paddle, ball, falling powerups, escalating levels. | *score* |
+| 🟦 **Stacker** | Falling blocks with hold, ghost piece, hard drop and a proper 7-bag randomiser. | *score* |
+| 🚀 **Rock Field** | Asteroids, including a hyperspace jump that occasionally kills you. | *score* |
+
+## The boss key
+
+Press <kbd>`</kbd> (backtick) or <kbd>Ctrl</kbd>+<kbd>B</kbd> at any moment. The whole
+page is instantly replaced by a plausible quarterly forecast spreadsheet, the browser tab
+renames itself `Q3_Regional_Forecast_v7_FINAL.xlsx`, and whatever you were playing pauses
+exactly where it was. Press it again to go back.
+
+## Other keys
+
+| Key | Does |
+|---|---|
+| <kbd>`</kbd> / <kbd>Ctrl</kbd>+<kbd>B</kbd> | boss key |
+| <kbd>/</kbd> | focus the search box |
+| <kbd>Esc</kbd> | back to the hub |
+| 🎲 | jump to a random game |
+| 🔇 | sound is **off** by default — this is an office, after all |
+
+## Running it
+
+Any of these work:
+
+- **Open the file.** Double-click `index.html`. Everything is a classic `<script>` tag, so
+  there is no module/CORS problem when loading from `file://`.
+- **Serve it.** `python3 -m http.server 8000` then visit `http://localhost:8000`.
+- **Host it.** Copy the folder to any static host. A manual GitHub Pages workflow is
+  included at `.github/workflows/pages.yml` — it only runs when you trigger it from the
+  Actions tab, and publishing needs Pages set to "GitHub Actions" in repository settings.
+
+## How it is put together
+
+```
+index.html              loads everything in order
+css/arcade.css          all styling
+js/core/engine.js       canvas, game loop, input, audio, DOM helper, disposer bag
+js/core/arcade.js       registry, hash router, hub, high scores, boss key
+js/games/*.js           one file per game, each self-registering
+```
+
+Each game is a single self-contained file that calls `Arcade.register({...})` with its
+metadata and a `mount(root, api)` function. `mount` returns a cleanup function; the router
+calls it when you navigate away, so nothing leaks between games. To add a game, drop a file
+in `js/games/` and add one `<script>` tag to `index.html`.
+
+Scores and progress live in `localStorage` under the `cubicle:` prefix. Nothing leaves the
+browser.
+
+## Verification
+
+Everything here was checked rather than assumed:
+
+- All 16 games are loaded in headless Chromium, driven with keyboard input, clicks and
+  drags, left running, and checked for console errors and uncaught exceptions. 16/16 clean.
+- The 28 **Jam Escape** levels were generated by random placement plus a BFS solver, and
+  only boards with a shortest solution between 5 and 26 moves were kept. The "par" shown
+  in-game is that exact BFS depth.
+- The 13 **Crate Pusher** levels were hand-designed and then run through a BFS solver.
+  One candidate turned out to be unsolvable and was cut.
+- **Pipe Dream** and **Lights Out** generate boards by scrambling a solved state, so
+  solvability is structural rather than tested.
