@@ -417,6 +417,9 @@
           h('ul', null, g.how.map((s) => h('li', null, s))))),
       toolbar, statusEl, stage);
 
+    stage.appendChild(h('div', { class: 'rotate-nudge' },
+      'Built wide. Turn the phone sideways or tap expand to fill the screen.'));
+
     let dispose = null;
     try {
       dispose = g.mount(stage, api);
@@ -424,6 +427,13 @@
       console.error('[' + g.id + '] failed to start', e);
       stage.replaceChildren(h('p', { class: 'empty' }, 'This one fell over on startup. Sorry. Try another.'));
     }
+    /* a landscape playfield is unreadable in a portrait phone, so say so */
+    requestAnimationFrame(() => {
+      const cvEl = stage.querySelector('canvas');
+      const ar = cvEl ? parseFloat(getComputedStyle(cvEl).getPropertyValue('--ar')) : 0;
+      stage.classList.toggle('wide', ar > 1.35);
+    });
+
     currentDispose = () => { if (typeof dispose === 'function') dispose(); };
     currentGame = g;
     document.title = bossOn ? Boss.title() : g.title.toUpperCase() + ' - ' + REAL_TITLE;
@@ -437,6 +447,7 @@
     Engine.paused = bossOn || document.hidden;
     const m = /^#g\/([\w-]+)/.exec(location.hash || '');
     const g = m && byId.get(m[1]);
+    document.body.classList.toggle('in-game', !!g);
     if (g) {
       const recent = store.get('recent', []).filter((x) => x !== g.id);
       recent.unshift(g.id);

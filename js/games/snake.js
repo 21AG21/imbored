@@ -3,8 +3,12 @@
   'use strict';
   const { h, clamp, randInt } = Engine;
 
-  const COLS = 30, ROWS = 20, CELL = 24;
+  const CELL = 24;
+  /* a 3:2 board is unreadable on a portrait phone, so go squarer there */
+  const narrow = matchMedia('(orientation: portrait) and (max-width: 620px)').matches;
+  const COLS = narrow ? 20 : 30, ROWS = 20;
   const W = COLS * CELL, H = ROWS * CELL;
+  const TOUCH = matchMedia('(hover: none)').matches;
 
   function mount(root, api) {
     const bagg = Engine.bag();
@@ -199,7 +203,7 @@
         ctx.fillStyle = '#e8ecf7';
         ctx.font = 'bold 22px system-ui';
         ctx.textAlign = 'center';
-        ctx.fillText('press an arrow key to start', W / 2, H / 2);
+        ctx.fillText(TOUCH ? 'swipe or tap an arrow to start' : 'press an arrow key to start', W / 2, H / 2);
         ctx.textAlign = 'left';
       }
     }
@@ -228,7 +232,7 @@
     scoreLabel: 'Score',
     tags: ['classic', 'arcade', 'retro'],
     how: [
-      'Arrows, WASD or swipe. You cannot turn back on yourself, so stop trying.',
+      'Arrows, WASD, swipe, or the on-screen pad. You cannot turn back on yourself, so stop trying.',
       'Normal apples are 10. The golden one is 50 and vanishes after seven seconds.',
       'Every apple makes you faster. That is the entire problem with this game.',
       'Flip Walls to open and you wrap around the edges instead of dying at them. No judgement.',
