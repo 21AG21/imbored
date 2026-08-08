@@ -177,17 +177,20 @@ the page chrome, which gets you most of the way there.
   standards-mode document (real doctype, meta viewport, favicon and all). Mail it
   to yourself, drop it on Google Drive, or open it from a `file://` path.
 - **Online playgrounds.** `node tools/build-onecompiler.mjs` emits three files to
-  `dist/onecompiler/` (`index.html`, `style.css`, `script.js`). Playgrounds cap
-  how much text a single tab holds — OneCompiler silently truncates a paste at
-  ~256 KB, so the full single file (~406 KB) gets chopped mid-script and only the
-  background paints. Splitting the code out and minifying `script.js` to ~209 KB
-  (the tool uses terser when installed) keeps every tab under the cap. Paste each
-  file into its matching tab. The `index.html` loader (`tools/onecompiler-loader.js`)
-  also side-steps OneCompiler's infinite-loop-guard rewriter, which injects `__lp`
-  counters into tab scripts and chokes on the minified bundle: it fetches
-  `script.js` and runs it from a runtime-created inline `<script>`, out of the
-  rewriter's reach, and falls back to an on-screen diagnostic rather than a blank
-  preview. It was hardened against several models of that rewriter's behaviour.
+  `dist/onecompiler/` (`index.html`, `styles.css`, `script.js` — matching
+  OneCompiler's default tabs). Two OneCompiler quirks have to be beaten. First,
+  each tab silently truncates a paste at ~256 KB, so the code is split out and
+  `script.js` is minified to ~209 KB (the tool uses terser when installed) to fit.
+  Second, OneCompiler runs an infinite-loop-guard rewriter that injects `__lp`
+  counters into scripts — tab `<script src>` *and* scripts injected into the main
+  document at runtime — and it chokes on the minified bundle
+  (`ReferenceError: __lp1 is not defined`). The loader (`tools/onecompiler-loader.js`)
+  escapes it by fetching `styles.css` + `script.js` as text and running the whole
+  arcade inside a runtime-built `<iframe srcdoc>`, whose scripts are parsed in
+  their own realm out of the rewriter's reach; if it still cannot boot it paints
+  an on-screen diagnostic rather than a blank preview. Validated against a local
+  reproduction of the rewriter: the naive loader reproduces the `__lp1` failure,
+  the iframe loader renders all 27 games. Paste each file into its matching tab.
 - **Host it.** Any static host. A GitHub Pages workflow sits in
   `.github/workflows/pages.yml` and only runs when you start it from the Actions tab.
 

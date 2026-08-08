@@ -42,20 +42,19 @@ try {
   /* terser not available — fall through and warn below */
 }
 
-/* NOTE the loader: instead of <script src="script.js"> we fetch the file and
-   run it as a runtime-injected inline script. Playgrounds like OneCompiler
-   rewrite TAB scripts to add infinite-loop guards, and that rewriter breaks on
-   minified/one-line loops (ReferenceError: __lp1 is not defined). A script
-   element built at runtime from fetched text is outside the rewriter's reach,
-   so the code runs untouched. fetch() of a same-origin sibling and inline
-   execution both work in these sandboxes.
-
-   The loader itself lives in tools/onecompiler-loader.js — a hardened,
-   self-diagnosing version (no syntactic loops, so the rewriter cannot
-   instrument the bootstrap; detects and neutralizes __lp guards if the fetched
-   bytes are themselves instrumented; falls back to an on-screen diagnostic
-   instead of a blank preview). It was validated against local reproductions of
-   OneCompiler's behavior models. */
+/* NOTE the loader (tools/onecompiler-loader.js): OneCompiler runs an
+   infinite-loop-guard rewriter that injects __lp counters into scripts. It
+   breaks on the minified bundle (ReferenceError: __lp1 is not defined) and
+   instruments not just tab <script src> but ALSO scripts injected into the main
+   document at runtime. The loader escapes it by fetching styles.css + script.js
+   as text and running the whole arcade inside a runtime-built <iframe srcdoc>:
+   the iframe's scripts are parsed in its own realm, out of the main-document
+   rewriter's reach. If it still cannot boot, it paints an on-screen diagnostic
+   rather than a blank preview. Validated against a local reproduction that
+   injects the exact __lp breakage into runtime + parser scripts: the naive
+   loader reproduces the failure, the iframe loader renders 27 games. Because
+   the arcade lives in the iframe (CSS inlined there), the outer page needs no
+   stylesheet link. */
 const loader = read('tools/onecompiler-loader.js');
 if (loader.includes('</script')) throw new Error('literal </script in loader');
 const indexHtml = `<!doctype html>
@@ -66,7 +65,6 @@ const indexHtml = `<!doctype html>
 <meta name="theme-color" content="#6f3fa8">
 <title>CUBICLE ARCADE 98</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23ffcb1f'/%3E%3Crect x='4' y='9' width='24' height='15' fill='%231d1722'/%3E%3Ccircle cx='11' cy='16' r='3' fill='%23ffcb1f'/%3E%3Crect x='18' y='13' width='4' height='4' fill='%2300a6b4'/%3E%3Crect x='23' y='17' width='4' height='4' fill='%23ff2d87'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <noscript><p style="padding:24px;font-family:Verdana,sans-serif">This needs JavaScript. It is all client side.</p></noscript>
@@ -80,10 +78,10 @@ ${loader}
 const outDir = path.join(ROOT, 'dist/onecompiler');
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(path.join(outDir, 'index.html'), indexHtml);
-fs.writeFileSync(path.join(outDir, 'style.css'), read('css/arcade.css'));
+fs.writeFileSync(path.join(outDir, 'styles.css'), read('css/arcade.css'));
 fs.writeFileSync(path.join(outDir, 'script.js'), js);
 console.log('dist/onecompiler/index.html   ' + (indexHtml.length / 1024).toFixed(1) + ' KB');
-console.log('dist/onecompiler/style.css    ' + (read('css/arcade.css').length / 1024).toFixed(1) + ' KB');
+console.log('dist/onecompiler/styles.css   ' + (read('css/arcade.css').length / 1024).toFixed(1) + ' KB');
 console.log('dist/onecompiler/script.js    ' + (js.length / 1024).toFixed(1) + ' KB  (' + scripts.length +
   ' modules, ' + (minified ? 'minified' : 'NOT minified') + ')');
 if (!minified) {
