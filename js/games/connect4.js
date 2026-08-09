@@ -218,6 +218,36 @@
       { value: '2p', label: '2 players (hotseat)' }
     ], '1p', (v) => { mode = v; p1w = 0; p2w = 0; reset(false); });
 
+    /* play-by-paste: a move code you send over any chat; opponent loads it */
+    const flat = () => { const a = []; for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) a.push(board[r][c]); return a; };
+    function loadPosition(res) {
+      let k = 0;
+      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) board[r][c] = res.cells[k++];
+      mode = '2p'; turn = res.extra ? CPU : YOU;
+      over = false; winner = 0; winLine = null; drop = null; thinking = 0; hoverCol = -1;
+      const w = winnerAt(board);
+      if (w) { over = true; winner = w.p; winLine = w.line; setTimeout(showEnd, 300); }
+      else if (full(board)) { over = true; winner = 0; setTimeout(showEnd, 300); }
+      banner.style.display = 'none';
+      api.status(over ? 'Loaded — this game is already decided.'
+        : 'Loaded. Your move, you are ' + (turn === YOU ? 'yellow' : 'red') + '. Drop, then Share the new code back.');
+      sync();
+    }
+    const codeInput = h('input', { type: 'text', class: 'boss-url', placeholder: 'move code', spellcheck: 'false', style: { width: '150px' } });
+    api.toolbar.appendChild(codeInput);
+    api.button('Share code', () => {
+      mode = '2p';
+      codeInput.value = Engine.packCode('C4', flat(), turn === YOU ? 0 : 1);
+      codeInput.select();
+      try { if (navigator.clipboard) navigator.clipboard.writeText(codeInput.value); } catch (e) { /* ignore */ }
+      api.status('Move code ready — send it to your opponent. They paste it here and press Load.');
+    });
+    api.button('Load code', () => {
+      const res = Engine.unpackCode('C4', codeInput.value, ROWS * COLS);
+      if (!res) { api.status('That code did not scan — paste the whole thing.'); return; }
+      loadPosition(res);
+    });
+
     function update(dt) {
       if (drop) {
         const target = TOP + PAD + drop.r * CELL;

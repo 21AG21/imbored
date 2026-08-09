@@ -329,6 +329,33 @@
     };
   })();
 
+  /* ---------- share a board position as a short, checksummed code ----------
+     Packs an array of small cell values (0/1/2) plus one extra bit (whose turn)
+     into a base-36 code with a tag and a checksum char, so a board can travel
+     over any chat as something that reads like a dull reference number. */
+  Engine.packCode = function packCode(tag, cells, extra) {
+    let v = 0n;
+    for (let i = cells.length - 1; i >= 0; i--) v = v * 3n + BigInt(cells[i] | 0);
+    v = v * 2n + (extra ? 1n : 0n);
+    let sum = extra ? 1 : 0;
+    for (let i = 0; i < cells.length; i++) sum += cells[i] | 0;
+    return tag.toUpperCase() + '-' + v.toString(36).toUpperCase() + '-' + (sum % 36).toString(36).toUpperCase();
+  };
+  Engine.unpackCode = function unpackCode(tag, code, n) {
+    try {
+      const parts = String(code == null ? '' : code).trim().toUpperCase().split('-');
+      if (parts.length !== 3 || parts[0] !== tag.toUpperCase()) return null;
+      let v = 0n;
+      for (const ch of parts[1]) { const d = parseInt(ch, 36); if (isNaN(d)) return null; v = v * 36n + BigInt(d); }
+      const extra = Number(v % 2n); v = v / 2n;
+      const cells = new Array(n);
+      let sum = extra;
+      for (let i = 0; i < n; i++) { const d = Number(v % 3n); v = v / 3n; cells[i] = d; sum += d; }
+      if ((sum % 36).toString(36).toUpperCase() !== parts[2]) return null;
+      return { cells: cells, extra: extra };
+    } catch (e) { return null; }
+  };
+
   /* ---------- auto-advancing win banner ----------
      Shows the result, then moves to the next level on a short countdown so
      nobody has to reach for the mouse. The button still works if you are
