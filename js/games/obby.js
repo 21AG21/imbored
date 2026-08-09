@@ -1,12 +1,12 @@
 /* The Obby — a Roblox-style obstacle course. Run and jump across platforms,
  * dodge lava and spikes, touch the checkpoints so a fall only costs a little,
- * and reach the flag. A dozen stages that ramp up; jump to any of them. */
+ * and reach the flag. Twenty stages that ramp up; jump to any of them. */
 (function () {
   'use strict';
   const { h, clamp } = Engine;
   const W = 720, H = 420;
   const GRAV = 2000, JUMP = 660, MOVE = 300, PW = 22, PH = 30;
-  const LEVELS = 12;
+  const LEVELS = 20;
   const PLAT_COLS = ['#e8402a', '#ffcb1f', '#6fcf2f', '#00a6b4', '#6f3fa8', '#ff2d87'];
 
   function mount(root, api) {
@@ -197,7 +197,7 @@
     emoji: 'obby',
     cat: 'action',
     order: 21,
-    blurb: 'A Roblox-style obstacle course: sprint and leap across a rainbow of platforms, clear the lava and the spikes, tag the green checkpoints, and reach the flag. Twelve stages that get meaner, and you can drop into any of them.',
+    blurb: 'A Roblox-style obstacle course: sprint and leap across a rainbow of platforms, clear the lava and the spikes, tag the green checkpoints, and reach the flag. Twenty stages that get meaner, and you can drop into any of them.',
     scoreLabel: 'Stages cleared',
     tags: ['platformer', 'obby', 'jump', 'obstacle-course'],
     how: [
@@ -205,7 +205,7 @@
       'Cross the gaps by jumping platform to platform. Falling into a gap, touching lava, or landing on spikes sends you back — but only to your last checkpoint.',
       'Green flags along the way are checkpoints: run past one and it lights up, so a mistake costs a little, not the whole stage.',
       'Reach the chequered flag at the end to clear the stage. Your time and fall count are recorded, and your best time per stage is saved.',
-      'Twelve stages get longer, higher and more hazardous. Use the Stage menu to jump straight to any of them.'
+      'Twenty stages get longer, higher and more hazardous. Use the Stage menu to jump straight to any of them.'
     ],
     mount
   });

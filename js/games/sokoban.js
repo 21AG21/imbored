@@ -17,7 +17,20 @@
     '#########/#   #   #/# $ $ . #/#   #.  #/#  @    #/#########',
     '########/#      #/# .$.  #/# $@$  #/# .$.  #/#      #/########',
     '########/#  #   #/# $$   #/# .. # #/#   @  #/########',
-    '##########/#   ##   #/# $    $ #/# # .. # #/#  $..$  #/#    @   #/##########'
+    '##########/#   ##   #/# $    $ #/# # .. # #/#  $..$  #/#    @   #/##########',
+    /* an extra dozen, each machine-checked solvable, ramping easy -> hard */
+    '########/#. .   #/# $$   #/#  @   #/#      #/########',
+    '######/#@   #/#$$  #/#    #/#..  #/######',
+    '#######/#. .  #/#$$$ .#/#  @  #/#######',
+    '######/#  . #/# $$ #/# . @#/######',
+    '#######/#  .  #/# $$  #/# @ . #/#     #/#######',
+    '#######/#.    #/# $   #/#  @  #/#   $ #/#    .#/#######',
+    '#########/#  ...  #/# $$$   #/#   @   #/#########',
+    '########/#      #/# $$$$ #/# .... #/#  @   #/########',
+    '########/#  .   #/# $$$ ##/#  .  .#/#  @   #/########',
+    '########/#. #   #/#  $ $ #/#  @   #/#. #   #/########',
+    '########/#     .#/# $$$  #/#    ..#/#  @   #/########',
+    '#########/#       #/# $$$ ..#/#  @  . #/#########'
   ];
 
   function mount(root, api) {
@@ -38,12 +51,14 @@
     api.button('Restart level', () => load(level));
     api.button('← Previous', () => { if (level > 0) load(level - 1); });
     api.button('Next →', () => { if (level < LEVELS.length - 1) load(level + 1); });
+    const lvlSel = api.select('Level', LEVELS.map((_, i) => ({ value: String(i), label: 'Level ' + (i + 1) })), '0', (v) => load(+v));
 
     const k = (x, y) => x + ',' + y;
 
     function load(i) {
       level = clamp(i, 0, LEVELS.length - 1);
       api.save('level', level);
+      if (lvlSel) lvlSel.value = String(level);
       const rows = LEVELS[level].split('/');
       Hh = rows.length;
       W = Math.max(...rows.map((r) => r.length));

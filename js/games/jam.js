@@ -85,10 +85,12 @@
     api.button('Restart level', () => load(level));
     api.button('← Previous', () => { if (level > 0) load(level - 1); });
     api.button('Next →', () => { if (level < LEVELS.length - 1) load(level + 1); });
+    const lvlSel = api.select('Level', LEVELS.map((_, i) => ({ value: String(i), label: 'Level ' + (i + 1) })), '0', (v) => load(+v));
 
     function load(i) {
       level = clamp(i, 0, LEVELS.length - 1);
       api.save('level', level);
+      if (lvlSel) lvlSel.value = String(level);
       const p = parse(LEVELS[level]);
       vs = p.vs; par = p.par;
       moves = 0; solvedAnim = 0; drag = null; done = false;
