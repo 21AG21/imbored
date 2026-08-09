@@ -198,6 +198,7 @@
         const edge = hopT > 0 ? 14 : 0;
         const on = belt.items.find((it) => px > it.x - edge && px < it.x + it.w + edge);
         if (!on) return die('You stepped onto a moving belt with nothing on it.');
+        if (hopT > 0) px = clamp(px, on.x + 6, on.x + on.w - 6);   // snap a near-edge landing onto the box, so the grace saves you instead of deferring death
         px += belt.speed * dt;
         if (px < 6 || px > W - 6) return die('The belt carried you into the wall.');
       }

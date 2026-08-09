@@ -7,7 +7,7 @@
 
   function mount(root, api) {
     const bagg = Engine.bag();
-    let you = 0, cpu = 0, turn = 0, whose = 'you', over = false, streak = 0, disposed = false;
+    let you = 0, cpu = 0, turn = 0, whose = 'you', over = false, streak = 0, disposed = false, gen = 0;
 
     const pStreak = api.pill('win streak: 0');
     const youScore = h('div', { class: 'pig-score' }, '0');
@@ -27,6 +27,7 @@
     api.button('New game', reset);
 
     function reset() {
+      gen++;   // invalidate any deskmate roll-chain still pending from the last game
       you = 0; cpu = 0; turn = 0; whose = 'you'; over = false;
       die.textContent = '·'; msg.textContent = 'Roll to build your turn. Bank before you bust.'; msg.className = 'pig-msg';
       busy(false); sync();
@@ -53,17 +54,17 @@
     function endTurn() {
       turn = 0; sync();
       whose = whose === 'you' ? 'cpu' : 'you';
-      if (whose === 'cpu') { busy(true); setTimeout(cpuStep.bind(null, 0, Math.round(20 / api.dm) + randInt(0, 4)), 650); }
+      if (whose === 'cpu') { busy(true); const myGen = gen; setTimeout(() => cpuStep(0, Math.round(20 / api.dm) + randInt(0, 4), myGen), 650); }
       else busy(false);
     }
-    function cpuStep(t, target) {
-      if (disposed || over) return;
+    function cpuStep(t, target, myGen) {
+      if (disposed || over || myGen !== gen) return;   // a New game since scheduling? drop this stale roll
       const d = randInt(1, 6); die.textContent = PIPS[d];
       if (d === 1) { msg.textContent = 'Deskmate rolled a 1.'; api.sfx.bad(); die.textContent = PIPS[1]; whose = 'you'; turn = 0; busy(false); sync(); return; }
       t += d; turnEl.textContent = 'deskmate turn: ' + t; api.sfx.blip(300);
       if (cpu + t >= GOAL) { cpu += t; sync(); return finish(false); }
       if (t >= target) { cpu += t; msg.textContent = 'Deskmate banks ' + t + '.'; whose = 'you'; turnEl.textContent = 'this turn: 0'; busy(false); sync(); return; }
-      setTimeout(cpuStep.bind(null, t, target), 560);
+      setTimeout(() => cpuStep(t, target, myGen), 560);
     }
     function finish(youWon) {
       over = true; busy(true);

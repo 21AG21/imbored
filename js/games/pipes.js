@@ -111,11 +111,12 @@
       done = true;
       api.sfx.great();
       api.submit(level);
-      setTimeout(() => {
+      const tid = setTimeout(() => {
         Engine.autoAdvance(banner, 'Network live.',
           'Level ' + level + ' solved in ' + moves + ' turns.',
           'Level ' + (level + 1), () => start(level + 1));
       }, 500);
+      bagg.add(() => clearTimeout(tid));
     }
 
     function turn(r, c, dir) {

@@ -127,20 +127,30 @@
         if (!t) return;
         const x = +t.dataset.x, y = +t.dataset.y;
         nameBox.textContent = colName(x) + (y + 1);
+        if (e.pointerType === 'touch') return;   // touch is handled below so a tap can dig while a long-press flags
         if (dead || won) return;
         if (e.button === 2) flagAt(x, y);
         else if (e.button === 0) dig(x, y);
         render();
       });
-      let holdT = 0;
+      /* touch: a short tap digs, a long press (420ms) plants a flag */
+      let holdT = 0, holdCell = null, flagged = false;
       tbl.addEventListener('touchstart', (e) => {
         const t = e.target.closest('.wb-cell');
-        if (!t) return;
+        if (!t || dead || won) { holdCell = null; return; }
+        holdCell = { x: +t.dataset.x, y: +t.dataset.y };
+        flagged = false;
         holdT = setTimeout(() => {
-          flagAt(+t.dataset.x, +t.dataset.y); render(); holdT = 0;
+          if (holdCell) { flagAt(holdCell.x, holdCell.y); render(); flagged = true; }
+          holdT = 0;
         }, 420);
       }, { passive: true });
-      tbl.addEventListener('touchend', () => { if (holdT) clearTimeout(holdT); holdT = 0; }, { passive: true });
+      tbl.addEventListener('touchend', (e) => {
+        if (holdT) { clearTimeout(holdT); holdT = 0; }
+        if (holdCell && !flagged && !dead && !won) { e.preventDefault(); dig(holdCell.x, holdCell.y); render(); }
+        holdCell = null;
+      });
+      tbl.addEventListener('touchmove', () => { if (holdT) { clearTimeout(holdT); holdT = 0; } holdCell = null; }, { passive: true });
       scroll.replaceChildren(tbl);
       render();
     }

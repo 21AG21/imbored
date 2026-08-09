@@ -11380,20 +11380,30 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
         if (!t) return;
         const x = +t.dataset.x, y = +t.dataset.y;
         nameBox.textContent = colName(x) + (y + 1);
+        if (e.pointerType === 'touch') return;   // touch is handled below so a tap can dig while a long-press flags
         if (dead || won) return;
         if (e.button === 2) flagAt(x, y);
         else if (e.button === 0) dig(x, y);
         render();
       });
-      let holdT = 0;
+      /* touch: a short tap digs, a long press (420ms) plants a flag */
+      let holdT = 0, holdCell = null, flagged = false;
       tbl.addEventListener('touchstart', (e) => {
         const t = e.target.closest('.wb-cell');
-        if (!t) return;
+        if (!t || dead || won) { holdCell = null; return; }
+        holdCell = { x: +t.dataset.x, y: +t.dataset.y };
+        flagged = false;
         holdT = setTimeout(() => {
-          flagAt(+t.dataset.x, +t.dataset.y); render(); holdT = 0;
+          if (holdCell) { flagAt(holdCell.x, holdCell.y); render(); flagged = true; }
+          holdT = 0;
         }, 420);
       }, { passive: true });
-      tbl.addEventListener('touchend', () => { if (holdT) clearTimeout(holdT); holdT = 0; }, { passive: true });
+      tbl.addEventListener('touchend', (e) => {
+        if (holdT) { clearTimeout(holdT); holdT = 0; }
+        if (holdCell && !flagged && !dead && !won) { e.preventDefault(); dig(holdCell.x, holdCell.y); render(); }
+        holdCell = null;
+      });
+      tbl.addEventListener('touchmove', () => { if (holdT) { clearTimeout(holdT); holdT = 0; } holdCell = null; }, { passive: true });
       scroll.replaceChildren(tbl);
       render();
     }
@@ -12993,7 +13003,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       const solved = Math.max(api.load('solved', 0), level + 1);
       api.save('solved', solved);
       api.submit(solved);
-      setTimeout(() => {
+      const tid = setTimeout(() => {
         if (level + 1 < LEVELS.length) {
           Engine.autoAdvance(banner, 'Out of the jam.',
             'Level ' + (level + 1) + ' in ' + moves + ' moves. Shortest possible: ' + par + '.' +
@@ -13006,6 +13016,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
             h('button', { class: 'btn primary', type: 'button', onclick: () => load(0) }, 'Start over'));
         }
       }, 900);
+      bagg.add(() => clearTimeout(tid));
     }
 
     function sync() {
@@ -13454,11 +13465,12 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       done = true;
       api.sfx.great();
       api.submit(level);
-      setTimeout(() => {
+      const tid = setTimeout(() => {
         Engine.autoAdvance(banner, 'Network live.',
           'Level ' + level + ' solved in ' + moves + ' turns.',
           'Level ' + (level + 1), () => start(level + 1));
       }, 500);
+      bagg.add(() => clearTimeout(tid));
     }
 
     function turn(r, c, dir) {
@@ -14348,7 +14360,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   'use strict';
   const { h, pick } = Engine;
 
-  const WORDS = ('about above abuse actor acute admit adopt adult after again agent agree ahead alarm album alert alike alive allow alone along alter among anger angle angry apart apple apply arena argue arise armed array arrow aside asset avoid awake award aware badly baker bases basic basis beach began begin begun being below bench birth black blame blank blast blind block blood board boost booth bound brain brand brass brave bread break breed brief bring broad broke brown brush build built burst buyer cable calm camp candy canal cargo carry catch cause chain chair chalk chaos charm chart chase cheap check chess chest chief child china chose civil claim class clean clear clerk click cliff climb clock close cloth cloud coach coast could count court cover crack craft crash crazy cream crime cross crowd crown crude curve cycle daily dance dated dealt death debut delay dense depth doing doubt dozen draft drama drank drawn dream dress dried drink drive drove dying eager early earth eight elite empty enemy enjoy enter entry equal error event every exact exist extra faith false fault favor feast fewer field fifth fifty fight final first fixed flame flash fleet flesh float flood floor flour fluid focus force forge forth forty forum found frame fraud fresh front frost fruit fully funny giant given giver glass globe glory going grace grade grain grand grant grape graph grass grave great green greet grief grill grind gross group grove grown guard guess guest guide happy harsh haste hatch heart heavy hedge hello hence hobby honey honor horse hotel house human humor hurry ideal image imply index inner input irony issue japan joint judge juice knife knock known label labor lakes large laser later laugh layer learn lease least leave legal lemon level lever light limit linen links liver lobby local lodge logic loose lorry lower loyal lucky lunar lunch magic major maker maple march match maybe mayor meant medal media mercy merge merit metal meter might minor minus mixed model money month moral motor mount mouse mouth movie music naked nasty naval nerve never newly night noble noise north noted novel nurse ocean offer often olive onion opera orbit order organ other ought ounce outer owner ozone paint panel panic paper party pasta patch pause peace peach pearl pedal penny phase phone photo piano picky piece pilot pinch pitch pixel pizza place plain plane plant plate point polar porch pound power press price pride prime print prior prize probe promo proof proud prove pulse punch pupil purse quest queue quick quiet quilt quite quota radar radio raise rally ranch range rapid ratio reach react ready realm rebel refer reign relax relay renew repay reply rider ridge rifle right rigid rinse risky rival river roast robot rocky rough round route royal rugby ruler rumor rural sadly saint salad sales salon sandy sauce scale scare scene scent scope score scout scrap screw sense serve seven shade shaft shake shall shame shape share sharp sheep sheet shelf shell shift shine shirt shock shoot shore short shown sight silly since sixth sixty skill skirt slate sleep slice slide slope small smart smell smile smoke snack snake sneak solar solid solve sorry sound south space spare spark speak speed spell spend spent spice spike spine spite split spoke spoon sport spray squad stack staff stage stain stair stake stamp stand stare start state steam steel steep steer stern stick stiff still stock stone stood store storm story stove strap straw strip stuck study stuff style sugar suite sunny super surge sweat sweep sweet swift swing sword table taken tally tango taste teach teeth tempo tenth thank theft their theme there these thick thief thing think third those three threw throw thumb tiger tight timer tired title toast today token tooth topic total touch tough tower toxic trace track trade trail train trait trash treat trend trial tribe trick tried tries truck truly trunk trust truth twice twist ultra uncle under union unite unity until upper upset urban usage usual valid value valve vapor vault venue verse video vigor villa virus visit vital vivid vocal voice voter wagon waist waste watch water weary wedge weigh weird whale wheat wheel where which while white whole whose widen widow width witch woman world worry worse worst worth would wound wrist write wrong yield young yours youth zebra').split(' ');
+  const WORDS = ('about above abuse actor acute admit adopt adult after again agent agree ahead alarm album alert alike alive allow alone along alter among anger angle angry apart apple apply arena argue arise armed array arrow aside asset avoid awake award aware badly baker bases basic basis beach began begin begun being below bench birth black blame blank blast blind block blood board boost booth bound brain brand brass brave bread break breed brief bring broad broke brown brush build built burst buyer cable cabin cameo candy canal cargo carry catch cause chain chair chalk chaos charm chart chase cheap check chess chest chief child china chose civil claim class clean clear clerk click cliff climb clock close cloth cloud coach coast could count court cover crack craft crash crazy cream crime cross crowd crown crude curve cycle daily dance dated dealt death debut delay dense depth doing doubt dozen draft drama drank drawn dream dress dried drink drive drove dying eager early earth eight elite empty enemy enjoy enter entry equal error event every exact exist extra faith false fault favor feast fewer field fifth fifty fight final first fixed flame flash fleet flesh float flood floor flour fluid focus force forge forth forty forum found frame fraud fresh front frost fruit fully funny giant given giver glass globe glory going grace grade grain grand grant grape graph grass grave great green greet grief grill grind gross group grove grown guard guess guest guide happy harsh haste hatch heart heavy hedge hello hence hobby honey honor horse hotel house human humor hurry ideal image imply index inner input irony issue japan joint judge juice knife knock known label labor lakes large laser later laugh layer learn lease least leave legal lemon level lever light limit linen links liver lobby local lodge logic loose lorry lower loyal lucky lunar lunch magic major maker maple march match maybe mayor meant medal media mercy merge merit metal meter might minor minus mixed model money month moral motor mount mouse mouth movie music naked nasty naval nerve never newly night noble noise north noted novel nurse ocean offer often olive onion opera orbit order organ other ought ounce outer owner ozone paint panel panic paper party pasta patch pause peace peach pearl pedal penny phase phone photo piano picky piece pilot pinch pitch pixel pizza place plain plane plant plate point polar porch pound power press price pride prime print prior prize probe promo proof proud prove pulse punch pupil purse quest queue quick quiet quilt quite quota radar radio raise rally ranch range rapid ratio reach react ready realm rebel refer reign relax relay renew repay reply rider ridge rifle right rigid rinse risky rival river roast robot rocky rough round route royal rugby ruler rumor rural sadly saint salad sales salon sandy sauce scale scare scene scent scope score scout scrap screw sense serve seven shade shaft shake shall shame shape share sharp sheep sheet shelf shell shift shine shirt shock shoot shore short shown sight silly since sixth sixty skill skirt slate sleep slice slide slope small smart smell smile smoke snack snake sneak solar solid solve sorry sound south space spare spark speak speed spell spend spent spice spike spine spite split spoke spoon sport spray squad stack staff stage stain stair stake stamp stand stare start state steam steel steep steer stern stick stiff still stock stone stood store storm story stove strap straw strip stuck study stuff style sugar suite sunny super surge sweat sweep sweet swift swing sword table taken tally tango taste teach teeth tempo tenth thank theft their theme there these thick thief thing think third those three threw throw thumb tiger tight timer tired title toast today token tooth topic total touch tough tower toxic trace track trade trail train trait trash treat trend trial tribe trick tried tries truck truly trunk trust truth twice twist ultra uncle under union unite unity until upper upset urban usage usual valid value valve vapor vault venue verse video vigor villa virus visit vital vivid vocal voice voter wagon waist waste watch water weary wedge weigh weird whale wheat wheel where which while white whole whose widen widow width witch woman world worry worse worst worth would wound wrist write wrong yield young yours youth zebra').split(' ');
 
   const LEN = 5;
   const KEYS = ['qwertyuiop', 'asdfghjkl', '↵zxcvbnm⌫'];
@@ -17940,8 +17952,10 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
     function negamax(b, depth, alpha, beta, player) {
       const w = winnerAt(b);
-      if (w) return (w.p === CPU ? 1 : -1) * (900000 + depth * 1000);
-      if (full(b) || depth === 0) return evaluate(b);
+      /* negamax negates child scores, so every leaf must be scored relative to
+         the side to move (`player`), not absolutely from the CPU's side */
+      if (w) return (w.p === player ? 1 : -1) * (900000 + depth * 1000);
+      if (full(b) || depth === 0) return (player === CPU ? 1 : -1) * evaluate(b);
 
       let best = -Infinity;
       for (const c of ORDER) {
@@ -21620,7 +21634,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     const keys = Engine.keys(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', ' ']);
     bagg.add(() => keys.dispose());
 
-    let ship, rocks, bullets, bits, score, lives, wave, over, inv, fireCd, waveT;
+    let ship, rocks, bullets, bits, score, lives, wave, over, inv, fireCd, waveT, hyperCd;
 
     const pScore = api.pill('Score: 0');
     const pLives = api.pill('▲▲▲');
@@ -21641,7 +21655,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       if (full) { score = 0; lives = api.dm > 2 ? 1 : api.dm > 1.2 ? 2 : 3; wave = 1; }
       ship = { x: W / 2, y: H / 2, vx: 0, vy: 0, a: -Math.PI / 2, thrusting: false };
       rocks = []; bullets = []; bits = [];
-      inv = 2.4; fireCd = 0; waveT = 0; over = false;
+      inv = 2.4; fireCd = 0; hyperCd = 0; waveT = 0; over = false;
       spawnWave();
       banner.style.display = 'none';
       api.status('← → turn · ↑ thrust · Space fire · ↓ or Shift for hyperspace (risky).');
@@ -21695,16 +21709,18 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     }
 
     function hyperspace() {
-      if (over) return;
+      if (over || hyperCd > 0) return;   // cooldown, so it can't be spammed for endless i-frames
+      hyperCd = 1.4;
       ship.x = rand(40, W - 40);
       ship.y = rand(40, H - 40);
       ship.vx = ship.vy = 0;
-      inv = Math.max(inv, 0.7);
       api.sfx.tone({ freq: 200, to: 1200, dur: 0.22, vol: 0.08, type: 'sine' });
-      /* the classic risk: you might land on a rock */
+      /* the classic risk: you might land on a rock — checked BEFORE any i-frames
+         are granted, and with inv forced to 0 so the hit actually lands */
       for (const r of rocks) {
-        if (Math.hypot(r.x - ship.x, r.y - ship.y) < r.r + 12) { boom(); return; }
+        if (Math.hypot(r.x - ship.x, r.y - ship.y) < r.r + 12) { inv = 0; boom(); return; }
       }
+      inv = Math.max(inv, 0.7);
     }
 
     function explode(x, y, n, color) {
@@ -21746,6 +21762,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     function update(dt) {
       if (over) return;
       inv = Math.max(0, inv - dt);
+      hyperCd = Math.max(0, hyperCd - dt);
       fireCd = Math.max(0, fireCd - dt);
 
       if (keys.get('ArrowLeft', 'a')) ship.a -= 3.6 * dt;
@@ -22866,6 +22883,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
         const edge = hopT > 0 ? 14 : 0;
         const on = belt.items.find((it) => px > it.x - edge && px < it.x + it.w + edge);
         if (!on) return die('You stepped onto a moving belt with nothing on it.');
+        if (hopT > 0) px = clamp(px, on.x + 6, on.x + on.w - 6);   // snap a near-edge landing onto the box, so the grace saves you instead of deferring death
         px += belt.speed * dt;
         if (px < 6 || px > W - 6) return die('The belt carried you into the wall.');
       }
@@ -24737,7 +24755,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   function mount(root, api) {
     const bagg = Engine.bag();
-    let you = 0, cpu = 0, turn = 0, whose = 'you', over = false, streak = 0, disposed = false;
+    let you = 0, cpu = 0, turn = 0, whose = 'you', over = false, streak = 0, disposed = false, gen = 0;
 
     const pStreak = api.pill('win streak: 0');
     const youScore = h('div', { class: 'pig-score' }, '0');
@@ -24757,6 +24775,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     api.button('New game', reset);
 
     function reset() {
+      gen++;   // invalidate any deskmate roll-chain still pending from the last game
       you = 0; cpu = 0; turn = 0; whose = 'you'; over = false;
       die.textContent = '·'; msg.textContent = 'Roll to build your turn. Bank before you bust.'; msg.className = 'pig-msg';
       busy(false); sync();
@@ -24783,17 +24802,17 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     function endTurn() {
       turn = 0; sync();
       whose = whose === 'you' ? 'cpu' : 'you';
-      if (whose === 'cpu') { busy(true); setTimeout(cpuStep.bind(null, 0, Math.round(20 / api.dm) + randInt(0, 4)), 650); }
+      if (whose === 'cpu') { busy(true); const myGen = gen; setTimeout(() => cpuStep(0, Math.round(20 / api.dm) + randInt(0, 4), myGen), 650); }
       else busy(false);
     }
-    function cpuStep(t, target) {
-      if (disposed || over) return;
+    function cpuStep(t, target, myGen) {
+      if (disposed || over || myGen !== gen) return;   // a New game since scheduling? drop this stale roll
       const d = randInt(1, 6); die.textContent = PIPS[d];
       if (d === 1) { msg.textContent = 'Deskmate rolled a 1.'; api.sfx.bad(); die.textContent = PIPS[1]; whose = 'you'; turn = 0; busy(false); sync(); return; }
       t += d; turnEl.textContent = 'deskmate turn: ' + t; api.sfx.blip(300);
       if (cpu + t >= GOAL) { cpu += t; sync(); return finish(false); }
       if (t >= target) { cpu += t; msg.textContent = 'Deskmate banks ' + t + '.'; whose = 'you'; turnEl.textContent = 'this turn: 0'; busy(false); sync(); return; }
-      setTimeout(cpuStep.bind(null, t, target), 560);
+      setTimeout(() => cpuStep(t, target, myGen), 560);
     }
     function finish(youWon) {
       over = true; busy(true);
@@ -25593,7 +25612,8 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   Arcade.register({
     id: 'soundboard',
-    usesDigits: true,   // number keys fire pads — the "1 = Docs" shortcut yields here
+    usesDigits: true,    // number keys fire pads — the "1 = Docs" shortcut yields here
+    usesLetters: true,   // and q/w/e/r/t/a/s/d/f fire pads too — keep 'r' from restarting
     title: 'Soundboard',
     emoji: 'speaker',
     cat: 'goof',
@@ -26235,7 +26255,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     const CUPR = clamp(17 - (api.dm - 1) * 5, 10, 19);
     const FRICTION = 0.9955 - (api.dm - 1) * 0.0012;
 
-    let hole, ball, vel, strokes, total, aim, sunk, sunkT, done, trail;
+    let hole, ball, vel, strokes, total, aim, sunk, sunkT, done, trail, gen = 0;
 
     const pHole = api.pill('');
     const pStroke = api.pill('Strokes: 0');
@@ -26251,7 +26271,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     }
 
     function loadHole(i) {
-      hole = i;
+      hole = i; gen++;   // any hole change invalidates a pending sink advance
       const H0 = HOLES[i];
       ball = { x: H0.ball[0], y: H0.ball[1] };
       vel = { x: 0, y: 0 };
@@ -26379,10 +26399,13 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       api.sfx[d <= 0 ? 'great' : 'good']();
       api.status(name + ' on hole ' + (hole + 1) + '.');
       sync();
-      setTimeout(() => {
-        if (hole + 1 < HOLES.length) loadHole(hole + 1);
+      const myGen = gen, atHole = hole;
+      const tid = setTimeout(() => {
+        if (myGen !== gen) return;                 // restarted / advanced already — drop this stale advance
+        if (atHole + 1 < HOLES.length) loadHole(atHole + 1);
         else finish();
       }, 1200);
+      bagg.add(() => clearTimeout(tid));
     }
 
     function finish() {

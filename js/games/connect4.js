@@ -113,8 +113,10 @@
 
     function negamax(b, depth, alpha, beta, player) {
       const w = winnerAt(b);
-      if (w) return (w.p === CPU ? 1 : -1) * (900000 + depth * 1000);
-      if (full(b) || depth === 0) return evaluate(b);
+      /* negamax negates child scores, so every leaf must be scored relative to
+         the side to move (`player`), not absolutely from the CPU's side */
+      if (w) return (w.p === player ? 1 : -1) * (900000 + depth * 1000);
+      if (full(b) || depth === 0) return (player === CPU ? 1 : -1) * evaluate(b);
 
       let best = -Infinity;
       for (const c of ORDER) {

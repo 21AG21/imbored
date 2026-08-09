@@ -177,7 +177,7 @@
       const solved = Math.max(api.load('solved', 0), level + 1);
       api.save('solved', solved);
       api.submit(solved);
-      setTimeout(() => {
+      const tid = setTimeout(() => {
         if (level + 1 < LEVELS.length) {
           Engine.autoAdvance(banner, 'Out of the jam.',
             'Level ' + (level + 1) + ' in ' + moves + ' moves. Shortest possible: ' + par + '.' +
@@ -190,6 +190,7 @@
             h('button', { class: 'btn primary', type: 'button', onclick: () => load(0) }, 'Start over'));
         }
       }, 900);
+      bagg.add(() => clearTimeout(tid));
     }
 
     function sync() {

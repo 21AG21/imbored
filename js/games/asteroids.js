@@ -14,7 +14,7 @@
     const keys = Engine.keys(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', ' ']);
     bagg.add(() => keys.dispose());
 
-    let ship, rocks, bullets, bits, score, lives, wave, over, inv, fireCd, waveT;
+    let ship, rocks, bullets, bits, score, lives, wave, over, inv, fireCd, waveT, hyperCd;
 
     const pScore = api.pill('Score: 0');
     const pLives = api.pill('▲▲▲');
@@ -35,7 +35,7 @@
       if (full) { score = 0; lives = api.dm > 2 ? 1 : api.dm > 1.2 ? 2 : 3; wave = 1; }
       ship = { x: W / 2, y: H / 2, vx: 0, vy: 0, a: -Math.PI / 2, thrusting: false };
       rocks = []; bullets = []; bits = [];
-      inv = 2.4; fireCd = 0; waveT = 0; over = false;
+      inv = 2.4; fireCd = 0; hyperCd = 0; waveT = 0; over = false;
       spawnWave();
       banner.style.display = 'none';
       api.status('← → turn · ↑ thrust · Space fire · ↓ or Shift for hyperspace (risky).');
@@ -89,16 +89,18 @@
     }
 
     function hyperspace() {
-      if (over) return;
+      if (over || hyperCd > 0) return;   // cooldown, so it can't be spammed for endless i-frames
+      hyperCd = 1.4;
       ship.x = rand(40, W - 40);
       ship.y = rand(40, H - 40);
       ship.vx = ship.vy = 0;
-      inv = Math.max(inv, 0.7);
       api.sfx.tone({ freq: 200, to: 1200, dur: 0.22, vol: 0.08, type: 'sine' });
-      /* the classic risk: you might land on a rock */
+      /* the classic risk: you might land on a rock — checked BEFORE any i-frames
+         are granted, and with inv forced to 0 so the hit actually lands */
       for (const r of rocks) {
-        if (Math.hypot(r.x - ship.x, r.y - ship.y) < r.r + 12) { boom(); return; }
+        if (Math.hypot(r.x - ship.x, r.y - ship.y) < r.r + 12) { inv = 0; boom(); return; }
       }
+      inv = Math.max(inv, 0.7);
     }
 
     function explode(x, y, n, color) {
@@ -140,6 +142,7 @@
     function update(dt) {
       if (over) return;
       inv = Math.max(0, inv - dt);
+      hyperCd = Math.max(0, hyperCd - dt);
       fireCd = Math.max(0, fireCd - dt);
 
       if (keys.get('ArrowLeft', 'a')) ship.a -= 3.6 * dt;

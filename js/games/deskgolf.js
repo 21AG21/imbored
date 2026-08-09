@@ -28,7 +28,7 @@
     const CUPR = clamp(17 - (api.dm - 1) * 5, 10, 19);
     const FRICTION = 0.9955 - (api.dm - 1) * 0.0012;
 
-    let hole, ball, vel, strokes, total, aim, sunk, sunkT, done, trail;
+    let hole, ball, vel, strokes, total, aim, sunk, sunkT, done, trail, gen = 0;
 
     const pHole = api.pill('');
     const pStroke = api.pill('Strokes: 0');
@@ -44,7 +44,7 @@
     }
 
     function loadHole(i) {
-      hole = i;
+      hole = i; gen++;   // any hole change invalidates a pending sink advance
       const H0 = HOLES[i];
       ball = { x: H0.ball[0], y: H0.ball[1] };
       vel = { x: 0, y: 0 };
@@ -172,10 +172,13 @@
       api.sfx[d <= 0 ? 'great' : 'good']();
       api.status(name + ' on hole ' + (hole + 1) + '.');
       sync();
-      setTimeout(() => {
-        if (hole + 1 < HOLES.length) loadHole(hole + 1);
+      const myGen = gen, atHole = hole;
+      const tid = setTimeout(() => {
+        if (myGen !== gen) return;                 // restarted / advanced already — drop this stale advance
+        if (atHole + 1 < HOLES.length) loadHole(atHole + 1);
         else finish();
       }, 1200);
+      bagg.add(() => clearTimeout(tid));
     }
 
     function finish() {
