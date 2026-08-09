@@ -8,26 +8,8 @@
 
   function mount(root, api) {
     const bagg = Engine.bag();
-    const cv = Engine.canvas(root, W, H);
+    const cv = Engine.canvas(root, W, H);   // Engine.canvas now auto-fits the playfield to the screen
     const ctx = cv.ctx;
-
-    /* Keep the whole playfield on screen. In portrait on a phone the header
-       eats enough height that a fixed 78vh canvas ran the ground past the fold,
-       so you died into a floor you could not see. Size the canvas to the space
-       actually left below the header on this device, and refit on resize or
-       orientation change. Flap has no on-screen pad, so filling that space is
-       exactly right. */
-    function fit() {
-      const vpH = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
-      const top = cv.el.getBoundingClientRect().top;
-      const availH = Math.max(240, vpH - top - 10);
-      /* cap WIDTH (aspect-ratio derives height from it) so the playfield scales
-         to fit the height without ever distorting the bird */
-      cv.el.style.maxWidth = Math.min(W, Math.round(availH * W / H)) + 'px';
-    }
-    requestAnimationFrame(fit);
-    bagg.listen(window, 'resize', fit);
-    if (window.visualViewport) bagg.listen(window.visualViewport, 'resize', fit);
 
     let by, bv, pipes, score, started, over, restartT, lastScore;
 

@@ -1303,6 +1303,32 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
   body.in-game .search { display: none; }
   .rotate-nudge { font-size: 11px; padding: 7px 10px; }
 }
+
+/* ---- portrait phone, mid-game: reclaim the vertical space the shelf chrome
+        doesn't need once you're actually playing. Before this the header stack
+        (topbar + title + tools + status) ate ~56% of a 664px screen, leaving a
+        pad game's controls below the fold. Everything here only trims height;
+        nothing is removed that you can't still reach. ---- */
+@media (orientation: portrait) and (max-width: 720px) {
+  /* one tidy row of controls instead of two — the wordmark and ticker aren't
+     worth 55px of playfield mid-game (the home dice still gets you back) */
+  body.in-game .topbar { flex-wrap: nowrap; padding: 5px 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  body.in-game .brand-text { display: none; }
+  body.in-game .ticker { display: none; }
+
+  /* compact title bar: smaller name, tighter padding, thinner how-to strip */
+  body.in-game .gamehead { padding: 6px 10px; gap: 6px; margin-bottom: 9px; }
+  body.in-game .gtitle { font-size: 16px; }
+  body.in-game .ge { font-size: 17px; }
+  body.in-game .back { padding: 4px 8px; }
+  body.in-game .gmeta { gap: 6px; }
+  body.in-game .howto summary { padding: 4px 10px; font-size: 10.5px; }
+
+  /* tighten the vertical rhythm so the playfield starts higher up */
+  body.in-game .gametools { margin-bottom: 9px; }
+  body.in-game .status { padding: 5px 9px; margin-bottom: 0; }
+  body.in-game .stage { gap: 10px; }
+}
 /* the mug should invite a tap, not occupy the whole screen */
 @media (max-width: 720px) {
   .mug { aspect-ratio: 5 / 3; max-width: 100%; }
@@ -2475,7 +2501,41 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     if (opts.maxHeight) c.style.maxHeight = opts.maxHeight;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     parent.appendChild(c);
+
+    /* Fit the playfield to the space actually left on the device so a canvas
+       game's bottom never sits past the fold on a phone (the flap bug, but for
+       every canvas game). Caps WIDTH — aspect-ratio derives the height, so it
+       never distorts — and leaves room for any control pad or panel sitting
+       below the canvas in the same container. Only shrinks when needed, so
+       desktop and roomy screens are untouched. Self-removes when detached. */
+    function fitCanvas() {
+      if (!c.isConnected) {
+        global.removeEventListener('resize', fitCanvas);
+        if (global.visualViewport) global.visualViewport.removeEventListener('resize', fitCanvas);
+        return;
+      }
+      if (document.body.classList.contains('bigscreen')) { c.style.maxWidth = 'var(--gw)'; return; }
+      const vpH = (global.visualViewport && global.visualViewport.height) || global.innerHeight;
+      const cr = c.getBoundingClientRect();
+      /* overhang = pixels from the canvas bottom down to the lowest thing below
+         it (a control pad, panels), gaps and margins included. Independent of the
+         canvas size, so shrinking the canvas leaves exactly that much room. */
+      let lowest = cr.bottom;
+      for (let sib = c.nextElementSibling; sib; sib = sib.nextElementSibling) {
+        const rb = sib.getBoundingClientRect().bottom;
+        if (rb > lowest) lowest = rb;
+      }
+      const overhang = lowest - cr.bottom;
+      const availH = Math.max(118, vpH - cr.top - overhang - 10);
+      c.style.maxWidth = Math.min(w, Math.round(availH * w / hh)) + 'px';
+    }
+    global.addEventListener('resize', fitCanvas);
+    if (global.visualViewport) global.visualViewport.addEventListener('resize', fitCanvas);
+    requestAnimationFrame(fitCanvas);
+    setTimeout(fitCanvas, 80);   // second pass once pads/panels have laid out
+
     return {
+      fit: fitCanvas,
       el: c, ctx, w, h: hh,
       pos(ev) {
         const r = c.getBoundingClientRect();
@@ -20046,26 +20106,8 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   function mount(root, api) {
     const bagg = Engine.bag();
-    const cv = Engine.canvas(root, W, H);
+    const cv = Engine.canvas(root, W, H);   // Engine.canvas now auto-fits the playfield to the screen
     const ctx = cv.ctx;
-
-    /* Keep the whole playfield on screen. In portrait on a phone the header
-       eats enough height that a fixed 78vh canvas ran the ground past the fold,
-       so you died into a floor you could not see. Size the canvas to the space
-       actually left below the header on this device, and refit on resize or
-       orientation change. Flap has no on-screen pad, so filling that space is
-       exactly right. */
-    function fit() {
-      const vpH = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
-      const top = cv.el.getBoundingClientRect().top;
-      const availH = Math.max(240, vpH - top - 10);
-      /* cap WIDTH (aspect-ratio derives height from it) so the playfield scales
-         to fit the height without ever distorting the bird */
-      cv.el.style.maxWidth = Math.min(W, Math.round(availH * W / H)) + 'px';
-    }
-    requestAnimationFrame(fit);
-    bagg.listen(window, 'resize', fit);
-    if (window.visualViewport) bagg.listen(window.visualViewport, 'resize', fit);
 
     let by, bv, pipes, score, started, over, restartT, lastScore;
 

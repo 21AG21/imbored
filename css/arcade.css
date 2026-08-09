@@ -1288,6 +1288,32 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
   body.in-game .search { display: none; }
   .rotate-nudge { font-size: 11px; padding: 7px 10px; }
 }
+
+/* ---- portrait phone, mid-game: reclaim the vertical space the shelf chrome
+        doesn't need once you're actually playing. Before this the header stack
+        (topbar + title + tools + status) ate ~56% of a 664px screen, leaving a
+        pad game's controls below the fold. Everything here only trims height;
+        nothing is removed that you can't still reach. ---- */
+@media (orientation: portrait) and (max-width: 720px) {
+  /* one tidy row of controls instead of two — the wordmark and ticker aren't
+     worth 55px of playfield mid-game (the home dice still gets you back) */
+  body.in-game .topbar { flex-wrap: nowrap; padding: 5px 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  body.in-game .brand-text { display: none; }
+  body.in-game .ticker { display: none; }
+
+  /* compact title bar: smaller name, tighter padding, thinner how-to strip */
+  body.in-game .gamehead { padding: 6px 10px; gap: 6px; margin-bottom: 9px; }
+  body.in-game .gtitle { font-size: 16px; }
+  body.in-game .ge { font-size: 17px; }
+  body.in-game .back { padding: 4px 8px; }
+  body.in-game .gmeta { gap: 6px; }
+  body.in-game .howto summary { padding: 4px 10px; font-size: 10.5px; }
+
+  /* tighten the vertical rhythm so the playfield starts higher up */
+  body.in-game .gametools { margin-bottom: 9px; }
+  body.in-game .status { padding: 5px 9px; margin-bottom: 0; }
+  body.in-game .stage { gap: 10px; }
+}
 /* the mug should invite a tap, not occupy the whole screen */
 @media (max-width: 720px) {
   .mug { aspect-ratio: 5 / 3; max-width: 100%; }
