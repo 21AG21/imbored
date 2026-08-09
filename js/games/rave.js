@@ -110,7 +110,8 @@
       'It exists to be seen by the wrong person. A boss glancing at a screen mid-seizure of rainbow tends to keep walking.',
       'Tap anywhere on the screen, press the Make It Stop button, or hit Escape to snap back to the calm arcade.',
       'It flashes fast and bright on purpose, so there is a one-time heads-up for anyone who is photosensitive — you can always back out there.',
-      'Pair it with the real panic key (the backtick turns the site into a spreadsheet) for the full range of workplace camouflage: invisible, or extremely visible.'
+      'Pair it with the real panic key (the backtick turns the site into a spreadsheet) for the full range of workplace camouflage: invisible, or extremely visible.',
+      'Summon it from anywhere without hunting for the tile: press Shift and the backtick key together (that is the ~ key, just above Tab) and the party starts instantly.'
     ],
     mount
   });

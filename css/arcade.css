@@ -158,9 +158,11 @@ kbd {
 /* ---------------- layout ---------------- */
 .view {
   flex: 1;
-  width: min(1200px, 100%);
-  margin: 0 auto;
-  padding: 20px 16px 40px;
+  width: 100%;
+  /* full-bleed so the content spans the screen and lines up with the topbar and
+     footer instead of floating in a narrow centred column; the game shelf
+     auto-fills, so a wider screen simply shows more games per row */
+  padding: 20px clamp(16px, 3vw, 40px) 40px;
 }
 
 .foot {

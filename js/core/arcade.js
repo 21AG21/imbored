@@ -423,6 +423,7 @@
         h('a', { class: 'foot-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener' }, 'PHANTOM: why traffic jams happen for no reason')),
       h('span', null,
         h('kbd', null, '`'), ' look busy   ',
+        h('kbd', null, 'Shift'), '+', h('kbd', null, '`'), ' rave   ',
         h('kbd', null, '['), h('kbd', null, ']'), ' switch game   ',
         h('kbd', null, 'R'), ' restart   ',
         h('kbd', null, '\\'), ' big screen   ',
@@ -1039,7 +1040,7 @@
       /* match the physical key (e.code) too: inside a text field, backtick is a
          dead key on many layouts (UK, US-International, German, French...) so
          e.key comes through as 'Dead' and the character check alone would miss */
-      if (e.key === '`' || e.code === 'Backquote' || (e.ctrlKey && !e.altKey && e.key.toLowerCase() === 'b')) {
+      if (((e.key === '`' || e.code === 'Backquote') && !e.shiftKey) || (e.ctrlKey && !e.altKey && e.key.toLowerCase() === 'b')) {
         e.preventDefault();
         if (typing && t.blur) t.blur();
         toggleBoss();
@@ -1053,6 +1054,10 @@
       /* big screen is a non-letter key (backslash) so it never competes with a
          game's own controls — every letter belongs to the games */
       if (e.key === '\\') { e.preventDefault(); Arcade.toggleBig(); return; }
+      /* the anti-panic key: Shift+backtick (~) detonates Rave Mode from anywhere
+         — the loud opposite of the quiet panic key right next to it. Match the
+         physical key too, for dead-key layouts where the tilde never arrives. */
+      if (e.key === '~' || (e.shiftKey && e.code === 'Backquote')) { e.preventDefault(); Arcade.go('rave'); return; }
       /* in a game: [ and ] flick to the previous/next game on the shelf,
          R restarts the current one (skipped where letters are the controls) */
       if (currentGame) {
