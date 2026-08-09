@@ -1734,6 +1734,25 @@ body.crt.boss-on::after, body.crt.boss-on::before { display: none; }
 .cal-now { position: absolute; left: 0; right: 0; height: 2px; background: #ea4335; z-index: 5; }
 .cal-now::before { content: ""; position: absolute; left: -5px; top: -4px; width: 10px; height: 10px; border-radius: 50%; background: #ea4335; }
 
+/* ============ Print-a-puzzle: Ctrl-P any board yields a clean sheet ============ */
+@media print {
+  .topbar, .foot, .chomps, .ticker, .gametools, .status, .howto, .gmeta,
+  .back, .rel-link, .rotate-nudge, .banner, .theme-pop, .bigscreen-note,
+  .boss, .dpad, .fire-panel, .flood-picker, .ship-stamp { display: none !important; }
+  body, .view, .stage, .board, .cell, .gamehead { background: #fff !important; box-shadow: none !important; }
+  .stage { padding: 0; gap: 8px; }
+  .gtitle { display: flex !important; color: #000 !important; text-shadow: none !important; justify-content: center; }
+  .board, .ms, .g2048, .lo, .f15, .flood, .ttt, .rev, .mem-board { border-color: #000 !important; padding: 0 !important; box-shadow: none !important; }
+  .cell { border-color: #000 !important; color: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .cell.on, .cell.hit, .cell.sunk, .cell.ship { background: #fff !important; }
+  .gcanvas { border-color: #000 !important; box-shadow: none !important; }
+  @page { margin: 14mm; }
+}
+@media print {
+  .sud-board { border-color: #000 !important; box-shadow: none !important; background: #fff !important; }
+  .sud-cell { border-color: #000 !important; color: #000 !important; background: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
 </style>
 </head>
 <body>
