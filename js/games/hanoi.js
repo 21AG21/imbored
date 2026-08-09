@@ -31,7 +31,10 @@
     }
     function sync() {
       pMoves.textContent = 'moves: ' + moves;
-      const b = api.best(); pMin.textContent = 'best: ' + (b == null ? '—' : b);
+      /* best is kept PER disk count — otherwise a 7-move three-disk solve brands
+         every harder board (min 15/31/63) a failure */
+      const b = api.load('best:' + n, null);
+      pMin.textContent = 'best (' + n + '): ' + (b == null ? '—' : b);
     }
     function render() {
       pegEls.forEach((pe, pi) => {
@@ -65,7 +68,12 @@
     function win() {
       over = true; api.sfx.great();
       const min = (1 << n) - 1;
-      const r = api.submit(moves);
+      const prevN = api.load('best:' + n, null);
+      if (prevN == null || moves < prevN) api.save('best:' + n, moves);
+      /* the leaderboard score is moves OVER optimal, so a perfect solve of any
+         disk count scores 0 and bigger towers aren't punished for their higher
+         minimum */
+      const r = api.submit(moves - min);
       msg.textContent = 'Solved in ' + moves + ' move' + (moves === 1 ? '' : 's') +
         (moves === min ? ' — perfect!' : ' (best possible: ' + min + ')') + '.' + (r.isRecord ? ' New record!' : '');
       msg.className = 'hn-msg win'; sync();
@@ -78,8 +86,9 @@
   Arcade.register({
     id: 'hanoi', title: 'Tower of Hanoi', emoji: 'stack', cat: 'puzzle', order: 20,
     lowerIsBetter: true,
+    formatScore: (v) => (v <= 0 ? 'perfect' : '+' + v + ' moves'),
     blurb: 'The classic disk-stacking puzzle, restyled as ring binders. Move the stack one binder at a time, never a big one on a small one.',
-    scoreLabel: 'Fewest moves', tags: ['puzzle', 'classic', 'logic'],
+    scoreLabel: 'Cleanest solve', tags: ['puzzle', 'classic', 'logic'],
     how: [
       'Click a peg to lift its top disk, then click another peg to drop it.',
       'A larger disk can never sit on a smaller one.',

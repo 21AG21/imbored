@@ -161,7 +161,7 @@ kbd {
   line-height: 1;
 }
 .icon-btn:active { box-shadow: var(--bevel-in); transform: translate(1px, 1px); }
-.icon-btn.on { background: var(--lime); }
+.icon-btn.on { background: var(--lime); box-shadow: inset 0 0 0 3px var(--ink); }  /* ink ring so "on" reads even when a theme's lime ~= its surface (mono) */
 
 /* ---------------- layout ---------------- */
 .view {
@@ -467,7 +467,7 @@ kbd {
 .btn:active { box-shadow: var(--bevel-in); transform: translate(1px, 1px); }
 .btn.primary { background: var(--banana); color: var(--onbanana); }
 .btn.danger { background: var(--tomato); color: var(--label); }
-.btn.on { background: var(--lime); color: var(--onlime); }
+.btn.on { background: var(--lime); color: var(--onlime); box-shadow: inset 0 0 0 3px var(--ink); }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
 
 .pill {
@@ -1445,7 +1445,7 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
 }
 .sud-key:active { box-shadow: var(--bevel-in); }
 .sud-key.wide { grid-column: span 2; aspect-ratio: auto; font-size: 12px; text-transform: uppercase; }
-.sud-key.on { background: var(--lime); }
+.sud-key.on { background: var(--lime); box-shadow: inset 0 0 0 3px var(--ink); }
 @media (max-width: 520px) {
   .sud-key.wide { grid-column: span 3; }
 }
@@ -2146,7 +2146,8 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   /* catch every remaining decorative animation for people who ask for calm */
   .g2048 .cell.pop, .match3 .cell.clearing, .sb-pad.lit, .stp-big.pop,
   .slot-reel.hit, .ana-scramble.shake, .crk-input.shake, .hero,
-  .gk-cell, .mm-shake, .diffbtn, .card:hover { animation: none !important; }
+  .gk-cell, .mm-shake, .diffbtn, .card:hover,
+  .wg-tile.shake, .mem-card.matched, .mr-q.shake, .mug.squish .mug-art, .pop { animation: none !important; }
 }
 
 /* larger touch targets on finger-driven screens (aim for ~44px) */

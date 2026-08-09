@@ -46,13 +46,16 @@
         const gap = 55 + rng() * (60 + diff * 90);
         const gapStart = cx;
         cx += gap;
-        const pw = Math.max(46, 90 - diff * 30 + rng() * 60);
+        /* the difficulty dial narrows the landing pads and adds hazards, but
+           never widens the GAPS — those are already near the jump's reach, and
+           stretching them would make stages unclearable */
+        const pw = Math.max(46, 90 - diff * 30 - (api.dm - 1) * 8 + rng() * 60);
         y = clamp(y + (rng() - 0.5) * (110 + diff * 90), 130, H - 44);
         plats.push({ x: cx, y, w: pw, h: H - y, c: (i % PLAT_COLS.length) });
         /* lava under some gaps */
-        if (rng() < 0.35 + diff * 0.2 && i > 1) hazards.push({ x: gapStart, y: H - 16, w: gap, h: 16, t: 'lava' });
+        if (rng() < clamp(0.35 + diff * 0.2 + (api.dm - 1) * 0.12, 0.1, 0.85) && i > 1) hazards.push({ x: gapStart, y: H - 16, w: gap, h: 16, t: 'lava' });
         /* spikes on some platform tops */
-        if (rng() < 0.22 + diff * 0.2 && i > 2 && pw > 60) hazards.push({ x: cx + pw * 0.32, y: y - 12, w: pw * 0.36, h: 12, t: 'spike' });
+        if (rng() < clamp(0.22 + diff * 0.2 + (api.dm - 1) * 0.1, 0.05, 0.75) && i > 2 && pw > 60) hazards.push({ x: cx + pw * 0.32, y: y - 12, w: pw * 0.36, h: 12, t: 'spike' });
         if (i % 4 === 3) { checks.push({ x: cx + pw / 2, y: y - PH, i: ci++ }); }
         cx += pw;
       }
