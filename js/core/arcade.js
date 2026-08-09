@@ -40,6 +40,10 @@
   let currentGame = null;
   let bossOn = false;
   let bigOn = false;
+  /* disguise mode: dress the whole app (home AND games) as plain documents, so
+     from across the room it reads as paperwork. Default on; the normal arcade
+     game UI is one toggle away. */
+  let docModeOn = true;
   /* The site's display name. Editable straight from the top bar (click it and
      type); defaults to a forgettable "Docs" so a glance at the header or the
      browser tab gives nothing away. Drives both the brand and the tab title. */
@@ -89,9 +93,25 @@
       store.set('diff', DIFFS[diffIdx].id);
       syncDiffBtn();
       route();          // restart whatever is running so the change bites immediately
+    },
+    docMode() { return docModeOn; },
+    setDocMode(on) {
+      docModeOn = on == null ? !docModeOn : !!on;
+      store.set('docmode', docModeOn);
+      applyDocMode();
     }
   };
   global.Arcade = Arcade;
+
+  /* toggle the whole-app document disguise. Pure CSS via a body class, so it
+     flips live with no re-render; the two toggle controls resync their labels. */
+  const docBtnSyncers = [];
+  function applyDocMode() {
+    document.body.classList.toggle('docmode', docModeOn);
+    docBtnSyncers.forEach((fn) => { try { fn(); } catch (e) { /* ignore */ } });
+    applyDocTitle();
+    if (currentGame) fitStageSoon();   // chrome height changed; re-fit the playfield
+  }
 
   /* ---------------- big screen ---------------- */
   /* Canvas games grow via CSS (the .gcanvas max-width rule). The ~14 DOM-board
@@ -271,11 +291,24 @@
       store.set('brand', t); applyDocTitle();
     });
 
+    /* the disguise toggle: normal arcade chrome is always one click away */
+    const docBtn = h('button', { class: 'btn docmode-btn', type: 'button' });
+    const syncDocBtn = () => {
+      docBtn.textContent = docModeOn ? 'View: Documents' : 'View: Arcade';
+      docBtn.title = docModeOn
+        ? 'Games are disguised as documents. Click for the normal arcade view.'
+        : 'Normal arcade view. Click to disguise everything as documents.';
+    };
+    docBtn.addEventListener('click', () => Arcade.setDocMode());
+    docBtnSyncers.push(syncDocBtn);
+    syncDocBtn();
+
     const bar = h('header', { class: 'topbar' },
       h('span', { class: 'brand' },
         h('a', { class: 'brand-mark', href: '#', title: 'Home', html: Icons.svg('dice', 19) }),
         brandText),
       h('div', { class: 'topbar-spacer' }),
+      docBtn,
       diffBtn,
       search,
       h('button', {
@@ -772,9 +805,14 @@
     }, 'Save an offline copy');
     dlBtn.addEventListener('click', () => { if (Arcade._downloadSelf) Arcade._downloadSelf(dlBtn); });
 
+    const viewBtn = h('button', { class: 'doc-tool', type: 'button', title: 'Whether games open disguised as documents or in the normal arcade view' });
+    const syncViewBtn = () => { viewBtn.textContent = 'Game view: ' + (docModeOn ? 'Documents' : 'Arcade'); };
+    viewBtn.addEventListener('click', () => { Arcade.setDocMode(); syncViewBtn(); });
+    syncViewBtn();
+
     const sep = () => h('span', { class: 'doc-sep' }, '·');
     const tools = h('div', { class: 'doc-tools' },
-      apBtn, sep(), sndBtn, sep(), dlBtn, sep(),
+      viewBtn, sep(), apBtn, sep(), sndBtn, sep(), dlBtn, sep(),
       h('a', { class: 'doc-tool', href: '#stats' }, 'Activity log'));
 
     const foot = h('footer', { class: 'doc-foot' },
@@ -949,6 +987,7 @@
           h('span', { class: 'pill diff-tag d-' + Arcade.diff().id }, Arcade.diff().label),
           daily ? h('span', { class: 'pill daily-tag', title: 'Everyone gets this exact board today' }, 'DAILY ' + daily) : null,
           bestEl),
+        h('p', { class: 'game-cap' }, g.blurb),   // reads as a document caption in disguise mode; hidden otherwise
         howto),
       toolbar, statusEl, stage);
 
@@ -1051,7 +1090,9 @@
     games.sort((a, b) => (a.order || 50) - (b.order || 50));
     if (store.get('crt', false)) document.body.classList.add('crt');
     if (store.get('colorsafe', false)) document.body.classList.add('colorsafe');
+    docModeOn = store.get('docmode', true);
     buildChrome();
+    applyDocMode();
     document.body.appendChild(Boss.build());
     buildChomps();
     if (global.Gags) global.Gags.init();

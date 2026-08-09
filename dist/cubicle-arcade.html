@@ -2575,7 +2575,8 @@ body.home-doc .ticker,
 body.home-doc .bigscreen-note,
 body.home-doc .chomps { display: none !important; }   /* keep the mascot off the professional page (still there in games) */
 
-body.home-doc {
+body.home-doc,
+body.docmode {
   --doc-desk:  #e6e7ea;
   --doc-paper: #ffffff;
   --doc-ink:   #1f2329;
@@ -2585,10 +2586,14 @@ body.home-doc {
   --doc-rule2: #d3d6dc;
   --doc-line:  #12151a;   /* the strong under-heading rule */
   --doc-link:  #1b4f8f;
+}
+body.home-doc,
+body.docmode.in-game {
   background: var(--doc-desk) !important;
   background-image: none !important;
 }
-:root[data-dark="1"] body.home-doc {
+:root[data-dark="1"] body.home-doc,
+:root[data-dark="1"] body.docmode {
   --doc-desk:  #0e1014;
   --doc-paper: #1b1e24;
   --doc-ink:   #e9ebef;
@@ -2719,6 +2724,106 @@ body.home-doc #view { padding: clamp(20px, 5vw, 60px) 16px; }
   .doc-h2 { flex-wrap: wrap; }
   .doc-count { margin-left: 0; width: 100%; }
 }
+
+/* ============================================================
+   DISGUISE MODE — dress the GAMES as documents too
+   With body.docmode on, the paper look extends into gameplay: a
+   game sits on a white page under a serif heading, framed like a
+   figure in a report, so from across the room it reads as
+   paperwork. The normal arcade chrome is one toggle away.
+   ============================================================ */
+
+/* the blurb reads as a document caption under the title — disguise only */
+.game-cap { display: none; }
+body.docmode .game-cap {
+  display: block; font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  font-size: 14px; font-style: italic; color: var(--doc-ink2);
+  margin: 9px 0 0; max-width: 72ch;
+}
+
+/* keep the mascot out of the disguise */
+body.docmode .chomps { display: none !important; }
+
+/* topbar becomes a calm document toolbar */
+body.docmode .topbar {
+  background: var(--doc-paper);
+  border-bottom: 1px solid var(--doc-rule2);
+  box-shadow: none;
+}
+body.docmode .brand-text,
+body.docmode .brand-mark { color: var(--doc-ink); }
+body.docmode .topbar .icon-btn,
+body.docmode .topbar .btn,
+body.docmode .topbar .search {
+  background: var(--doc-paper); color: var(--doc-ink);
+  border: 1px solid var(--doc-rule2); box-shadow: none; border-radius: 4px;
+  text-transform: none; letter-spacing: 0;
+}
+body.docmode .topbar .icon-btn:hover,
+body.docmode .topbar .btn:hover { background: var(--doc-rule); }
+body.docmode .topbar .search::placeholder { color: var(--doc-mut); }
+
+/* the view is a centered white page; the game is a figure on it */
+body.docmode.in-game:not(.bigscreen) #view {
+  max-width: 1100px; width: 100%; margin: 0 auto;
+  background: var(--doc-paper); color: var(--doc-ink);
+  border: 1px solid var(--doc-rule2); border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.05), 0 14px 40px rgba(0,0,0,.10);
+  padding: clamp(16px, 2.6vw, 34px) clamp(16px, 3.2vw, 48px) clamp(18px, 2.6vw, 40px);
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+}
+
+/* game header → document heading */
+body.docmode .gamehead {
+  background: none; border: 0; box-shadow: none; border-radius: 0;
+  border-bottom: 1px solid var(--doc-rule);
+  padding: 0 0 12px; margin: 0 0 14px; display: block;
+}
+body.docmode .gtitle {
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  text-transform: none; font-weight: 700; letter-spacing: -.01em;
+  font-size: clamp(21px, 3vw, 30px); color: var(--doc-ink);
+  margin: 6px 0 0; display: block; text-shadow: none;
+}
+body.docmode .gtitle .ge { display: none; }
+body.docmode .back {
+  font-family: Verdana, Geneva, sans-serif; font-size: 12px;
+  color: var(--doc-link); background: none; border: 0; box-shadow: none;
+  text-decoration: underline; text-underline-offset: 2px; padding: 0; text-transform: none;
+}
+body.docmode .gmeta { gap: 12px; margin-top: 9px; align-items: baseline; }
+body.docmode .gmeta .pill {
+  background: none !important; border: 0 !important; box-shadow: none !important;
+  color: var(--doc-mut); font-family: Verdana, Geneva, sans-serif; font-size: 12px;
+  padding: 0; letter-spacing: .02em; text-transform: none;
+}
+
+/* how-to reads as document body text */
+body.docmode .howto { background: none; border: 0; box-shadow: none; margin-top: 12px; }
+body.docmode .howto summary {
+  background: none; border: 0; box-shadow: none; padding: 0;
+  color: var(--doc-link); font-family: Verdana, Geneva, sans-serif; font-size: 12.5px;
+  text-decoration: underline; text-underline-offset: 2px; text-transform: none;
+}
+body.docmode .how-body {
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  color: var(--doc-ink2); background: none; border: 0; padding: 8px 0 0;
+}
+
+/* the playfield, framed like a figure in a report */
+body.docmode.in-game .stage {
+  background: var(--doc-paper);
+  border: 1px solid var(--doc-rule2); border-radius: 2px;
+  padding: clamp(8px, 1.5vw, 16px);
+  box-shadow: inset 0 0 0 1px var(--doc-rule);
+}
+body.docmode .status {
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  color: var(--doc-ink2);
+}
+
+/* the disguise toggle button sitting in the arcade topbar */
+.docmode-btn { white-space: nowrap; }
 
 </style>
 </head>
@@ -4662,6 +4767,10 @@ body.home-doc #view { padding: clamp(20px, 5vw, 60px) 16px; }
   let currentGame = null;
   let bossOn = false;
   let bigOn = false;
+  /* disguise mode: dress the whole app (home AND games) as plain documents, so
+     from across the room it reads as paperwork. Default on; the normal arcade
+     game UI is one toggle away. */
+  let docModeOn = true;
   /* The site's display name. Editable straight from the top bar (click it and
      type); defaults to a forgettable "Docs" so a glance at the header or the
      browser tab gives nothing away. Drives both the brand and the tab title. */
@@ -4711,9 +4820,25 @@ body.home-doc #view { padding: clamp(20px, 5vw, 60px) 16px; }
       store.set('diff', DIFFS[diffIdx].id);
       syncDiffBtn();
       route();          // restart whatever is running so the change bites immediately
+    },
+    docMode() { return docModeOn; },
+    setDocMode(on) {
+      docModeOn = on == null ? !docModeOn : !!on;
+      store.set('docmode', docModeOn);
+      applyDocMode();
     }
   };
   global.Arcade = Arcade;
+
+  /* toggle the whole-app document disguise. Pure CSS via a body class, so it
+     flips live with no re-render; the two toggle controls resync their labels. */
+  const docBtnSyncers = [];
+  function applyDocMode() {
+    document.body.classList.toggle('docmode', docModeOn);
+    docBtnSyncers.forEach((fn) => { try { fn(); } catch (e) { /* ignore */ } });
+    applyDocTitle();
+    if (currentGame) fitStageSoon();   // chrome height changed; re-fit the playfield
+  }
 
   /* ---------------- big screen ---------------- */
   /* Canvas games grow via CSS (the .gcanvas max-width rule). The ~14 DOM-board
@@ -4893,11 +5018,24 @@ body.home-doc #view { padding: clamp(20px, 5vw, 60px) 16px; }
       store.set('brand', t); applyDocTitle();
     });
 
+    /* the disguise toggle: normal arcade chrome is always one click away */
+    const docBtn = h('button', { class: 'btn docmode-btn', type: 'button' });
+    const syncDocBtn = () => {
+      docBtn.textContent = docModeOn ? 'View: Documents' : 'View: Arcade';
+      docBtn.title = docModeOn
+        ? 'Games are disguised as documents. Click for the normal arcade view.'
+        : 'Normal arcade view. Click to disguise everything as documents.';
+    };
+    docBtn.addEventListener('click', () => Arcade.setDocMode());
+    docBtnSyncers.push(syncDocBtn);
+    syncDocBtn();
+
     const bar = h('header', { class: 'topbar' },
       h('span', { class: 'brand' },
         h('a', { class: 'brand-mark', href: '#', title: 'Home', html: Icons.svg('dice', 19) }),
         brandText),
       h('div', { class: 'topbar-spacer' }),
+      docBtn,
       diffBtn,
       search,
       h('button', {
@@ -5394,9 +5532,14 @@ body.home-doc #view { padding: clamp(20px, 5vw, 60px) 16px; }
     }, 'Save an offline copy');
     dlBtn.addEventListener('click', () => { if (Arcade._downloadSelf) Arcade._downloadSelf(dlBtn); });
 
+    const viewBtn = h('button', { class: 'doc-tool', type: 'button', title: 'Whether games open disguised as documents or in the normal arcade view' });
+    const syncViewBtn = () => { viewBtn.textContent = 'Game view: ' + (docModeOn ? 'Documents' : 'Arcade'); };
+    viewBtn.addEventListener('click', () => { Arcade.setDocMode(); syncViewBtn(); });
+    syncViewBtn();
+
     const sep = () => h('span', { class: 'doc-sep' }, '·');
     const tools = h('div', { class: 'doc-tools' },
-      apBtn, sep(), sndBtn, sep(), dlBtn, sep(),
+      viewBtn, sep(), apBtn, sep(), sndBtn, sep(), dlBtn, sep(),
       h('a', { class: 'doc-tool', href: '#stats' }, 'Activity log'));
 
     const foot = h('footer', { class: 'doc-foot' },
@@ -5571,6 +5714,7 @@ body.home-doc #view { padding: clamp(20px, 5vw, 60px) 16px; }
           h('span', { class: 'pill diff-tag d-' + Arcade.diff().id }, Arcade.diff().label),
           daily ? h('span', { class: 'pill daily-tag', title: 'Everyone gets this exact board today' }, 'DAILY ' + daily) : null,
           bestEl),
+        h('p', { class: 'game-cap' }, g.blurb),   // reads as a document caption in disguise mode; hidden otherwise
         howto),
       toolbar, statusEl, stage);
 
@@ -5673,7 +5817,9 @@ body.home-doc #view { padding: clamp(20px, 5vw, 60px) 16px; }
     games.sort((a, b) => (a.order || 50) - (b.order || 50));
     if (store.get('crt', false)) document.body.classList.add('crt');
     if (store.get('colorsafe', false)) document.body.classList.add('colorsafe');
+    docModeOn = store.get('docmode', true);
     buildChrome();
+    applyDocMode();
     document.body.appendChild(Boss.build());
     buildChomps();
     if (global.Gags) global.Gags.init();

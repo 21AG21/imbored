@@ -2560,7 +2560,8 @@ body.home-doc .ticker,
 body.home-doc .bigscreen-note,
 body.home-doc .chomps { display: none !important; }   /* keep the mascot off the professional page (still there in games) */
 
-body.home-doc {
+body.home-doc,
+body.docmode {
   --doc-desk:  #e6e7ea;
   --doc-paper: #ffffff;
   --doc-ink:   #1f2329;
@@ -2570,10 +2571,14 @@ body.home-doc {
   --doc-rule2: #d3d6dc;
   --doc-line:  #12151a;   /* the strong under-heading rule */
   --doc-link:  #1b4f8f;
+}
+body.home-doc,
+body.docmode.in-game {
   background: var(--doc-desk) !important;
   background-image: none !important;
 }
-:root[data-dark="1"] body.home-doc {
+:root[data-dark="1"] body.home-doc,
+:root[data-dark="1"] body.docmode {
   --doc-desk:  #0e1014;
   --doc-paper: #1b1e24;
   --doc-ink:   #e9ebef;
@@ -2704,3 +2709,103 @@ body.home-doc #view { padding: clamp(20px, 5vw, 60px) 16px; }
   .doc-h2 { flex-wrap: wrap; }
   .doc-count { margin-left: 0; width: 100%; }
 }
+
+/* ============================================================
+   DISGUISE MODE — dress the GAMES as documents too
+   With body.docmode on, the paper look extends into gameplay: a
+   game sits on a white page under a serif heading, framed like a
+   figure in a report, so from across the room it reads as
+   paperwork. The normal arcade chrome is one toggle away.
+   ============================================================ */
+
+/* the blurb reads as a document caption under the title — disguise only */
+.game-cap { display: none; }
+body.docmode .game-cap {
+  display: block; font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  font-size: 14px; font-style: italic; color: var(--doc-ink2);
+  margin: 9px 0 0; max-width: 72ch;
+}
+
+/* keep the mascot out of the disguise */
+body.docmode .chomps { display: none !important; }
+
+/* topbar becomes a calm document toolbar */
+body.docmode .topbar {
+  background: var(--doc-paper);
+  border-bottom: 1px solid var(--doc-rule2);
+  box-shadow: none;
+}
+body.docmode .brand-text,
+body.docmode .brand-mark { color: var(--doc-ink); }
+body.docmode .topbar .icon-btn,
+body.docmode .topbar .btn,
+body.docmode .topbar .search {
+  background: var(--doc-paper); color: var(--doc-ink);
+  border: 1px solid var(--doc-rule2); box-shadow: none; border-radius: 4px;
+  text-transform: none; letter-spacing: 0;
+}
+body.docmode .topbar .icon-btn:hover,
+body.docmode .topbar .btn:hover { background: var(--doc-rule); }
+body.docmode .topbar .search::placeholder { color: var(--doc-mut); }
+
+/* the view is a centered white page; the game is a figure on it */
+body.docmode.in-game:not(.bigscreen) #view {
+  max-width: 1100px; width: 100%; margin: 0 auto;
+  background: var(--doc-paper); color: var(--doc-ink);
+  border: 1px solid var(--doc-rule2); border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.05), 0 14px 40px rgba(0,0,0,.10);
+  padding: clamp(16px, 2.6vw, 34px) clamp(16px, 3.2vw, 48px) clamp(18px, 2.6vw, 40px);
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+}
+
+/* game header → document heading */
+body.docmode .gamehead {
+  background: none; border: 0; box-shadow: none; border-radius: 0;
+  border-bottom: 1px solid var(--doc-rule);
+  padding: 0 0 12px; margin: 0 0 14px; display: block;
+}
+body.docmode .gtitle {
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  text-transform: none; font-weight: 700; letter-spacing: -.01em;
+  font-size: clamp(21px, 3vw, 30px); color: var(--doc-ink);
+  margin: 6px 0 0; display: block; text-shadow: none;
+}
+body.docmode .gtitle .ge { display: none; }
+body.docmode .back {
+  font-family: Verdana, Geneva, sans-serif; font-size: 12px;
+  color: var(--doc-link); background: none; border: 0; box-shadow: none;
+  text-decoration: underline; text-underline-offset: 2px; padding: 0; text-transform: none;
+}
+body.docmode .gmeta { gap: 12px; margin-top: 9px; align-items: baseline; }
+body.docmode .gmeta .pill {
+  background: none !important; border: 0 !important; box-shadow: none !important;
+  color: var(--doc-mut); font-family: Verdana, Geneva, sans-serif; font-size: 12px;
+  padding: 0; letter-spacing: .02em; text-transform: none;
+}
+
+/* how-to reads as document body text */
+body.docmode .howto { background: none; border: 0; box-shadow: none; margin-top: 12px; }
+body.docmode .howto summary {
+  background: none; border: 0; box-shadow: none; padding: 0;
+  color: var(--doc-link); font-family: Verdana, Geneva, sans-serif; font-size: 12.5px;
+  text-decoration: underline; text-underline-offset: 2px; text-transform: none;
+}
+body.docmode .how-body {
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  color: var(--doc-ink2); background: none; border: 0; padding: 8px 0 0;
+}
+
+/* the playfield, framed like a figure in a report */
+body.docmode.in-game .stage {
+  background: var(--doc-paper);
+  border: 1px solid var(--doc-rule2); border-radius: 2px;
+  padding: clamp(8px, 1.5vw, 16px);
+  box-shadow: inset 0 0 0 1px var(--doc-rule);
+}
+body.docmode .status {
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  color: var(--doc-ink2);
+}
+
+/* the disguise toggle button sitting in the arcade topbar */
+.docmode-btn { white-space: nowrap; }
