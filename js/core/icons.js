@@ -204,7 +204,8 @@
     busywork: p('M7 3h7l4 4v14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z', P.paper) + p('M14 3l4 4h-4z', P.grey) + line(8, 10, 16, 10, 1.4, P.teal) + line(8, 13, 16, 13, 1.4, P.grey) + line(8, 16, 13, 16, 1.4, P.grey) + p('M15 15l5-2 2 3-5 3-2 1 .5-2z', P.yellow),
     spam: r(3, 6, 18, 13, P.paper) + p('M3 6l9 7 9-7', 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round"') + c(18, 7, 4.5, P.tomato) + line(18, 5, 18, 8, 1.6, P.paper) + c(18, 9.6, 0.9, P.paper),
     turf: line(8, 7, 16, 7, 1.6, INK) + line(16, 7, 12, 17, 1.6, INK) + line(12, 17, 8, 7, 1.6, INK) + c(8, 7, 3.2, P.tomato) + c(16, 7, 3.2, P.lime) + c(12, 17, 3.2, P.teal),
-    find: r(3, 3, 18, 18, P.paper) + r(4.5, 4.5, 4, 4, P.banana) + r(9.5, 9.5, 4, 4, P.banana) + r(14.5, 14.5, 4, 4, P.banana) + line(9, 3, 9, 21, 1, P.grey) + line(15, 3, 15, 21, 1, P.grey) + line(3, 9, 21, 9, 1, P.grey) + line(3, 15, 21, 15, 1, P.grey)
+    find: r(3, 3, 18, 18, P.paper) + r(4.5, 4.5, 4, 4, P.banana) + r(9.5, 9.5, 4, 4, P.banana) + r(14.5, 14.5, 4, 4, P.banana) + line(9, 3, 9, 21, 1, P.grey) + line(15, 3, 15, 21, 1, P.grey) + line(3, 9, 21, 9, 1, P.grey) + line(3, 15, 21, 15, 1, P.grey),
+    bubble: c(8, 7, 3.4, P.tomato) + c(15, 7, 3.4, P.teal) + c(11.5, 13, 3.4, P.banana) + c(7, 15, 3.4, P.lime) + c(16, 15, 3.4, P.grape) + c(7, 6, 1, P.paper) + c(14, 6, 1, P.paper)
   };
 
   const Icons = {
