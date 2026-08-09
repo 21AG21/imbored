@@ -202,7 +202,8 @@
     powder: p('M6 4h12l-6 8z', P.yellow) + p('M6 20h12l-6-8z', P.grey) + c(12, 13, 1.1, P.yellow) + c(12, 16, 1, P.yellow) + line(5, 4, 19, 4, 2, P.grey) + line(5, 20, 19, 20, 2, P.grey),
     keys: r(2, 7, 20, 11, P.dark) + r(4, 9, 2.4, 2, P.paper) + r(7.5, 9, 2.4, 2, P.paper) + r(11, 9, 2.4, 2, P.paper) + r(14.5, 9, 2.4, 2, P.paper) + r(18, 9, 1.8, 2, P.paper) + r(4, 12, 2.4, 2, P.paper) + r(7.5, 12, 2.4, 2, P.paper) + r(11, 12, 2.4, 2, P.paper) + r(14.5, 12, 2.4, 2, P.paper) + r(7, 15, 10, 2, P.paper),
     busywork: p('M7 3h7l4 4v14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z', P.paper) + p('M14 3l4 4h-4z', P.grey) + line(8, 10, 16, 10, 1.4, P.teal) + line(8, 13, 16, 13, 1.4, P.grey) + line(8, 16, 13, 16, 1.4, P.grey) + p('M15 15l5-2 2 3-5 3-2 1 .5-2z', P.yellow),
-    spam: r(3, 6, 18, 13, P.paper) + p('M3 6l9 7 9-7', 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round"') + c(18, 7, 4.5, P.tomato) + line(18, 5, 18, 8, 1.6, P.paper) + c(18, 9.6, 0.9, P.paper)
+    spam: r(3, 6, 18, 13, P.paper) + p('M3 6l9 7 9-7', 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round"') + c(18, 7, 4.5, P.tomato) + line(18, 5, 18, 8, 1.6, P.paper) + c(18, 9.6, 0.9, P.paper),
+    turf: line(8, 7, 16, 7, 1.6, INK) + line(16, 7, 12, 17, 1.6, INK) + line(12, 17, 8, 7, 1.6, INK) + c(8, 7, 3.2, P.tomato) + c(16, 7, 3.2, P.lime) + c(12, 17, 3.2, P.teal)
   };
 
   const Icons = {
