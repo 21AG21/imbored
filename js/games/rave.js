@@ -1,11 +1,11 @@
 /* Rave — the anti-panic key. Where the backtick turns the site into a spreadsheet,
  * this turns the whole screen into a screaming rainbow nightclub, on purpose, to
  * make a hovering boss decide they saw nothing and leave. Full-viewport takeover.
- * A swarm of fake pointers now moves WITH your hand instead of wandering, so the
- * old "yours is the one that follows your mouse" tell is gone — the whole crowd
- * surges in whatever direction you push. Stopping it is a secret. Carries a
- * photosensitivity + loud-audio heads-up because the flashing and screeching are
- * both very real. */
+ * Every pointer is now an identical white circle, and the whole swarm drifts WITH
+ * your hand instead of wandering, so there is no "yours is the one that follows
+ * your mouse" tell left. There is no button and no Escape — the only way out is
+ * to hold a secret key combo. Carries a photosensitivity + loud-audio heads-up
+ * because the flashing and screeching are both very real. */
 (function () {
   'use strict';
   const { h, clamp } = Engine;
@@ -120,23 +120,19 @@
     let overlay = null, raf = 0;
     const screamer = makeScreamer();
 
-    /* a classic arrow pointer, drawn on the canvas so we can spray dozens of
-       identical decoys and hide which one is really yours */
-    function drawCursor(ctx, x, y, s) {
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.scale(s, s);
+    /* every pointer is now just a plain white circle — identical dots, so there
+       is nothing distinctive about yours to latch onto in the swarm */
+    function drawDot(ctx, x, y, r) {
       ctx.beginPath();
-      ctx.moveTo(0, 0); ctx.lineTo(0, 17); ctx.lineTo(4.2, 13); ctx.lineTo(7, 19.5);
-      ctx.lineTo(9.6, 18.4); ctx.lineTo(6.9, 12); ctx.lineTo(12, 12); ctx.closePath();
-      ctx.fillStyle = '#fff'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.6;
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff'; ctx.strokeStyle = '#111';
+      ctx.lineWidth = Math.max(1, r * 0.18);
       ctx.fill(); ctx.stroke();
-      ctx.restore();
     }
 
     function start() {
-      root.replaceChildren(h('p', { class: 'rave-hint' }, 'The party owns your whole screen — and a swarm of fake pointers now moves whichever way you move, so you cannot pick yours out of the crowd anymore. Turning it off is a secret you have to find.'));
-      api.status('RAVE ENGAGED. Loud, bright, and hard to kill — the fake cursors follow your hand now, so the old trick is dead. There is a way out, but you have to discover it.');
+      root.replaceChildren(h('p', { class: 'rave-hint' }, 'The party owns your whole screen — and it is now a blizzard of identical circles that all drift whichever way you move, so your real one is completely lost in the swarm. There is no button and no Escape. Turning it off is a secret you have to find, and hang onto.'));
+      api.status('RAVE ENGAGED. Loud, bright, and very hard to kill — every pointer is an identical circle and the whole swarm follows your hand, so there is no tell left. There is a way out, but you have to discover it and commit to it.');
 
       overlay = h('div', { class: 'rave-overlay', tabindex: '0', style: { cursor: 'none' } });
       const cv = h('canvas', { class: 'rave-canvas' });
@@ -214,18 +210,18 @@
         ctx.restore();
 
         /* the whole swarm rides your last mouse move; the impulse decays so the
-           crowd coasts to a stop when your hand does — same as your real cursor */
-        const cs = scaleX * 1.9;                       // pointer size in device px
+           crowd coasts to a stop when your hand does — same as your real circle */
+        const dotR = scaleX * 9;                        // dot radius in device px
         for (const d of decoys) {
           d.x = wrap(d.x + driftX + (Math.random() - 0.5) * 1.4, innerWidth);
           d.y = wrap(d.y + driftY + (Math.random() - 0.5) * 1.4, innerHeight);
-          drawCursor(ctx, d.x * scaleX, d.y * scaleY, cs);
+          drawDot(ctx, d.x * scaleX, d.y * scaleY, dotR);
         }
         driftX *= 0.72; driftY *= 0.72;
         if (Math.abs(driftX) < 0.05) driftX = 0;
         if (Math.abs(driftY) < 0.05) driftY = 0;
-        /* your real pointer, identical, drawn last so it is buried in the pile */
-        if (haveReal) drawCursor(ctx, realX * scaleX, realY * scaleY, cs);
+        /* your real circle, identical, drawn last so it is buried in the pile */
+        if (haveReal) drawDot(ctx, realX * scaleX, realY * scaleY, dotR);
 
         raf = requestAnimationFrame(frame);
       }
@@ -233,14 +229,29 @@
       screamer.start();
 
       const kill = () => { location.hash = ''; };
-      /* No button, no "press any key". The way out is Shift+S — never shown on
-         screen, so finding it is the whole game. Escape is kept as an unadvertised
-         safety hatch (flashing + loud audio means there must be a guaranteed exit),
-         but it is not something the how-to brags about. */
-      bagg.add(Engine.onKey((e) => {
-        if (e.key === 'Escape') { kill(); return true; }
-        if (e.shiftKey && (e.code === 'KeyS' || (e.key || '').toLowerCase() === 's')) { kill(); return true; }
-      }));
+      /* While the rave is up it OWNS the keyboard: a capture-phase listener eats
+         every keydown before the site's global shortcuts (Escape-to-exit, the
+         panic key, difficulty keys…) can see it, so none of them bail you out.
+         Escape now does nothing. The single way out is to HOLD Shift+S — a quick
+         tap will not do it; you must press it and keep both keys down for a beat,
+         and releasing either one resets the hold. (You can still close the tab or
+         reload — this is a prank toy, not a real trap.) */
+      const HOLD_MS = 1500;
+      let holdTimer = 0;
+      const clearHold = () => { if (holdTimer) { clearTimeout(holdTimer); holdTimer = 0; } };
+      bagg.listen(window, 'keydown', (e) => {
+        e.preventDefault();
+        e.stopImmediatePropagation();                              // nothing else on the page hears this key
+        if (e.shiftKey && (e.code === 'KeyS' || (e.key || '').toLowerCase() === 's')) {
+          if (!holdTimer) holdTimer = setTimeout(kill, HOLD_MS);   // keydown repeats while held; only the first arms it
+        }
+      }, true);
+      bagg.listen(window, 'keyup', (e) => {
+        e.stopImmediatePropagation();
+        const k = (e.key || '').toLowerCase();
+        if (k === 's' || k === 'shift') clearHold();               // release either key and you start over
+      }, true);
+      bagg.add(clearHold);
       overlay.focus();
     }
 
@@ -261,9 +272,9 @@
     tags: ['toy', 'prank', 'boss'],
     how: [
       'Opening it takes over the whole screen with fast spinning colour, giant flashing text, and loud, ever-changing animal screeches. It fires the instant you open it, with no confirmation.',
-      'It sprays dozens of fake mouse pointers across the screen. They no longer wander on their own — the whole swarm now moves in whatever direction you move your mouse, so you truly cannot tell which pointer is yours.',
-      'There is no stop button and no obvious key. Getting out is a secret you have to figure out — that is the point.',
-      'It flashes fast and bright and gets loud, so open it only when you actually want that. (If you ever genuinely need out and cannot find the trick, Escape always works.)',
+      'It sprays dozens of identical white circles across the screen. The whole swarm drifts in whatever direction you move your mouse, so your real one is completely lost in the crowd — there is no tell.',
+      'There is no stop button, no press-any-key, and Escape does nothing. Getting out is a secret you have to figure out and hold onto — that is the point. (You can always just close the tab.)',
+      'It flashes fast and bright and gets loud, so open it only when you actually want that.',
       'Pair it with the panic key (the backtick turns the site into a spreadsheet) for cover at both extremes.',
       'Press Shift and the backtick key (the ~ key above Tab) to summon it from anywhere.'
     ],
