@@ -71,7 +71,7 @@
     let cellEls;
     function buildBoard() {
       boardWrap.replaceChildren();
-      const b = h('div', { class: 'board', style: { gridTemplateColumns: 'repeat(' + W + ', 30px)' } });
+      const b = h('div', { class: 'board', style: { gridTemplateColumns: 'repeat(' + W + ', var(--msc, 30px))' } });
       cellEls = [];
       for (let y = 0; y < Hh; y++) {
         for (let x = 0; x < W; x++) {

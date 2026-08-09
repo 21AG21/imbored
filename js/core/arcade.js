@@ -94,6 +94,32 @@
   global.Arcade = Arcade;
 
   /* ---------------- big screen ---------------- */
+  /* Canvas games grow via CSS (the .gcanvas max-width rule). The ~14 DOM-board
+     games are fixed-pixel grids, so in big-screen mode they were left stranded
+     at ~330px on an empty page. Scale the whole board to fill the freed space —
+     transform keeps every cell's hit area mapped, so they stay clickable. */
+  function fitBigDOM() {
+    const stage = document.querySelector('#view .stage');
+    if (!stage) return;
+    stage.style.transform = '';
+    stage.style.transformOrigin = '';
+    if (!bigOn || stage.querySelector('canvas')) return;   // off, or a canvas game (scales itself)
+    const rect = stage.getBoundingClientRect();
+    /* the stage is full-width but its board is a narrow centred child, so size to
+       the widest real child, not the stage's own width */
+    let natW = 0;
+    for (const c of stage.children) { const r = c.getBoundingClientRect(); if (r.height > 0) natW = Math.max(natW, r.width); }
+    const natH = stage.scrollHeight;
+    if (!natW || !natH) return;
+    const availH = global.innerHeight - rect.top - 16;
+    const availW = global.innerWidth - 24;
+    const scale = Math.min(availW / natW, availH / natH);
+    if (scale > 1.03) {
+      stage.style.transformOrigin = 'top center';
+      stage.style.transform = 'scale(' + Math.min(scale, 3) + ')';
+    }
+  }
+  Arcade.fitBig = fitBigDOM;
   function setBig(on) {
     bigOn = on;
     document.body.classList.toggle('bigscreen', bigOn);
@@ -105,7 +131,10 @@
     } else if (!bigOn && document.fullscreenElement && document.exitFullscreen) {
       document.exitFullscreen().catch(() => { });
     }
+    requestAnimationFrame(fitBigDOM);
+    setTimeout(fitBigDOM, 90);
   }
+  global.addEventListener('resize', () => { if (bigOn) fitBigDOM(); });
   Arcade.toggleBig = () => setBig(!bigOn);
 
   let skinSel = null;
@@ -977,6 +1006,7 @@
     currentDispose = () => { if (typeof dispose === 'function') dispose(); if (tut) tut.halt(); };
     currentGame = g;
     applyDocTitle();
+    if (bigOn) { requestAnimationFrame(fitBigDOM); setTimeout(fitBigDOM, 90); }
   }
 
   /* ---------------- router ---------------- */
