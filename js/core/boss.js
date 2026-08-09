@@ -561,11 +561,122 @@
     };
   }
 
+  /* place the caret at the end of an editable node */
+  function caretEnd(node) {
+    node.focus();
+    const r = document.createRange();
+    r.selectNodeContents(node); r.collapse(false);
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+  }
+
+  /* ============================ 7. SLIDES ============================ */
+  const SLIDE_TITLES = ['Q3 Business Review', 'Where we are', 'The numbers', 'What changed',
+    'Risks and mitigations', 'What we need from you', 'Timeline', 'Appendix'];
+  function buildSlides() {
+    const title = h('div', { class: 'sl-title', contenteditable: 'true', spellcheck: 'false' }, 'Q3 Business Review');
+    const sub = h('div', { class: 'sl-sub', contenteditable: 'true', spellcheck: 'false' }, 'Leadership sync · Confidential — do not forward');
+    const bullets = h('ul', { class: 'sl-bullets', contenteditable: 'true', spellcheck: 'false' },
+      h('li', null, 'Revenue is tracking slightly ahead of plan'),
+      h('li', null, 'Two initiatives paused to protect the roadmap'),
+      h('li', null, 'Hiring held until the reforecast lands'));
+    const rail = h('div', { class: 'sl-rail' }, SLIDE_TITLES.map((t, i) =>
+      h('div', { class: 'sl-thumb' + (i === 0 ? ' active' : '') },
+        h('span', { class: 'sl-thumb-n' }, String(i + 1)),
+        h('div', { class: 'sl-thumb-box' }, h('span', { class: 'sl-thumb-t' }, t)))));
+    return {
+      focus: () => caretEnd(bullets),
+      el: h('div', { class: 'skin slides' },
+        h('div', { class: 'sl-bar' },
+          h('span', { class: 'sl-file' }, 'Q3 Business Review'),
+          h('span', { class: 'sl-menu' }, ['File', 'Edit', 'View', 'Insert', 'Slide', 'Arrange', 'Help'].map((m) => h('span', null, m))),
+          h('span', { class: 'sl-present' }, '▷ Present')),
+        h('div', { class: 'sl-body' }, rail,
+          h('div', { class: 'sl-stage' }, h('div', { class: 'sl-slide' }, title, sub, bullets))),
+        h('div', { class: 'sl-foot' }, h('span', null, 'Slide 1 of ' + SLIDE_TITLES.length), h('span', null, 'Click to add speaker notes')))
+    };
+  }
+
+  /* ============================ 8. CHAT ============================ */
+  const CHAT_MSGS = [
+    { who: 'Priya K.', t: '9:31', m: 'did we ever land on the Friday slot?' },
+    { who: 'you', t: '9:32', m: 'not officially — I’ll send a note round.', me: true },
+    { who: 'S. Okafor', t: '9:33', m: '+1 to moving it, it clashes with the other standup' },
+    { who: 'R. Patel', t: '9:34', m: 'either works for me, just not before coffee' },
+    { who: 'Priya K.', t: '9:36', m: 'thanks both 🙏' }
+  ];
+  function buildChat() {
+    const input = h('div', { class: 'ch-input', contenteditable: 'true', spellcheck: 'false', 'data-ph': 'Message #general' });
+    const feed = h('div', { class: 'ch-feed' }, CHAT_MSGS.map((x) =>
+      h('div', { class: 'ch-msg' + (x.me ? ' me' : '') },
+        h('span', { class: 'ch-av' }, x.who === 'you' ? 'K' : x.who[0]),
+        h('div', { class: 'ch-bubble' },
+          h('div', { class: 'ch-meta' }, h('b', null, x.who), h('span', { class: 'ch-time' }, x.t)),
+          h('div', { class: 'ch-text' }, x.m)))));
+    const send = () => {
+      const txt = input.textContent.trim();
+      if (!txt) return;
+      feed.appendChild(h('div', { class: 'ch-msg me' },
+        h('span', { class: 'ch-av' }, 'K'),
+        h('div', { class: 'ch-bubble' },
+          h('div', { class: 'ch-meta' }, h('b', null, 'you'), h('span', { class: 'ch-time' }, 'now')),
+          h('div', { class: 'ch-text' }, txt))));
+      input.textContent = '';
+      feed.scrollTop = feed.scrollHeight;
+    };
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
+    return {
+      focus: () => { input.focus(); },
+      el: h('div', { class: 'skin chat' },
+        h('div', { class: 'ch-side' },
+          h('div', { class: 'ch-workspace' }, h('span', { class: 'ch-ws-mark' }, 'N'), 'Northwind'),
+          h('div', { class: 'ch-sec' }, 'Channels'),
+          ['general', 'random', 'engineering', 'design', 'announcements'].map((c, i) =>
+            h('div', { class: 'ch-chan' + (i === 0 ? ' active' : '') }, h('span', { class: 'ch-hash' }, '#'), c)),
+          h('div', { class: 'ch-sec' }, 'Direct messages'),
+          ['Priya K.', 'S. Okafor', 'R. Patel', 'Facilities'].map((d) =>
+            h('div', { class: 'ch-dm' }, h('span', { class: 'ch-dot' }), d))),
+        h('div', { class: 'ch-main' },
+          h('div', { class: 'ch-head' }, h('b', null, '# general'), h('span', { class: 'ch-topic' }, 'Company-wide chatter and logistics')),
+          feed,
+          h('div', { class: 'ch-compose' }, input, h('span', { class: 'ch-sendbtn' }, 'Send'))))
+    };
+  }
+
+  /* ============================ 9. KANBAN ============================ */
+  const KANBAN = [
+    { name: 'Backlog', cards: [['Refactor the auth flow', 'ENG-214'], ['Write the Q3 retro doc', 'OPS-88'], ['Investigate the flaky test', 'ENG-231']] },
+    { name: 'In progress', cards: [['Billing migration — cohort 2', 'ENG-198'], ['Update onboarding copy', 'DES-40']] },
+    { name: 'In review', cards: [['PR #482: cache headers', 'ENG-205']] },
+    { name: 'Done', cards: [['Ship the status page', 'OPS-71'], ['Rotate the API credentials', 'SEC-12'], ['Archive the old repo', 'ENG-180']] }
+  ];
+  const KAN_TAGS = ['#5b7', '#39c', '#c85', '#96b'];
+  function buildKanban() {
+    const cols = KANBAN.map((col, ci) => h('div', { class: 'kb-col' },
+      h('div', { class: 'kb-colhead' }, h('span', null, col.name), h('span', { class: 'kb-count' }, String(col.cards.length))),
+      h('div', { class: 'kb-cards' }, col.cards.map(([t, id]) =>
+        h('div', { class: 'kb-card' },
+          h('span', { class: 'kb-tag', style: { background: KAN_TAGS[ci % KAN_TAGS.length] } }),
+          h('div', { class: 'kb-card-t' }, t),
+          h('div', { class: 'kb-card-foot' }, h('span', { class: 'kb-id' }, id), h('span', { class: 'kb-ava' }, 'K')))))));
+    return {
+      focus: () => { },
+      el: h('div', { class: 'skin kanban' },
+        h('div', { class: 'kb-bar' },
+          h('span', { class: 'kb-file' }, 'Sprint 34 — Platform'),
+          h('span', { class: 'kb-menu' }, ['Board', 'Backlog', 'Timeline', 'Reports'].map((m, i) => h('span', { class: i === 0 ? 'on' : '' }, m))),
+          h('span', { class: 'kb-avatars' }, ['K', 'P', 'S'].map((a) => h('span', { class: 'kb-ava' }, a)))),
+        h('div', { class: 'kb-board' }, cols))
+    };
+  }
+
   /* ============================ shell ============================ */
   const SKINS = [
     { id: 'docs', label: 'Doc', icon: 'docs', title: () => curDoc().title + ' - Docs', build: buildDocs },
     { id: 'sheet', label: 'Spreadsheet', icon: 'sheet', title: () => 'Q3 Regional Forecast — v7 (final)', build: buildSheet },
+    { id: 'slides', label: 'Slides', icon: 'sheet', title: () => 'Q3 Business Review - Slides', build: buildSlides },
     { id: 'inbox', label: 'Inbox', icon: 'inbox', title: () => 'Inbox (3) - Mail', build: buildInbox },
+    { id: 'chat', label: 'Chat', icon: 'inbox', title: () => '#general - Chat', build: buildChat },
+    { id: 'kanban', label: 'Board', icon: 'sheet', title: () => 'Sprint 34 - Board', build: buildKanban },
     { id: 'term', label: 'Terminal', icon: 'term', title: () => 'bash - ~/work/platform', build: buildTerm },
     { id: 'cal', label: 'Calendar', icon: 'sheet', title: () => 'Calendar - ' + CAL_MONTHS[new Date().getMonth()] + ' ' + new Date().getFullYear(), build: buildCalendar },
     { id: 'web', label: 'Any website', icon: 'web', title: () => hostOf(webUrl), build: buildWeb }
