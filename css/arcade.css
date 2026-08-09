@@ -2271,3 +2271,51 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 .stp-info { display: flex; flex-direction: column; line-height: 1.3; }
 .stp-cost { font: 600 11px "Courier New", monospace; color: var(--ink2); }
 .stp-buy:disabled { opacity: .5; }
+
+/* ================= Five in a Row (gomoku) ================= */
+.gomoku { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 12px; width: 100%; }
+.gk-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
+.gk-msg.win { color: var(--lime); } .gk-msg.lose { color: var(--tomato); }
+.gk-grid { display: grid; gap: 2px; width: 100%; max-width: 468px; aspect-ratio: 1; background: var(--ink); border: 3px solid var(--ink); box-shadow: var(--hard); }
+.gk-cell { background: #d9b66a; border: 0; padding: 0; cursor: pointer; position: relative; }
+.gk-cell.b::after, .gk-cell.w::after { content: ''; position: absolute; inset: 11%; border-radius: 50%; }
+.gk-cell.b::after { background: radial-gradient(circle at 35% 30%, #555, #0d0d0d); }
+.gk-cell.w::after { background: radial-gradient(circle at 35% 30%, #fff, #cbcbcb); box-shadow: inset 0 0 0 1px #9a9a9a; }
+.gk-cell.last::before { content: ''; position: absolute; inset: 28%; border: 2px solid var(--tomato); border-radius: 50%; z-index: 1; }
+.gk-cell.win { box-shadow: inset 0 0 0 3px var(--lime); }
+
+/* ================= Number Cracker (bulls & cows) ================= */
+.cracker { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 14px; width: 100%; max-width: 420px; margin: 0 auto; }
+.crk-help { font: 600 12px/1.4 Verdana, sans-serif; color: var(--ink2); text-align: center; }
+.crk-list { width: 100%; display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow: auto; }
+.crk-row { display: flex; align-items: center; justify-content: space-between; background: var(--paper2); border: 2px solid var(--ink); border-radius: 6px; padding: 6px 12px; }
+.crk-guess { display: flex; gap: 6px; }
+.crk-digit { font: 800 20px Impact, "Arial Black", sans-serif; width: 20px; text-align: center; color: var(--ink); }
+.crk-pegs { display: flex; gap: 4px; }
+.crk-peg { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--ink); background: transparent; }
+.crk-peg.bull { background: var(--ink); }
+.crk-peg.cow { background: var(--banana); }
+.crk-form { display: flex; gap: 8px; }
+.crk-input { font: 800 22px Impact, "Arial Black", sans-serif; letter-spacing: 7px; width: 150px; text-align: center; padding: 8px 8px 8px 15px; border: 3px solid var(--ink); border-radius: 6px; background: var(--label); color: var(--ink); box-shadow: var(--bevel-in); }
+.crk-input.shake { animation: ana-shake .3s; }
+.crk-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
+.crk-msg.win { color: var(--lime); } .crk-msg.lose { color: var(--tomato); }
+
+/* ================= Peg Solitaire ================= */
+.pegs { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 14px; }
+.peg-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
+.peg-msg.win { color: var(--lime); } .peg-msg.lose { color: var(--tomato); }
+.peg-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; width: 100%; max-width: 360px; }
+.peg-void { aspect-ratio: 1; }
+.peg-hole { aspect-ratio: 1; border-radius: 50%; background: var(--paper2); border: 2px solid var(--shade); cursor: pointer; padding: 0; position: relative; }
+.peg-hole.peg { background: radial-gradient(circle at 35% 30%, var(--banana), #a8791f); border: 2px solid var(--ink); box-shadow: 2px 2px 0 rgba(0,0,0,.25); }
+.peg-hole.sel { outline: 3px dashed var(--grape); outline-offset: 2px; }
+
+/* ================= Quarterly Slots ================= */
+.slots { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 16px; }
+.slot-window { display: flex; gap: 10px; background: var(--ink); padding: 12px; border: 4px solid var(--ink); border-radius: 12px; box-shadow: var(--hard); }
+.slot-reel { width: 76px; height: 96px; display: grid; place-items: center; font-size: 50px; background: var(--label); border-radius: 8px; }
+.slot-reel.hit { animation: stp-pop .3s; }
+.slot-msg { font: 700 15px Verdana, sans-serif; min-height: 22px; text-align: center; }
+.slot-msg.win { color: var(--lime); } .slot-msg.lose { color: var(--tomato); }
+.slot-btns { display: flex; gap: 10px; }

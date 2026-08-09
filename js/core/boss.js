@@ -57,7 +57,7 @@
       body: `<h1>Q3 Planning Notes</h1>
 <p><span class="muted"><i>Draft. Shared with the working group. Comments welcome by Friday.</i></span></p>
 <h2>Where we landed</h2>
-<p>Carrying three workstreams into Q3 rather than five. The two we are pausing were not failing, they were competing for the same two people. Both get revisited at the September checkpoint.</p>
+<p>Carrying three workstreams into Q3 instead of five. We paused two of them because they needed the same two people and we could not staff both at once. We look at them again at the September checkpoint.</p>
 <h2>Open questions</h2>
 <ul><li>Who owns the migration once the contractor rolls off?</li>
 <li>Do we still need the weekly sync, or is the written update enough?</li>
@@ -65,7 +65,7 @@
 <h2>Actions</h2>
 <ol><li>Draft the one-pager and circulate it before the review.</li>
 <li>Confirm headcount assumptions with Finance.</li>
-<li>Book the follow-up. Thirty minutes, not sixty.</li></ol>
+<li>Book the follow-up. Keep it to thirty minutes.</li></ol>
 <h2>Notes from the room</h2>
 <p>General agreement that scope crept because nobody was empowered to say no. Proposal is to name a single decision owner per workstream. No objections raised.</p>
 <p><br></p>`
@@ -75,13 +75,13 @@
       body: `<h1>The Long Fuse: Why 1914 Was Not an Accident</h1>
 <p><span class="muted"><i>Essay draft. ~1,500 words. Due for the seminar on the 14th.</i></span></p>
 <h2>Introduction</h2>
-<p>It is comfortable to describe the outbreak of the First World War as a tragic accident — a sequence of telegrams that arrived too late and generals who could not stop the timetables. That reading is soothing precisely because it absolves everyone. This essay argues the opposite: the war was the predictable outcome of a system built to reward brinkmanship.</p>
+<p>People often call the outbreak of the First World War an accident: telegrams that arrived too late, generals who could not stop the timetables. That version is easy to accept because it blames no one in particular. This essay argues the war was the likely result of a system that rewarded pushing every crisis to the edge.</p>
 <h2>The alliance trap</h2>
-<p>By 1914 the great powers had bound themselves into two blocs so tightly that a quarrel between the smallest members could summon the largest. Alliances meant for deterrence became conductors for escalation. Deterrence works until it is tested; then it becomes a fuse.</p>
+<p>By 1914 the great powers had tied themselves into two blocs. A quarrel between the smallest members could pull in the largest. Alliances built to prevent a war were what let a small conflict spread across the continent.</p>
 <h2>Timetables and the illusion of control</h2>
-<p>Mobilisation plans compressed political decisions into hours. Once the trains began to move, statesmen discovered they had delegated the timing of war to railway schedules drawn up a decade earlier.</p>
+<p>Mobilisation plans cut the time for political decisions down to hours. Once the trains began to move, the timing of the war was set by railway schedules written a decade earlier.</p>
 <h2>Conclusion</h2>
-<p>Contingency mattered, but it operated inside a structure engineered to convert a crisis into a catastrophe. The fuse was long. It had simply been laid years before the match.</p>
+<p>Chance mattered, but it worked inside a structure that was built to turn a crisis into a wider war. The conditions for it were in place years before the summer of 1914.</p>
 <p><br></p>`
     },
     {
@@ -89,13 +89,13 @@
       body: `<h1>Sleep, Spacing, and the Consolidation of Memory</h1>
 <p><span class="muted"><i>Working literature review. Section 2 of the thesis. References incomplete.</i></span></p>
 <h2>Abstract</h2>
-<p>This review surveys evidence that sleep does not merely rest the brain but actively reorganises what was learned during the day. Two mechanisms recur across the literature: the replay of daytime activity during slow-wave sleep, and the pruning of connections that carried little signal.</p>
+<p>This review covers evidence that sleep reorganises what was learned during the day, and does more than rest the brain. Two mechanisms come up repeatedly across the studies: the replay of daytime activity during slow-wave sleep, and the pruning of connections that carried little signal.</p>
 <h2>Key findings</h2>
 <ul><li>Declarative memories show larger overnight gains than procedural ones, though the gap narrows with practice.</li>
 <li>Naps of roughly ninety minutes reproduce much of the benefit of a full night for single tasks.</li>
 <li>Spacing study across sleep cycles outperforms massed study by a wide and stable margin.</li></ul>
 <h2>Gaps in the evidence</h2>
-<p>Sample sizes remain small and skew heavily toward undergraduates. Few studies follow retention beyond a week, so claims about durable consolidation are, at present, extrapolations.</p>
+<p>Sample sizes stay small and lean heavily toward undergraduates. Few studies track retention beyond a week, so claims about long-term consolidation go past what the current data show.</p>
 <h2>Next steps</h2>
 <p>A within-subject design tracking retention at one day, one week, and one month would address the most obvious gap.</p>
 <p><br></p>`
@@ -122,10 +122,10 @@
       title: 'In Praise of the Long Walk',
       body: `<h1>In Praise of the Long Walk</h1>
 <p><span class="muted"><i>Personal essay. Second draft. Probably still too long.</i></span></p>
-<p>There is a particular kind of thinking that will not happen at a desk. It waits until you are a mile from home, half-listening to your own footsteps, and then it arrives unannounced, as though it had been standing in the road the whole time.</p>
-<p>I have solved more problems on pavements than I ever have on paper. Not because walking makes me clever, but because it makes me patient. The body sets a rhythm the mind cannot rush, and in that enforced slowness the knots come loose on their own.</p>
-<p>The philosophers knew this. So did the poets, who wrote their best lines out loud to the hedgerows. What they shared was not genius so much as a refusal to sit still and wait for it.</p>
-<p>So when the work will not come, I no longer force it. I put on my shoes. The sentence I could not write is usually waiting somewhere around the second corner, and it is always kinder to me out there than it was at the desk.</p>
+<p>Some kinds of thinking will not happen at a desk. They show up when I am a mile from home and no longer trying to force them, as if they had been waiting on the road for me to walk past.</p>
+<p>I have worked out more problems on a walk than at my desk. Walking does not make me smarter. It slows me down, and once I slow down the problem tends to come apart on its own.</p>
+<p>Plenty of writers worked this way, walking for hours and drafting lines out loud as they went. What they had in common was a habit of not sitting at a desk waiting for the work to arrive.</p>
+<p>So when the work will not come, I stop pushing and put on my shoes. The sentence I could not write is usually there by the second corner, and it comes easier outside than it did at the desk.</p>
 <p><br></p>`
     },
     {
@@ -148,9 +148,9 @@
       title: 'Reading Response — Le Guin',
       body: `<h1>Reading Response: <i>The Left Hand of Darkness</i></h1>
 <p><span class="muted"><i>Weekly response. One page. No secondary sources this week.</i></span></p>
-<p>Le Guin sets her story on a world where the inhabitants have no fixed sex, and then declines to make that the point. The book is not about gender so much as it is about the slow, awkward, unglamorous work of learning to trust a person who is genuinely foreign to you.</p>
-<p>What stayed with me was the journey across the ice: two characters, mutually suspicious, who survive only by becoming legible to one another. The novel argues that understanding is not a flash of insight but a distance you cover on foot, at cost, with someone who could still betray you.</p>
-<p>I came in expecting a thought experiment and left with something closer to a friendship story. That the experiment recedes is, I think, the whole achievement. The strangeness stops being a premise and becomes simply the condition of the two people trying to reach each other.</p>
+<p>Le Guin sets the story on a world where people have no fixed sex, then spends most of the book somewhere else. What she keeps returning to is how two people learn to trust each other when one of them is a stranger in every way.</p>
+<p>The part that stayed with me was the trek across the ice. The two of them start out suspicious and only survive by slowly coming to understand each other. Understanding here is slow work, built over time with someone who could still turn on you.</p>
+<p>I started it expecting a thought experiment about gender and finished it reading a story about two people becoming friends. The setup fades into the background, and by the end the strangeness has settled into the situation of the two of them trying to reach each other.</p>
 <p><br></p>`
     },
     {
@@ -158,8 +158,8 @@
       body: `<h1>Application: Data Analyst, Insights Team</h1>
 <p><span class="muted"><i>Cover letter draft. Tailor the second paragraph before sending.</i></span></p>
 <p>Dear Hiring Manager,</p>
-<p>I am writing to apply for the Data Analyst position on the Insights team. Over the past three years I have turned messy operational data into decisions people actually acted on, and I would like to do that work somewhere it clearly matters.</p>
-<p>In my current role I rebuilt a weekly reporting process that took a colleague most of a day into a pipeline that runs in minutes, which freed the team to spend its time asking better questions rather than assembling the same tables. I care less about the dashboard than about whether anyone changes their mind because of it.</p>
+<p>I am writing to apply for the Data Analyst position on the Insights team. Over the past three years I have turned messy operational data into reports that teams used to make real decisions, and I would like to do that work somewhere it has an impact.</p>
+<p>In my current role I rebuilt a weekly reporting process. It used to take a colleague most of a day; now it runs in a few minutes, which gives the team time to dig into the numbers instead of rebuilding the same tables by hand. What matters to me is whether a report changes what someone decides to do.</p>
 <p>I would welcome the chance to discuss how I could help the Insights team. Thank you for your time and consideration.</p>
 <p>Sincerely,</p>
 <p>K.</p>

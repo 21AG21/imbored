@@ -2287,6 +2287,54 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 .stp-cost { font: 600 11px "Courier New", monospace; color: var(--ink2); }
 .stp-buy:disabled { opacity: .5; }
 
+/* ================= Five in a Row (gomoku) ================= */
+.gomoku { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 12px; width: 100%; }
+.gk-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
+.gk-msg.win { color: var(--lime); } .gk-msg.lose { color: var(--tomato); }
+.gk-grid { display: grid; gap: 2px; width: 100%; max-width: 468px; aspect-ratio: 1; background: var(--ink); border: 3px solid var(--ink); box-shadow: var(--hard); }
+.gk-cell { background: #d9b66a; border: 0; padding: 0; cursor: pointer; position: relative; }
+.gk-cell.b::after, .gk-cell.w::after { content: ''; position: absolute; inset: 11%; border-radius: 50%; }
+.gk-cell.b::after { background: radial-gradient(circle at 35% 30%, #555, #0d0d0d); }
+.gk-cell.w::after { background: radial-gradient(circle at 35% 30%, #fff, #cbcbcb); box-shadow: inset 0 0 0 1px #9a9a9a; }
+.gk-cell.last::before { content: ''; position: absolute; inset: 28%; border: 2px solid var(--tomato); border-radius: 50%; z-index: 1; }
+.gk-cell.win { box-shadow: inset 0 0 0 3px var(--lime); }
+
+/* ================= Number Cracker (bulls & cows) ================= */
+.cracker { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 14px; width: 100%; max-width: 420px; margin: 0 auto; }
+.crk-help { font: 600 12px/1.4 Verdana, sans-serif; color: var(--ink2); text-align: center; }
+.crk-list { width: 100%; display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow: auto; }
+.crk-row { display: flex; align-items: center; justify-content: space-between; background: var(--paper2); border: 2px solid var(--ink); border-radius: 6px; padding: 6px 12px; }
+.crk-guess { display: flex; gap: 6px; }
+.crk-digit { font: 800 20px Impact, "Arial Black", sans-serif; width: 20px; text-align: center; color: var(--ink); }
+.crk-pegs { display: flex; gap: 4px; }
+.crk-peg { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--ink); background: transparent; }
+.crk-peg.bull { background: var(--ink); }
+.crk-peg.cow { background: var(--banana); }
+.crk-form { display: flex; gap: 8px; }
+.crk-input { font: 800 22px Impact, "Arial Black", sans-serif; letter-spacing: 7px; width: 150px; text-align: center; padding: 8px 8px 8px 15px; border: 3px solid var(--ink); border-radius: 6px; background: var(--label); color: var(--ink); box-shadow: var(--bevel-in); }
+.crk-input.shake { animation: ana-shake .3s; }
+.crk-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
+.crk-msg.win { color: var(--lime); } .crk-msg.lose { color: var(--tomato); }
+
+/* ================= Peg Solitaire ================= */
+.pegs { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 14px; }
+.peg-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
+.peg-msg.win { color: var(--lime); } .peg-msg.lose { color: var(--tomato); }
+.peg-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; width: 100%; max-width: 360px; }
+.peg-void { aspect-ratio: 1; }
+.peg-hole { aspect-ratio: 1; border-radius: 50%; background: var(--paper2); border: 2px solid var(--shade); cursor: pointer; padding: 0; position: relative; }
+.peg-hole.peg { background: radial-gradient(circle at 35% 30%, var(--banana), #a8791f); border: 2px solid var(--ink); box-shadow: 2px 2px 0 rgba(0,0,0,.25); }
+.peg-hole.sel { outline: 3px dashed var(--grape); outline-offset: 2px; }
+
+/* ================= Quarterly Slots ================= */
+.slots { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 16px; }
+.slot-window { display: flex; gap: 10px; background: var(--ink); padding: 12px; border: 4px solid var(--ink); border-radius: 12px; box-shadow: var(--hard); }
+.slot-reel { width: 76px; height: 96px; display: grid; place-items: center; font-size: 50px; background: var(--label); border-radius: 8px; }
+.slot-reel.hit { animation: stp-pop .3s; }
+.slot-msg { font: 700 15px Verdana, sans-serif; min-height: 22px; text-align: center; }
+.slot-msg.win { color: var(--lime); } .slot-msg.lose { color: var(--tomato); }
+.slot-btns { display: flex; gap: 10px; }
+
 </style>
 </head>
 <body>
@@ -3579,7 +3627,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       body: `<h1>Q3 Planning Notes</h1>
 <p><span class="muted"><i>Draft. Shared with the working group. Comments welcome by Friday.</i></span></p>
 <h2>Where we landed</h2>
-<p>Carrying three workstreams into Q3 rather than five. The two we are pausing were not failing, they were competing for the same two people. Both get revisited at the September checkpoint.</p>
+<p>Carrying three workstreams into Q3 instead of five. We paused two of them because they needed the same two people and we could not staff both at once. We look at them again at the September checkpoint.</p>
 <h2>Open questions</h2>
 <ul><li>Who owns the migration once the contractor rolls off?</li>
 <li>Do we still need the weekly sync, or is the written update enough?</li>
@@ -3587,7 +3635,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 <h2>Actions</h2>
 <ol><li>Draft the one-pager and circulate it before the review.</li>
 <li>Confirm headcount assumptions with Finance.</li>
-<li>Book the follow-up. Thirty minutes, not sixty.</li></ol>
+<li>Book the follow-up. Keep it to thirty minutes.</li></ol>
 <h2>Notes from the room</h2>
 <p>General agreement that scope crept because nobody was empowered to say no. Proposal is to name a single decision owner per workstream. No objections raised.</p>
 <p><br></p>`
@@ -3597,13 +3645,13 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       body: `<h1>The Long Fuse: Why 1914 Was Not an Accident</h1>
 <p><span class="muted"><i>Essay draft. ~1,500 words. Due for the seminar on the 14th.</i></span></p>
 <h2>Introduction</h2>
-<p>It is comfortable to describe the outbreak of the First World War as a tragic accident — a sequence of telegrams that arrived too late and generals who could not stop the timetables. That reading is soothing precisely because it absolves everyone. This essay argues the opposite: the war was the predictable outcome of a system built to reward brinkmanship.</p>
+<p>People often call the outbreak of the First World War an accident: telegrams that arrived too late, generals who could not stop the timetables. That version is easy to accept because it blames no one in particular. This essay argues the war was the likely result of a system that rewarded pushing every crisis to the edge.</p>
 <h2>The alliance trap</h2>
-<p>By 1914 the great powers had bound themselves into two blocs so tightly that a quarrel between the smallest members could summon the largest. Alliances meant for deterrence became conductors for escalation. Deterrence works until it is tested; then it becomes a fuse.</p>
+<p>By 1914 the great powers had tied themselves into two blocs. A quarrel between the smallest members could pull in the largest. Alliances built to prevent a war were what let a small conflict spread across the continent.</p>
 <h2>Timetables and the illusion of control</h2>
-<p>Mobilisation plans compressed political decisions into hours. Once the trains began to move, statesmen discovered they had delegated the timing of war to railway schedules drawn up a decade earlier.</p>
+<p>Mobilisation plans cut the time for political decisions down to hours. Once the trains began to move, the timing of the war was set by railway schedules written a decade earlier.</p>
 <h2>Conclusion</h2>
-<p>Contingency mattered, but it operated inside a structure engineered to convert a crisis into a catastrophe. The fuse was long. It had simply been laid years before the match.</p>
+<p>Chance mattered, but it worked inside a structure that was built to turn a crisis into a wider war. The conditions for it were in place years before the summer of 1914.</p>
 <p><br></p>`
     },
     {
@@ -3611,13 +3659,13 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       body: `<h1>Sleep, Spacing, and the Consolidation of Memory</h1>
 <p><span class="muted"><i>Working literature review. Section 2 of the thesis. References incomplete.</i></span></p>
 <h2>Abstract</h2>
-<p>This review surveys evidence that sleep does not merely rest the brain but actively reorganises what was learned during the day. Two mechanisms recur across the literature: the replay of daytime activity during slow-wave sleep, and the pruning of connections that carried little signal.</p>
+<p>This review covers evidence that sleep reorganises what was learned during the day, and does more than rest the brain. Two mechanisms come up repeatedly across the studies: the replay of daytime activity during slow-wave sleep, and the pruning of connections that carried little signal.</p>
 <h2>Key findings</h2>
 <ul><li>Declarative memories show larger overnight gains than procedural ones, though the gap narrows with practice.</li>
 <li>Naps of roughly ninety minutes reproduce much of the benefit of a full night for single tasks.</li>
 <li>Spacing study across sleep cycles outperforms massed study by a wide and stable margin.</li></ul>
 <h2>Gaps in the evidence</h2>
-<p>Sample sizes remain small and skew heavily toward undergraduates. Few studies follow retention beyond a week, so claims about durable consolidation are, at present, extrapolations.</p>
+<p>Sample sizes stay small and lean heavily toward undergraduates. Few studies track retention beyond a week, so claims about long-term consolidation go past what the current data show.</p>
 <h2>Next steps</h2>
 <p>A within-subject design tracking retention at one day, one week, and one month would address the most obvious gap.</p>
 <p><br></p>`
@@ -3644,10 +3692,10 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       title: 'In Praise of the Long Walk',
       body: `<h1>In Praise of the Long Walk</h1>
 <p><span class="muted"><i>Personal essay. Second draft. Probably still too long.</i></span></p>
-<p>There is a particular kind of thinking that will not happen at a desk. It waits until you are a mile from home, half-listening to your own footsteps, and then it arrives unannounced, as though it had been standing in the road the whole time.</p>
-<p>I have solved more problems on pavements than I ever have on paper. Not because walking makes me clever, but because it makes me patient. The body sets a rhythm the mind cannot rush, and in that enforced slowness the knots come loose on their own.</p>
-<p>The philosophers knew this. So did the poets, who wrote their best lines out loud to the hedgerows. What they shared was not genius so much as a refusal to sit still and wait for it.</p>
-<p>So when the work will not come, I no longer force it. I put on my shoes. The sentence I could not write is usually waiting somewhere around the second corner, and it is always kinder to me out there than it was at the desk.</p>
+<p>Some kinds of thinking will not happen at a desk. They show up when I am a mile from home and no longer trying to force them, as if they had been waiting on the road for me to walk past.</p>
+<p>I have worked out more problems on a walk than at my desk. Walking does not make me smarter. It slows me down, and once I slow down the problem tends to come apart on its own.</p>
+<p>Plenty of writers worked this way, walking for hours and drafting lines out loud as they went. What they had in common was a habit of not sitting at a desk waiting for the work to arrive.</p>
+<p>So when the work will not come, I stop pushing and put on my shoes. The sentence I could not write is usually there by the second corner, and it comes easier outside than it did at the desk.</p>
 <p><br></p>`
     },
     {
@@ -3670,9 +3718,9 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       title: 'Reading Response — Le Guin',
       body: `<h1>Reading Response: <i>The Left Hand of Darkness</i></h1>
 <p><span class="muted"><i>Weekly response. One page. No secondary sources this week.</i></span></p>
-<p>Le Guin sets her story on a world where the inhabitants have no fixed sex, and then declines to make that the point. The book is not about gender so much as it is about the slow, awkward, unglamorous work of learning to trust a person who is genuinely foreign to you.</p>
-<p>What stayed with me was the journey across the ice: two characters, mutually suspicious, who survive only by becoming legible to one another. The novel argues that understanding is not a flash of insight but a distance you cover on foot, at cost, with someone who could still betray you.</p>
-<p>I came in expecting a thought experiment and left with something closer to a friendship story. That the experiment recedes is, I think, the whole achievement. The strangeness stops being a premise and becomes simply the condition of the two people trying to reach each other.</p>
+<p>Le Guin sets the story on a world where people have no fixed sex, then spends most of the book somewhere else. What she keeps returning to is how two people learn to trust each other when one of them is a stranger in every way.</p>
+<p>The part that stayed with me was the trek across the ice. The two of them start out suspicious and only survive by slowly coming to understand each other. Understanding here is slow work, built over time with someone who could still turn on you.</p>
+<p>I started it expecting a thought experiment about gender and finished it reading a story about two people becoming friends. The setup fades into the background, and by the end the strangeness has settled into the situation of the two of them trying to reach each other.</p>
 <p><br></p>`
     },
     {
@@ -3680,8 +3728,8 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       body: `<h1>Application: Data Analyst, Insights Team</h1>
 <p><span class="muted"><i>Cover letter draft. Tailor the second paragraph before sending.</i></span></p>
 <p>Dear Hiring Manager,</p>
-<p>I am writing to apply for the Data Analyst position on the Insights team. Over the past three years I have turned messy operational data into decisions people actually acted on, and I would like to do that work somewhere it clearly matters.</p>
-<p>In my current role I rebuilt a weekly reporting process that took a colleague most of a day into a pipeline that runs in minutes, which freed the team to spend its time asking better questions rather than assembling the same tables. I care less about the dashboard than about whether anyone changes their mind because of it.</p>
+<p>I am writing to apply for the Data Analyst position on the Insights team. Over the past three years I have turned messy operational data into reports that teams used to make real decisions, and I would like to do that work somewhere it has an impact.</p>
+<p>In my current role I rebuilt a weekly reporting process. It used to take a colleague most of a day; now it runs in a few minutes, which gives the team time to dig into the numbers instead of rebuilding the same tables by hand. What matters to me is whether a report changes what someone decides to do.</p>
 <p>I would welcome the chance to discuss how I could help the Insights team. Thank you for your time and consideration.</p>
 <p>Sincerely,</p>
 <p>K.</p>
@@ -11880,6 +11928,95 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
 </script>
 <script>
+/* Peg Solitaire — jump pegs to clear the board down to one. */
+(function () {
+  'use strict';
+  const { h } = Engine;
+  const N = 7;
+  const valid = (r, c) => !((r < 2 || r > 4) && (c < 2 || c > 4));
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let cell, sel, over, best;
+
+    const pLeft = api.pill('pegs: 0');
+    const pBest = api.pill('best: —');
+    const msg = h('div', { class: 'peg-msg' }, '');
+    const grid = h('div', { class: 'peg-grid' });
+    const els = [];
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+      const el = valid(r, c)
+        ? h('button', { class: 'peg-hole', type: 'button', onclick: () => tap(r * N + c) })
+        : h('div', { class: 'peg-void' });
+      els.push(el); grid.appendChild(el);
+    }
+    root.appendChild(h('div', { class: 'pegs' }, msg, grid));
+    api.button('New board', reset);
+
+    function reset() {
+      cell = new Array(N * N).fill(-1);
+      for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) if (valid(r, c)) cell[r * N + c] = 1;
+      cell[3 * N + 3] = 0;
+      sel = -1; over = false;
+      msg.textContent = 'Jump a peg over a neighbour into an empty hole. Aim for one peg left.'; msg.className = 'peg-msg';
+      render();
+      api.status('Tap a peg, then tap an empty hole two spaces away with a peg between. The jumped peg is removed. Clear down to a single peg.');
+    }
+    function count() { return cell.reduce((a, v) => a + (v === 1 ? 1 : 0), 0); }
+    function render() {
+      for (let i = 0; i < cell.length; i++) {
+        if (cell[i] === -1) continue;
+        els[i].className = 'peg-hole' + (cell[i] === 1 ? ' peg' : '') + (i === sel ? ' sel' : '');
+      }
+      pLeft.textContent = 'pegs: ' + count();
+      const b = api.best(); pBest.textContent = 'best: ' + (b == null ? '—' : b);
+    }
+    function jumps(i) {
+      const r = Math.floor(i / N), c = i % N, out = [];
+      for (const [dr, dc] of [[0, 1], [0, -1], [1, 0], [-1, 0]]) {
+        const mr = r + dr, mc = c + dc, tr = r + 2 * dr, tc = c + 2 * dc;
+        if (valid(tr, tc) && cell[mr * N + mc] === 1 && cell[tr * N + tc] === 0) out.push([mr * N + mc, tr * N + tc]);
+      }
+      return out;
+    }
+    function anyMove() {
+      for (let i = 0; i < cell.length; i++) if (cell[i] === 1 && jumps(i).length) return true;
+      return false;
+    }
+    function tap(i) {
+      if (over) return;
+      if (cell[i] === 1) { sel = (sel === i ? -1 : i); api.sfx.click(); render(); return; }
+      if (cell[i] === 0 && sel >= 0) {
+        const move = jumps(sel).find((m) => m[1] === i);
+        if (!move) { api.sfx.thud(); return; }
+        cell[sel] = 0; cell[move[0]] = 0; cell[i] = 1; sel = -1; api.sfx.blip(500); render();
+        const n = count();
+        if (n === 1) { over = true; api.sfx.great(); api.submit(1); msg.textContent = 'One peg left. Perfect solve!'; msg.className = 'peg-msg win'; return; }
+        if (!anyMove()) { over = true; api.sfx.bad(); api.submit(n); msg.textContent = 'No moves left with ' + n + ' pegs. Try again.'; msg.className = 'peg-msg lose'; }
+      }
+    }
+
+    reset();
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'pegs', title: 'Peg Solitaire', emoji: 'lightsout', cat: 'puzzle', order: 21,
+    lowerIsBetter: true,
+    blurb: 'The wooden peg board from every waiting room. Jump pegs over each other to remove them and try to finish with a single peg standing.',
+    scoreLabel: 'Fewest left', tags: ['puzzle', 'classic', 'solitaire'],
+    how: [
+      'Tap a peg to select it, then tap an empty hole two spaces away.',
+      'The peg jumps a neighbour into the hole, and the jumped peg is removed.',
+      'Keep jumping until no moves remain.',
+      'Fewer pegs left is better. One peg is a perfect solve.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
 /* Word Search. Office-flavoured word lists hidden in a grid of letters; drag a
  * straight line through one to cross it off. Find them all. */
 (function () {
@@ -15182,6 +15319,220 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       'Turns alternate with your deskmate. Taking the last stick loses.',
       'There is a counting pattern that wins every game. Work it out.',
       'Your score is your streak of games won in a row.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Five in a Row — get five of your stones in a line before the deskmate does. */
+(function () {
+  'use strict';
+  const { h } = Engine;
+  const SIZE = 13;
+  const DIRS = [[1, 0], [0, 1], [1, 1], [1, -1]];
+  const HUMAN = 1, CPU = 2;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let board, over, streak, disposed = false, busy = false;
+    streak = api.load('streak', 0);
+
+    const pStreak = api.pill('win streak: ' + streak);
+    const pTurn = api.pill('your move');
+    const msg = h('div', { class: 'gk-msg' }, 'You are black. Get five in a row.');
+    const grid = h('div', { class: 'gk-grid', style: { gridTemplateColumns: 'repeat(' + SIZE + ', 1fr)' } });
+    const cells = [];
+    for (let i = 0; i < SIZE * SIZE; i++) {
+      const c = h('button', { class: 'gk-cell', type: 'button', onclick: () => human(i) });
+      cells.push(c); grid.appendChild(c);
+    }
+    root.appendChild(h('div', { class: 'gomoku' }, msg, grid));
+    api.button('New game', reset);
+
+    const at = (r, c) => (r < 0 || c < 0 || r >= SIZE || c >= SIZE) ? -1 : board[r * SIZE + c];
+
+    function reset() {
+      board = new Array(SIZE * SIZE).fill(0);
+      over = false; busy = false;
+      cells.forEach((c) => { c.className = 'gk-cell'; });
+      msg.textContent = 'You are black. Get five in a row.'; msg.className = 'gk-msg';
+      pTurn.textContent = 'your move';
+      api.status('Click an empty point to place a black stone. First to five in a line — any direction — wins.');
+    }
+    function render(lastHuman, lastCpu, winLine) {
+      for (let i = 0; i < board.length; i++) {
+        cells[i].className = 'gk-cell' + (board[i] === HUMAN ? ' b' : board[i] === CPU ? ' w' : '') +
+          (i === lastHuman || i === lastCpu ? ' last' : '') + (winLine && winLine.indexOf(i) >= 0 ? ' win' : '');
+      }
+      pStreak.textContent = 'win streak: ' + streak;
+    }
+
+    /* longest run of `who` through (r,c) in direction d, plus open-end count */
+    function lineInfo(r, c, d, who) {
+      let len = 1, openA = false, openB = false;
+      let rr = r + d[0], cc = c + d[1];
+      while (at(rr, cc) === who) { len++; rr += d[0]; cc += d[1]; }
+      if (at(rr, cc) === 0) openA = true;
+      rr = r - d[0]; cc = c - d[1];
+      while (at(rr, cc) === who) { len++; rr -= d[0]; cc -= d[1]; }
+      if (at(rr, cc) === 0) openB = true;
+      return { len, open: (openA ? 1 : 0) + (openB ? 1 : 0) };
+    }
+    function placeScore(r, c, who) {
+      let best = 0;
+      for (const d of DIRS) {
+        const { len, open } = lineInfo(r, c, d, who);
+        let v;
+        if (len >= 5) v = 1000000;
+        else if (len === 4) v = open === 2 ? 100000 : open === 1 ? 12000 : 0;
+        else if (len === 3) v = open === 2 ? 6000 : open === 1 ? 400 : 0;
+        else if (len === 2) v = open === 2 ? 300 : open === 1 ? 40 : 0;
+        else v = open === 2 ? 20 : 5;
+        best += v;
+      }
+      return best;
+    }
+    function winThrough(i, who) {
+      const r = Math.floor(i / SIZE), c = i % SIZE;
+      for (const d of DIRS) {
+        const line = [i];
+        let rr = r + d[0], cc = c + d[1];
+        while (at(rr, cc) === who) { line.push(rr * SIZE + cc); rr += d[0]; cc += d[1]; }
+        rr = r - d[0]; cc = c - d[1];
+        while (at(rr, cc) === who) { line.push(rr * SIZE + cc); rr -= d[0]; cc -= d[1]; }
+        if (line.length >= 5) return line;
+      }
+      return null;
+    }
+
+    function human(i) {
+      if (over || busy || board[i]) return;
+      board[i] = HUMAN; api.sfx.click();
+      const win = winThrough(i, HUMAN);
+      if (win) { over = true; streak++; api.save('streak', streak); api.submit(streak); api.sfx.great(); render(i, -1, win); msg.textContent = 'Five in a row — you win! Streak ' + streak + '.'; msg.className = 'gk-msg win'; pTurn.textContent = 'you win'; return; }
+      render(i, -1);
+      if (board.every((v) => v)) { over = true; msg.textContent = 'Board full — a draw.'; return; }
+      busy = true; pTurn.textContent = 'deskmate…';
+      setTimeout(() => cpuTurn(i), 260);
+    }
+    function cpuTurn(lastHuman) {
+      if (disposed || over) return;
+      let bestI = -1, bestV = -1;
+      for (let i = 0; i < board.length; i++) {
+        if (board[i]) continue;
+        const r = Math.floor(i / SIZE), c = i % SIZE;
+        const off = placeScore(r, c, CPU);
+        const def = placeScore(r, c, HUMAN);
+        const v = off + def * 0.92 + (Math.abs(r - 6) + Math.abs(c - 6) < 5 ? 3 : 0);
+        if (v > bestV) { bestV = v; bestI = i; }
+      }
+      if (bestI < 0) { over = true; return; }
+      board[bestI] = CPU; api.sfx.blip(300);
+      const win = winThrough(bestI, CPU);
+      if (win) { over = true; streak = 0; api.save('streak', 0); api.sfx.bad(); render(lastHuman, bestI, win); msg.textContent = 'Deskmate got five. Streak reset.'; msg.className = 'gk-msg lose'; pTurn.textContent = 'you lose'; busy = false; return; }
+      render(lastHuman, bestI);
+      busy = false; pTurn.textContent = 'your move';
+    }
+
+    reset();
+    return () => { disposed = true; bagg.dispose(); };
+  }
+
+  Arcade.register({
+    id: 'gomoku', title: 'Five in a Row', emoji: 'connect4', cat: 'brain', order: 30,
+    blurb: 'Place stones on the grid and try to line up five in a row before your deskmate does. Simple to learn, hard to close out.',
+    scoreLabel: 'Win streak', tags: ['strategy', 'board', 'classic'],
+    how: [
+      'Click an empty point to place a black stone. The deskmate answers in white.',
+      'Line up five of your stones in a row, in any direction, to win.',
+      'The deskmate blocks your threats, so build more than one at once.',
+      'Your score is the streak of games you win in a row.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Number Cracker — bulls and cows. Guess the secret four-digit code. */
+(function () {
+  'use strict';
+  const { h, shuffle } = Engine;
+  const LEN = 4, MAXG = 10;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let secret, guesses, over, streak, disposed = false;
+    streak = api.load('streak', 0);
+
+    const pStreak = api.pill('win streak: ' + streak);
+    const pLeft = api.pill('guesses: ' + MAXG);
+    const list = h('div', { class: 'crk-list' });
+    const input = h('input', { class: 'crk-input', type: 'text', inputmode: 'numeric', maxlength: String(LEN), placeholder: '4 digits', spellcheck: 'false', autocomplete: 'off' });
+    const form = h('form', { class: 'crk-form' }, input, h('button', { class: 'btn primary', type: 'submit' }, 'Guess'));
+    form.addEventListener('submit', (e) => { e.preventDefault(); guess(); });
+    const msg = h('div', { class: 'crk-msg' }, '');
+    root.appendChild(h('div', { class: 'cracker' },
+      h('div', { class: 'crk-help' }, 'Four different digits (0-9). ● = right digit, right spot. ○ = right digit, wrong spot.'),
+      list, form, msg));
+    api.button('New code', reset);
+
+    function newSecret() {
+      const digits = shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, LEN);
+      return digits.join('');
+    }
+    function reset() {
+      secret = newSecret(); guesses = []; over = false;
+      list.replaceChildren(); msg.textContent = ''; msg.className = 'crk-msg';
+      input.disabled = false; input.value = ''; try { input.focus(); } catch (e) { /* */ }
+      pLeft.textContent = 'guesses: ' + MAXG; pStreak.textContent = 'win streak: ' + streak;
+      api.status('Crack the four-digit code. Each digit is different. Read the pegs and narrow it down.');
+    }
+    function score(g) {
+      let bulls = 0, cows = 0;
+      for (let i = 0; i < LEN; i++) {
+        if (g[i] === secret[i]) bulls++;
+        else if (secret.indexOf(g[i]) >= 0) cows++;
+      }
+      return { bulls, cows };
+    }
+    function guess() {
+      if (over) return;
+      const g = input.value.trim();
+      if (!/^[0-9]{4}$/.test(g)) { shake(); msg.textContent = 'Enter four digits.'; msg.className = 'crk-msg lose'; return; }
+      if (new Set(g.split('')).size !== LEN) { shake(); msg.textContent = 'All four digits must be different.'; msg.className = 'crk-msg lose'; return; }
+      const { bulls, cows } = score(g);
+      guesses.push(g);
+      const pegs = h('span', { class: 'crk-pegs' });
+      for (let i = 0; i < bulls; i++) pegs.appendChild(h('span', { class: 'crk-peg bull' }));
+      for (let i = 0; i < cows; i++) pegs.appendChild(h('span', { class: 'crk-peg cow' }));
+      for (let i = 0; i < LEN - bulls - cows; i++) pegs.appendChild(h('span', { class: 'crk-peg' }));
+      list.appendChild(h('div', { class: 'crk-row' }, h('span', { class: 'crk-guess' }, g.split('').map((d) => h('span', { class: 'crk-digit' }, d))), pegs));
+      list.scrollTop = list.scrollHeight;
+      input.value = ''; msg.textContent = ''; msg.className = 'crk-msg';
+      pLeft.textContent = 'guesses: ' + (MAXG - guesses.length);
+      if (bulls === LEN) { over = true; streak++; api.save('streak', streak); api.submit(streak); api.sfx.great(); msg.textContent = 'Cracked it in ' + guesses.length + '! Streak ' + streak + '.'; msg.className = 'crk-msg win'; input.disabled = true; return; }
+      api.sfx.blip(300 + bulls * 120);
+      if (guesses.length >= MAXG) { over = true; streak = 0; api.save('streak', 0); api.sfx.bad(); msg.textContent = 'Out of guesses. The code was ' + secret + '.'; msg.className = 'crk-msg lose'; input.disabled = true; return; }
+      try { input.focus(); } catch (e) { /* */ }
+    }
+    function shake() { input.classList.remove('shake'); void input.offsetWidth; input.classList.add('shake'); api.sfx.bad(); }
+
+    reset();
+    return () => { disposed = true; bagg.dispose(); };
+  }
+
+  Arcade.register({
+    id: 'crack', title: 'Number Cracker', emoji: 'find', cat: 'brain', order: 31,
+    blurb: 'A hidden four-digit code, ten guesses. After each try you learn how many digits are right and how many are in the wrong spot. Deduce the rest.',
+    scoreLabel: 'Win streak', tags: ['logic', 'deduction', 'numbers'],
+    how: [
+      'The code is four different digits. Type a guess and press Guess.',
+      'A filled peg (●) means a digit is correct and in the right place.',
+      'A hollow peg (○) means the digit is in the code but somewhere else.',
+      'Crack it within ten guesses. Your score is the streak of codes cracked in a row.'
     ],
     mount
   });
@@ -22767,6 +23118,102 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       'Spend staples in the shop on interns and machines that staple on their own.',
       'Each unit costs more the more you own, so keep expanding the line.',
       'Your score is the most staples you produce in a single run.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Quarterly Slots — a three-reel office fruit machine. Spin the budget away. */
+(function () {
+  'use strict';
+  const { h, randInt } = Engine;
+  const SYMS = ['📎', '☕', '📈', '💼', '🏆', '💾', '7️⃣'];
+  /* payout for three-of-a-kind, by symbol index */
+  const PAY3 = [5, 8, 12, 15, 25, 40, 100];
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let credits, best, spinning = false, disposed = false;
+
+    const pCredits = api.pill('credits: 20');
+    const pBest = api.pill('best: 20');
+    const reelEls = [0, 1, 2].map(() => h('div', { class: 'slot-reel' }, '❓'));
+    const msg = h('div', { class: 'slot-msg' }, 'Spin costs 1 credit. Match three to win big.');
+    const spinBtn = h('button', { class: 'btn primary slot-spin', type: 'button', onclick: spin }, 'Spin (1)');
+    root.appendChild(h('div', { class: 'slots' },
+      h('div', { class: 'slot-window' }, reelEls),
+      msg,
+      h('div', { class: 'slot-btns' }, spinBtn)));
+    api.button('Cash out / restart', reset);
+
+    function reset() {
+      credits = 20; best = 20; spinning = false;
+      reelEls.forEach((r) => { r.textContent = '❓'; });
+      msg.textContent = 'Spin costs 1 credit. Match three to win big.'; msg.className = 'slot-msg';
+      sync();
+      api.status('Each spin costs one credit. Two of a kind pays a little, three pays a lot, three 7s pays out big. See how high your credits climb.');
+    }
+    function sync() {
+      pCredits.textContent = 'credits: ' + credits;
+      best = Math.max(best, credits);
+      pBest.textContent = 'best: ' + best;
+      spinBtn.disabled = spinning || credits <= 0;
+    }
+    function payout(a, b, c) {
+      if (a === b && b === c) return PAY3[a];
+      if (a === b || b === c || a === c) return 2;
+      return 0;
+    }
+    function spin() {
+      if (spinning || credits <= 0) return;
+      credits--; spinning = true; sync();
+      msg.textContent = '…'; msg.className = 'slot-msg';
+      const finals = [randInt(0, SYMS.length - 1), randInt(0, SYMS.length - 1), randInt(0, SYMS.length - 1)];
+      let ticks = 0;
+      const settle = [10, 16, 22];
+      const iv = setInterval(() => {
+        if (disposed) { clearInterval(iv); return; }
+        ticks++;
+        for (let r = 0; r < 3; r++) {
+          if (ticks < settle[r]) reelEls[r].textContent = SYMS[randInt(0, SYMS.length - 1)];
+          else reelEls[r].textContent = SYMS[finals[r]];
+        }
+        if (ticks % 2 === 0) api.sfx.blip(400 + ticks * 20);
+        if (ticks >= settle[2]) {
+          clearInterval(iv);
+          spinning = false;
+          const win = payout(finals[0], finals[1], finals[2]);
+          if (win > 0) {
+            credits += win; api.sfx.great();
+            msg.textContent = (finals[0] === finals[1] && finals[1] === finals[2]) ? ('Three of a kind! +' + win) : ('A pair. +' + win);
+            msg.className = 'slot-msg win';
+            reelEls.forEach((r) => { r.classList.remove('hit'); void r.offsetWidth; r.classList.add('hit'); });
+          } else {
+            api.sfx.bad(); msg.textContent = credits <= 0 ? 'Out of credits. Cash out to restart.' : 'Nothing. Spin again.';
+            msg.className = 'slot-msg' + (credits <= 0 ? ' lose' : '');
+          }
+          api.submit(best);
+          sync();
+        }
+      }, 70);
+      bagg.add(() => clearInterval(iv));
+    }
+
+    reset();
+    return () => { disposed = true; bagg.dispose(); };
+  }
+
+  Arcade.register({
+    id: 'slots', title: 'Quarterly Slots', emoji: 'coffee', cat: 'goofy', order: 49,
+    blurb: 'A three-reel fruit machine stocked with office supplies. Spin costs a credit, matches pay out, three 7s pay out big. No real money, only your dignity.',
+    scoreLabel: 'Best credits', tags: ['luck', 'slots', 'toy'],
+    how: [
+      'Each spin costs one credit. Press Spin.',
+      'Two matching symbols pay a little. Three matching pay a lot.',
+      'Three 7s is the jackpot.',
+      'Your score is the highest credit balance you reach in a run.'
     ],
     mount
   });
