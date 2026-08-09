@@ -208,7 +208,9 @@
     bubble: c(8, 7, 3.4, P.tomato) + c(15, 7, 3.4, P.teal) + c(11.5, 13, 3.4, P.banana) + c(7, 15, 3.4, P.lime) + c(16, 15, 3.4, P.grape) + c(7, 6, 1, P.paper) + c(14, 6, 1, P.paper),
     cards: r(5, 6, 11, 15, P.paper, ' transform="rotate(-10 10 13)"') + r(9, 4, 11, 15, P.paper, ' transform="rotate(8 14 11)"') + p('M14 8l2 3-2 3-2-3z', P.tomato) + line(14, 4, 14, 6, 1.4, P.grey),
     rave: c(12, 12, 6, P.hotpink) + c(8, 8, 2.2, P.banana) + c(16, 9, 2.2, P.teal) + c(9, 16, 2.2, P.lime) + c(15, 15, 2.2, P.tomato) + c(12, 6, 1.8, P.grape) + line(12, 12, 4, 4, 1.4, P.banana) + line(12, 12, 20, 5, 1.4, P.teal),
-    speaker: r(4, 9, 5, 6, P.dark) + p('M9 9l6-4v14l-6-4z', P.paper) + p('M17 8a5 5 0 0 1 0 8', 'none').replace('fill="none"', 'fill="none" stroke="' + P.tomato + '" stroke-width="2" stroke-linecap="round"') + p('M19 6a8 8 0 0 1 0 12', 'none').replace('fill="none"', 'fill="none" stroke="' + P.banana + '" stroke-width="1.6" stroke-linecap="round"')
+    speaker: r(4, 9, 5, 6, P.dark) + p('M9 9l6-4v14l-6-4z', P.paper) + p('M17 8a5 5 0 0 1 0 8', 'none').replace('fill="none"', 'fill="none" stroke="' + P.tomato + '" stroke-width="2" stroke-linecap="round"') + p('M19 6a8 8 0 0 1 0 12', 'none').replace('fill="none"', 'fill="none" stroke="' + P.banana + '" stroke-width="1.6" stroke-linecap="round"'),
+    car: p('M3 15l1.5-5A3 3 0 0 1 7.4 8h9.2a3 3 0 0 1 2.9 2l1.5 5v3a1 1 0 0 1-1 1h-2v-2H6v2H4a1 1 0 0 1-1-1z', P.tomato) + p('M6.5 10h11l1 3.5H5.5z', P.teal) + c(7, 16, 1.6, P.dark) + c(17, 16, 1.6, P.dark),
+    obby: r(3, 18, 5, 3, P.lime) + r(10, 14, 5, 3, P.banana) + r(17, 9, 5, 3, P.teal) + c(6, 14, 2.4, P.tomato) + line(6, 14, 6, 18, 1.4, INK)
   };
 
   const Icons = {
