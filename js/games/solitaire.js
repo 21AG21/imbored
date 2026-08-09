@@ -228,7 +228,7 @@
       const p = cv.pos(e);
       const t = hit(p);
       if (!t) return;
-      cv.el.setPointerCapture(e.pointerId);
+      try { if (cv.el.setPointerCapture) cv.el.setPointerCapture(e.pointerId); } catch (err) { /* no active pointer; harmless */ }
 
       if (t.kind === 'stock') { drawFromStock(); return; }
 

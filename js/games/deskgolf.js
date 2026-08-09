@@ -71,7 +71,7 @@
       if (done || sunk || moving()) return;
       const p = cv.pos(e);
       if (Math.hypot(p.x - ball.x, p.y - ball.y) > 70) return;
-      cv.el.setPointerCapture(e.pointerId);
+      try { if (cv.el.setPointerCapture) cv.el.setPointerCapture(e.pointerId); } catch (err) { /* no active pointer; harmless */ }
       aim = { x: p.x, y: p.y };
     });
     bagg.listen(cv.el, 'pointermove', (e) => {

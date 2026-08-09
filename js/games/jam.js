@@ -139,7 +139,7 @@
       const p = cv.pos(e);
       const v = vehicleAt(p.x, p.y);
       if (!v) return;
-      cv.el.setPointerCapture(e.pointerId);
+      try { if (cv.el.setPointerCapture) cv.el.setPointerCapture(e.pointerId); } catch (err) { /* no active pointer; harmless */ }
       const f = freedom(v);
       drag = { v, sx: p.x, sy: p.y, off: 0, min: -f.back * CELL, max: f.fwd * CELL };
     });

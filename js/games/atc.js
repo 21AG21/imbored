@@ -70,7 +70,7 @@
       const pt = cv.pos(e);
       const p = nearestPlane(pt.x, pt.y);
       if (!p) return;
-      cv.el.setPointerCapture(e.pointerId);
+      try { if (cv.el.setPointerCapture) cv.el.setPointerCapture(e.pointerId); } catch (err) { /* no active pointer; harmless */ }
       p.path = [];
       drawing = p;
       planes.forEach((q) => { q.sel = q === p; });

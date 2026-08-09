@@ -411,6 +411,7 @@
     function endDay() {
       shopOpen = true;
       api.sfx.great();
+      api.submit(delivered);   // bank the run's throughput each surviving day, not only on the final rage-out
       renderShop();
     }
 
@@ -477,7 +478,7 @@
     bagg.listen(cv.el, 'pointerdown', (e) => {
       if (over) return;
       const p = cv.pos(e);
-      cv.el.setPointerCapture(e.pointerId);
+      try { if (cv.el.setPointerCapture) cv.el.setPointerCapture(e.pointerId); } catch (err) { /* no active pointer; harmless */ }
       drag = { x0: p.x, y0: p.y, x: p.x, y: p.y };
     });
     bagg.listen(cv.el, 'pointermove', (e) => {
