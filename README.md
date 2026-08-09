@@ -2,7 +2,7 @@
 
 **The complete shareware collection for people whose meeting has no agenda.**
 
-Twenty-seven games. Zero installers. No account, no network, no build step. It is plain
+Ninety games. Zero installers. No account, no network, no build step. It is plain
 HTML, CSS and JavaScript, so you can **double-click `index.html`** and it runs straight
 off the disk.
 
@@ -57,8 +57,8 @@ A frozen screenshot fools nobody once somebody expects to see a cursor moving.
 Put an address in the **PANIC SCREEN** box in the footer and pick how it opens:
 
 - **Open the site** (default) navigates this tab straight to that address. This works with
-  literally any website. Your scores live in `localStorage`, so the back button brings the
-  arcade back exactly as you left it.
+  literally any website. The back button brings the arcade back, though a full navigation
+  away and back starts a fresh session (nothing is persisted — see below).
 - **Embed it** drops the site into a frame on top of the games, so whatever you were
   playing stays paused underneath. This only works for sites that permit being framed, and
   most large sites explicitly forbid it with `X-Frame-Options` or a `frame-ancestors`
@@ -190,7 +190,7 @@ the page chrome, which gets you most of the way there.
   their own realm out of the rewriter's reach; if it still cannot boot it paints
   an on-screen diagnostic rather than a blank preview. Validated against a local
   reproduction of the rewriter: the naive loader reproduces the `__lp1` failure,
-  the iframe loader renders all 27 games. Paste each file into its matching tab.
+  the iframe loader renders every game. Paste each file into its matching tab.
 - **Host it.** Any static host. A GitHub Pages workflow sits in
   `.github/workflows/pages.yml` and only runs when you start it from the Actions tab.
 
@@ -199,11 +199,12 @@ the page chrome, which gets you most of the way there.
 ```
 index.html            loads everything, in order
 css/arcade.css        the whole look
-js/core/analytics.js  the one network call: Vercel page views, deployed hosts only
 js/core/engine.js     canvas, loop, input, audio, DOM helper, disposer bag
 js/core/icons.js      the drawn icon set (there are no emoji in this build)
 js/core/themes.js     the colour-scheme presets and custom-colour builder
-js/core/boss.js       the five panic screens
+js/core/boss.js       the panic screens
+js/core/gags.js       the screen-effect and office-prank toys
+js/core/tutorial.js   the animated how-to-play demos
 js/core/arcade.js     registry, router, shelf, scores, difficulty, CHOMPS
 js/games/*.js         one file per game, each registering itself
 tools/                the single-file bundler
@@ -215,36 +216,23 @@ calls on the way out, so nothing leaks between games. `api.dm` is the difficulty
 multiplier every game scales its own knobs by. To add a game, drop a file in `js/games/`
 and add one `<script>` tag.
 
-Scores and progress live in `localStorage` under the `cubicle:` prefix. Your scores, your
-settings and anything you type into a panic screen never leave the browser. The only
-exception is the anonymous page-view ping described below, and only on a live deployment.
-
-## A note on analytics
-
-`js/core/analytics.js` wires up **Vercel Web Analytics**, and it is the single thing in the
-build that touches the network. It is on a short leash:
-
-- It **only wakes up on Vercel**. The insights script is served by Vercel's own edge, so it
-  is allow-listed to hosts ending in `.vercel.app` (production, branch and preview deploys)
-  and does nothing anywhere else — `file://`, `localhost`, **Google Drive / DriveToWeb**,
-  GitHub Pages, the single-file bundle. Off Vercel it makes no request at all, so the "runs
-  off the disk, nothing leaves the browser" promise holds and the console stays clean (no
-  404 for a Vercel script that no Vercel is serving). A custom domain in front of a Vercel
-  project can opt in with `window.__ARCADE_VERCEL__ = true`.
-- It records **anonymous page views only**. No scores, no settings, and none of the text
-  you type into a panic screen is ever sent.
-- Collection still has to be switched on in the Vercel project: **Vercel dashboard →
-  your project → Analytics → enable Web Analytics**. The code side is done; that toggle is
-  the other half.
+Scores, settings and anything you type into a panic screen live only in memory, in a
+single `window.__cubicleMem` object. Nothing is written to `localStorage`, cookies, or any
+other persistent store, and there is no network call of any kind — no analytics, no
+fonts, no CDN. Reload the tab and you start fresh. That is the whole privacy story: it
+runs off the disk and nothing ever leaves the browser.
 
 ## Checked, not assumed
 
-- All 24 games get loaded in headless Chromium, driven with keys, clicks and drags, left
-  running, then checked for console errors and uncaught exceptions. 27 of 27 clean, on all
-  four difficulty settings, and again in the single-file bundle.
-- Mobile is checked at 390x844, 844x390 and 320x568: zero horizontal overflow on the shelf
-  and in all 24 games, and zero playfields below the fold in landscape. Touch input is
-  exercised with real tap and drag events on d-pads, boards and canvases.
+- Every game gets loaded in headless Chromium, driven with keys, clicks and drags, left
+  running, then checked for console errors and uncaught exceptions — all of them clean, on
+  all four difficulty settings, and again in the single-file bundle. The two computer
+  opponents (Ultimate Noughts, Mancala) are played out to completion by a random-move bot
+  to prove they can't soft-lock, and the physics games (Lander especially) are landed by an
+  autopilot on every tier to prove they can be won.
+- Mobile is checked at 390x664, 390x844 and 320x568: zero horizontal overflow on the shelf
+  or in any game, and every canvas game — plus its on-screen controls — sits above the fold.
+  Touch input is exercised with real tap and drag events on d-pads, boards and canvases.
 - All four panic screens are opened and typed into by the test, and the typed text is read
   back out of the DOM to prove the keyboard reaches them.
 - The 28 **Jam Escape** boards were generated by random placement plus a breadth-first
