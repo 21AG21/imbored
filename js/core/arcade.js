@@ -15,12 +15,14 @@
   ];
 
   /* ---------------- storage ---------------- */
+  /* In-memory only. Nothing is written to localStorage, cookies, or any other
+     browser store — close the tab and everything is forgotten. Scores and
+     settings live for the session; the footer's Back up button lets you save
+     them to a file yourself if you want to keep them. */
+  const mem = (window.__cubicleMem = window.__cubicleMem || {});
   const store = {
-    get(k, d) {
-      try { const v = localStorage.getItem('cubicle:' + k); return v == null ? d : JSON.parse(v); }
-      catch (e) { return d; }
-    },
-    set(k, v) { try { localStorage.setItem('cubicle:' + k, JSON.stringify(v)); } catch (e) { /* private mode */ } }
+    get(k, d) { return Object.prototype.hasOwnProperty.call(mem, k) ? mem[k] : d; },
+    set(k, v) { mem[k] = v; }
   };
 
   /* ---------------- difficulty dial ----------------
@@ -261,22 +263,31 @@
     const webRow = h('span', { class: 'foot-skin' }, urlInput, modeSel);
     const webHint = h('span', { class: 'foot-hint' });
 
+    /* which document the Doc disguise shows: shuffle, or a pinned essay/report/etc. */
+    const docSel = h('select', {
+      class: 'sel', 'aria-label': 'Which document the Doc disguise shows',
+      onchange: () => { if (docSel.value === 'shuffle') Boss.setShuffle(); else Boss.setDoc(+docSel.value); }
+    }, [h('option', { value: 'shuffle', selected: Boss.docMode() === 'shuffle' ? true : null }, 'Shuffle (random each time)')]
+      .concat(Boss.docs().map((t, i) => h('option', { value: String(i), selected: Boss.docMode() === i ? true : null }, t))));
+    const docRow = h('span', { class: 'foot-skin' }, h('strong', null, 'DOCUMENT:'), docSel);
+
     syncWebRow = () => {
       const isWeb = Boss.skinId() === 'web';
       webRow.style.display = isWeb ? '' : 'none';
       webHint.style.display = isWeb ? '' : 'none';
+      docRow.style.display = Boss.skinId() === 'docs' ? '' : 'none';
+      docSel.value = Boss.docMode() === 'shuffle' ? 'shuffle' : String(Boss.docMode());
       webHint.textContent = Boss.mode() === 'jump'
         ? 'Open the site: the key loads that address in this tab. Works with any website. Your scores are saved, so come back with the back button.'
         : 'Embed it: the key drops the site into a frame over the games, keeping your game paused underneath. Only works for sites that allow embedding, which most big ones do not.';
     };
 
-    /* Filing cabinet: every score lives in this origin's localStorage, so the
-       Vercel / Pages / Drive / USB copies are separate silos. Back up carries
-       them between; Restore merges a backup in. Purely local — nothing leaves. */
+    /* Nothing persists on its own — scores and settings live only in memory for
+       this session. Back up writes them to a file you keep; Restore reads one
+       back in. That is the only way anything survives a reload, and it is fully
+       manual and local: nothing is stored in the browser and nothing leaves. */
     function exportSaves() {
-      const data = {};
-      try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.indexOf('cubicle:') === 0) data[k] = localStorage.getItem(k); } } catch (e) { /* private mode */ }
-      const blob = new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify(mem, null, 1)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = h('a', { href: url, download: 'cubicle-arcade-saves.json' });
       document.body.appendChild(a); a.click(); a.remove();
@@ -292,14 +303,55 @@
           try {
             const data = JSON.parse(rd.result);
             let n = 0;
-            for (const k in data) if (k.indexOf('cubicle:') === 0) { localStorage.setItem(k, data[k]); n++; }
-            if (n) location.reload(); else alert('No arcade scores found in that file.');
+            for (const k in data) {
+              /* accept old backups too (keys were 'cubicle:'-prefixed and values
+                 were JSON strings); normalise both to the in-memory shape */
+              const key = k.indexOf('cubicle:') === 0 ? k.slice(8) : k;
+              let val = data[k];
+              if (typeof val === 'string') { try { val = JSON.parse(val); } catch (err2) { /* keep as string */ } }
+              mem[key] = val; n++;
+            }
+            if (n) {
+              if (window.Themes && Themes.apply) Themes.apply();
+              renderHub();
+              alert('Restored ' + n + ' saved item' + (n === 1 ? '' : 's') + '. (Nothing is stored in the browser — back up again before you close the tab to keep changes.)');
+            } else alert('No arcade scores found in that file.');
           } catch (err) { alert('That file did not look like an arcade backup.'); }
         };
         rd.readAsText(f);
         e.target.value = '';
       }
     });
+
+    /* Save the whole arcade as one self-contained file you can drop in Drive, on
+       a USB stick, anywhere — and open offline any time. We clone the live page,
+       strip the runtime-injected UI back to the pristine skeleton (scripts and
+       styles only), and hand back a copy that boots exactly like a fresh load.
+       In the single-file build every script and the stylesheet are inlined, so
+       the copy needs nothing else to run. */
+    function downloadSelf() {
+      let html;
+      try {
+        const clone = document.documentElement.cloneNode(true);
+        clone.removeAttribute('style');      // drop the theme vars stamped on <html>
+        clone.removeAttribute('data-ui');
+        clone.removeAttribute('data-dark');
+        const b = clone.querySelector('body');
+        if (b) Array.prototype.slice.call(b.children).forEach((n) => {
+          const tag = n.tagName ? n.tagName.toLowerCase() : '';
+          if (tag !== 'script' && tag !== 'noscript') n.remove();   // everything else is rebuilt on load
+        });
+        html = '<!doctype html>\n' + clone.outerHTML;
+      } catch (e) { html = '<!doctype html>\n' + document.documentElement.outerHTML; }
+      if (/<script[^>]+\bsrc=/.test(html)) {
+        alert('Heads up: this looks like the multi-file version, so the saved copy will still expect its script files nearby. The single-file build saves as one standalone file.');
+      }
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = h('a', { href: url, download: 'docs.html' });   // a discreet filename
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+    }
 
     const foot = h('footer', { class: 'foot' },
       h('span', { class: 'foot-skin' },
@@ -311,12 +363,17 @@
             onchange: (e) => store.set('autohide', e.target.checked)
           }),
           h('span', null, 'auto-hide when I click away'))),
+      docRow,
       h('span', { class: 'foot-skin' },
         h('strong', null, 'SCORES:'),
         h('button', { class: 'btn tiny', type: 'button', onclick: exportSaves }, 'Back up'),
         h('button', { class: 'btn tiny', type: 'button', onclick: () => importInput.click() }, 'Restore'),
         h('a', { class: 'foot-link', href: '#stats' }, 'Your timesheet'),
         importInput),
+      h('span', { class: 'foot-skin' },
+        h('strong', null, 'OFFLINE COPY:'),
+        h('button', { class: 'btn tiny', type: 'button', title: 'Save this whole page as one file you can open with no internet', onclick: downloadSelf }, 'Download this page'),
+        h('span', { class: 'foot-privacy' }, 'one self-contained file — keep it in Drive or a USB stick and open it offline any time')),
       webRow,
       h('span', null,
         h('a', { class: 'foot-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener' }, 'PHANTOM: why traffic jams happen for no reason')),
@@ -328,7 +385,7 @@
         h('kbd', null, '/'), ' search   ',
         h('kbd', null, 'Esc'), ' back'),
       h('span', { class: 'foot-privacy' },
-        'No cookies. No accounts. No tracking. Every score and setting lives only in this browser, and nothing you type is ever sent anywhere.'),
+        'No cookies. No accounts. No tracking. No storage of any kind — nothing is written to this browser and nothing you type ever leaves it. Close the tab and it forgets everything; use Back up to save your scores to a file yourself.'),
       webHint);
     syncWebRow();
 

@@ -3,9 +3,11 @@
 (function (global) {
   'use strict';
   const h = Engine.h;
+  /* in-memory only — see arcade.js. Persists nothing across reloads. */
+  const mem = (window.__cubicleMem = window.__cubicleMem || {});
   const store = {
-    get(k, d) { try { const v = localStorage.getItem('cubicle:' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
-    set(k, v) { try { localStorage.setItem('cubicle:' + k, JSON.stringify(v)); } catch (e) { } }
+    get(k, d) { return Object.prototype.hasOwnProperty.call(mem, k) ? mem[k] : d; },
+    set(k, v) { mem[k] = v; }
   };
 
   /* a theme overrides the paper/ink family and, for the louder ones, the accent

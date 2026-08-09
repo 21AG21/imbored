@@ -4,9 +4,11 @@
   'use strict';
   const h = Engine.h;
 
+  /* in-memory only — see arcade.js. Persists nothing across reloads. */
+  const mem = (window.__cubicleMem = window.__cubicleMem || {});
   const store = {
-    get(k, d) { try { const v = localStorage.getItem('cubicle:' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
-    set(k, v) { try { localStorage.setItem('cubicle:' + k, JSON.stringify(v)); } catch (e) { } }
+    get(k, d) { return Object.prototype.hasOwnProperty.call(mem, k) ? mem[k] : d; },
+    set(k, v) { mem[k] = v; }
   };
 
   let skinId = store.get('bossskin', 'docs');
@@ -42,29 +44,134 @@
     menu: g('<path d="M4 7h16M4 12h16M4 17h16"/>'),
     sidebar: g('<rect x="3" y="5" width="18" height="14" rx="1"/><path d="M9 5v14"/>')
   };
-  const DOC_BLUE = '#3a6ea5';
+  /* a neutral slate-teal, deliberately not any real suite's brand colour */
+  const DOC_BLUE = '#41707c';
 
   /* ============================ 1. DOC ============================ */
-  const DOC_TITLE = 'Q3 Planning Notes';
-  const DOC_BODY =
-    '<h1>Q3 Planning Notes</h1>' +
-    '<p><span class="muted"><i>Draft. Shared with the working group. Comments welcome by Friday.</i></span></p>' +
-    '<h2>Where we landed</h2>' +
-    '<p>Carrying three workstreams into Q3 rather than five. The two we are pausing were not failing, they were competing for the same two people. Both get revisited at the September checkpoint.</p>' +
-    '<h2>Open questions</h2>' +
-    '<ul><li>Who owns the migration once the contractor rolls off?</li>' +
-    '<li>Do we still need the weekly sync, or is the written update enough?</li>' +
-    '<li>Budget line for tooling has not been confirmed. Chasing.</li></ul>' +
-    '<h2>Actions</h2>' +
-    '<ol><li>Draft the one-pager and circulate it before the review.</li>' +
-    '<li>Confirm headcount assumptions with Finance.</li>' +
-    '<li>Book the follow-up. Thirty minutes, not sixty.</li></ol>' +
-    '<h2>Notes from the room</h2>' +
-    '<p>General agreement that scope crept because nobody was empowered to say no. Proposal is to name a single decision owner per workstream. No objections raised.</p>' +
-    '<p><br></p>';
+  /* A shelf of believable documents so the disguise is never the same memo
+     twice — meeting notes, essays, research, a proposal, a cover letter. Each
+     panic picks a fresh one at random; click the title to flip to the next. */
+  const DOCS = [
+    {
+      title: 'Q3 Planning Notes',
+      body: `<h1>Q3 Planning Notes</h1>
+<p><span class="muted"><i>Draft. Shared with the working group. Comments welcome by Friday.</i></span></p>
+<h2>Where we landed</h2>
+<p>Carrying three workstreams into Q3 rather than five. The two we are pausing were not failing, they were competing for the same two people. Both get revisited at the September checkpoint.</p>
+<h2>Open questions</h2>
+<ul><li>Who owns the migration once the contractor rolls off?</li>
+<li>Do we still need the weekly sync, or is the written update enough?</li>
+<li>Budget line for tooling has not been confirmed. Chasing.</li></ul>
+<h2>Actions</h2>
+<ol><li>Draft the one-pager and circulate it before the review.</li>
+<li>Confirm headcount assumptions with Finance.</li>
+<li>Book the follow-up. Thirty minutes, not sixty.</li></ol>
+<h2>Notes from the room</h2>
+<p>General agreement that scope crept because nobody was empowered to say no. Proposal is to name a single decision owner per workstream. No objections raised.</p>
+<p><br></p>`
+    },
+    {
+      title: 'The Long Fuse — Essay Draft',
+      body: `<h1>The Long Fuse: Why 1914 Was Not an Accident</h1>
+<p><span class="muted"><i>Essay draft. ~1,500 words. Due for the seminar on the 14th.</i></span></p>
+<h2>Introduction</h2>
+<p>It is comfortable to describe the outbreak of the First World War as a tragic accident — a sequence of telegrams that arrived too late and generals who could not stop the timetables. That reading is soothing precisely because it absolves everyone. This essay argues the opposite: the war was the predictable outcome of a system built to reward brinkmanship.</p>
+<h2>The alliance trap</h2>
+<p>By 1914 the great powers had bound themselves into two blocs so tightly that a quarrel between the smallest members could summon the largest. Alliances meant for deterrence became conductors for escalation. Deterrence works until it is tested; then it becomes a fuse.</p>
+<h2>Timetables and the illusion of control</h2>
+<p>Mobilisation plans compressed political decisions into hours. Once the trains began to move, statesmen discovered they had delegated the timing of war to railway schedules drawn up a decade earlier.</p>
+<h2>Conclusion</h2>
+<p>Contingency mattered, but it operated inside a structure engineered to convert a crisis into a catastrophe. The fuse was long. It had simply been laid years before the match.</p>
+<p><br></p>`
+    },
+    {
+      title: 'Sleep and Memory — Literature Review',
+      body: `<h1>Sleep, Spacing, and the Consolidation of Memory</h1>
+<p><span class="muted"><i>Working literature review. Section 2 of the thesis. References incomplete.</i></span></p>
+<h2>Abstract</h2>
+<p>This review surveys evidence that sleep does not merely rest the brain but actively reorganises what was learned during the day. Two mechanisms recur across the literature: the replay of daytime activity during slow-wave sleep, and the pruning of connections that carried little signal.</p>
+<h2>Key findings</h2>
+<ul><li>Declarative memories show larger overnight gains than procedural ones, though the gap narrows with practice.</li>
+<li>Naps of roughly ninety minutes reproduce much of the benefit of a full night for single tasks.</li>
+<li>Spacing study across sleep cycles outperforms massed study by a wide and stable margin.</li></ul>
+<h2>Gaps in the evidence</h2>
+<p>Sample sizes remain small and skew heavily toward undergraduates. Few studies follow retention beyond a week, so claims about durable consolidation are, at present, extrapolations.</p>
+<h2>Next steps</h2>
+<p>A within-subject design tracking retention at one day, one week, and one month would address the most obvious gap.</p>
+<p><br></p>`
+    },
+    {
+      title: 'Proposal — Retire the Billing Service',
+      body: `<h1>Proposal: Retiring the Legacy Billing Service</h1>
+<p><span class="muted"><i>For review by the platform group. Decision requested by month end.</i></span></p>
+<h2>Summary</h2>
+<p>The legacy billing service handles a shrinking share of invoices but consumes a disproportionate share of on-call incidents. This proposal recommends migrating the remaining accounts to the new pipeline over two quarters and decommissioning the old service.</p>
+<h2>Why now</h2>
+<ul><li>Sixty percent of last quarter's paging alerts traced back to this one service.</li>
+<li>The only engineer who understood its retry logic has left.</li>
+<li>The new pipeline has run the high-volume accounts without incident for six months.</li></ul>
+<h2>Plan</h2>
+<ol><li>Freeze new integrations against the legacy endpoints.</li>
+<li>Migrate accounts in cohorts, smallest first, with a one-week soak between cohorts.</li>
+<li>Run both systems in shadow for a full billing cycle before cutover.</li></ol>
+<h2>Risks</h2>
+<p>Edge-case tax rules are under-documented. Mitigation: a reconciliation report comparing both systems, reviewed by Finance before each cohort.</p>
+<p><br></p>`
+    },
+    {
+      title: 'In Praise of the Long Walk',
+      body: `<h1>In Praise of the Long Walk</h1>
+<p><span class="muted"><i>Personal essay. Second draft. Probably still too long.</i></span></p>
+<p>There is a particular kind of thinking that will not happen at a desk. It waits until you are a mile from home, half-listening to your own footsteps, and then it arrives unannounced, as though it had been standing in the road the whole time.</p>
+<p>I have solved more problems on pavements than I ever have on paper. Not because walking makes me clever, but because it makes me patient. The body sets a rhythm the mind cannot rush, and in that enforced slowness the knots come loose on their own.</p>
+<p>The philosophers knew this. So did the poets, who wrote their best lines out loud to the hedgerows. What they shared was not genius so much as a refusal to sit still and wait for it.</p>
+<p>So when the work will not come, I no longer force it. I put on my shoes. The sentence I could not write is usually waiting somewhere around the second corner, and it is always kinder to me out there than it was at the desk.</p>
+<p><br></p>`
+    },
+    {
+      title: 'Field Notes — Urban Peregrines',
+      body: `<h1>Field Notes: Urban Peregrine Nesting Sites</h1>
+<p><span class="muted"><i>Observation log. Site 3 (cathedral tower). Weather: overcast, light wind.</i></span></p>
+<h2>0640</h2>
+<p>Adult female on the ledge, facing east. No prey visible. Preening for eleven minutes, then still.</p>
+<h2>0715</h2>
+<p>Male arrives from the north with an unidentified small bird. Exchange at the ledge lasts under four seconds. Female departs; male remains with the eyasses.</p>
+<h2>Observations</h2>
+<ul><li>Three eyasses confirmed. Down still visible on all three, so hatch was recent.</li>
+<li>The pair continues to favour the tower over the taller office block two streets away, likely for the wider ledge and the updraft off the nave roof.</li>
+<li>Pigeon population within the survey square appears noticeably thinner than last season.</li></ul>
+<h2>Note to self</h2>
+<p>Return at dusk to log the evening feed. Bring the longer lens; the morning shots were soft.</p>
+<p><br></p>`
+    },
+    {
+      title: 'Reading Response — Le Guin',
+      body: `<h1>Reading Response: <i>The Left Hand of Darkness</i></h1>
+<p><span class="muted"><i>Weekly response. One page. No secondary sources this week.</i></span></p>
+<p>Le Guin sets her story on a world where the inhabitants have no fixed sex, and then declines to make that the point. The book is not about gender so much as it is about the slow, awkward, unglamorous work of learning to trust a person who is genuinely foreign to you.</p>
+<p>What stayed with me was the journey across the ice: two characters, mutually suspicious, who survive only by becoming legible to one another. The novel argues that understanding is not a flash of insight but a distance you cover on foot, at cost, with someone who could still betray you.</p>
+<p>I came in expecting a thought experiment and left with something closer to a friendship story. That the experiment recedes is, I think, the whole achievement. The strangeness stops being a premise and becomes simply the condition of the two people trying to reach each other.</p>
+<p><br></p>`
+    },
+    {
+      title: 'Application — Data Analyst',
+      body: `<h1>Application: Data Analyst, Insights Team</h1>
+<p><span class="muted"><i>Cover letter draft. Tailor the second paragraph before sending.</i></span></p>
+<p>Dear Hiring Manager,</p>
+<p>I am writing to apply for the Data Analyst position on the Insights team. Over the past three years I have turned messy operational data into decisions people actually acted on, and I would like to do that work somewhere it clearly matters.</p>
+<p>In my current role I rebuilt a weekly reporting process that took a colleague most of a day into a pipeline that runs in minutes, which freed the team to spend its time asking better questions rather than assembling the same tables. I care less about the dashboard than about whether anyone changes their mind because of it.</p>
+<p>I would welcome the chance to discuss how I could help the Insights team. Thank you for your time and consideration.</p>
+<p>Sincerely,</p>
+<p>K.</p>
+<p><br></p>`
+    }
+  ];
+  let docIdx = Math.floor(Math.random() * DOCS.length);
+  let docMode = 'shuffle';                 // 'shuffle' = a random doc each panic; a number pins one
+  const curDoc = () => DOCS[docIdx] || DOCS[0];
 
   function buildDocs() {
-    const body = h('div', { class: 'gd-body', contenteditable: 'true', spellcheck: 'false', html: DOC_BODY });
+    const body = h('div', { class: 'gd-body', contenteditable: 'true', spellcheck: 'false', html: curDoc().body });
     const editNote = h('span', { class: 'gd-editnote' }, 'Last edit was seconds ago');
     body.addEventListener('input', () => { editNote.textContent = 'Last edit was seconds ago'; });
 
@@ -86,16 +193,16 @@
         h('div', { class: 'gd-head' },
           h('span', {
             class: 'gd-logo', html:
-              '<svg viewBox="0 0 40 54" width="34" height="40"><path d="M4 0h22l14 14v36a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4z" fill="#3a6ea5"/><path d="M26 0l14 14H30a4 4 0 0 1-4-4z" fill="#9db8d8"/><g fill="#fff"><rect x="9" y="22" width="22" height="2.6" rx="1.3"/><rect x="9" y="29" width="22" height="2.6" rx="1.3"/><rect x="9" y="36" width="22" height="2.6" rx="1.3"/><rect x="9" y="43" width="14" height="2.6" rx="1.3"/></g></svg>'
+              '<svg viewBox="0 0 40 54" width="34" height="40"><path d="M4 0h22l14 14v36a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4z" fill="#41707c"/><path d="M26 0l14 14H30a4 4 0 0 1-4-4z" fill="#a7c8ce"/><g fill="#fff"><rect x="9" y="22" width="22" height="2.6" rx="1.3"/><rect x="9" y="29" width="22" height="2.6" rx="1.3"/><rect x="9" y="36" width="22" height="2.6" rx="1.3"/><rect x="9" y="43" width="14" height="2.6" rx="1.3"/></g></svg>'
           }),
           h('div', { class: 'gd-headmid' },
             h('div', { class: 'gd-titlerow' },
-              h('span', { class: 'gd-title' }, DOC_TITLE),
+              h('span', { class: 'gd-title', title: 'Open a different document', onclick: () => Boss.nextDoc() }, curDoc().title),
               h('span', { class: 'gd-mini', html: GL.star }),
               h('span', { class: 'gd-mini', html: GL.folder }),
               h('span', { class: 'gd-mini', html: GL.cloud })),
             h('div', { class: 'gd-menu' },
-              ['File', 'Edit', 'View', 'Insert', 'Format', 'Tools', 'Extensions', 'Help'].map((m) => h('span', null, m)))),
+              ['File', 'Edit', 'View', 'Insert', 'Format', 'Tools', 'Help'].map((m) => h('span', null, m)))),
           h('div', { class: 'gd-headright' },
             h('span', { class: 'gd-mini', html: GL.comment }),
             h('span', { class: 'gd-share' }, h('span', { class: 'gd-lock', html: GL.lock }), 'Share'),
@@ -106,7 +213,7 @@
             tb(GL.undo), tb(GL.redo), tb(GL.print), tb(GL.spell), tb(GL.paint),
             h('span', { class: 'gd-zoom' }, '100%', h('i', { class: 'gd-caret' })),
             sep(),
-            dd('Normal text', true),
+            dd('Body text', true),
             sep(),
             dd('Arial', true),
             sep(),
@@ -200,8 +307,8 @@
       focus: () => { if (firstCell) firstCell.focus(); },
       el: h('div', { class: 'skin sheet' },
         h('div', { class: 'sh-bar' },
-          h('span', { class: 'sh-file' }, 'Q3_Regional_Forecast_v7_FINAL.xlsx'),
-          h('span', { class: 'sh-menu' }, ['File', 'Home', 'Insert', 'Formulas', 'Data', 'Review', 'View'].map((m) => h('span', null, m)))),
+          h('span', { class: 'sh-file' }, 'Q3 Regional Forecast — v7 (final)'),
+          h('span', { class: 'sh-menu' }, ['File', 'Edit', 'Insert', 'Data', 'Chart', 'View'].map((m) => h('span', null, m)))),
         h('div', { class: 'sh-formula' }, cellRef, h('span', { class: 'fx' }, 'fx'), formula),
         h('div', { class: 'sh-grid' }, h('table', null, h('thead', null, head), h('tbody', null, rows))),
         h('div', { class: 'sh-tabs' },
@@ -267,7 +374,7 @@
         h('div', { class: 'mail-cols' },
           h('div', { class: 'mail-side' },
             h('div', { class: 'mail-compose' }, 'Compose'),
-            ['Inbox 3', 'Starred', 'Snoozed', 'Sent', 'Drafts 2', 'Archive', 'Spam'].map((f, i) =>
+            ['Inbox 3', 'Flagged', 'Sent', 'Drafts 2', 'Archive', 'Junk'].map((f, i) =>
               h('div', { class: 'mail-folder' + (i === 0 ? ' active' : '') }, f))),
           list,
           h('div', { class: 'mail-read' }, subject, from, bodyText,
@@ -385,20 +492,20 @@
   const CAL_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'];
   const CAL_EVENTS = [
-    { d: 0, s: 9, e: 9.5, t: '1:1 // Katz', c: '#7986cb' },
-    { d: 0, s: 11, e: 12, t: 'Sprint planning', c: '#3a6ea5' },
+    { d: 0, s: 9, e: 9.5, t: '1:1 // Katz', c: '#6b73a6' },
+    { d: 0, s: 11, e: 12, t: 'Sprint planning', c: '#41707c' },
     { d: 0, s: 14, e: 15.5, t: 'HOLD — do not book', c: '#a79b8e' },
-    { d: 1, s: 8.5, e: 9, t: 'Standup', c: '#33b679' },
-    { d: 1, s: 10, e: 11, t: 'Design review', c: '#f4511e' },
-    { d: 1, s: 13, e: 14, t: 'Lunch w/ Priya', c: '#f6bf26' },
-    { d: 2, s: 9.5, e: 11, t: 'Focus block', c: '#616161' },
-    { d: 2, s: 15, e: 16, t: 'Vendor call', c: '#039be5' },
-    { d: 3, s: 10, e: 10.5, t: '1:1 // Okafor', c: '#7986cb' },
-    { d: 3, s: 12, e: 13, t: 'Lunch', c: '#f6bf26' },
-    { d: 3, s: 14, e: 15.5, t: 'Roadmap sync', c: '#3a6ea5' },
-    { d: 4, s: 9, e: 9.5, t: 'Standup', c: '#33b679' },
-    { d: 4, s: 11, e: 12, t: 'Interview: Backend', c: '#8e24aa' },
-    { d: 4, s: 16, e: 17, t: 'Wind-down / notes', c: '#616161' }
+    { d: 1, s: 8.5, e: 9, t: 'Standup', c: '#4a8a6a' },
+    { d: 1, s: 10, e: 11, t: 'Design review', c: '#c85a3c' },
+    { d: 1, s: 13, e: 14, t: 'Lunch w/ Priya', c: '#d0a24a' },
+    { d: 2, s: 9.5, e: 11, t: 'Focus block', c: '#6a6a72' },
+    { d: 2, s: 15, e: 16, t: 'Vendor call', c: '#3d8aa0' },
+    { d: 3, s: 10, e: 10.5, t: '1:1 // Okafor', c: '#6b73a6' },
+    { d: 3, s: 12, e: 13, t: 'Lunch', c: '#d0a24a' },
+    { d: 3, s: 14, e: 15.5, t: 'Roadmap sync', c: '#41707c' },
+    { d: 4, s: 9, e: 9.5, t: 'Standup', c: '#4a8a6a' },
+    { d: 4, s: 11, e: 12, t: 'Interview: Backend', c: '#7a4a86' },
+    { d: 4, s: 16, e: 17, t: 'Wind-down / notes', c: '#6a6a72' }
   ];
   function calHalf(v) { const hh = Math.floor(v); const m = Math.round((v - hh) * 60); const ap = hh < 12 ? 'a' : 'p'; const h12 = hh % 12 === 0 ? 12 : hh % 12; return h12 + (m ? ':' + String(m).padStart(2, '0') : '') + ap; }
 
@@ -456,8 +563,8 @@
 
   /* ============================ shell ============================ */
   const SKINS = [
-    { id: 'docs', label: 'Doc', icon: 'docs', title: () => DOC_TITLE + ' - Docs', build: buildDocs },
-    { id: 'sheet', label: 'Spreadsheet', icon: 'sheet', title: () => 'Q3_Regional_Forecast_v7_FINAL.xlsx', build: buildSheet },
+    { id: 'docs', label: 'Doc', icon: 'docs', title: () => curDoc().title + ' - Docs', build: buildDocs },
+    { id: 'sheet', label: 'Spreadsheet', icon: 'sheet', title: () => 'Q3 Regional Forecast — v7 (final)', build: buildSheet },
     { id: 'inbox', label: 'Inbox', icon: 'inbox', title: () => 'Inbox (3) - Mail', build: buildInbox },
     { id: 'term', label: 'Terminal', icon: 'term', title: () => 'bash - ~/work/platform', build: buildTerm },
     { id: 'cal', label: 'Calendar', icon: 'sheet', title: () => 'Calendar - ' + CAL_MONTHS[new Date().getMonth()] + ' ' + new Date().getFullYear(), build: buildCalendar },
@@ -484,6 +591,19 @@
       const i = SKINS.findIndex((s) => s.id === skinId);
       Boss.setSkin(SKINS[(i + 1) % SKINS.length].id);
     },
+    /* the Doc disguise now carries a shelf of documents (essays, research,
+       notes, a proposal, a cover letter). Shuffle picks one at random on each
+       panic; pin one to always show it. Clicking the title flips to the next. */
+    docs: () => DOCS.map((d) => d.title),
+    docIndex: () => docIdx,
+    docMode: () => docMode,
+    setShuffle() { docMode = 'shuffle'; },
+    setDoc(i) {
+      if (i < 0 || i >= DOCS.length) return;
+      docMode = i; docIdx = i;
+      if (on && skinId === 'docs') { render(); if (current && current.focus) current.focus(); try { document.title = Boss.title(); } catch (e) { /* */ } }
+    },
+    nextDoc() { Boss.setDoc((docIdx + 1) % DOCS.length); },
     isOn: () => on
   };
 
@@ -517,6 +637,13 @@
     if (want && skinId === 'web' && webMode === 'jump') {
       const u = normalise(webUrl);
       if (u) { location.href = u; return false; }
+    }
+    /* entering the Doc disguise: shuffle to a fresh document, or show the pinned one */
+    if (want && skinId === 'docs') {
+      if (docMode === 'shuffle' && DOCS.length > 1) {
+        const prev = docIdx;
+        do { docIdx = Math.floor(Math.random() * DOCS.length); } while (docIdx === prev);
+      } else if (typeof docMode === 'number') { docIdx = docMode; }
     }
     on = want;
     if (on) render();
