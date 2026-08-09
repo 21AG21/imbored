@@ -327,6 +327,8 @@
         h('kbd', null, '\\'), ' big screen   ',
         h('kbd', null, '/'), ' search   ',
         h('kbd', null, 'Esc'), ' back'),
+      h('span', { class: 'foot-privacy' },
+        'No cookies. No accounts. No tracking. Every score and setting lives only in this browser, and nothing you type is ever sent anywhere.'),
       webHint);
     syncWebRow();
 

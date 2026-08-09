@@ -1928,3 +1928,6 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 .sb-emoji { font-size: 26px; line-height: 1; }
 .sb-label { font: 700 12px Verdana, sans-serif; color: var(--ink); text-align: center; }
 .sb-key { position: absolute; top: 4px; right: 6px; font: 700 9px "Courier New", monospace; color: var(--ink3); }
+
+/* footer privacy line */
+.foot-privacy { font: 11px/1.5 Verdana, sans-serif; color: var(--ink3); max-width: 60ch; }

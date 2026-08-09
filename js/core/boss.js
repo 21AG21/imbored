@@ -42,7 +42,7 @@
     menu: g('<path d="M4 7h16M4 12h16M4 17h16"/>'),
     sidebar: g('<rect x="3" y="5" width="18" height="14" rx="1"/><path d="M9 5v14"/>')
   };
-  const DOC_BLUE = '#4285f4';
+  const DOC_BLUE = '#3a6ea5';
 
   /* ============================ 1. DOC ============================ */
   const DOC_TITLE = 'Q3 Planning Notes';
@@ -86,7 +86,7 @@
         h('div', { class: 'gd-head' },
           h('span', {
             class: 'gd-logo', html:
-              '<svg viewBox="0 0 40 54" width="34" height="40"><path d="M4 0h22l14 14v36a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4z" fill="#4285f4"/><path d="M26 0l14 14H30a4 4 0 0 1-4-4z" fill="#a1c2fa"/><g fill="#fff"><rect x="9" y="22" width="22" height="2.6" rx="1.3"/><rect x="9" y="29" width="22" height="2.6" rx="1.3"/><rect x="9" y="36" width="22" height="2.6" rx="1.3"/><rect x="9" y="43" width="14" height="2.6" rx="1.3"/></g></svg>'
+              '<svg viewBox="0 0 40 54" width="34" height="40"><path d="M4 0h22l14 14v36a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4z" fill="#3a6ea5"/><path d="M26 0l14 14H30a4 4 0 0 1-4-4z" fill="#9db8d8"/><g fill="#fff"><rect x="9" y="22" width="22" height="2.6" rx="1.3"/><rect x="9" y="29" width="22" height="2.6" rx="1.3"/><rect x="9" y="36" width="22" height="2.6" rx="1.3"/><rect x="9" y="43" width="14" height="2.6" rx="1.3"/></g></svg>'
           }),
           h('div', { class: 'gd-headmid' },
             h('div', { class: 'gd-titlerow' },
@@ -386,7 +386,7 @@
     'July', 'August', 'September', 'October', 'November', 'December'];
   const CAL_EVENTS = [
     { d: 0, s: 9, e: 9.5, t: '1:1 // Katz', c: '#7986cb' },
-    { d: 0, s: 11, e: 12, t: 'Sprint planning', c: '#4285f4' },
+    { d: 0, s: 11, e: 12, t: 'Sprint planning', c: '#3a6ea5' },
     { d: 0, s: 14, e: 15.5, t: 'HOLD — do not book', c: '#a79b8e' },
     { d: 1, s: 8.5, e: 9, t: 'Standup', c: '#33b679' },
     { d: 1, s: 10, e: 11, t: 'Design review', c: '#f4511e' },
@@ -395,7 +395,7 @@
     { d: 2, s: 15, e: 16, t: 'Vendor call', c: '#039be5' },
     { d: 3, s: 10, e: 10.5, t: '1:1 // Okafor', c: '#7986cb' },
     { d: 3, s: 12, e: 13, t: 'Lunch', c: '#f6bf26' },
-    { d: 3, s: 14, e: 15.5, t: 'Roadmap sync', c: '#4285f4' },
+    { d: 3, s: 14, e: 15.5, t: 'Roadmap sync', c: '#3a6ea5' },
     { d: 4, s: 9, e: 9.5, t: 'Standup', c: '#33b679' },
     { d: 4, s: 11, e: 12, t: 'Interview: Backend', c: '#8e24aa' },
     { d: 4, s: 16, e: 17, t: 'Wind-down / notes', c: '#616161' }
@@ -456,7 +456,7 @@
 
   /* ============================ shell ============================ */
   const SKINS = [
-    { id: 'docs', label: 'Doc', icon: 'docs', title: () => DOC_TITLE + ' - Google Docs', build: buildDocs },
+    { id: 'docs', label: 'Doc', icon: 'docs', title: () => DOC_TITLE + ' - Docs', build: buildDocs },
     { id: 'sheet', label: 'Spreadsheet', icon: 'sheet', title: () => 'Q3_Regional_Forecast_v7_FINAL.xlsx', build: buildSheet },
     { id: 'inbox', label: 'Inbox', icon: 'inbox', title: () => 'Inbox (3) - Mail', build: buildInbox },
     { id: 'term', label: 'Terminal', icon: 'term', title: () => 'bash - ~/work/platform', build: buildTerm },
