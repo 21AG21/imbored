@@ -110,7 +110,7 @@
     document.body.classList.toggle('docmode', docModeOn);
     docBtnSyncers.forEach((fn) => { try { fn(); } catch (e) { /* ignore */ } });
     applyDocTitle();
-    if (currentGame) fitStageSoon();   // chrome height changed; re-fit the playfield
+    if (currentGame) { try { global.dispatchEvent(new Event('resize')); } catch (e) { /* ignore */ } fitStageSoon(); }   // re-fit canvas + DOM boards for the new layout
   }
 
   /* ---------------- big screen ---------------- */
@@ -124,7 +124,9 @@
     if (!stage) return;
     stage.style.transform = '';
     stage.style.transformOrigin = '';
+    stage.style.zoom = '';
     if (stage.querySelector('canvas')) return;   // canvas games size themselves
+    const docm = document.body.classList.contains('docmode') && !bigOn;
     const rect = stage.getBoundingClientRect();
     /* the stage is full-width but its board is a narrow centred child, so size to
        the widest real child, not the stage's own width */
@@ -132,6 +134,17 @@
     for (const c of stage.children) { const r = c.getBoundingClientRect(); if (r.height > 4) natW = Math.max(natW, r.width); }
     const natH = stage.scrollHeight;
     if (!natW || !natH) return;
+    if (docm) {
+      /* document-embed: grow the board to fill the text column like a full-width
+         table/figure, using zoom (not transform) so the page REFLOWS and the
+         report prose flows below it instead of being overlapped. Height-capped. */
+      const availW = stage.clientWidth - 8;
+      const capH = global.innerHeight * 0.72;
+      let z = Math.min(availW / natW, capH / natH);
+      z = Math.max(1, Math.min(z, 2.2));
+      if (z > 1.02) stage.style.zoom = z.toFixed(3);
+      return;
+    }
     /* Bound growth to the space the board actually has: down to the bottom of
        #view (which is exactly where the footer starts, so the scaled board never
        collides with it) in normal mode, or the whole viewport in big-screen. */
@@ -922,6 +935,46 @@
     applyDocTitle();
   }
 
+  /* Disguise-only "report" prose that wraps the game like a figure in a document.
+     Shown only in docmode (CSS-hidden otherwise). Deliberately generic so it sits
+     plausibly around any game; picked deterministically per game id so a given
+     game always reads the same. The point is text DENSITY: a blurred page of text
+     with a figure in the middle reads as a document, not a game on an empty page. */
+  const PROSE = [
+    'This section summarises the current position and the items still outstanding at the time of writing.',
+    'The material below is provided for reference and reflects the most recent review by the working group.',
+    'No significant changes were recorded since the previous update, and the working assumptions remain in place.',
+    'Where figures are shown they should be read as provisional and are subject to the usual caveats.',
+    'The approach follows the process agreed at the last checkpoint, with minor adjustments noted where relevant.',
+    'Comments from the group have been folded in, and the remaining open questions are flagged for follow-up.',
+    'Overall the picture is consistent with expectations, though a small number of cases warrant a closer look.',
+    'A fuller breakdown is available on request; the summary here is intended to support a quick read before the review.',
+    'The underlying detail has been checked against the source records and reconciled where discrepancies were found.',
+    'These notes are circulated ahead of the meeting so that comments can be gathered and resolved in advance.',
+    'Nothing here changes the headline conclusion, which is unchanged from the earlier draft shared last week.',
+    'The next steps are listed at the end, with an owner and a rough timing recorded against each item.'
+  ];
+  const FIGCAPS = [
+    'Figure 1. Current-state overview, captured for this review.',
+    'Figure 1. Summary layout for the period under review.',
+    'Figure 1. Reference view, as referred to in the notes above.',
+    'Table 1. Working figures — provisional and subject to revision.',
+    'Figure 1. Snapshot circulated for comment ahead of the meeting.'
+  ];
+  function hashId(s) { let x = 2166136261; for (let i = 0; i < s.length; i++) { x ^= s.charCodeAt(i); x = (x * 16777619) >>> 0; } return x; }
+  function docProse(g) {
+    const seed = hashId(g.id || 'x');
+    const P = (k) => PROSE[(seed >>> (k * 4)) % PROSE.length];   // unsigned shift — signed >> can go negative -> undefined
+    const intro = h('div', { class: 'doc-prose doc-intro' },
+      h('p', null, P(0)),
+      h('p', null, P(1) + ' ' + P(2)));
+    const after = h('div', { class: 'doc-prose doc-after' },
+      h('p', { class: 'doc-figcap' }, FIGCAPS[seed % FIGCAPS.length]),
+      h('p', null, P(3) + ' ' + P(4)),
+      h('p', null, P(5)));
+    return { intro, after };
+  }
+
   /* ---------------- game screen ---------------- */
   function renderGame(g, daily) {
     const view = document.getElementById('view');
@@ -991,7 +1044,9 @@
           bestEl),
         h('p', { class: 'game-cap' }, g.blurb),   // reads as a document caption in disguise mode; hidden otherwise
         howto),
-      toolbar, statusEl, stage);
+      docProse(g).intro,                          // disguise-only report prose around the "figure"
+      toolbar, statusEl, stage,
+      docProse(g).after);
 
     stage.appendChild(h('div', { class: 'rotate-nudge' },
       'Built wide. Turn the phone sideways or tap expand to fill the screen.'));

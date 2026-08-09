@@ -91,6 +91,16 @@
         return;
       }
       if (document.body.classList.contains('bigscreen')) { c.style.maxWidth = 'var(--gw)'; return; }
+      /* disguise mode: the canvas is an embedded FIGURE in a document, not the
+         whole show. Size it to the text column, capped to a portion of the
+         viewport height, so report prose can flow above and below it without the
+         canvas chasing the viewport bottom and overlapping that prose. */
+      if (document.body.classList.contains('docmode')) {
+        const parentW = (c.parentElement && c.parentElement.clientWidth) || c.getBoundingClientRect().width;
+        const capH = ((global.visualViewport && global.visualViewport.height) || global.innerHeight) * 0.72;
+        c.style.maxWidth = Math.round(Math.min(parentW, capH * w / hh)) + 'px';
+        return;
+      }
       const vpH = (global.visualViewport && global.visualViewport.height) || global.innerHeight;
       const cr = c.getBoundingClientRect();
       /* overhang = pixels from the canvas bottom down to the lowest thing below
