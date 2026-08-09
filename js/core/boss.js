@@ -381,12 +381,86 @@
     try { return new URL(normalise(u)).hostname.replace(/^www\./, ''); } catch (e) { return 'workspace'; }
   }
 
+  /* ============================ 6. CALENDAR ============================ */
+  const CAL_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'];
+  const CAL_EVENTS = [
+    { d: 0, s: 9, e: 9.5, t: '1:1 // Katz', c: '#7986cb' },
+    { d: 0, s: 11, e: 12, t: 'Sprint planning', c: '#4285f4' },
+    { d: 0, s: 14, e: 15.5, t: 'HOLD — do not book', c: '#a79b8e' },
+    { d: 1, s: 8.5, e: 9, t: 'Standup', c: '#33b679' },
+    { d: 1, s: 10, e: 11, t: 'Design review', c: '#f4511e' },
+    { d: 1, s: 13, e: 14, t: 'Lunch w/ Priya', c: '#f6bf26' },
+    { d: 2, s: 9.5, e: 11, t: 'Focus block', c: '#616161' },
+    { d: 2, s: 15, e: 16, t: 'Vendor call', c: '#039be5' },
+    { d: 3, s: 10, e: 10.5, t: '1:1 // Okafor', c: '#7986cb' },
+    { d: 3, s: 12, e: 13, t: 'Lunch', c: '#f6bf26' },
+    { d: 3, s: 14, e: 15.5, t: 'Roadmap sync', c: '#4285f4' },
+    { d: 4, s: 9, e: 9.5, t: 'Standup', c: '#33b679' },
+    { d: 4, s: 11, e: 12, t: 'Interview: Backend', c: '#8e24aa' },
+    { d: 4, s: 16, e: 17, t: 'Wind-down / notes', c: '#616161' }
+  ];
+  function calHalf(v) { const hh = Math.floor(v); const m = Math.round((v - hh) * 60); const ap = hh < 12 ? 'a' : 'p'; const h12 = hh % 12 === 0 ? 12 : hh % 12; return h12 + (m ? ':' + String(m).padStart(2, '0') : '') + ap; }
+
+  function buildCalendar() {
+    const now = new Date();
+    const H0 = 8, H1 = 19, PXH = 46;
+    const hours = [];
+    for (let hh = H0; hh < H1; hh++) hours.push(hh);
+    const fmtH = (hh) => (hh % 12 === 0 ? 12 : hh % 12) + (hh < 12 ? ' AM' : ' PM');
+    const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+    const monday = new Date(now); monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+    const nowH = now.getHours() + now.getMinutes() / 60;
+    const nowDayIdx = (now.getDay() + 6) % 7;
+    const gridH = hours.length * PXH;
+
+    const timeGutter = h('div', { class: 'cal-times' },
+      hours.map((hh) => h('div', { class: 'cal-timelabel', style: { height: PXH + 'px' } }, fmtH(hh))));
+
+    const cols = dayNames.map((dn, di) => {
+      const col = h('div', { class: 'cal-col', style: { height: gridH + 'px' } });
+      CAL_EVENTS.filter((e) => e.d === di).forEach((e) => {
+        col.appendChild(h('div', {
+          class: 'cal-event',
+          style: { top: ((e.s - H0) * PXH) + 'px', height: ((e.e - e.s) * PXH - 3) + 'px', background: e.c }
+        }, h('span', { class: 'cal-ev-t' }, e.t), h('span', { class: 'cal-ev-time' }, calHalf(e.s) + ' – ' + calHalf(e.e))));
+      });
+      if (di === nowDayIdx && nowH >= H0 && nowH <= H1) {
+        col.appendChild(h('div', { class: 'cal-now', style: { top: ((nowH - H0) * PXH) + 'px' } }));
+      }
+      return col;
+    });
+
+    const dayHead = h('div', { class: 'cal-dayhead' },
+      h('div', { class: 'cal-corner' }),
+      dayNames.map((dn, di) => {
+        const d = new Date(monday); d.setDate(monday.getDate() + di);
+        return h('div', { class: 'cal-dcol' + (di === nowDayIdx ? ' today' : '') },
+          h('span', { class: 'cal-dn' }, dn), h('span', { class: 'cal-dnum' }, String(d.getDate())));
+      }));
+
+    return {
+      focus: () => { },
+      el: h('div', { class: 'skin cal' },
+        h('div', { class: 'cal-head' },
+          h('span', { class: 'cal-logo' }, h('span', { class: 'cal-logo-day' }, String(now.getDate())), 'Calendar'),
+          h('span', { class: 'cal-todaybtn' }, 'Today'),
+          h('span', { class: 'cal-title' }, CAL_MONTHS[now.getMonth()] + ' ' + now.getFullYear()),
+          h('span', { class: 'cal-viewbtn' }, 'Week')),
+        dayHead,
+        h('div', { class: 'cal-scroll' },
+          h('div', { class: 'cal-grid' }, timeGutter,
+            h('div', { class: 'cal-cols', style: { backgroundSize: '100% ' + PXH + 'px' } }, cols))))
+    };
+  }
+
   /* ============================ shell ============================ */
   const SKINS = [
     { id: 'docs', label: 'Doc', icon: 'docs', title: () => DOC_TITLE + ' - Google Docs', build: buildDocs },
     { id: 'sheet', label: 'Spreadsheet', icon: 'sheet', title: () => 'Q3_Regional_Forecast_v7_FINAL.xlsx', build: buildSheet },
     { id: 'inbox', label: 'Inbox', icon: 'inbox', title: () => 'Inbox (3) - Mail', build: buildInbox },
     { id: 'term', label: 'Terminal', icon: 'term', title: () => 'bash - ~/work/platform', build: buildTerm },
+    { id: 'cal', label: 'Calendar', icon: 'sheet', title: () => 'Calendar - ' + CAL_MONTHS[new Date().getMonth()] + ' ' + new Date().getFullYear(), build: buildCalendar },
     { id: 'web', label: 'Any website', icon: 'web', title: () => hostOf(webUrl), build: buildWeb }
   ];
   const skin = () => SKINS.find((s) => s.id === skinId) || SKINS[0];
