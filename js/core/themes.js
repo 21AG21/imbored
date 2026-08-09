@@ -57,6 +57,21 @@
         '--crt': '#0a0d12'
       }
     },
+    /* Night: warm, dim, low blue light. For reading in a dark room or winding
+       down before bed — parchment text on warm charcoal, muted accents, nothing
+       that glares. Paired with the 'soft' UI for calm edges. */
+    night: {
+      name: 'Night (kind to eyes)',
+      vars: {
+        '--paper': '#211a12', '--paper2': '#2b2318', '--label': '#352b1d',
+        '--chrome': '#473a27', '--shade': '#130e08', '--hilite': '#4e4130',
+        '--ink': '#ecdcc2', '--ink2': '#c9b591', '--ink3': '#9c8967',
+        '--brandink': '#ecdcc2',
+        '--teal': '#5fb2a2', '--hotpink': '#df9090', '--banana': '#e4ba62',
+        '--grape': '#584a34', '--lime': '#a7bd6a', '--tomato': '#df8a5f',
+        '--crt': '#160f08'
+      }
+    },
     beige: { name: 'Beige', vars: {} },
     slate: {
       name: 'Slate',
@@ -264,7 +279,7 @@
      corner radius, shadow style and background texture — so themes restyle the
      whole layout, not just the colours */
   const UI = {
-    paper: 'chunky', ink: 'chunky', graphite: 'chunky', mono: 'soft',
+    paper: 'chunky', ink: 'chunky', graphite: 'chunky', mono: 'soft', night: 'soft',
     beige: 'chunky', slate: 'chunky', pumpkin: 'chunky', dusk: 'chunky', carbon: 'chunky',
     mint: 'soft', rose: 'soft', forest: 'soft', ice: 'soft',
     bubblegum: 'neon', miami: 'neon', grapesoda: 'neon',

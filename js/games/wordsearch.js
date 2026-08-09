@@ -168,15 +168,15 @@
     emoji: 'find',
     cat: 'puzzle',
     order: 18,
-    blurb: 'The back-page classic, restocked with office vocabulary. Buzzwords, coffee orders and creative excuses are buried in a grid of letters — drag a line through each to strike it off. Deeply calming, mildly subversive.',
+    blurb: 'The back-page word search, restocked with office vocabulary. Themed lists of buzzwords, coffee terms and excuses hide in a letter grid, and you drag a line through each to strike it off.',
     scoreLabel: 'Puzzles solved',
     tags: ['word-search', 'words', 'relaxing'],
     how: [
-      'Each grid hides a themed list of words — across, down, diagonally, and either forwards or backwards.',
-      'Press on the first letter of a word and drag in a straight line to its last letter, then release. A correct word locks in and gets crossed off the list.',
-      'Lines must be straight: horizontal, vertical, or a true 45-degree diagonal. Any other shape just clears and you try again.',
-      'Find every word on the list to clear the grid. A timer runs from your first drag if you like to race yourself.',
-      'Pick a different theme from the menu, or hit New grid to shuffle the same words into a fresh layout. Each clear counts toward your total.'
+      'Each grid hides a themed list of words placed across, down, or diagonally, forwards or backwards.',
+      'Press the first letter of a word and drag in a straight line to its last letter, then release. A correct word locks in and crosses off the list.',
+      'Lines must be straight: horizontal, vertical, or a true 45-degree diagonal. Any other shape clears and you try again.',
+      'Find every word on the list to clear the grid. A timer runs from your first drag if you want to race yourself.',
+      'Pick a different theme from the menu, or hit New grid to reshuffle the same words into a fresh layout. Each clear counts toward your total.'
     ],
     mount
   });

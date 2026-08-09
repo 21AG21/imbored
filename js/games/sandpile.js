@@ -143,15 +143,15 @@
     emoji: 'sandpile',
     cat: 'sim',
     order: 9,
-    blurb: 'Memos land on desks; a desk with four spills over onto its neighbours, sometimes setting off a reply-all storm that crosses the whole floor. It tunes itself to the edge of chaos with no help from you, which is the unsettling part.',
+    blurb: 'Memos land on desks; a desk holding four spills onto its neighbours and can set off a reply-all cascade. Left alone, the pile drives itself to the edge of chaos.',
     scoreLabel: 'Biggest avalanche',
     tags: ['sandpile', 'self-organized-criticality', 'power-law', 'emergence'],
     how: [
-      'Memos drop on random desks. A desk holding four topples, sending one to each orthogonal neighbour; memos falling off the floor are lost.',
+      'Memos drop on random desks. A desk holding four topples, sending one to each side neighbour. Memos off the edge are lost.',
       'A topple can push neighbours over too, so one memo can trigger an avalanche of any size. Click a desk to drop one yourself.',
-      'There is no setting to change. Left alone, the pile drives itself to criticality — the point where avalanches have no typical size.',
-      'The instrument is the avalanche-size distribution on log-log axes. When it settles into a straight line, that line is the power law of self-organized criticality.',
-      'You cannot calm it down; there is no stable state to reach. Your score is simply the biggest avalanche you have seen.'
+      'There is no setting to change. Left alone, the pile drives itself to criticality, where avalanches have no typical size.',
+      'The plot is the avalanche-size distribution on log-log axes. A straight line is the power law of self-organized criticality.',
+      'You cannot calm it down; there is no stable state to reach. Your score is the biggest avalanche you have seen.'
     ],
     mount
   });

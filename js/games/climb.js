@@ -134,15 +134,15 @@
     emoji: 'climb',
     cat: 'action',
     order: 37,
-    blurb: 'You bounce forever on your own. All you do is steer onto the next shelf, and the next, until you miss one. Then it is a long way down.',
+    blurb: 'You bounce on your own and steer onto the next shelf up. Miss one and you fall off the bottom.',
     scoreLabel: 'Height',
     tags: ['doodle', 'jump', 'platform'],
     how: [
-      'You bounce on your own, forever. Steering left and right is the only thing you control.',
-      'Move with the arrow keys, A/D, or by holding the mouse to either side of the field. Walk off one edge and you reappear on the other.',
-      'You only bounce when falling onto the top of a shelf, so aim your descent. Green shelves sit still; orange ones slide, and harder settings deal more of the moving kind.',
-      'The screen scrolls up as you gain height and never comes back down. Fall off the bottom and the run ends.',
-      'Your score is how high you climbed before gravity won.'
+      'You bounce automatically. Steering left and right is all you control.',
+      'Move with arrow keys, A/D, or hold the mouse to one side of the field. Leave one edge and you reappear on the other.',
+      'You bounce only when landing on top of a shelf, so line up your descent. Green shelves hold still; orange ones slide, and harder settings add more sliding ones.',
+      'The view scrolls up as you climb and never drops back. Fall past the bottom and the run ends.',
+      'Your score is the height you reach before you fall.'
     ],
     mount
   });

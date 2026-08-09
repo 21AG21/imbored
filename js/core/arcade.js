@@ -29,10 +29,10 @@
      Every game multiplies its own knobs by Arcade.dm(): spawn rates, speeds,
      patience, board sizes, lives. One dial, sixteen different flavours of pain. */
   const DIFFS = [
-    { id: 'chill', label: 'CHILL', m: 0.7, note: 'Everything is slower and kinder. No shame in it.' },
-    { id: 'normal', label: 'NORMAL', m: 1, note: 'The way these were built.' },
-    { id: 'hard', label: 'HARD', m: 1.55, note: 'Faster, meaner, fewer second chances.' },
-    { id: 'nightmare', label: 'NIGHTMARE', m: 2.3, note: 'This is a bad idea and you should do it.' }
+    { id: 'chill', label: 'CHILL', m: 0.6, note: 'Slower and more forgiving.' },
+    { id: 'normal', label: 'NORMAL', m: 1, note: 'The intended balance.' },
+    { id: 'hard', label: 'HARD', m: 1.8, note: 'Faster and stingier.' },
+    { id: 'nightmare', label: 'NIGHTMARE', m: 2.6, note: 'Unreasonable. Have fun.' }
   ];
   let diffIdx = 1;
 

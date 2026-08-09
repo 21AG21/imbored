@@ -3255,6 +3255,21 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
         '--crt': '#0a0d12'
       }
     },
+    /* Night: warm, dim, low blue light. For reading in a dark room or winding
+       down before bed — parchment text on warm charcoal, muted accents, nothing
+       that glares. Paired with the 'soft' UI for calm edges. */
+    night: {
+      name: 'Night (kind to eyes)',
+      vars: {
+        '--paper': '#211a12', '--paper2': '#2b2318', '--label': '#352b1d',
+        '--chrome': '#473a27', '--shade': '#130e08', '--hilite': '#4e4130',
+        '--ink': '#ecdcc2', '--ink2': '#c9b591', '--ink3': '#9c8967',
+        '--brandink': '#ecdcc2',
+        '--teal': '#5fb2a2', '--hotpink': '#df9090', '--banana': '#e4ba62',
+        '--grape': '#584a34', '--lime': '#a7bd6a', '--tomato': '#df8a5f',
+        '--crt': '#160f08'
+      }
+    },
     beige: { name: 'Beige', vars: {} },
     slate: {
       name: 'Slate',
@@ -3462,7 +3477,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
      corner radius, shadow style and background texture — so themes restyle the
      whole layout, not just the colours */
   const UI = {
-    paper: 'chunky', ink: 'chunky', graphite: 'chunky', mono: 'soft',
+    paper: 'chunky', ink: 'chunky', graphite: 'chunky', mono: 'soft', night: 'soft',
     beige: 'chunky', slate: 'chunky', pumpkin: 'chunky', dusk: 'chunky', carbon: 'chunky',
     mint: 'soft', rose: 'soft', forest: 'soft', ice: 'soft',
     bubblegum: 'neon', miami: 'neon', grapesoda: 'neon',
@@ -4309,10 +4324,10 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
      Every game multiplies its own knobs by Arcade.dm(): spawn rates, speeds,
      patience, board sizes, lives. One dial, sixteen different flavours of pain. */
   const DIFFS = [
-    { id: 'chill', label: 'CHILL', m: 0.7, note: 'Everything is slower and kinder. No shame in it.' },
-    { id: 'normal', label: 'NORMAL', m: 1, note: 'The way these were built.' },
-    { id: 'hard', label: 'HARD', m: 1.55, note: 'Faster, meaner, fewer second chances.' },
-    { id: 'nightmare', label: 'NIGHTMARE', m: 2.3, note: 'This is a bad idea and you should do it.' }
+    { id: 'chill', label: 'CHILL', m: 0.6, note: 'Slower and more forgiving.' },
+    { id: 'normal', label: 'NORMAL', m: 1, note: 'The intended balance.' },
+    { id: 'hard', label: 'HARD', m: 1.8, note: 'Faster and stingier.' },
+    { id: 'nightmare', label: 'NIGHTMARE', m: 2.6, note: 'Unreasonable. Have fun.' }
   ];
   let diffIdx = 1;
 
@@ -6083,16 +6098,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'ising',
     cat: 'sim',
     order: 8,
-    blurb: 'A lattice of magnetic spins run by one honest rule. Cool it and the whole sheet locks into a single magnetised colour; warm it past the Curie point and thermal noise shreds it. The collapse lands right around the temperature Onsager pinned down in 1944.',
+    blurb: 'A grid of magnetic spins run by one flip rule. Cool it and the sheet locks to a single colour; heat it past the Curie point Onsager fixed in 1944 and thermal noise pulls it apart.',
     scoreLabel: 'Peak susceptibility',
     tags: ['ising', 'phase-transition', 'magnetism', 'monte-carlo'],
     how: [
-      'Every square is a tiny magnet pointing up or down. Neighbours prefer to agree — that is the only interaction, and there is no outside field.',
-      'The lattice flips spins by the Metropolis rule: a move that lowers energy is always taken, and one that raises it is taken with probability exp(-ΔE / T). Temperature T is how much the noise fights the neighbours.',
-      'Drag temperature down and the sheet magnetises: one colour swallows the board and |M| climbs toward 1. Drag it up and the order melts to salt-and-pepper with |M| near 0.',
-      'The interesting place is the Curie point T_c ≈ 2.27. Park there and watch domains boil at every size at once — that is criticality, not a stall.',
-      'The panel plots magnetisation against temperature, measured live from the model, with Onsager’s exact T_c marked as the dashed line. On this finite lattice the measured curve rounds off and its drop sits a hair to the right of the line — that offset is real finite-size physics, and it shrinks as the lattice grows.',
-      'Fluctuations (the susceptibility χ) peak sharply at the transition. Your score is the biggest χ you can coax out — which means finding the critical temperature and sitting on it.'
+      'Every square is a tiny magnet pointing up or down. Neighbours prefer to match, and there is no outside field, so that agreement is the whole interaction.',
+      'Spins flip by the Metropolis rule: a move that lowers energy is always taken, one that raises it is taken with probability exp(-ΔE / T). Temperature T sets how hard the noise pushes against the neighbours.',
+      'Drag temperature down and the sheet magnetises: one colour takes the board and |M| climbs toward 1. Drag it up and the order dissolves to salt-and-pepper with |M| near 0.',
+      'The Curie point is T_c ≈ 2.27. Sit there and domains churn at every size at once, which is criticality rather than a stall.',
+      'The panel plots magnetisation against temperature, measured live from the model, with the exact T_c marked by the dashed line. On a finite lattice the curve rounds off and its drop sits a hair right of the line, which is real finite-size physics that shrinks as the lattice grows.',
+      'Fluctuations (the susceptibility χ) peak sharply at the transition. Your score is the largest χ you can hold, so find the critical temperature and stay on it.'
     ],
     mount
   });
@@ -6875,15 +6890,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'sandpile',
     cat: 'sim',
     order: 9,
-    blurb: 'Memos land on desks; a desk with four spills over onto its neighbours, sometimes setting off a reply-all storm that crosses the whole floor. It tunes itself to the edge of chaos with no help from you, which is the unsettling part.',
+    blurb: 'Memos land on desks; a desk holding four spills onto its neighbours and can set off a reply-all cascade. Left alone, the pile drives itself to the edge of chaos.',
     scoreLabel: 'Biggest avalanche',
     tags: ['sandpile', 'self-organized-criticality', 'power-law', 'emergence'],
     how: [
-      'Memos drop on random desks. A desk holding four topples, sending one to each orthogonal neighbour; memos falling off the floor are lost.',
+      'Memos drop on random desks. A desk holding four topples, sending one to each side neighbour. Memos off the edge are lost.',
       'A topple can push neighbours over too, so one memo can trigger an avalanche of any size. Click a desk to drop one yourself.',
-      'There is no setting to change. Left alone, the pile drives itself to criticality — the point where avalanches have no typical size.',
-      'The instrument is the avalanche-size distribution on log-log axes. When it settles into a straight line, that line is the power law of self-organized criticality.',
-      'You cannot calm it down; there is no stable state to reach. Your score is simply the biggest avalanche you have seen.'
+      'There is no setting to change. Left alone, the pile drives itself to criticality, where avalanches have no typical size.',
+      'The plot is the avalanche-size distribution on log-log axes. A straight line is the power law of self-organized criticality.',
+      'You cannot calm it down; there is no stable state to reach. Your score is the biggest avalanche you have seen.'
     ],
     mount
   });
@@ -7039,15 +7054,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'vicsek',
     cat: 'sim',
     order: 10,
-    blurb: 'A few hundred dots, each just steering toward the average heading of its neighbours plus a little randomness. Turn the randomness down and a directionless swarm suddenly moves as one, leaderless. The original model of flocking.',
+    blurb: 'A few hundred dots, each steering toward the average heading of its neighbours plus some randomness. Turn the noise down and the swarm locks into one direction with no leader.',
     scoreLabel: 'Best alignment',
     tags: ['vicsek', 'flocking', 'phase-transition', 'emergence'],
     how: [
-      'Every dot moves at the same speed and, each step, turns to the average heading of the dots within a short radius, plus some random jitter.',
-      'The noise slider is that jitter. There is no leader and no goal — alignment is entirely emergent.',
-      'The order parameter, "alignment", is 0 when the crowd mills in all directions and 1 when it moves in perfect lockstep.',
-      'The instrument plots alignment against noise, measured live. Below a critical noise the flock locks in; above it, it falls apart. The change is sharp.',
-      'Your score is the best alignment you sustain. The interesting play is right around the transition.'
+      'Every dot moves at the same speed and turns to the average heading of the dots near it, plus random jitter.',
+      'The noise slider controls that jitter. There is no leader and no goal; alignment emerges on its own.',
+      'Alignment reads 0 when the crowd mills in all directions and 1 when it moves in lockstep.',
+      'The plot tracks alignment against noise, measured live. Below a critical noise the flock locks in; above it, it falls apart.',
+      'Your score is the best alignment you sustain. Play around the transition.'
     ],
     mount
   });
@@ -7913,16 +7928,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'boom',
     cat: 'sim',
     order: 11,
-    blurb: 'One line of arithmetic runs a population, and turning a single knob marches it from a steady level, through doubling boom–bust cycles, into full-blown chaos — with islands of clean order hidden inside the storm. The famous route to chaos, live and measured.',
+    blurb: 'One line of arithmetic runs a population. Turn the growth-rate knob up and it goes from a steady level into doubling boom-bust cycles and then chaos, with small windows of order hidden in the mess.',
     scoreLabel: 'Deepest cycle',
     tags: ['logistic-map', 'chaos', 'bifurcation', 'dynamical-systems'],
     how: [
-      'The rule is next = r × x × (1 − x): a population that grows when small and crashes when it overshoots. x is the stock (0 to 1), r is the growth rate you control.',
-      'The big picture is the bifurcation diagram: for each growth rate it shows the values the population eventually settles into. One line means a steady level; two means it alternates high–low every year; four means a longer cycle, and so on.',
-      'Raise r and the cycle length keeps doubling — 1, 2, 4, 8, 16 — in ever-smaller steps, piling up at r ≈ 3.5699. Past that the population never repeats: deterministic chaos from a one-liner.',
-      'The bottom strip plays the actual orbit year by year, so you can watch the cycle length with your own eyes: flat, then a two-beat, then a jitter that never settles.',
-      'The panel measures the Lyapunov exponent — the rate nearby populations pull apart. It is negative wherever the map is periodic and crosses zero exactly at the onset of chaos, which is marked.',
-      'Hunt the windows: deep inside the chaos the diagram suddenly clears into a tidy three-year cycle near r ≈ 3.83 (and there are five- and six-year windows too). Your score is the longest exact cycle you can land on.'
+      'The rule is next = r × x × (1 − x): a population that grows when small and crashes when it overshoots. x is the stock from 0 to 1, and r is the growth rate you set.',
+      'The main view is the bifurcation diagram: for each growth rate it marks the values the population settles into. One dot is a steady level, two dots mean it alternates high and low each year, and more dots mean a longer cycle.',
+      'Raise r and the cycle length keeps doubling, 1, 2, 4, 8, 16, in ever-smaller steps that pile up at r ≈ 3.5699. Past there the population never repeats, which is deterministic chaos from a one-liner.',
+      'The bottom strip replays the orbit year by year, so you can watch the cycle length directly: flat at low r, a two-beat higher up, then a jitter that never settles.',
+      'The panel measures the Lyapunov exponent, the rate at which nearby populations pull apart. It is negative wherever the map is periodic and crosses zero right at the onset of chaos, which is marked.',
+      'Hunt the windows: deep in the chaos the diagram clears into a tidy three-year cycle near r ≈ 3.83, with five- and six-year windows nearby. Your score is the longest exact cycle you can land on.'
     ],
     mount
   });
@@ -10388,15 +10403,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'minesweeper',
     cat: 'puzzle',
     order: 10,
-    blurb: 'The reigning world champion at making you look deep in thought. Three sizes, first click always safe, proper chording.',
+    blurb: 'Minesweeper with three board sizes, a first click that is always safe, and chording. Good cover for looking deep in thought.',
     scoreLabel: 'Wins',
     tags: ['mines', 'classic', 'logic'],
     how: [
-      'Left click digs. The first dig can never be a mine.',
+      'Left click digs. Your first dig is never a mine.',
       'Right click plants a flag. On a touchscreen, press and hold.',
-      'Click a number that already has the right count of flags around it and it sweeps the rest for you. This is the whole game once you learn it.',
-      'Clear every square that is not a mine. Your fastest time for each size is remembered.',
-      'Cranking the difficulty adds more mines to the same board.'
+      'Click a number that already has its full count of flags around it to sweep the rest. This is most of the game once it clicks.',
+      'Clear every square that is not a mine. Your fastest time per size is saved.',
+      'Harder settings add more mines to the same board.'
     ],
     mount
   });
@@ -10818,16 +10833,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'flood',
     cat: 'puzzle',
     order: 16,
-    blurb: 'Start in the corner, choose a colour, and swallow the board one flood at a time. Fewer moves is the flex.',
+    blurb: 'Flood the whole 14x14 board into one colour from the top-left corner. Do it in as few moves as you can.',
     scoreLabel: 'Fewest moves',
     lowerIsBetter: true,
     tags: ['flood-it', 'colour', 'fill'],
     how: [
-      'Your territory starts as the single tile in the top-left corner.',
-      'Click or tap a colour button. Your whole territory repaints to it and swallows every neighbouring tile of that colour, growing in one flood.',
-      'The trick: spreading wide early gives every later flood more edge to eat. Chasing one colour into a corner is a trap.',
-      'Fill the entire board with one colour to win. Your score is how many floods it took — fewer is better.',
-      'Par is a rough target for the board, and it tightens on harder settings. Beat it and you were planning two floods ahead.'
+      'Your territory is the single tile in the top-left corner.',
+      'Pick a colour. Your territory repaints and absorbs every touching tile of that colour.',
+      'Spread wide early so later floods have more edge to absorb.',
+      'Fill the whole board to win. Your score is the flood count, so fewer is better.',
+      'Par is a target move count for the board. Beat it if you can.'
     ],
     mount
   });
@@ -11129,17 +11144,17 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'sheet',
     cat: 'puzzle',
     order: 17,
-    blurb: 'Minesweeper in disguise. Lettered columns, numbered rows, a formula bar — it reads like a spreadsheet from across the room, and plays like the meeting classic up close.',
+    blurb: 'Minesweeper dressed as a spreadsheet. Lettered columns and a formula bar read like data entry from across the room.',
     scoreLabel: 'Sheets closed',
     tags: ['minesweeper', 'spreadsheet', 'camouflage', 'logic'],
     how: [
-      'It is Minesweeper wearing a spreadsheet costume. Every "cell" is a square that either hides a mine or a count of the mines touching it.',
-      'Left-click a cell to fill it in. Your first click is always safe and usually opens a whole block of empty cells at once.',
-      'A number is how many of the eight cells around it are mines. Use those figures to deduce which neighbours are safe and which to avoid.',
-      'Right-click (or long-press on touch) to flag a cell you believe is a mine — it fills amber, like a cell you have highlighted for review.',
-      'Click a number that already has the right count of flags around it to auto-open its remaining neighbours in one go.',
-      'Hit a mine and it turns into a #REF! error and the sheet breaks. Fill every safe cell to reconcile the sheet and win.',
-      'The disguise is the point: from a distance it looks exactly like you doing data entry. The panic key still works if you need it.'
+      'Under the disguise it is Minesweeper. Each cell hides either a mine or a count of the mines around it.',
+      'Left-click a cell to open it. Your first click is always safe and often opens a whole block.',
+      'A number counts the mines in the eight cells around it. Use the numbers to deduce which neighbours are safe.',
+      'Right-click, or long-press on touch, to flag a suspected mine. It fills amber like a highlighted cell.',
+      'Click a number that already has enough flags around it to open its other neighbours at once.',
+      'Hit a mine and it turns into a #REF! error. Open every safe cell to win.',
+      'From a distance it looks like data entry. The panic key still works if you need it.'
     ],
     mount
   });
@@ -11851,13 +11866,13 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   Arcade.register({
     id: 'hanoi', title: 'Tower of Hanoi', emoji: 'stack', cat: 'puzzle', order: 20,
     lowerIsBetter: true,
-    blurb: 'The ancient disk-stacking puzzle as a tower of ring binders you shuffle from one desk to another — never a big one on a small one. Simple rules, deceptively fiddly, weirdly soothing.',
+    blurb: 'The classic disk-stacking puzzle, restyled as ring binders. Move the stack one binder at a time, never a big one on a small one.',
     scoreLabel: 'Fewest moves', tags: ['puzzle', 'classic', 'logic'],
     how: [
-      'Click a peg to lift its top disk, then click another peg to drop it there.',
-      'A larger disk can never rest on a smaller one.',
-      'Move the entire stack from the left peg over to the right peg.',
-      'Fewer moves is better — the theoretical minimum is 2^disks minus 1.'
+      'Click a peg to lift its top disk, then click another peg to drop it.',
+      'A larger disk can never sit on a smaller one.',
+      'Move the whole stack from the left peg to the right peg.',
+      'Fewer moves is better. The minimum is 2^disks minus 1.'
     ],
     mount
   });
@@ -12035,15 +12050,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'find',
     cat: 'puzzle',
     order: 18,
-    blurb: 'The back-page classic, restocked with office vocabulary. Buzzwords, coffee orders and creative excuses are buried in a grid of letters — drag a line through each to strike it off. Deeply calming, mildly subversive.',
+    blurb: 'The back-page word search, restocked with office vocabulary. Themed lists of buzzwords, coffee terms and excuses hide in a letter grid, and you drag a line through each to strike it off.',
     scoreLabel: 'Puzzles solved',
     tags: ['word-search', 'words', 'relaxing'],
     how: [
-      'Each grid hides a themed list of words — across, down, diagonally, and either forwards or backwards.',
-      'Press on the first letter of a word and drag in a straight line to its last letter, then release. A correct word locks in and gets crossed off the list.',
-      'Lines must be straight: horizontal, vertical, or a true 45-degree diagonal. Any other shape just clears and you try again.',
-      'Find every word on the list to clear the grid. A timer runs from your first drag if you like to race yourself.',
-      'Pick a different theme from the menu, or hit New grid to shuffle the same words into a fresh layout. Each clear counts toward your total.'
+      'Each grid hides a themed list of words placed across, down, or diagonally, forwards or backwards.',
+      'Press the first letter of a word and drag in a straight line to its last letter, then release. A correct word locks in and crosses off the list.',
+      'Lines must be straight: horizontal, vertical, or a true 45-degree diagonal. Any other shape clears and you try again.',
+      'Find every word on the list to clear the grid. A timer runs from your first drag if you want to race yourself.',
+      'Pick a different theme from the menu, or hit New grid to reshuffle the same words into a fresh layout. Each clear counts toward your total.'
     ],
     mount
   });
@@ -12559,15 +12574,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'jam',
     cat: 'puzzle',
     order: 12,
-    blurb: 'Twenty-eight car park jams. Every single one was solved by computer first, so the exit definitely exists. Probably.',
+    blurb: 'Slide the blocking cars out of the way and drive the red car to the exit. Twenty-eight boards, each one checked to be solvable.',
     scoreLabel: 'Levels solved',
     tags: ['rush hour', 'sliding', 'cars', 'unblock'],
     how: [
-      'Drag a car along the way it points. Cars do not turn. Cars have never turned.',
-      'Only the red one gets out, and only through the gap on the right.',
-      'Par is the shortest possible solution, found by exhaustive search. Matching it is a genuine flex.',
-      'Levels are ordered by that shortest solution, so the difficulty climbs honestly.',
-      'Use the Level menu to jump straight to any of the twenty-eight boards whenever you like.'
+      'Drag a car along its own axis. Cars cannot turn.',
+      'Only the red car leaves, through the gap on the right.',
+      'Par is the shortest solution, found by exhaustive search. Match it if you can.',
+      'Levels are ordered by solution length, so they get harder as you go.',
+      'Use the Level menu to jump to any of the 28 boards.'
     ],
     mount
   });
@@ -12791,15 +12806,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'sokoban',
     cat: 'puzzle',
     order: 13,
-    blurb: 'Push crates onto the markers. You can push. You cannot pull. One thoughtless shove and the level is quietly unwinnable.',
+    blurb: 'Push crates onto the markers. You can push a crate but never pull it, so one careless shove can strand a level for good.',
     scoreLabel: 'Levels solved',
     tags: ['sokoban', 'boxes', 'warehouse', 'logic'],
     how: [
-      'Arrows or WASD to walk. Walking into a crate shoves it one square.',
-      'You can never pull. A crate in a corner is there forever.',
-      'Z or the Undo button rewinds. Use it constantly, nobody is watching.',
-      'Every crate on a ringed marker finishes the level.',
-      'All twenty-five warehouses were checked by a solver before shipping, ramping from easy to hard. Use the Level menu to jump straight to any of them.'
+      'Walk with arrows or WASD. Walking into a crate shoves it one square ahead.',
+      'You can push but never pull. A crate wedged into a corner stays there.',
+      'Z or the Undo button rewinds a move. Lean on it, nobody is watching.',
+      'Every crate sitting on a ringed marker clears the level.',
+      'All twenty-five warehouses were solver-checked before shipping and ramp from easy to hard. The Level menu jumps straight to any of them.'
     ],
     mount
   });
@@ -13023,14 +13038,14 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'pipes',
     cat: 'puzzle',
     order: 14,
-    blurb: 'Spin every pipe until the whole grid lights up from one glowing source. Endless levels, all of them definitely solvable.',
+    blurb: 'Rotate every pipe until the whole grid connects to the glowing source. Endless levels, all solvable by construction.',
     scoreLabel: 'Level',
     tags: ['net', 'rotate', 'connect', 'plumbing'],
     how: [
-      'Left click spins a pipe clockwise. Right click spins it back.',
-      'The amber blob is the source. Pipes glow when they are fed by it.',
-      'Every single pipe has to end up connected. No orphans allowed, not even the little ones.',
-      'Boards are grown from a random spanning tree, so a solution always exists by construction.',
+      'Left-click a pipe to turn it clockwise. Right-click turns it back.',
+      'The amber blob is the source. Pipes glow once it feeds them.',
+      'Every pipe has to end up connected, including the dead-end stubs.',
+      'Boards grow from a random spanning tree, so a solution always exists.',
       'Harder settings hand you bigger grids sooner.'
     ],
     mount
@@ -13788,15 +13803,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'solitaire',
     cat: 'puzzle',
     order: 15,
-    blurb: 'Klondike. The one that has been on office computers since 1990 and has outlasted every operating system it shipped with.',
+    blurb: 'Klondike solitaire. Build the four foundations up from Ace to King, one suit each.',
     scoreLabel: 'Games won',
     tags: ['klondike', 'cards', 'patience', 'classic'],
     how: [
-      'Build the four piles up top from Ace to King, one suit each.',
-      'In the columns, stack downwards in alternating colours. Only a King goes into an empty column.',
-      'Drag a card and everything sitting on it moves too, as long as it is a proper run.',
-      'Click a card without dragging and it flies home if it can. "Send home" does the whole board.',
-      'Z undoes. Space deals. Chill and Normal deal one card at a time with unlimited redeals; Hard deals three with two redeals, and Nightmare gives you one.'
+      'Build the four foundations from Ace to King, one suit each.',
+      'In the columns, stack down in alternating colours. Only a King fills an empty column.',
+      'Drag a card and any proper run on top of it moves too.',
+      'Click a card without dragging to send it home. Send home clears everything that can go.',
+      'Z undoes, Space draws. Chill and normal draw one card with unlimited redeals. Hard draws three with two redeals, nightmare with one.'
     ],
     mount
   });
@@ -14382,15 +14397,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'sudoku',
     cat: 'brain',
     order: 20,
-    blurb: 'Generated fresh every time and machine-checked to have exactly one solution, so you never have to guess and can never paint yourself into a corner.',
+    blurb: 'A fresh puzzle every time, machine-checked to have exactly one solution. You never have to guess.',
     scoreLabel: 'Solved',
     tags: ['sudoku', 'numbers', 'logic', 'classic'],
     how: [
-      'Tap a square, then tap a number. Type the number if you have a keyboard.',
+      'Tap a square, then a number. Type the number if you have a keyboard.',
       'Notes mode pencils small candidates into a square. N toggles it.',
-      'Every puzzle is dug out of a full solution one square at a time, and any dig that would allow a second answer is put back. Pure logic will always get you there.',
-      'Check marks any wrong number in red. Hint fills the selected square, at the cost of your no-hint finish.',
-      'The difficulty dial sets how many numbers you start with: 46 on Chill down to 26 on Nightmare.'
+      'Each puzzle is dug from a full solution, and any removal that would allow a second answer is put back. Logic always gets you there.',
+      'Check marks any wrong number in red. Hint fills the selected square, at the cost of a clean finish.',
+      'The difficulty dial sets your starting clues, from 46 on chill down to 26 on nightmare.'
     ],
     mount
   });
@@ -14821,15 +14836,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'mastermind',
     cat: 'brain',
     order: 23,
-    blurb: 'You have forgotten your own login again. Deduce the four-colour code before the help desk picks up. Ten tries, no hints, mild shame.',
+    blurb: 'Deduce the hidden four-colour password in ten guesses. Feedback pegs tell you how close each guess is.',
     scoreLabel: 'Win streak',
     tags: ['mastermind', 'logic', 'code', 'deduction'],
     how: [
-      'Crack the hidden four-peg password before IT phones back. You get ten guesses.',
-      'Tap a colour from the palette or press 1-8 to fill the next slot. Backspace clears the last peg, tap a filled slot to edit from there, then hit Guess or Enter.',
-      'After each guess a black feedback peg means right colour in the right slot; a white peg means right colour but wrong slot. Colours can repeat in the code.',
-      'Solve it and your win streak grows by one. That streak is your score, saved between visits. A loss resets it to zero.',
-      'Chill and normal use six colours, hard uses seven, nightmare uses eight. More colours, more possibilities, more sweat.'
+      'Crack the hidden four-peg code in ten guesses.',
+      'Tap a palette colour or press 1-8 to fill the four slots, then hit Guess or Enter. Backspace clears the last peg.',
+      'A black peg means right colour and right slot. A white peg means right colour, wrong slot. Colours can repeat.',
+      'Solve it and your win streak grows by one. A loss resets it to zero.',
+      'Chill and normal use six colours, hard uses seven, nightmare eight.'
     ],
     mount
   });
@@ -14893,13 +14908,13 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   Arcade.register({
     id: 'rps', title: 'Desk Duel', emoji: 'circle', cat: 'brain', order: 26,
-    blurb: 'Rock, paper, scissors against a colleague who never blinks and never gloats. Chase the longest winning streak you can before your luck turns.',
+    blurb: 'Rock, paper, scissors against a deskmate who throws at random. Chase the longest winning streak you can string together.',
     scoreLabel: 'Best streak', tags: ['quick', 'luck', 'classic'],
     how: [
-      'Pick rock, paper or scissors. Your deskmate picks at the same instant, at random.',
-      'Rock beats scissors, scissors beats paper, paper beats rock. A tie is just a tie.',
-      'Every win extends your streak; one loss resets it to zero.',
-      'The score kept is the longest streak you have ever strung together.'
+      'Pick rock, paper or scissors. Your deskmate picks at the same moment, at random.',
+      'Rock beats scissors, scissors beats paper, paper beats rock. Matching throws tie and nothing changes.',
+      'Every win extends your streak. One loss resets it to zero.',
+      'Your score is the longest streak you manage.'
     ],
     mount
   });
@@ -14989,13 +15004,13 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   Arcade.register({
     id: 'hangman', title: 'Hangman', emoji: 'find', cat: 'brain', order: 27,
     usesLetters: true,
-    blurb: 'The office word is hidden. Guess it a letter at a time before the little face gives up entirely — words drawn from the natural habitat of the cubicle: deadlines, spreadsheets, synergy.',
+    blurb: 'A hidden office word shown as blanks. Guess letters before six misses fill in the little face. Words are all cubicle stock like deadline, spreadsheet and synergy.',
     scoreLabel: 'Best streak', tags: ['word', 'classic', 'spelling'],
     how: [
-      'A hidden word appears as blanks. Guess letters by tapping the keys or typing them.',
-      'Right letters fill in every place they appear; wrong letters count against you.',
-      'Six misses and the round is lost. Solve the word to extend your streak.',
-      'The score kept is your longest streak of solved words in a row.'
+      'A hidden word shows as blanks. Guess letters by tapping the keys or typing them.',
+      'A correct letter fills every spot it appears; a wrong one adds a miss.',
+      'Six misses loses the round. Solve the word to extend your streak.',
+      'Your score is the longest run of words solved in a row.'
     ],
     mount
   });
@@ -15080,13 +15095,13 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   Arcade.register({
     id: 'anagram', title: 'Word Scramble', emoji: 'wordguess', cat: 'brain', order: 28,
-    blurb: 'Sixty seconds, a pile of jumbled office words, and your slowly-rising panic. Unscramble as many as you can before the clock runs out.',
+    blurb: 'Unscramble office words against a 60-second clock. Each one you get scores a point.',
     scoreLabel: 'Best (60s)', tags: ['word', 'speed', 'spelling'],
     how: [
-      'A scrambled office word appears. Type the real word and press Enter.',
-      'Each correct answer scores a point and serves up the next word.',
-      'Stuck? Skip for a fresh one — it costs no points, only precious seconds.',
-      'You have sixty seconds. The score kept is the most you have solved in one run.'
+      'Type the unscrambled word and press Enter.',
+      'A correct answer scores a point and loads the next word.',
+      'Skip for a new word when you are stuck. It costs time, not points.',
+      'You get 60 seconds. Your score is the most words solved in one run.'
     ],
     mount
   });
@@ -15160,13 +15175,13 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   Arcade.register({
     id: 'nim', title: 'Last Stick', emoji: 'priority', cat: 'brain', order: 29,
-    blurb: 'A tiny, vicious game of nerve and arithmetic. A row of sticks on the desk; take one, two or three each turn. Get stuck taking the last one and you lose. The deskmate knows the trick — can you work it out?',
+    blurb: 'Take one, two, or three sticks per turn against the deskmate. Whoever takes the last stick loses.',
     scoreLabel: 'Win streak', tags: ['strategy', 'maths', 'classic'],
     how: [
-      'A row of sticks. On your turn, take one, two or three of them.',
-      'Turns alternate with your deskmate. Whoever is forced to take the LAST stick loses.',
-      'There is a winning pattern hidden in the counting. Find it and you can win every game.',
-      'The score kept is your streak of games won in a row.'
+      'On your turn, take one, two, or three sticks.',
+      'Turns alternate with your deskmate. Taking the last stick loses.',
+      'There is a counting pattern that wins every game. Work it out.',
+      'Your score is your streak of games won in a row.'
     ],
     mount
   });
@@ -15476,14 +15491,14 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'keys',
     cat: 'brain',
     order: 30,
-    blurb: 'A words-per-minute test disguised as a form. Type the line exactly — only the right key advances, so the score is honest — and find out how fast you really are. Looks exactly like work.',
+    blurb: 'A words-per-minute test dressed as a data-entry form. Type each line exactly, since only the correct key advances, and it reports your real speed.',
     scoreLabel: 'Best WPM',
     tags: ['typing', 'speed', 'words-per-minute', 'skill'],
     how: [
       'Click the box and type the line shown, character for character, including spaces (drawn as a dot) and punctuation.',
-      'It is strict: a wrong key does not move you forward. The current character just turns red until you hit the right one, so you cannot mash your way to a fake score.',
-      'Words per minute is measured the standard way — five characters count as one word — from your first keystroke to your last.',
-      'Accuracy is the share of keystrokes that were correct. A run only sets a record if you finish at 90% accuracy or better, so speed without control does not count.',
+      'It is strict: a wrong key never advances you. The current character turns red until you hit the right one, so you cannot mash out a fake score.',
+      'Words per minute uses the standard measure of five characters per word, timed from your first keystroke to your last.',
+      'Accuracy is the share of keystrokes that were correct. A run sets a record only if you finish at 90% accuracy or better, so speed without control does not count.',
       'Hit New line for a fresh sentence any time. Your best clean WPM is the score to beat.'
     ],
     mount
@@ -18940,15 +18955,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'breakout',
     cat: 'action',
     order: 31,
-    blurb: 'Bounce, smash, grab the falling letters. Multiball is a gift right up until the moment it is a punishment.',
+    blurb: 'Clear the bricks with a paddle and ball. Catch the falling tiles for power-ups.',
     scoreLabel: 'Score',
     tags: ['breakout', 'arkanoid', 'paddle', 'ball'],
     how: [
-      'Mouse, drag, or arrow keys move the paddle. Space, click, or tap launches.',
-      'Where the ball hits the paddle decides where it goes. Edges fire it out wide.',
-      'Falling tiles: W widens the paddle, 3 splits the ball, S slows time, and the heart is a spare life.',
-      'Clear every brick for a 250 point bonus, then it does it again but worse.',
-      'Hard gives you two lives. Nightmare gives you one, and a faster ball.'
+      'Move the paddle with the mouse or arrow keys. Space, click, or tap to launch.',
+      'Where the ball hits the paddle sets its angle. Edges send it out wide.',
+      'Catch a falling tile: W widens the paddle, 3 splits the ball, S slows time, heart is a spare life.',
+      'Clear every brick for a 250-point bonus, then the next board rebuilds harder.',
+      'Hard gives you two lives. Nightmare gives one, plus a faster ball.'
     ],
     mount
   });
@@ -19491,14 +19506,14 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'flap',
     cat: 'action',
     order: 34,
-    blurb: 'One button, one bird, one floor. The gaps never get bigger and you never get better quite fast enough.',
+    blurb: 'One button keeps a bird in the air. Tap to flap, thread the pipe gaps, and see how far you get before you clip one.',
     scoreLabel: 'Score',
     tags: ['flappy', 'one-button', 'tap'],
     how: [
-      'Click, tap, or press Space for one flap upward. Every flap is exactly the same size.',
-      'Gravity keeps pulling you down between flaps, so you are constantly correcting.',
-      'Thread the gap in each pipe. Touching a pipe, the floor, or the ceiling ends the run instantly.',
-      'Your score is the number of pipes you clear. Harder settings tighten the gaps and speed up the scroll.'
+      'Click, tap, or press Space to flap upward. Every flap is the same strength.',
+      'Gravity pulls you down between flaps, so you correct constantly.',
+      'Fly through the gap in each pipe. Touching a pipe, the floor, or the ceiling ends the run.',
+      'Your score is the number of pipes you clear. Harder settings narrow the gaps and speed up the scroll.'
     ],
     mount
   });
@@ -19783,15 +19798,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'climb',
     cat: 'action',
     order: 37,
-    blurb: 'You bounce forever on your own. All you do is steer onto the next shelf, and the next, until you miss one. Then it is a long way down.',
+    blurb: 'You bounce on your own and steer onto the next shelf up. Miss one and you fall off the bottom.',
     scoreLabel: 'Height',
     tags: ['doodle', 'jump', 'platform'],
     how: [
-      'You bounce on your own, forever. Steering left and right is the only thing you control.',
-      'Move with the arrow keys, A/D, or by holding the mouse to either side of the field. Walk off one edge and you reappear on the other.',
-      'You only bounce when falling onto the top of a shelf, so aim your descent. Green shelves sit still; orange ones slide, and harder settings deal more of the moving kind.',
-      'The screen scrolls up as you gain height and never comes back down. Fall off the bottom and the run ends.',
-      'Your score is how high you climbed before gravity won.'
+      'You bounce automatically. Steering left and right is all you control.',
+      'Move with arrow keys, A/D, or hold the mouse to one side of the field. Leave one edge and you reappear on the other.',
+      'You bounce only when landing on top of a shelf, so line up your descent. Green shelves hold still; orange ones slide, and harder settings add more sliding ones.',
+      'The view scrolls up as you climb and never drops back. Fall past the bottom and the run ends.',
+      'Your score is the height you reach before you fall.'
     ],
     mount
   });
@@ -20401,15 +20416,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'car',
     cat: 'action',
     order: 20,
-    blurb: 'A proper arcade racer hiding in a browser tab — a curving, cresting pseudo-3D highway, traffic to thread, and twenty stages that get twistier and busier. Floor it, keep it on the tarmac, and beat the clock. Jump to any stage whenever you like.',
+    blurb: 'A pseudo-3D arcade racer with a curving, cresting highway and traffic to weave through. Twenty stages get twistier and busier as you go, and you can jump straight to any of them.',
     scoreLabel: 'Stages cleared',
     tags: ['racing', 'driving', 'arcade', '3d'],
     how: [
-      'Hold gas to accelerate, brake to slow, and steer left/right to stay on the road — arrow keys, WASD, or the on-screen buttons on touch.',
-      'The road bends and rolls over hills. On a curve the car drifts to the outside, so steer into the bend to hold your line; drift onto the grass and you bog down.',
-      'Traffic is scattered down every stage. Clip a car and you lose almost all your speed, so pick your lane early.',
-      'Reach the finish line to clear the stage and bank your time. Twenty stages get longer, curvier and more crowded as you go.',
-      'Use the Stage menu to jump straight to any stage whenever you want — no need to grind through in order. Your best time per stage is saved.'
+      'Hold gas to speed up, brake to slow, and steer left or right to stay on the road. Use arrow keys, WASD, or the on-screen buttons on touch.',
+      'The road bends and rolls over hills. On a curve the car drifts toward the outside, so steer into the bend to hold your line. Drift onto the grass and you bog down.',
+      'Traffic is scattered along every stage. Clip a car and you lose almost all your speed, so pick your lane early.',
+      'Reach the finish to clear the stage and bank your time. Later stages run longer, curvier and more crowded.',
+      'The Stage menu jumps straight to any stage, so you can skip around instead of grinding in order. Your best time per stage is saved.'
     ],
     mount
   });
@@ -21378,16 +21393,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'coffee',
     cat: 'goof',
     order: 60,
-    blurb: 'Click mug. Get coffee. Buy an intern to click the mug. Buy a robot to manage the intern. This is how empires start.',
+    blurb: 'Click the mug for coffee, then spend it on things that brew for you. An idle clicker that runs while you do other work.',
     scoreLabel: 'Lifetime cups',
     formatScore: (v) => fmt(v),
     tags: ['idle', 'incremental', 'clicker', 'coffee'],
     how: [
-      'Click the mug. That is the whole starting move.',
-      'Spend cups in the shop. Everything you buy brews coffee while you do literally anything else.',
+      'Click the mug to brew a cup.',
+      'Spend cups in the shop. Everything you buy keeps brewing while you are away.',
       'Shift-click a shop row to buy ten at once.',
-      'Random office events swing your rate up or down for a bit. Free doughnuts good. Fire alarm bad.',
-      'Your progress saves automatically to this browser. Harder difficulties make everything cost more.'
+      'Office events swing your rate up or down for a while. Doughnuts help, fire alarms hurt.',
+      'Progress saves to this browser. Harder difficulty makes everything cost more.'
     ],
     mount
   });
@@ -22237,16 +22252,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'blackjack',
     cat: 'goof',
     order: 6,
-    blurb: 'Single-deck blackjack against a dealer with a fixed policy and no tells. You are betting your unspent PTO. It is not real. Please relax.',
+    blurb: 'Single-deck blackjack against a dealer who plays a fixed policy. The chips are dressed up as unspent PTO, so nothing real rides on it.',
     scoreLabel: 'Chip high',
     tags: ['cards', 'blackjack', 'dealer', 'chips'],
     usesLetters: true,
     how: [
-      'Get closer to twenty-one than the dealer without going over. Aces are eleven or one, whichever helps.',
-      'Buttons: Deal, Hit, Stand, Double. Keys: H hit, S stand, D double, Space deals. Pick a bet from the dropdown.',
-      'The dealer hits sixteen and stands on seventeen, then flips the hole card once you stand. Blackjack pays three to two.',
-      'Your chip bankroll persists and is the score kept. Broke? A PTO advance tops you back up, but that will not count toward a record.',
-      'Chill and Normal use one deck and the dealer stands on soft seventeen. Hard and Nightmare deal four decks and the dealer hits soft seventeen.'
+      'Beat the dealer\'s total without going over twenty-one. Aces count as eleven or one, whichever helps.',
+      'Deal a hand, then Hit or Stand. Double takes one more card for a matched bet. Keys: H hit, S stand, D double, Space deals.',
+      'The dealer hits sixteen and stands on seventeen, then turns over the hole card after you stand. Blackjack pays three to two.',
+      'Your chip bankroll carries between hands and is the score. Go broke and a PTO advance refills you, though a refilled run sets no record.',
+      'Chill and Normal use one deck with the dealer standing on soft seventeen. Hard and Nightmare use four decks with the dealer hitting soft seventeen.'
     ],
     mount: mount
   });
@@ -22545,13 +22560,13 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   Arcade.register({
     id: 'pig', title: 'Press Your Luck', emoji: 'dice', cat: 'goofy', order: 46,
-    blurb: 'A filthy little dice game. Roll to pile up points, but roll a single 1 and the whole turn evaporates. Bank when your nerve gives out. First to 100 against a deskmate who knows exactly when to quit.',
+    blurb: 'Roll to build up points, but a single 1 wipes the whole turn. Bank before that happens. First to 100 beats your deskmate.',
     scoreLabel: 'Win streak', tags: ['dice', 'luck', 'press-your-luck'],
     how: [
-      'On your turn, roll as many times as you dare — each roll adds to your turn total.',
-      'Roll a 1 and you lose everything built this turn. Bank to keep it and pass the dice.',
-      'First to 100 wins. Your deskmate banks around twenty, so out-nerve them.',
-      'The score kept is your streak of games won in a row.'
+      'On your turn, roll as many times as you dare. Each roll adds to the turn total.',
+      'Roll a 1 and you lose everything built this turn. Bank to keep it and hand over the dice.',
+      'First to 100 wins. Your deskmate banks around twenty, so push a little past that.',
+      'Your score is the streak of games you win in a row.'
     ],
     mount
   });
@@ -22726,14 +22741,14 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   Arcade.register({
     id: 'stapler', title: 'Staple Empire', emoji: 'busywork', cat: 'goofy', order: 48,
-    blurb: 'The purest office idle game. Click the stapler. Buy interns to staple for you. Buy machines to staple faster. Watch a number climb toward the heat-death of the universe. Deeply unnecessary, impossible to stop.',
+    blurb: 'An office idle clicker. Click the stapler for staples, then spend them on interns and machines that staple for you while the number climbs on its own.',
     scoreLabel: 'Staples made', tags: ['idle', 'clicker', 'numbers'],
     formatScore: (v) => (function f(n) { if (n < 1000) return String(n); const u = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx']; let i = 0; while (n >= 1000 && i < u.length - 1) { n /= 1000; i++; } return (n < 10 ? n.toFixed(2) : n < 100 ? n.toFixed(1) : Math.floor(n)) + u[i]; })(v),
     how: [
       'Click the big stapler to make staples by hand.',
-      'Spend staples in the shop on interns and machines that staple automatically.',
-      'Everything gets pricier as you buy more of it, so keep the production line growing.',
-      'The score kept is the most staples you have ever produced in a single run.'
+      'Spend staples in the shop on interns and machines that staple on their own.',
+      'Each unit costs more the more you own, so keep expanding the line.',
+      'Your score is the most staples you produce in a single run.'
     ],
     mount
   });
@@ -22838,16 +22853,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'rave',
     cat: 'goofy',
     order: 45,
-    blurb: 'The opposite of the panic key. Instead of hiding your games behind a spreadsheet, this detonates your entire screen into a strobing rainbow so aggressively that anyone reading over your shoulder decides they would rather be anywhere else. Tap to stop.',
+    blurb: 'The opposite of the panic key. It fills your whole screen with strobing rainbow colour so anyone reading over your shoulder looks away. Tap to stop.',
     scoreLabel: 'Parties thrown',
     tags: ['toy', 'prank', 'boss'],
     how: [
-      'Opening it takes over your whole screen — every pixel — with fast, saturated, spinning colour and giant flashing nonsense text.',
-      'It exists to be seen by the wrong person. A boss glancing at a screen mid-seizure of rainbow tends to keep walking.',
-      'To stop it: press ANY key, tap anywhere on the screen, or hit the Make It Stop button. It snaps straight back to the calm arcade.',
-      'It fires the instant you open it — no confirmation step. It flashes fast and bright by design, so only reach for it when that is what you want.',
-      'Pair it with the real panic key (the backtick turns the site into a spreadsheet) for the full range of workplace camouflage: invisible, or extremely visible.',
-      'Summon it from anywhere without hunting for the tile: press Shift and the backtick key together (that is the ~ key, just above Tab) and the party starts instantly.'
+      'Opening it takes over the whole screen with fast spinning colour and giant flashing text.',
+      'It is meant to be seen. A boss glancing at the screen tends to keep walking.',
+      'Press any key, tap the screen, or hit Make It Stop to end it. It snaps back to the arcade.',
+      'It fires the instant you open it, with no confirmation. It flashes fast and bright, so open it only when you want that.',
+      'Pair it with the panic key (the backtick turns the site into a spreadsheet) for cover at both extremes.',
+      'Press Shift and the backtick key (the ~ key above Tab) to summon it from anywhere.'
     ],
     mount
   });
@@ -23514,15 +23529,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'desktoss',
     cat: 'goof',
     order: 62,
-    blurb: 'Crumpled paper, one bin, and an air conditioning vent with a personal grudge. Bin on a desk counts double.',
+    blurb: 'Catapult crumpled paper into the bin while the air-con vent pushes it off course. A bin up on a desk counts double.',
     scoreLabel: 'Score',
     tags: ['paper', 'basketball', 'bin', 'physics', 'throw'],
     how: [
-      'Drag backwards from the paper ball and release. Further back means harder.',
-      'The dotted arc is where it would go right now. The flag shows which way the air con is blowing.',
-      'Rims bounce. Use them if you must, but it is embarrassing.',
-      'Every basket moves the bin further away and shrinks it. Bins up on a desk are worth double.',
-      'Five misses and you are done picking paper off the carpet. The bin only creeps away slowly, and the air con is milder than it used to be.'
+      'Drag back from the paper ball and release. Further back throws harder.',
+      'The dotted arc shows the current shot. The flag shows which way the air-con blows.',
+      'The rim bounces the ball, so bank shots are fair game.',
+      'Every basket moves the bin back and shrinks it. A bin on a desk scores double.',
+      'Five misses ends the game. The bin only drifts back slowly.'
     ],
     mount
   });
@@ -23854,16 +23869,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'deskgolf',
     cat: 'goof',
     order: 63,
-    blurb: 'Nine holes of putting across the office carpet. Desks bounce, mousepads drag, and someone has spilled coffee absolutely everywhere.',
+    blurb: 'Nine holes of mini golf across the office carpet. Aim by dragging back from the ball, and mind the desks, mousepads and coffee spills.',
     scoreLabel: 'Best round',
     lowerIsBetter: true,
     tags: ['golf', 'putting', 'physics', 'mini golf'],
     how: [
-      'Drag backwards from the ball and release to putt. The bar shows the power.',
-      'Desks bounce the ball. The dark purple patches are mousepads and they slow you right down.',
-      'The brown puddles are spilled coffee. In means one penalty stroke and back to the tee.',
-      'Nine holes, par 31. Lower total is better, so this is the one game here where a small score wins.',
-      'Harder difficulties shrink the cup and make the carpet faster.'
+      'Drag back from the ball and release to putt. The bar shows how hard you hit it.',
+      'Desks bounce the ball. The dark purple patches are mousepads and drag it to a stop faster.',
+      'Brown puddles are spilled coffee. Landing in one costs a penalty stroke and sends you back to the tee.',
+      'Nine holes, par 31. Lower total wins, so a small score is the goal here.',
+      'Harder settings shrink the cup and speed up the carpet.'
     ],
     mount
   });

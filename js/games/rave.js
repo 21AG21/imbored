@@ -95,16 +95,16 @@
     emoji: 'rave',
     cat: 'goofy',
     order: 45,
-    blurb: 'The opposite of the panic key. Instead of hiding your games behind a spreadsheet, this detonates your entire screen into a strobing rainbow so aggressively that anyone reading over your shoulder decides they would rather be anywhere else. Tap to stop.',
+    blurb: 'The opposite of the panic key. It fills your whole screen with strobing rainbow colour so anyone reading over your shoulder looks away. Tap to stop.',
     scoreLabel: 'Parties thrown',
     tags: ['toy', 'prank', 'boss'],
     how: [
-      'Opening it takes over your whole screen — every pixel — with fast, saturated, spinning colour and giant flashing nonsense text.',
-      'It exists to be seen by the wrong person. A boss glancing at a screen mid-seizure of rainbow tends to keep walking.',
-      'To stop it: press ANY key, tap anywhere on the screen, or hit the Make It Stop button. It snaps straight back to the calm arcade.',
-      'It fires the instant you open it — no confirmation step. It flashes fast and bright by design, so only reach for it when that is what you want.',
-      'Pair it with the real panic key (the backtick turns the site into a spreadsheet) for the full range of workplace camouflage: invisible, or extremely visible.',
-      'Summon it from anywhere without hunting for the tile: press Shift and the backtick key together (that is the ~ key, just above Tab) and the party starts instantly.'
+      'Opening it takes over the whole screen with fast spinning colour and giant flashing text.',
+      'It is meant to be seen. A boss glancing at the screen tends to keep walking.',
+      'Press any key, tap the screen, or hit Make It Stop to end it. It snaps back to the arcade.',
+      'It fires the instant you open it, with no confirmation. It flashes fast and bright, so open it only when you want that.',
+      'Pair it with the panic key (the backtick turns the site into a spreadsheet) for cover at both extremes.',
+      'Press Shift and the backtick key (the ~ key above Tab) to summon it from anywhere.'
     ],
     mount
   });

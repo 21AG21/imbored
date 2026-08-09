@@ -54,13 +54,13 @@
 
   Arcade.register({
     id: 'rps', title: 'Desk Duel', emoji: 'circle', cat: 'brain', order: 26,
-    blurb: 'Rock, paper, scissors against a colleague who never blinks and never gloats. Chase the longest winning streak you can before your luck turns.',
+    blurb: 'Rock, paper, scissors against a deskmate who throws at random. Chase the longest winning streak you can string together.',
     scoreLabel: 'Best streak', tags: ['quick', 'luck', 'classic'],
     how: [
-      'Pick rock, paper or scissors. Your deskmate picks at the same instant, at random.',
-      'Rock beats scissors, scissors beats paper, paper beats rock. A tie is just a tie.',
-      'Every win extends your streak; one loss resets it to zero.',
-      'The score kept is the longest streak you have ever strung together.'
+      'Pick rock, paper or scissors. Your deskmate picks at the same moment, at random.',
+      'Rock beats scissors, scissors beats paper, paper beats rock. Matching throws tie and nothing changes.',
+      'Every win extends your streak. One loss resets it to zero.',
+      'Your score is the longest streak you manage.'
     ],
     mount
   });

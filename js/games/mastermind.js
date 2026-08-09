@@ -219,15 +219,15 @@
     emoji: 'mastermind',
     cat: 'brain',
     order: 23,
-    blurb: 'You have forgotten your own login again. Deduce the four-colour code before the help desk picks up. Ten tries, no hints, mild shame.',
+    blurb: 'Deduce the hidden four-colour password in ten guesses. Feedback pegs tell you how close each guess is.',
     scoreLabel: 'Win streak',
     tags: ['mastermind', 'logic', 'code', 'deduction'],
     how: [
-      'Crack the hidden four-peg password before IT phones back. You get ten guesses.',
-      'Tap a colour from the palette or press 1-8 to fill the next slot. Backspace clears the last peg, tap a filled slot to edit from there, then hit Guess or Enter.',
-      'After each guess a black feedback peg means right colour in the right slot; a white peg means right colour but wrong slot. Colours can repeat in the code.',
-      'Solve it and your win streak grows by one. That streak is your score, saved between visits. A loss resets it to zero.',
-      'Chill and normal use six colours, hard uses seven, nightmare uses eight. More colours, more possibilities, more sweat.'
+      'Crack the hidden four-peg code in ten guesses.',
+      'Tap a palette colour or press 1-8 to fill the four slots, then hit Guess or Enter. Backspace clears the last peg.',
+      'A black peg means right colour and right slot. A white peg means right colour, wrong slot. Colours can repeat.',
+      'Solve it and your win streak grows by one. A loss resets it to zero.',
+      'Chill and normal use six colours, hard uses seven, nightmare eight.'
     ],
     mount
   });

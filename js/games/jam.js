@@ -277,15 +277,15 @@
     emoji: 'jam',
     cat: 'puzzle',
     order: 12,
-    blurb: 'Twenty-eight car park jams. Every single one was solved by computer first, so the exit definitely exists. Probably.',
+    blurb: 'Slide the blocking cars out of the way and drive the red car to the exit. Twenty-eight boards, each one checked to be solvable.',
     scoreLabel: 'Levels solved',
     tags: ['rush hour', 'sliding', 'cars', 'unblock'],
     how: [
-      'Drag a car along the way it points. Cars do not turn. Cars have never turned.',
-      'Only the red one gets out, and only through the gap on the right.',
-      'Par is the shortest possible solution, found by exhaustive search. Matching it is a genuine flex.',
-      'Levels are ordered by that shortest solution, so the difficulty climbs honestly.',
-      'Use the Level menu to jump straight to any of the twenty-eight boards whenever you like.'
+      'Drag a car along its own axis. Cars cannot turn.',
+      'Only the red car leaves, through the gap on the right.',
+      'Par is the shortest solution, found by exhaustive search. Match it if you can.',
+      'Levels are ordered by solution length, so they get harder as you go.',
+      'Use the Level menu to jump to any of the 28 boards.'
     ],
     mount
   });

@@ -80,13 +80,13 @@
   Arcade.register({
     id: 'hangman', title: 'Hangman', emoji: 'find', cat: 'brain', order: 27,
     usesLetters: true,
-    blurb: 'The office word is hidden. Guess it a letter at a time before the little face gives up entirely — words drawn from the natural habitat of the cubicle: deadlines, spreadsheets, synergy.',
+    blurb: 'A hidden office word shown as blanks. Guess letters before six misses fill in the little face. Words are all cubicle stock like deadline, spreadsheet and synergy.',
     scoreLabel: 'Best streak', tags: ['word', 'classic', 'spelling'],
     how: [
-      'A hidden word appears as blanks. Guess letters by tapping the keys or typing them.',
-      'Right letters fill in every place they appear; wrong letters count against you.',
-      'Six misses and the round is lost. Solve the word to extend your streak.',
-      'The score kept is your longest streak of solved words in a row.'
+      'A hidden word shows as blanks. Guess letters by tapping the keys or typing them.',
+      'A correct letter fills every spot it appears; a wrong one adds a miss.',
+      'Six misses loses the round. Solve the word to extend your streak.',
+      'Your score is the longest run of words solved in a row.'
     ],
     mount
   });

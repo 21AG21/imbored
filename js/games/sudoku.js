@@ -269,15 +269,15 @@
     emoji: 'sudoku',
     cat: 'brain',
     order: 20,
-    blurb: 'Generated fresh every time and machine-checked to have exactly one solution, so you never have to guess and can never paint yourself into a corner.',
+    blurb: 'A fresh puzzle every time, machine-checked to have exactly one solution. You never have to guess.',
     scoreLabel: 'Solved',
     tags: ['sudoku', 'numbers', 'logic', 'classic'],
     how: [
-      'Tap a square, then tap a number. Type the number if you have a keyboard.',
+      'Tap a square, then a number. Type the number if you have a keyboard.',
       'Notes mode pencils small candidates into a square. N toggles it.',
-      'Every puzzle is dug out of a full solution one square at a time, and any dig that would allow a second answer is put back. Pure logic will always get you there.',
-      'Check marks any wrong number in red. Hint fills the selected square, at the cost of your no-hint finish.',
-      'The difficulty dial sets how many numbers you start with: 46 on Chill down to 26 on Nightmare.'
+      'Each puzzle is dug from a full solution, and any removal that would allow a second answer is put back. Logic always gets you there.',
+      'Check marks any wrong number in red. Hint fills the selected square, at the cost of a clean finish.',
+      'The difficulty dial sets your starting clues, from 46 on chill down to 26 on nightmare.'
     ],
     mount
   });

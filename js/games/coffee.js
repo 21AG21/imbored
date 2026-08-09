@@ -186,16 +186,16 @@
     emoji: 'coffee',
     cat: 'goof',
     order: 60,
-    blurb: 'Click mug. Get coffee. Buy an intern to click the mug. Buy a robot to manage the intern. This is how empires start.',
+    blurb: 'Click the mug for coffee, then spend it on things that brew for you. An idle clicker that runs while you do other work.',
     scoreLabel: 'Lifetime cups',
     formatScore: (v) => fmt(v),
     tags: ['idle', 'incremental', 'clicker', 'coffee'],
     how: [
-      'Click the mug. That is the whole starting move.',
-      'Spend cups in the shop. Everything you buy brews coffee while you do literally anything else.',
+      'Click the mug to brew a cup.',
+      'Spend cups in the shop. Everything you buy keeps brewing while you are away.',
       'Shift-click a shop row to buy ten at once.',
-      'Random office events swing your rate up or down for a bit. Free doughnuts good. Fire alarm bad.',
-      'Your progress saves automatically to this browser. Harder difficulties make everything cost more.'
+      'Office events swing your rate up or down for a while. Doughnuts help, fire alarms hurt.',
+      'Progress saves to this browser. Harder difficulty makes everything cost more.'
     ],
     mount
   });

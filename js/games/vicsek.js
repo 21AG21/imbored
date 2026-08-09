@@ -146,15 +146,15 @@
     emoji: 'vicsek',
     cat: 'sim',
     order: 10,
-    blurb: 'A few hundred dots, each just steering toward the average heading of its neighbours plus a little randomness. Turn the randomness down and a directionless swarm suddenly moves as one, leaderless. The original model of flocking.',
+    blurb: 'A few hundred dots, each steering toward the average heading of its neighbours plus some randomness. Turn the noise down and the swarm locks into one direction with no leader.',
     scoreLabel: 'Best alignment',
     tags: ['vicsek', 'flocking', 'phase-transition', 'emergence'],
     how: [
-      'Every dot moves at the same speed and, each step, turns to the average heading of the dots within a short radius, plus some random jitter.',
-      'The noise slider is that jitter. There is no leader and no goal — alignment is entirely emergent.',
-      'The order parameter, "alignment", is 0 when the crowd mills in all directions and 1 when it moves in perfect lockstep.',
-      'The instrument plots alignment against noise, measured live. Below a critical noise the flock locks in; above it, it falls apart. The change is sharp.',
-      'Your score is the best alignment you sustain. The interesting play is right around the transition.'
+      'Every dot moves at the same speed and turns to the average heading of the dots near it, plus random jitter.',
+      'The noise slider controls that jitter. There is no leader and no goal; alignment emerges on its own.',
+      'Alignment reads 0 when the crowd mills in all directions and 1 when it moves in lockstep.',
+      'The plot tracks alignment against noise, measured live. Below a critical noise the flock locks in; above it, it falls apart.',
+      'Your score is the best alignment you sustain. Play around the transition.'
     ],
     mount
   });

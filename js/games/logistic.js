@@ -220,16 +220,16 @@
     emoji: 'boom',
     cat: 'sim',
     order: 11,
-    blurb: 'One line of arithmetic runs a population, and turning a single knob marches it from a steady level, through doubling boom–bust cycles, into full-blown chaos — with islands of clean order hidden inside the storm. The famous route to chaos, live and measured.',
+    blurb: 'One line of arithmetic runs a population. Turn the growth-rate knob up and it goes from a steady level into doubling boom-bust cycles and then chaos, with small windows of order hidden in the mess.',
     scoreLabel: 'Deepest cycle',
     tags: ['logistic-map', 'chaos', 'bifurcation', 'dynamical-systems'],
     how: [
-      'The rule is next = r × x × (1 − x): a population that grows when small and crashes when it overshoots. x is the stock (0 to 1), r is the growth rate you control.',
-      'The big picture is the bifurcation diagram: for each growth rate it shows the values the population eventually settles into. One line means a steady level; two means it alternates high–low every year; four means a longer cycle, and so on.',
-      'Raise r and the cycle length keeps doubling — 1, 2, 4, 8, 16 — in ever-smaller steps, piling up at r ≈ 3.5699. Past that the population never repeats: deterministic chaos from a one-liner.',
-      'The bottom strip plays the actual orbit year by year, so you can watch the cycle length with your own eyes: flat, then a two-beat, then a jitter that never settles.',
-      'The panel measures the Lyapunov exponent — the rate nearby populations pull apart. It is negative wherever the map is periodic and crosses zero exactly at the onset of chaos, which is marked.',
-      'Hunt the windows: deep inside the chaos the diagram suddenly clears into a tidy three-year cycle near r ≈ 3.83 (and there are five- and six-year windows too). Your score is the longest exact cycle you can land on.'
+      'The rule is next = r × x × (1 − x): a population that grows when small and crashes when it overshoots. x is the stock from 0 to 1, and r is the growth rate you set.',
+      'The main view is the bifurcation diagram: for each growth rate it marks the values the population settles into. One dot is a steady level, two dots mean it alternates high and low each year, and more dots mean a longer cycle.',
+      'Raise r and the cycle length keeps doubling, 1, 2, 4, 8, 16, in ever-smaller steps that pile up at r ≈ 3.5699. Past there the population never repeats, which is deterministic chaos from a one-liner.',
+      'The bottom strip replays the orbit year by year, so you can watch the cycle length directly: flat at low r, a two-beat higher up, then a jitter that never settles.',
+      'The panel measures the Lyapunov exponent, the rate at which nearby populations pull apart. It is negative wherever the map is periodic and crosses zero right at the onset of chaos, which is marked.',
+      'Hunt the windows: deep in the chaos the diagram clears into a tidy three-year cycle near r ≈ 3.83, with five- and six-year windows nearby. Your score is the longest exact cycle you can land on.'
     ],
     mount
   });

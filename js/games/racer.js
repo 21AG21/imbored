@@ -280,15 +280,15 @@
     emoji: 'car',
     cat: 'action',
     order: 20,
-    blurb: 'A proper arcade racer hiding in a browser tab — a curving, cresting pseudo-3D highway, traffic to thread, and twenty stages that get twistier and busier. Floor it, keep it on the tarmac, and beat the clock. Jump to any stage whenever you like.',
+    blurb: 'A pseudo-3D arcade racer with a curving, cresting highway and traffic to weave through. Twenty stages get twistier and busier as you go, and you can jump straight to any of them.',
     scoreLabel: 'Stages cleared',
     tags: ['racing', 'driving', 'arcade', '3d'],
     how: [
-      'Hold gas to accelerate, brake to slow, and steer left/right to stay on the road — arrow keys, WASD, or the on-screen buttons on touch.',
-      'The road bends and rolls over hills. On a curve the car drifts to the outside, so steer into the bend to hold your line; drift onto the grass and you bog down.',
-      'Traffic is scattered down every stage. Clip a car and you lose almost all your speed, so pick your lane early.',
-      'Reach the finish line to clear the stage and bank your time. Twenty stages get longer, curvier and more crowded as you go.',
-      'Use the Stage menu to jump straight to any stage whenever you want — no need to grind through in order. Your best time per stage is saved.'
+      'Hold gas to speed up, brake to slow, and steer left or right to stay on the road. Use arrow keys, WASD, or the on-screen buttons on touch.',
+      'The road bends and rolls over hills. On a curve the car drifts toward the outside, so steer into the bend to hold your line. Drift onto the grass and you bog down.',
+      'Traffic is scattered along every stage. Clip a car and you lose almost all your speed, so pick your lane early.',
+      'Reach the finish to clear the stage and bank your time. Later stages run longer, curvier and more crowded.',
+      'The Stage menu jumps straight to any stage, so you can skip around instead of grinding in order. Your best time per stage is saved.'
     ],
     mount
   });

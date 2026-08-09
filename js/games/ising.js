@@ -234,16 +234,16 @@
     emoji: 'ising',
     cat: 'sim',
     order: 8,
-    blurb: 'A lattice of magnetic spins run by one honest rule. Cool it and the whole sheet locks into a single magnetised colour; warm it past the Curie point and thermal noise shreds it. The collapse lands right around the temperature Onsager pinned down in 1944.',
+    blurb: 'A grid of magnetic spins run by one flip rule. Cool it and the sheet locks to a single colour; heat it past the Curie point Onsager fixed in 1944 and thermal noise pulls it apart.',
     scoreLabel: 'Peak susceptibility',
     tags: ['ising', 'phase-transition', 'magnetism', 'monte-carlo'],
     how: [
-      'Every square is a tiny magnet pointing up or down. Neighbours prefer to agree — that is the only interaction, and there is no outside field.',
-      'The lattice flips spins by the Metropolis rule: a move that lowers energy is always taken, and one that raises it is taken with probability exp(-ΔE / T). Temperature T is how much the noise fights the neighbours.',
-      'Drag temperature down and the sheet magnetises: one colour swallows the board and |M| climbs toward 1. Drag it up and the order melts to salt-and-pepper with |M| near 0.',
-      'The interesting place is the Curie point T_c ≈ 2.27. Park there and watch domains boil at every size at once — that is criticality, not a stall.',
-      'The panel plots magnetisation against temperature, measured live from the model, with Onsager’s exact T_c marked as the dashed line. On this finite lattice the measured curve rounds off and its drop sits a hair to the right of the line — that offset is real finite-size physics, and it shrinks as the lattice grows.',
-      'Fluctuations (the susceptibility χ) peak sharply at the transition. Your score is the biggest χ you can coax out — which means finding the critical temperature and sitting on it.'
+      'Every square is a tiny magnet pointing up or down. Neighbours prefer to match, and there is no outside field, so that agreement is the whole interaction.',
+      'Spins flip by the Metropolis rule: a move that lowers energy is always taken, one that raises it is taken with probability exp(-ΔE / T). Temperature T sets how hard the noise pushes against the neighbours.',
+      'Drag temperature down and the sheet magnetises: one colour takes the board and |M| climbs toward 1. Drag it up and the order dissolves to salt-and-pepper with |M| near 0.',
+      'The Curie point is T_c ≈ 2.27. Sit there and domains churn at every size at once, which is criticality rather than a stall.',
+      'The panel plots magnetisation against temperature, measured live from the model, with the exact T_c marked by the dashed line. On a finite lattice the curve rounds off and its drop sits a hair right of the line, which is real finite-size physics that shrinks as the lattice grows.',
+      'Fluctuations (the susceptibility χ) peak sharply at the transition. Your score is the largest χ you can hold, so find the critical temperature and stay on it.'
     ],
     mount
   });

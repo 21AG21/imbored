@@ -493,15 +493,15 @@
     emoji: 'solitaire',
     cat: 'puzzle',
     order: 15,
-    blurb: 'Klondike. The one that has been on office computers since 1990 and has outlasted every operating system it shipped with.',
+    blurb: 'Klondike solitaire. Build the four foundations up from Ace to King, one suit each.',
     scoreLabel: 'Games won',
     tags: ['klondike', 'cards', 'patience', 'classic'],
     how: [
-      'Build the four piles up top from Ace to King, one suit each.',
-      'In the columns, stack downwards in alternating colours. Only a King goes into an empty column.',
-      'Drag a card and everything sitting on it moves too, as long as it is a proper run.',
-      'Click a card without dragging and it flies home if it can. "Send home" does the whole board.',
-      'Z undoes. Space deals. Chill and Normal deal one card at a time with unlimited redeals; Hard deals three with two redeals, and Nightmare gives you one.'
+      'Build the four foundations from Ace to King, one suit each.',
+      'In the columns, stack down in alternating colours. Only a King fills an empty column.',
+      'Drag a card and any proper run on top of it moves too.',
+      'Click a card without dragging to send it home. Send home clears everything that can go.',
+      'Z undoes, Space draws. Chill and normal draw one card with unlimited redeals. Hard draws three with two redeals, nightmare with one.'
     ],
     mount
   });

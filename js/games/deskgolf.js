@@ -322,16 +322,16 @@
     emoji: 'deskgolf',
     cat: 'goof',
     order: 63,
-    blurb: 'Nine holes of putting across the office carpet. Desks bounce, mousepads drag, and someone has spilled coffee absolutely everywhere.',
+    blurb: 'Nine holes of mini golf across the office carpet. Aim by dragging back from the ball, and mind the desks, mousepads and coffee spills.',
     scoreLabel: 'Best round',
     lowerIsBetter: true,
     tags: ['golf', 'putting', 'physics', 'mini golf'],
     how: [
-      'Drag backwards from the ball and release to putt. The bar shows the power.',
-      'Desks bounce the ball. The dark purple patches are mousepads and they slow you right down.',
-      'The brown puddles are spilled coffee. In means one penalty stroke and back to the tee.',
-      'Nine holes, par 31. Lower total is better, so this is the one game here where a small score wins.',
-      'Harder difficulties shrink the cup and make the carpet faster.'
+      'Drag back from the ball and release to putt. The bar shows how hard you hit it.',
+      'Desks bounce the ball. The dark purple patches are mousepads and drag it to a stop faster.',
+      'Brown puddles are spilled coffee. Landing in one costs a penalty stroke and sends you back to the tee.',
+      'Nine holes, par 31. Lower total wins, so a small score is the goal here.',
+      'Harder settings shrink the cup and speed up the carpet.'
     ],
     mount
   });

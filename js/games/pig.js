@@ -78,13 +78,13 @@
 
   Arcade.register({
     id: 'pig', title: 'Press Your Luck', emoji: 'dice', cat: 'goofy', order: 46,
-    blurb: 'A filthy little dice game. Roll to pile up points, but roll a single 1 and the whole turn evaporates. Bank when your nerve gives out. First to 100 against a deskmate who knows exactly when to quit.',
+    blurb: 'Roll to build up points, but a single 1 wipes the whole turn. Bank before that happens. First to 100 beats your deskmate.',
     scoreLabel: 'Win streak', tags: ['dice', 'luck', 'press-your-luck'],
     how: [
-      'On your turn, roll as many times as you dare — each roll adds to your turn total.',
-      'Roll a 1 and you lose everything built this turn. Bank to keep it and pass the dice.',
-      'First to 100 wins. Your deskmate banks around twenty, so out-nerve them.',
-      'The score kept is your streak of games won in a row.'
+      'On your turn, roll as many times as you dare. Each roll adds to the turn total.',
+      'Roll a 1 and you lose everything built this turn. Bank to keep it and hand over the dice.',
+      'First to 100 wins. Your deskmate banks around twenty, so push a little past that.',
+      'Your score is the streak of games you win in a row.'
     ],
     mount
   });

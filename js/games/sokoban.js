@@ -214,15 +214,15 @@
     emoji: 'sokoban',
     cat: 'puzzle',
     order: 13,
-    blurb: 'Push crates onto the markers. You can push. You cannot pull. One thoughtless shove and the level is quietly unwinnable.',
+    blurb: 'Push crates onto the markers. You can push a crate but never pull it, so one careless shove can strand a level for good.',
     scoreLabel: 'Levels solved',
     tags: ['sokoban', 'boxes', 'warehouse', 'logic'],
     how: [
-      'Arrows or WASD to walk. Walking into a crate shoves it one square.',
-      'You can never pull. A crate in a corner is there forever.',
-      'Z or the Undo button rewinds. Use it constantly, nobody is watching.',
-      'Every crate on a ringed marker finishes the level.',
-      'All twenty-five warehouses were checked by a solver before shipping, ramping from easy to hard. Use the Level menu to jump straight to any of them.'
+      'Walk with arrows or WASD. Walking into a crate shoves it one square ahead.',
+      'You can push but never pull. A crate wedged into a corner stays there.',
+      'Z or the Undo button rewinds a move. Lean on it, nobody is watching.',
+      'Every crate sitting on a ringed marker clears the level.',
+      'All twenty-five warehouses were solver-checked before shipping and ramp from easy to hard. The Level menu jumps straight to any of them.'
     ],
     mount
   });

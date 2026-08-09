@@ -335,15 +335,15 @@
     emoji: 'desktoss',
     cat: 'goof',
     order: 62,
-    blurb: 'Crumpled paper, one bin, and an air conditioning vent with a personal grudge. Bin on a desk counts double.',
+    blurb: 'Catapult crumpled paper into the bin while the air-con vent pushes it off course. A bin up on a desk counts double.',
     scoreLabel: 'Score',
     tags: ['paper', 'basketball', 'bin', 'physics', 'throw'],
     how: [
-      'Drag backwards from the paper ball and release. Further back means harder.',
-      'The dotted arc is where it would go right now. The flag shows which way the air con is blowing.',
-      'Rims bounce. Use them if you must, but it is embarrassing.',
-      'Every basket moves the bin further away and shrinks it. Bins up on a desk are worth double.',
-      'Five misses and you are done picking paper off the carpet. The bin only creeps away slowly, and the air con is milder than it used to be.'
+      'Drag back from the paper ball and release. Further back throws harder.',
+      'The dotted arc shows the current shot. The flag shows which way the air-con blows.',
+      'The rim bounces the ball, so bank shots are fair game.',
+      'Every basket moves the bin back and shrinks it. A bin on a desk scores double.',
+      'Five misses ends the game. The bin only drifts back slowly.'
     ],
     mount
   });

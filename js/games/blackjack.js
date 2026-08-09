@@ -310,16 +310,16 @@
     emoji: 'blackjack',
     cat: 'goof',
     order: 6,
-    blurb: 'Single-deck blackjack against a dealer with a fixed policy and no tells. You are betting your unspent PTO. It is not real. Please relax.',
+    blurb: 'Single-deck blackjack against a dealer who plays a fixed policy. The chips are dressed up as unspent PTO, so nothing real rides on it.',
     scoreLabel: 'Chip high',
     tags: ['cards', 'blackjack', 'dealer', 'chips'],
     usesLetters: true,
     how: [
-      'Get closer to twenty-one than the dealer without going over. Aces are eleven or one, whichever helps.',
-      'Buttons: Deal, Hit, Stand, Double. Keys: H hit, S stand, D double, Space deals. Pick a bet from the dropdown.',
-      'The dealer hits sixteen and stands on seventeen, then flips the hole card once you stand. Blackjack pays three to two.',
-      'Your chip bankroll persists and is the score kept. Broke? A PTO advance tops you back up, but that will not count toward a record.',
-      'Chill and Normal use one deck and the dealer stands on soft seventeen. Hard and Nightmare deal four decks and the dealer hits soft seventeen.'
+      'Beat the dealer\'s total without going over twenty-one. Aces count as eleven or one, whichever helps.',
+      'Deal a hand, then Hit or Stand. Double takes one more card for a matched bet. Keys: H hit, S stand, D double, Space deals.',
+      'The dealer hits sixteen and stands on seventeen, then turns over the hole card after you stand. Blackjack pays three to two.',
+      'Your chip bankroll carries between hands and is the score. Go broke and a PTO advance refills you, though a refilled run sets no record.',
+      'Chill and Normal use one deck with the dealer standing on soft seventeen. Hard and Nightmare use four decks with the dealer hitting soft seventeen.'
     ],
     mount: mount
   });

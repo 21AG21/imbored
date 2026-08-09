@@ -292,17 +292,17 @@
     emoji: 'sheet',
     cat: 'puzzle',
     order: 17,
-    blurb: 'Minesweeper in disguise. Lettered columns, numbered rows, a formula bar — it reads like a spreadsheet from across the room, and plays like the meeting classic up close.',
+    blurb: 'Minesweeper dressed as a spreadsheet. Lettered columns and a formula bar read like data entry from across the room.',
     scoreLabel: 'Sheets closed',
     tags: ['minesweeper', 'spreadsheet', 'camouflage', 'logic'],
     how: [
-      'It is Minesweeper wearing a spreadsheet costume. Every "cell" is a square that either hides a mine or a count of the mines touching it.',
-      'Left-click a cell to fill it in. Your first click is always safe and usually opens a whole block of empty cells at once.',
-      'A number is how many of the eight cells around it are mines. Use those figures to deduce which neighbours are safe and which to avoid.',
-      'Right-click (or long-press on touch) to flag a cell you believe is a mine — it fills amber, like a cell you have highlighted for review.',
-      'Click a number that already has the right count of flags around it to auto-open its remaining neighbours in one go.',
-      'Hit a mine and it turns into a #REF! error and the sheet breaks. Fill every safe cell to reconcile the sheet and win.',
-      'The disguise is the point: from a distance it looks exactly like you doing data entry. The panic key still works if you need it.'
+      'Under the disguise it is Minesweeper. Each cell hides either a mine or a count of the mines around it.',
+      'Left-click a cell to open it. Your first click is always safe and often opens a whole block.',
+      'A number counts the mines in the eight cells around it. Use the numbers to deduce which neighbours are safe.',
+      'Right-click, or long-press on touch, to flag a suspected mine. It fills amber like a highlighted cell.',
+      'Click a number that already has enough flags around it to open its other neighbours at once.',
+      'Hit a mine and it turns into a #REF! error. Open every safe cell to win.',
+      'From a distance it looks like data entry. The panic key still works if you need it.'
     ],
     mount
   });

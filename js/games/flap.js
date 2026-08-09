@@ -141,14 +141,14 @@
     emoji: 'flap',
     cat: 'action',
     order: 34,
-    blurb: 'One button, one bird, one floor. The gaps never get bigger and you never get better quite fast enough.',
+    blurb: 'One button keeps a bird in the air. Tap to flap, thread the pipe gaps, and see how far you get before you clip one.',
     scoreLabel: 'Score',
     tags: ['flappy', 'one-button', 'tap'],
     how: [
-      'Click, tap, or press Space for one flap upward. Every flap is exactly the same size.',
-      'Gravity keeps pulling you down between flaps, so you are constantly correcting.',
-      'Thread the gap in each pipe. Touching a pipe, the floor, or the ceiling ends the run instantly.',
-      'Your score is the number of pipes you clear. Harder settings tighten the gaps and speed up the scroll.'
+      'Click, tap, or press Space to flap upward. Every flap is the same strength.',
+      'Gravity pulls you down between flaps, so you correct constantly.',
+      'Fly through the gap in each pipe. Touching a pipe, the floor, or the ceiling ends the run.',
+      'Your score is the number of pipes you clear. Harder settings narrow the gaps and speed up the scroll.'
     ],
     mount
   });

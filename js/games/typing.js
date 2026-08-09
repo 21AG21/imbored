@@ -123,14 +123,14 @@
     emoji: 'keys',
     cat: 'brain',
     order: 30,
-    blurb: 'A words-per-minute test disguised as a form. Type the line exactly — only the right key advances, so the score is honest — and find out how fast you really are. Looks exactly like work.',
+    blurb: 'A words-per-minute test dressed as a data-entry form. Type each line exactly, since only the correct key advances, and it reports your real speed.',
     scoreLabel: 'Best WPM',
     tags: ['typing', 'speed', 'words-per-minute', 'skill'],
     how: [
       'Click the box and type the line shown, character for character, including spaces (drawn as a dot) and punctuation.',
-      'It is strict: a wrong key does not move you forward. The current character just turns red until you hit the right one, so you cannot mash your way to a fake score.',
-      'Words per minute is measured the standard way — five characters count as one word — from your first keystroke to your last.',
-      'Accuracy is the share of keystrokes that were correct. A run only sets a record if you finish at 90% accuracy or better, so speed without control does not count.',
+      'It is strict: a wrong key never advances you. The current character turns red until you hit the right one, so you cannot mash out a fake score.',
+      'Words per minute uses the standard measure of five characters per word, timed from your first keystroke to your last.',
+      'Accuracy is the share of keystrokes that were correct. A run sets a record only if you finish at 90% accuracy or better, so speed without control does not count.',
       'Hit New line for a fresh sentence any time. Your best clean WPM is the score to beat.'
     ],
     mount

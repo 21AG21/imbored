@@ -306,15 +306,15 @@
     emoji: 'breakout',
     cat: 'action',
     order: 31,
-    blurb: 'Bounce, smash, grab the falling letters. Multiball is a gift right up until the moment it is a punishment.',
+    blurb: 'Clear the bricks with a paddle and ball. Catch the falling tiles for power-ups.',
     scoreLabel: 'Score',
     tags: ['breakout', 'arkanoid', 'paddle', 'ball'],
     how: [
-      'Mouse, drag, or arrow keys move the paddle. Space, click, or tap launches.',
-      'Where the ball hits the paddle decides where it goes. Edges fire it out wide.',
-      'Falling tiles: W widens the paddle, 3 splits the ball, S slows time, and the heart is a spare life.',
-      'Clear every brick for a 250 point bonus, then it does it again but worse.',
-      'Hard gives you two lives. Nightmare gives you one, and a faster ball.'
+      'Move the paddle with the mouse or arrow keys. Space, click, or tap to launch.',
+      'Where the ball hits the paddle sets its angle. Edges send it out wide.',
+      'Catch a falling tile: W widens the paddle, 3 splits the ball, S slows time, heart is a spare life.',
+      'Clear every brick for a 250-point bonus, then the next board rebuilds harder.',
+      'Hard gives you two lives. Nightmare gives one, plus a faster ball.'
     ],
     mount
   });

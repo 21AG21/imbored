@@ -78,13 +78,13 @@
   Arcade.register({
     id: 'hanoi', title: 'Tower of Hanoi', emoji: 'stack', cat: 'puzzle', order: 20,
     lowerIsBetter: true,
-    blurb: 'The ancient disk-stacking puzzle as a tower of ring binders you shuffle from one desk to another — never a big one on a small one. Simple rules, deceptively fiddly, weirdly soothing.',
+    blurb: 'The classic disk-stacking puzzle, restyled as ring binders. Move the stack one binder at a time, never a big one on a small one.',
     scoreLabel: 'Fewest moves', tags: ['puzzle', 'classic', 'logic'],
     how: [
-      'Click a peg to lift its top disk, then click another peg to drop it there.',
-      'A larger disk can never rest on a smaller one.',
-      'Move the entire stack from the left peg over to the right peg.',
-      'Fewer moves is better — the theoretical minimum is 2^disks minus 1.'
+      'Click a peg to lift its top disk, then click another peg to drop it.',
+      'A larger disk can never sit on a smaller one.',
+      'Move the whole stack from the left peg to the right peg.',
+      'Fewer moves is better. The minimum is 2^disks minus 1.'
     ],
     mount
   });

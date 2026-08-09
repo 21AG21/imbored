@@ -214,14 +214,14 @@
     emoji: 'pipes',
     cat: 'puzzle',
     order: 14,
-    blurb: 'Spin every pipe until the whole grid lights up from one glowing source. Endless levels, all of them definitely solvable.',
+    blurb: 'Rotate every pipe until the whole grid connects to the glowing source. Endless levels, all solvable by construction.',
     scoreLabel: 'Level',
     tags: ['net', 'rotate', 'connect', 'plumbing'],
     how: [
-      'Left click spins a pipe clockwise. Right click spins it back.',
-      'The amber blob is the source. Pipes glow when they are fed by it.',
-      'Every single pipe has to end up connected. No orphans allowed, not even the little ones.',
-      'Boards are grown from a random spanning tree, so a solution always exists by construction.',
+      'Left-click a pipe to turn it clockwise. Right-click turns it back.',
+      'The amber blob is the source. Pipes glow once it feeds them.',
+      'Every pipe has to end up connected, including the dead-end stubs.',
+      'Boards grow from a random spanning tree, so a solution always exists.',
       'Harder settings hand you bigger grids sooner.'
     ],
     mount

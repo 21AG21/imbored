@@ -84,14 +84,14 @@
 
   Arcade.register({
     id: 'stapler', title: 'Staple Empire', emoji: 'busywork', cat: 'goofy', order: 48,
-    blurb: 'The purest office idle game. Click the stapler. Buy interns to staple for you. Buy machines to staple faster. Watch a number climb toward the heat-death of the universe. Deeply unnecessary, impossible to stop.',
+    blurb: 'An office idle clicker. Click the stapler for staples, then spend them on interns and machines that staple for you while the number climbs on its own.',
     scoreLabel: 'Staples made', tags: ['idle', 'clicker', 'numbers'],
     formatScore: (v) => (function f(n) { if (n < 1000) return String(n); const u = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx']; let i = 0; while (n >= 1000 && i < u.length - 1) { n /= 1000; i++; } return (n < 10 ? n.toFixed(2) : n < 100 ? n.toFixed(1) : Math.floor(n)) + u[i]; })(v),
     how: [
       'Click the big stapler to make staples by hand.',
-      'Spend staples in the shop on interns and machines that staple automatically.',
-      'Everything gets pricier as you buy more of it, so keep the production line growing.',
-      'The score kept is the most staples you have ever produced in a single run.'
+      'Spend staples in the shop on interns and machines that staple on their own.',
+      'Each unit costs more the more you own, so keep expanding the line.',
+      'Your score is the most staples you produce in a single run.'
     ],
     mount
   });

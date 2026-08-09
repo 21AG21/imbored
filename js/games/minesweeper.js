@@ -229,15 +229,15 @@
     emoji: 'minesweeper',
     cat: 'puzzle',
     order: 10,
-    blurb: 'The reigning world champion at making you look deep in thought. Three sizes, first click always safe, proper chording.',
+    blurb: 'Minesweeper with three board sizes, a first click that is always safe, and chording. Good cover for looking deep in thought.',
     scoreLabel: 'Wins',
     tags: ['mines', 'classic', 'logic'],
     how: [
-      'Left click digs. The first dig can never be a mine.',
+      'Left click digs. Your first dig is never a mine.',
       'Right click plants a flag. On a touchscreen, press and hold.',
-      'Click a number that already has the right count of flags around it and it sweeps the rest for you. This is the whole game once you learn it.',
-      'Clear every square that is not a mine. Your fastest time for each size is remembered.',
-      'Cranking the difficulty adds more mines to the same board.'
+      'Click a number that already has its full count of flags around it to sweep the rest. This is most of the game once it clicks.',
+      'Clear every square that is not a mine. Your fastest time per size is saved.',
+      'Harder settings add more mines to the same board.'
     ],
     mount
   });

@@ -64,13 +64,13 @@
 
   Arcade.register({
     id: 'nim', title: 'Last Stick', emoji: 'priority', cat: 'brain', order: 29,
-    blurb: 'A tiny, vicious game of nerve and arithmetic. A row of sticks on the desk; take one, two or three each turn. Get stuck taking the last one and you lose. The deskmate knows the trick — can you work it out?',
+    blurb: 'Take one, two, or three sticks per turn against the deskmate. Whoever takes the last stick loses.',
     scoreLabel: 'Win streak', tags: ['strategy', 'maths', 'classic'],
     how: [
-      'A row of sticks. On your turn, take one, two or three of them.',
-      'Turns alternate with your deskmate. Whoever is forced to take the LAST stick loses.',
-      'There is a winning pattern hidden in the counting. Find it and you can win every game.',
-      'The score kept is your streak of games won in a row.'
+      'On your turn, take one, two, or three sticks.',
+      'Turns alternate with your deskmate. Taking the last stick loses.',
+      'There is a counting pattern that wins every game. Work it out.',
+      'Your score is your streak of games won in a row.'
     ],
     mount
   });

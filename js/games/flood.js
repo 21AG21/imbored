@@ -88,16 +88,16 @@
     emoji: 'flood',
     cat: 'puzzle',
     order: 16,
-    blurb: 'Start in the corner, choose a colour, and swallow the board one flood at a time. Fewer moves is the flex.',
+    blurb: 'Flood the whole 14x14 board into one colour from the top-left corner. Do it in as few moves as you can.',
     scoreLabel: 'Fewest moves',
     lowerIsBetter: true,
     tags: ['flood-it', 'colour', 'fill'],
     how: [
-      'Your territory starts as the single tile in the top-left corner.',
-      'Click or tap a colour button. Your whole territory repaints to it and swallows every neighbouring tile of that colour, growing in one flood.',
-      'The trick: spreading wide early gives every later flood more edge to eat. Chasing one colour into a corner is a trap.',
-      'Fill the entire board with one colour to win. Your score is how many floods it took — fewer is better.',
-      'Par is a rough target for the board, and it tightens on harder settings. Beat it and you were planning two floods ahead.'
+      'Your territory is the single tile in the top-left corner.',
+      'Pick a colour. Your territory repaints and absorbs every touching tile of that colour.',
+      'Spread wide early so later floods have more edge to absorb.',
+      'Fill the whole board to win. Your score is the flood count, so fewer is better.',
+      'Par is a target move count for the board. Beat it if you can.'
     ],
     mount
   });

@@ -75,13 +75,13 @@
 
   Arcade.register({
     id: 'anagram', title: 'Word Scramble', emoji: 'wordguess', cat: 'brain', order: 28,
-    blurb: 'Sixty seconds, a pile of jumbled office words, and your slowly-rising panic. Unscramble as many as you can before the clock runs out.',
+    blurb: 'Unscramble office words against a 60-second clock. Each one you get scores a point.',
     scoreLabel: 'Best (60s)', tags: ['word', 'speed', 'spelling'],
     how: [
-      'A scrambled office word appears. Type the real word and press Enter.',
-      'Each correct answer scores a point and serves up the next word.',
-      'Stuck? Skip for a fresh one — it costs no points, only precious seconds.',
-      'You have sixty seconds. The score kept is the most you have solved in one run.'
+      'Type the unscrambled word and press Enter.',
+      'A correct answer scores a point and loads the next word.',
+      'Skip for a new word when you are stuck. It costs time, not points.',
+      'You get 60 seconds. Your score is the most words solved in one run.'
     ],
     mount
   });
