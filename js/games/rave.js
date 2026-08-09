@@ -15,8 +15,8 @@
     let overlay = null, raf = 0;
 
     function start() {
-      root.replaceChildren(h('p', { class: 'rave-hint' }, 'The party is on your whole screen. Tap it (or press Esc) to make it stop.'));
-      api.status('RAVE ENGAGED. Tap the screen or hit Esc to return to something that looks like work.');
+      root.replaceChildren(h('p', { class: 'rave-hint' }, 'The party is on your whole screen. Press any key (or tap) to make it stop.'));
+      api.status('RAVE ENGAGED. Press any key or tap the screen to return to something that looks like work.');
 
       overlay = h('div', { class: 'rave-overlay', tabindex: '0' });
       const cv = h('canvas', { class: 'rave-canvas' });
@@ -75,7 +75,11 @@
       const kill = () => { location.hash = ''; };
       bagg.listen(overlay, 'pointerdown', kill);
       bagg.listen(stop, 'pointerdown', (e) => { e.stopPropagation(); kill(); });
-      bagg.add(Engine.onKey((e) => { if (e.key === 'Escape') { kill(); return true; } }));
+      /* ANY key gets you out — when you want the rainbow gone you want it gone
+         now, not after remembering which key. Lone modifier taps (Shift, Ctrl,
+         Alt, Meta, Caps) are ignored so a stray one doesn't bail you out early. */
+      const MODS = ['Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'OS'];
+      bagg.add(Engine.onKey((e) => { if (MODS.indexOf(e.key) !== -1) return; kill(); return true; }));
       overlay.focus();
     }
 
@@ -97,7 +101,7 @@
     how: [
       'Opening it takes over your whole screen — every pixel — with fast, saturated, spinning colour and giant flashing nonsense text.',
       'It exists to be seen by the wrong person. A boss glancing at a screen mid-seizure of rainbow tends to keep walking.',
-      'Tap anywhere on the screen, press the Make It Stop button, or hit Escape to snap back to the calm arcade.',
+      'To stop it: press ANY key, tap anywhere on the screen, or hit the Make It Stop button. It snaps straight back to the calm arcade.',
       'It fires the instant you open it — no confirmation step. It flashes fast and bright by design, so only reach for it when that is what you want.',
       'Pair it with the real panic key (the backtick turns the site into a spreadsheet) for the full range of workplace camouflage: invisible, or extremely visible.',
       'Summon it from anywhere without hunting for the tile: press Shift and the backtick key together (that is the ~ key, just above Tab) and the party starts instantly.'
