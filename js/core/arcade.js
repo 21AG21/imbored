@@ -488,7 +488,8 @@
         h('h1', null, 'Look busy. ', h('span', { class: 'accent' }, 'Be busy.')),
         h('p', null,
           'The complete shareware collection for people whose meeting has no agenda. ',
-          'Everything runs in this tab. Hit ', h('kbd', null, '`'), ' and the whole thing turns into a spreadsheet so fast nobody sees a thing.')),
+          'Everything runs in this tab. Hit ', h('kbd', null, '`'), ' and the whole thing turns into a spreadsheet so fast nobody sees a thing.'),
+        h('button', { class: 'btn primary daily-btn', type: 'button', onclick: () => Arcade.daily() }, 'Play today’s Daily')),
       chips,
       h('div', { class: 'grid' },
         cards.length ? cards : h('p', { class: 'empty' }, 'Nothing by that name. Try fewer letters.'),
@@ -606,7 +607,7 @@
   }
 
   /* ---------------- game screen ---------------- */
-  function renderGame(g) {
+  function renderGame(g, daily) {
     const view = document.getElementById('view');
     const stage = h('div', { class: 'stage' });
     const statusEl = h('div', { class: 'status' });
@@ -661,6 +662,7 @@
         g.link ? h('a', { class: 'back rel-link', href: g.link.url, target: '_blank', rel: 'noopener' }, g.link.label + ' \u2197') : null,
         h('div', { class: 'gmeta' },
           h('span', { class: 'pill diff-tag d-' + Arcade.diff().id }, Arcade.diff().label),
+          daily ? h('span', { class: 'pill daily-tag', title: 'Everyone gets this exact board today' }, 'DAILY ' + daily) : null,
           bestEl),
         h('details', { class: 'howto' },
           h('summary', null, 'How this thing works'),
@@ -690,19 +692,33 @@
   }
 
   /* ---------------- router ---------------- */
+  /* ---------------- Daily challenge (same seeded board for everyone) ---------------- */
+  const DAILY_POOL = ['minesweeper', '2048', 'fifteen', 'flood', 'jam', 'sokoban', 'pipes', 'maze', 'sudoku', 'lightsout', 'nonogram', 'wordguess', 'match3'];
+  let restoreRandom = null;
+  function installSeed(s) { const orig = Math.random; Math.random = Engine.rng(s); return () => { Math.random = orig; }; }
+  function todayStamp() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function dailyPick(ds) { const pool = DAILY_POOL.filter((id) => byId.has(id)); const r = Engine.rng('pick:' + ds); return pool[Math.floor(r() * pool.length)] || pool[0]; }
+  Arcade.daily = function () { const ds = todayStamp(); location.hash = '#daily/' + dailyPick(ds) + '/' + encodeURIComponent(ds); };
+
   function route() {
+    /* restore real Math.random if we're leaving a seeded Daily */
+    if (restoreRandom) { try { restoreRandom(); } catch (e) { /* ignore */ } restoreRandom = null; }
     if (currentDispose) { try { currentDispose(); } catch (e) { console.error(e); } }
     currentDispose = null;
     currentGame = null;
     Engine.paused = bossOn || document.hidden;
+    const dmatch = /^#daily\/([\w-]+)\/(.+)$/.exec(location.hash || '');
     const m = /^#g\/([\w-]+)/.exec(location.hash || '');
-    const g = m && byId.get(m[1]);
+    let g = null, daily = null;
+    if (dmatch && byId.get(dmatch[1])) { g = byId.get(dmatch[1]); daily = decodeURIComponent(dmatch[2]); }
+    else if (m) g = byId.get(m[1]);
     document.body.classList.toggle('in-game', !!g);
     if (g) {
+      if (daily) restoreRandom = installSeed('daily:' + daily + ':' + g.id);
       const recent = store.get('recent', []).filter((x) => x !== g.id);
       recent.unshift(g.id);
       store.set('recent', recent.slice(0, 8));
-      renderGame(g);
+      renderGame(g, daily);
     } else if ((location.hash || '') === '#stats') {
       if (bigOn) setBig(false);
       renderStats();

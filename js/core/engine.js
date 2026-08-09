@@ -329,6 +329,25 @@
     };
   })();
 
+  /* ---------- seeded RNG (xmur3 hash -> mulberry32) ----------
+     Deterministic from a string seed, so the same seed reproduces the same
+     board anywhere with no network. Used by the Daily challenge. */
+  Engine.rng = function rng(seedStr) {
+    seedStr = String(seedStr);
+    let hh = 1779033703 ^ seedStr.length;
+    for (let i = 0; i < seedStr.length; i++) {
+      hh = Math.imul(hh ^ seedStr.charCodeAt(i), 3432918353);
+      hh = (hh << 13) | (hh >>> 19);
+    }
+    let a = (hh ^= hh >>> 16) >>> 0;
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  };
+
   /* ---------- Engine.fx: a shared confetti burst overlay ----------
      One fixed pointer-through canvas over the page; particles self-clean when
      they die and the rAF loop stops. Skipped entirely under reduced-motion. */

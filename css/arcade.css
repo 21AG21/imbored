@@ -1741,3 +1741,7 @@ body.crt.boss-on::after, body.crt.boss-on::before { display: none; }
 /* colour-safe: redundant symbols where colour is the only channel */
 body.colorsafe .flood .cell { display: grid; place-items: center; font: 700 11px/1 Verdana, sans-serif; color: #14110c; text-shadow: 0 0 2px rgba(255,255,255,.9); }
 body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20px/1 Verdana, sans-serif; color: #14110c; text-shadow: 0 0 2px rgba(255,255,255,.9); }
+
+/* Daily challenge */
+.daily-btn { margin-top: 14px; }
+.pill.daily-tag { background: var(--grape); color: var(--label); }
