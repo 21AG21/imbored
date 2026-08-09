@@ -489,7 +489,20 @@
 
   function render() {
     current = skin().build();
-    host.replaceChildren(current.el, h('div', { class: 'boss-hint' }, 'press ` to resume'));
+    /* A secret way out for when your hands are already on the mouse (or you are
+       on a phone with no backtick key): the app logo in the top-left corner is
+       a live button that drops you straight back into the arcade. */
+    const exit = h('button', {
+      class: 'boss-exit', type: 'button', title: 'Back to the arcade',
+      'aria-label': 'Back to the arcade',
+      onclick: (e) => {
+        e.preventDefault(); e.stopPropagation();
+        if (global.Arcade && global.Arcade.toggleBoss) global.Arcade.toggleBoss(false);
+        else Boss.toggle(false);
+      }
+    });
+    host.replaceChildren(current.el, exit,
+      h('div', { class: 'boss-hint' }, 'press ` or click the corner logo to resume'));
   }
 
   Boss.build = function build() {

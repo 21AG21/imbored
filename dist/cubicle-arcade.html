@@ -790,6 +790,17 @@ body.boss-on { overflow: hidden; }
   font: 10px/1 -apple-system, "Segoe UI", system-ui, sans-serif;
   color: rgba(120,120,120,.45); pointer-events: none; z-index: 2;
 }
+/* Invisible escape hatch sitting on the disguise's top-left logo. Looks like
+   part of the app until you hover; a tap or click returns to the arcade. */
+.boss-exit {
+  position: fixed; left: 0; top: 0; width: 58px; height: 48px;
+  z-index: 5; background: transparent; border: 0; padding: 0; margin: 0;
+  cursor: pointer; -webkit-appearance: none; appearance: none;
+  border-radius: 0 0 8px 0; transition: background .12s, box-shadow .12s;
+}
+.boss-exit:hover { background: rgba(120,120,120,.10); box-shadow: inset 0 0 0 2px rgba(120,120,120,.22); }
+.boss-exit:active { background: rgba(120,120,120,.18); }
+@media (pointer: coarse) { .boss-exit { width: 64px; height: 54px; } }
 .boss [contenteditable]:focus { outline: none; }
 
 .foot-skin { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -3530,7 +3541,20 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   function render() {
     current = skin().build();
-    host.replaceChildren(current.el, h('div', { class: 'boss-hint' }, 'press ` to resume'));
+    /* A secret way out for when your hands are already on the mouse (or you are
+       on a phone with no backtick key): the app logo in the top-left corner is
+       a live button that drops you straight back into the arcade. */
+    const exit = h('button', {
+      class: 'boss-exit', type: 'button', title: 'Back to the arcade',
+      'aria-label': 'Back to the arcade',
+      onclick: (e) => {
+        e.preventDefault(); e.stopPropagation();
+        if (global.Arcade && global.Arcade.toggleBoss) global.Arcade.toggleBoss(false);
+        else Boss.toggle(false);
+      }
+    });
+    host.replaceChildren(current.el, exit,
+      h('div', { class: 'boss-hint' }, 'press ` or click the corner logo to resume'));
   }
 
   Boss.build = function build() {
