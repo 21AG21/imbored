@@ -2173,3 +2173,66 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   .sl-rail { display: none; }
   .ch-side { display: none; }
 }
+
+/* ================= new game: Desk Duel (RPS) ================= */
+.rps { display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 14px; }
+.rps-row { display: flex; align-items: center; gap: 16px; width: 100%; max-width: 520px; justify-content: space-between; }
+.rps-side { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.rps-lbl { font: 700 12px Verdana, sans-serif; letter-spacing: .08em; color: var(--ink2); }
+.rps-hand { width: 96px; height: 96px; display: grid; place-items: center; font-size: 50px; background: var(--label); border: 3px solid var(--ink); box-shadow: var(--bevel-out); border-radius: 12px; }
+.rps-verdict { font: 800 18px/1.1 Impact, "Arial Black", sans-serif; text-transform: uppercase; letter-spacing: .04em; text-align: center; min-width: 96px; color: var(--ink); }
+.rps-verdict.win { color: var(--lime); } .rps-verdict.lose { color: var(--tomato); } .rps-verdict.tie { color: var(--ink3); }
+.rps-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.rps-btn { font-size: 15px; }
+
+/* ================= Hangman ================= */
+.hangman { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 14px; }
+.hm-gallows { font-size: 54px; line-height: 1; }
+.hm-word { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.hm-slot { min-width: 26px; height: 40px; border-bottom: 4px solid var(--ink); display: grid; place-items: center; font: 800 26px Impact, "Arial Black", sans-serif; color: var(--ink); padding: 0 3px; }
+.hm-slot.shown { color: var(--grape); }
+.hm-keys { display: grid; grid-template-columns: repeat(9, 1fr); gap: 5px; max-width: 460px; width: 100%; }
+.hm-key { padding: 8px 0; font: 700 14px Verdana, sans-serif; min-width: 0; }
+.hm-key.hit { background: var(--lime); }
+.hm-key.miss { background: var(--tomato); opacity: .65; }
+.hm-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
+.hm-msg.win { color: var(--lime); } .hm-msg.lose { color: var(--tomato); }
+
+/* ================= Press Your Luck (pig) ================= */
+.pig { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 14px; }
+.pig-board { display: flex; align-items: center; gap: 22px; }
+.pig-col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.pig-lbl { font: 700 12px Verdana, sans-serif; letter-spacing: .06em; color: var(--ink2); }
+.pig-score { font: 800 40px Impact, "Arial Black", sans-serif; color: var(--ink); min-width: 66px; text-align: center; }
+.pig-mid { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.pig-die { width: 78px; height: 78px; display: grid; place-items: center; font-size: 54px; background: var(--label); border: 3px solid var(--ink); border-radius: 14px; box-shadow: var(--bevel-out); }
+.pig-turn { font: 700 13px Verdana, sans-serif; color: var(--ink2); }
+.pig-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
+.pig-msg.win { color: var(--lime); } .pig-msg.lose { color: var(--tomato); }
+.pig-btns { display: flex; gap: 10px; }
+
+/* ================= Higher or Lower ================= */
+.hilo { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 14px; }
+.hl-cards { display: flex; gap: 16px; }
+.hl-card { width: 92px; height: 128px; background: #fbfbfb; border: 3px solid var(--ink); border-radius: 10px; box-shadow: var(--bevel-out); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: #16202e; }
+.hl-card.red { color: #c62828; }
+.hl-card.back { background: var(--grape); color: var(--label); font: 800 40px Impact, "Arial Black", sans-serif; }
+.hl-rank { font: 800 34px Impact, "Arial Black", sans-serif; }
+.hl-suit { font-size: 26px; }
+.hl-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
+.hl-msg.win { color: var(--lime); } .hl-msg.lose { color: var(--tomato); }
+.hl-btns { display: flex; gap: 12px; }
+
+/* ================= Tower of Hanoi ================= */
+.hanoi-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 14px; width: 100%; }
+.hanoi { display: flex; gap: 10px; width: 100%; max-width: 560px; }
+.hn-slot { flex: 1; display: flex; }
+.hn-peg { position: relative; flex: 1; min-height: 210px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; cursor: pointer; background: var(--paper2); border: 3px solid var(--ink); border-radius: 8px; padding-bottom: 8px; }
+.hn-peg.sel { outline: 3px dashed var(--grape); outline-offset: 2px; }
+.hn-rod { position: absolute; bottom: 8px; width: 8px; height: 82%; background: var(--shade); border-radius: 4px; }
+.hn-stack { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.hn-disk { height: 18px; border: 2px solid var(--ink); border-radius: 6px; }
+.hn-disk.d1 { background: var(--tomato); } .hn-disk.d2 { background: var(--banana); } .hn-disk.d3 { background: var(--lime); }
+.hn-disk.d4 { background: var(--teal); } .hn-disk.d5 { background: var(--grape); } .hn-disk.d6 { background: var(--hotpink); }
+.hn-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
+.hn-msg.win { color: var(--lime); } .hn-msg.lose { color: var(--tomato); }

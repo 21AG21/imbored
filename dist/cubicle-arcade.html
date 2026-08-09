@@ -2189,6 +2189,69 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   .ch-side { display: none; }
 }
 
+/* ================= new game: Desk Duel (RPS) ================= */
+.rps { display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 14px; }
+.rps-row { display: flex; align-items: center; gap: 16px; width: 100%; max-width: 520px; justify-content: space-between; }
+.rps-side { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.rps-lbl { font: 700 12px Verdana, sans-serif; letter-spacing: .08em; color: var(--ink2); }
+.rps-hand { width: 96px; height: 96px; display: grid; place-items: center; font-size: 50px; background: var(--label); border: 3px solid var(--ink); box-shadow: var(--bevel-out); border-radius: 12px; }
+.rps-verdict { font: 800 18px/1.1 Impact, "Arial Black", sans-serif; text-transform: uppercase; letter-spacing: .04em; text-align: center; min-width: 96px; color: var(--ink); }
+.rps-verdict.win { color: var(--lime); } .rps-verdict.lose { color: var(--tomato); } .rps-verdict.tie { color: var(--ink3); }
+.rps-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.rps-btn { font-size: 15px; }
+
+/* ================= Hangman ================= */
+.hangman { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 14px; }
+.hm-gallows { font-size: 54px; line-height: 1; }
+.hm-word { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.hm-slot { min-width: 26px; height: 40px; border-bottom: 4px solid var(--ink); display: grid; place-items: center; font: 800 26px Impact, "Arial Black", sans-serif; color: var(--ink); padding: 0 3px; }
+.hm-slot.shown { color: var(--grape); }
+.hm-keys { display: grid; grid-template-columns: repeat(9, 1fr); gap: 5px; max-width: 460px; width: 100%; }
+.hm-key { padding: 8px 0; font: 700 14px Verdana, sans-serif; min-width: 0; }
+.hm-key.hit { background: var(--lime); }
+.hm-key.miss { background: var(--tomato); opacity: .65; }
+.hm-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
+.hm-msg.win { color: var(--lime); } .hm-msg.lose { color: var(--tomato); }
+
+/* ================= Press Your Luck (pig) ================= */
+.pig { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 14px; }
+.pig-board { display: flex; align-items: center; gap: 22px; }
+.pig-col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.pig-lbl { font: 700 12px Verdana, sans-serif; letter-spacing: .06em; color: var(--ink2); }
+.pig-score { font: 800 40px Impact, "Arial Black", sans-serif; color: var(--ink); min-width: 66px; text-align: center; }
+.pig-mid { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.pig-die { width: 78px; height: 78px; display: grid; place-items: center; font-size: 54px; background: var(--label); border: 3px solid var(--ink); border-radius: 14px; box-shadow: var(--bevel-out); }
+.pig-turn { font: 700 13px Verdana, sans-serif; color: var(--ink2); }
+.pig-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
+.pig-msg.win { color: var(--lime); } .pig-msg.lose { color: var(--tomato); }
+.pig-btns { display: flex; gap: 10px; }
+
+/* ================= Higher or Lower ================= */
+.hilo { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 14px; }
+.hl-cards { display: flex; gap: 16px; }
+.hl-card { width: 92px; height: 128px; background: #fbfbfb; border: 3px solid var(--ink); border-radius: 10px; box-shadow: var(--bevel-out); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: #16202e; }
+.hl-card.red { color: #c62828; }
+.hl-card.back { background: var(--grape); color: var(--label); font: 800 40px Impact, "Arial Black", sans-serif; }
+.hl-rank { font: 800 34px Impact, "Arial Black", sans-serif; }
+.hl-suit { font-size: 26px; }
+.hl-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
+.hl-msg.win { color: var(--lime); } .hl-msg.lose { color: var(--tomato); }
+.hl-btns { display: flex; gap: 12px; }
+
+/* ================= Tower of Hanoi ================= */
+.hanoi-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 14px; width: 100%; }
+.hanoi { display: flex; gap: 10px; width: 100%; max-width: 560px; }
+.hn-slot { flex: 1; display: flex; }
+.hn-peg { position: relative; flex: 1; min-height: 210px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; cursor: pointer; background: var(--paper2); border: 3px solid var(--ink); border-radius: 8px; padding-bottom: 8px; }
+.hn-peg.sel { outline: 3px dashed var(--grape); outline-offset: 2px; }
+.hn-rod { position: absolute; bottom: 8px; width: 8px; height: 82%; background: var(--shade); border-radius: 4px; }
+.hn-stack { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.hn-disk { height: 18px; border: 2px solid var(--ink); border-radius: 6px; }
+.hn-disk.d1 { background: var(--tomato); } .hn-disk.d2 { background: var(--banana); } .hn-disk.d3 { background: var(--lime); }
+.hn-disk.d4 { background: var(--teal); } .hn-disk.d5 { background: var(--grape); } .hn-disk.d6 { background: var(--hotpink); }
+.hn-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
+.hn-msg.win { color: var(--lime); } .hn-msg.lose { color: var(--tomato); }
+
 </style>
 </head>
 <body>
@@ -11673,6 +11736,100 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
 </script>
 <script>
+/* Tower of Hanoi — move the stack, never a big disk on a small one. */
+(function () {
+  'use strict';
+  const { h } = Engine;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let N = 4, n = 4, pegs = [[], [], []], moves = 0, sel = null, over = false;
+
+    const pMoves = api.pill('moves: 0');
+    const pMin = api.pill('best: —');
+    const pegEls = [0, 1, 2].map((i) => {
+      const pe = h('div', { class: 'hn-peg' });
+      pe.addEventListener('click', () => pick(i));
+      return pe;
+    });
+    const board = h('div', { class: 'hanoi' }, pegEls.map((pe) => h('div', { class: 'hn-slot' }, pe)));
+    const msg = h('div', { class: 'hn-msg' }, '');
+    root.appendChild(h('div', { class: 'hanoi-wrap' }, board, msg));
+
+    api.select('Disks', [3, 4, 5, 6].map((v) => ({ value: String(v), label: v + ' disks' })), '4', (v) => { N = +v; reset(); });
+    api.button('Restart', reset);
+
+    function reset() {
+      n = N; pegs = [[], [], []];
+      for (let i = n; i >= 1; i--) pegs[0].push(i);
+      moves = 0; sel = null; over = false;
+      msg.textContent = 'Move the whole stack to the right peg in as few moves as you can.'; msg.className = 'hn-msg';
+      render(); sync();
+      api.status('Click a peg to lift its top disk, click another peg to drop it. A bigger disk can never sit on a smaller one. Minimum here is ' + ((1 << n) - 1) + ' moves.');
+    }
+    function sync() {
+      pMoves.textContent = 'moves: ' + moves;
+      const b = api.best(); pMin.textContent = 'best: ' + (b == null ? '—' : b);
+    }
+    function render() {
+      pegEls.forEach((pe, pi) => {
+        pe.className = 'hn-peg' + (sel === pi ? ' sel' : '');
+        const stack = h('div', { class: 'hn-stack' });
+        for (let k = pegs[pi].length - 1; k >= 0; k--) {
+          const size = pegs[pi][k];
+          stack.appendChild(h('div', { class: 'hn-disk d' + size, style: { width: (28 + size * 13) + 'px' } }, ''));
+        }
+        pe.replaceChildren(h('div', { class: 'hn-rod' }), stack);
+      });
+    }
+    function pick(pi) {
+      if (over) return;
+      if (sel === null) {
+        if (!pegs[pi].length) { api.sfx.thud(); return; }
+        sel = pi; api.sfx.click(); render(); return;
+      }
+      if (sel === pi) { sel = null; render(); return; }
+      const from = pegs[sel], to = pegs[pi];
+      const disk = from[from.length - 1];
+      if (to.length && to[to.length - 1] < disk) {
+        api.sfx.bad(); msg.textContent = 'A bigger disk cannot go on a smaller one.'; msg.className = 'hn-msg lose';
+        sel = null; render(); return;
+      }
+      to.push(from.pop()); moves++; sel = null; api.sfx.blip(520);
+      msg.textContent = ''; msg.className = 'hn-msg';
+      render(); sync();
+      if (pegs[2].length === n) win();
+    }
+    function win() {
+      over = true; api.sfx.great();
+      const min = (1 << n) - 1;
+      const r = api.submit(moves);
+      msg.textContent = 'Solved in ' + moves + ' move' + (moves === 1 ? '' : 's') +
+        (moves === min ? ' — perfect!' : ' (best possible: ' + min + ')') + '.' + (r.isRecord ? ' New record!' : '');
+      msg.className = 'hn-msg win'; sync();
+    }
+
+    reset();
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'hanoi', title: 'Tower of Hanoi', emoji: 'stack', cat: 'puzzle', order: 20,
+    lowerIsBetter: true,
+    blurb: 'The ancient disk-stacking puzzle as a tower of ring binders you shuffle from one desk to another — never a big one on a small one. Simple rules, deceptively fiddly, weirdly soothing.',
+    scoreLabel: 'Fewest moves', tags: ['puzzle', 'classic', 'logic'],
+    how: [
+      'Click a peg to lift its top disk, then click another peg to drop it there.',
+      'A larger disk can never rest on a smaller one.',
+      'Move the entire stack from the left peg over to the right peg.',
+      'Fewer moves is better — the theoretical minimum is 2^disks minus 1.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
 /* Word Search. Office-flavoured word lists hidden in a grid of letters; drag a
  * straight line through one to cross it off. Find them all. */
 (function () {
@@ -14638,6 +14795,172 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       'After each guess a black feedback peg means right colour in the right slot; a white peg means right colour but wrong slot. Colours can repeat in the code.',
       'Solve it and your win streak grows by one. That streak is your score, saved between visits. A loss resets it to zero.',
       'Chill and normal use six colours, hard uses seven, nightmare uses eight. More colours, more possibilities, more sweat.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Desk Duel — rock, paper, scissors against a colleague who never blinks. */
+(function () {
+  'use strict';
+  const { h, randInt } = Engine;
+  const MOVES = [
+    { id: 'rock', label: 'Rock', ico: '✊', beats: 'scissors' },
+    { id: 'paper', label: 'Paper', ico: '✋', beats: 'rock' },
+    { id: 'scissors', label: 'Scissors', ico: '✌️', beats: 'paper' }
+  ];
+  const ico = (id) => MOVES.find((m) => m.id === id).ico;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let streak = 0;
+
+    const pStreak = api.pill('streak: 0');
+    const pBest = api.pill('best: 0');
+    const youCard = h('div', { class: 'rps-hand' }, '❔');
+    const cpuCard = h('div', { class: 'rps-hand' }, '❔');
+    const verdict = h('div', { class: 'rps-verdict' }, 'Throw a move.');
+    const btns = h('div', { class: 'rps-btns' }, MOVES.map((m) =>
+      h('button', { class: 'btn rps-btn', type: 'button', onclick: () => play(m.id) }, m.ico + ' ' + m.label)));
+    root.appendChild(h('div', { class: 'rps' },
+      h('div', { class: 'rps-row' },
+        h('div', { class: 'rps-side' }, h('span', { class: 'rps-lbl' }, 'YOU'), youCard),
+        verdict,
+        h('div', { class: 'rps-side' }, h('span', { class: 'rps-lbl' }, 'DESKMATE'), cpuCard)),
+      btns));
+
+    function sync() {
+      pStreak.textContent = 'streak: ' + streak;
+      pBest.textContent = 'best: ' + (api.best() || 0);
+    }
+    function play(myId) {
+      const cpu = MOVES[randInt(0, 2)];
+      youCard.textContent = ico(myId);
+      cpuCard.textContent = cpu.ico;
+      const me = MOVES.find((m) => m.id === myId);
+      if (myId === cpu.id) { verdict.textContent = 'Tie'; verdict.className = 'rps-verdict tie'; api.sfx.click(); }
+      else if (me.beats === cpu.id) {
+        streak++; verdict.textContent = 'You win!'; verdict.className = 'rps-verdict win'; api.sfx.good();
+        api.submit(streak);
+      } else {
+        if (streak) api.sfx.bad(); else api.sfx.thud();
+        streak = 0; verdict.textContent = 'They got you'; verdict.className = 'rps-verdict lose';
+      }
+      sync();
+    }
+
+    api.status('Pick rock, paper or scissors. Longest winning streak is what counts.');
+    sync();
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'rps', title: 'Desk Duel', emoji: 'circle', cat: 'brain', order: 26,
+    blurb: 'Rock, paper, scissors against a colleague who never blinks and never gloats. Chase the longest winning streak you can before your luck turns.',
+    scoreLabel: 'Best streak', tags: ['quick', 'luck', 'classic'],
+    how: [
+      'Pick rock, paper or scissors. Your deskmate picks at the same instant, at random.',
+      'Rock beats scissors, scissors beats paper, paper beats rock. A tie is just a tie.',
+      'Every win extends your streak; one loss resets it to zero.',
+      'The score kept is the longest streak you have ever strung together.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Hangman — guess the office word before the little face gives up. */
+(function () {
+  'use strict';
+  const { h } = Engine;
+  const WORDS = ['SPREADSHEET', 'DEADLINE', 'MEETING', 'SYNERGY', 'KEYBOARD', 'STAPLER',
+    'PRINTER', 'BUDGET', 'QUARTERLY', 'ONBOARDING', 'BANDWIDTH', 'ROADMAP', 'STANDUP',
+    'INVOICE', 'FIREWALL', 'LATENCY', 'BACKLOG', 'CUBICLE', 'LANYARD', 'WHITEBOARD',
+    'ELEVATOR', 'PROJECTOR', 'PARKING', 'COMMUTE', 'PAYROLL', 'HEADCOUNT'];
+  const FACES = ['🙂', '😐', '😟', '😧', '😨', '😱', '💀'];
+  const STAGES = 6;
+  const ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let word = '', guessed = {}, misses = 0, streak = 0, over = false;
+
+    const pStreak = api.pill('streak: 0');
+    const pLives = api.pill('misses: 0/' + STAGES);
+    const face = h('div', { class: 'hm-gallows' }, FACES[0]);
+    const wordEl = h('div', { class: 'hm-word' });
+    const msg = h('div', { class: 'hm-msg' }, '');
+    const keysEl = h('div', { class: 'hm-keys' });
+    root.appendChild(h('div', { class: 'hangman' }, face, wordEl, msg, keysEl));
+    api.button('New word', next);
+
+    const keyBtns = {};
+    ALPHA.forEach((c) => {
+      const b = h('button', { class: 'btn hm-key', type: 'button', onclick: () => guess(c) }, c);
+      keyBtns[c] = b; keysEl.appendChild(b);
+    });
+
+    function next() {
+      word = WORDS[Math.floor(Math.random() * WORDS.length)];
+      guessed = {}; misses = 0; over = false;
+      ALPHA.forEach((c) => { keyBtns[c].disabled = false; keyBtns[c].className = 'btn hm-key'; });
+      msg.textContent = ''; msg.className = 'hm-msg';
+      render();
+      api.status('Guess the hidden office word a letter at a time. Six misses ends it. Type letters or tap the keys.');
+    }
+    function render() {
+      wordEl.replaceChildren.apply(wordEl, word.split('').map((ch) =>
+        h('span', { class: 'hm-slot' + (guessed[ch] || over ? ' shown' : '') }, guessed[ch] || over ? ch : '')));
+      pStreak.textContent = 'streak: ' + streak;
+      pLives.textContent = 'misses: ' + misses + '/' + STAGES;
+      face.textContent = FACES[Math.min(misses, STAGES)];
+    }
+    function guess(c) {
+      if (over || guessed[c] !== undefined) return;
+      keyBtns[c].disabled = true;
+      if (word.indexOf(c) >= 0) {
+        guessed[c] = c; keyBtns[c].classList.add('hit'); api.sfx.blip(700); render();
+        if (word.split('').every((ch) => guessed[ch])) win();
+      } else {
+        guessed[c] = null; keyBtns[c].classList.add('miss'); misses++; api.sfx.bad(); render();
+        if (misses >= STAGES) lose();
+      }
+    }
+    function win() {
+      over = true; streak++; api.sfx.great();
+      const r = api.submit(streak);
+      msg.textContent = 'Got it — ' + word + '! Streak ' + streak + '.' + (r.isRecord ? ' Best yet!' : '');
+      msg.className = 'hm-msg win'; render();
+    }
+    function lose() {
+      over = true; streak = 0; api.sfx.bad();
+      msg.textContent = 'It was ' + word + '. Streak reset — tap New word.';
+      msg.className = 'hm-msg lose'; render();
+    }
+
+    bagg.add(Engine.onKey((e) => {
+      const c = (e.key || '').toUpperCase();
+      if (c.length === 1 && c >= 'A' && c <= 'Z') { guess(c); return true; }
+      if (e.key === 'Enter' && over) { next(); return true; }
+    }));
+
+    next();
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'hangman', title: 'Hangman', emoji: 'find', cat: 'brain', order: 27,
+    usesLetters: true,
+    blurb: 'The office word is hidden. Guess it a letter at a time before the little face gives up entirely — words drawn from the natural habitat of the cubicle: deadlines, spreadsheets, synergy.',
+    scoreLabel: 'Best streak', tags: ['word', 'classic', 'spelling'],
+    how: [
+      'A hidden word appears as blanks. Guess letters by tapping the keys or typing them.',
+      'Right letters fill in every place they appear; wrong letters count against you.',
+      'Six misses and the round is lost. Solve the word to extend your streak.',
+      'The score kept is your longest streak of solved words in a row.'
     ],
     mount
   });
@@ -21929,6 +22252,181 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       'Your final five are paid by the table: a pair of jacks or better pays, on up through two pair, straights, flushes, full houses, quads, and the royal flush at the top.',
       'The royal flush pays a big bonus at the maximum bet of five, which is why Max bet exists. Everything else pays straight multiples of your bet.',
       'Credits are pretend and saved between visits; if you bust out, Add credits tops you back up. Your score is the highest credit balance you reach.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Press Your Luck — the dice game where a single 1 wipes your whole turn. */
+(function () {
+  'use strict';
+  const { h, randInt } = Engine;
+  const GOAL = 100;
+  const PIPS = ['·', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let you = 0, cpu = 0, turn = 0, whose = 'you', over = false, streak = 0, disposed = false;
+
+    const pStreak = api.pill('win streak: 0');
+    const youScore = h('div', { class: 'pig-score' }, '0');
+    const cpuScore = h('div', { class: 'pig-score' }, '0');
+    const turnEl = h('div', { class: 'pig-turn' }, 'this turn: 0');
+    const die = h('div', { class: 'pig-die' }, '·');
+    const msg = h('div', { class: 'pig-msg' }, 'Roll to build your turn. Bank before you bust.');
+    const rollBtn = h('button', { class: 'btn primary', type: 'button', onclick: roll }, 'Roll');
+    const bankBtn = h('button', { class: 'btn', type: 'button', onclick: bank }, 'Bank');
+    root.appendChild(h('div', { class: 'pig' },
+      h('div', { class: 'pig-board' },
+        h('div', { class: 'pig-col' }, h('span', { class: 'pig-lbl' }, 'YOU'), youScore),
+        h('div', { class: 'pig-mid' }, die, turnEl),
+        h('div', { class: 'pig-col' }, h('span', { class: 'pig-lbl' }, 'DESKMATE'), cpuScore)),
+      msg,
+      h('div', { class: 'pig-btns' }, rollBtn, bankBtn)));
+    api.button('New game', reset);
+
+    function reset() {
+      you = 0; cpu = 0; turn = 0; whose = 'you'; over = false;
+      die.textContent = '·'; msg.textContent = 'Roll to build your turn. Bank before you bust.'; msg.className = 'pig-msg';
+      busy(false); sync();
+    }
+    function sync() {
+      youScore.textContent = you; cpuScore.textContent = cpu;
+      turnEl.textContent = 'this turn: ' + turn; pStreak.textContent = 'win streak: ' + streak;
+    }
+    function busy(b) { rollBtn.disabled = b; bankBtn.disabled = b || turn === 0; }
+
+    function roll() {
+      if (over || whose !== 'you') return;
+      const d = randInt(1, 6); die.textContent = PIPS[d];
+      if (d === 1) { turn = 0; sync(); msg.textContent = 'Rolled a 1 — turn lost.'; api.sfx.bad(); endTurn(); }
+      else { turn += d; api.sfx.blip(380 + d * 40); busy(false); sync(); }
+    }
+    function bank() {
+      if (over || whose !== 'you' || turn === 0) return;
+      you += turn; turn = 0; api.sfx.good(); sync();
+      if (you >= GOAL) return finish(true);
+      msg.textContent = 'Banked. Deskmate rolls…';
+      endTurn();
+    }
+    function endTurn() {
+      turn = 0; sync();
+      whose = whose === 'you' ? 'cpu' : 'you';
+      if (whose === 'cpu') { busy(true); setTimeout(cpuStep.bind(null, 0, 18 + randInt(0, 6)), 650); }
+      else busy(false);
+    }
+    function cpuStep(t, target) {
+      if (disposed || over) return;
+      const d = randInt(1, 6); die.textContent = PIPS[d];
+      if (d === 1) { msg.textContent = 'Deskmate rolled a 1.'; api.sfx.bad(); die.textContent = PIPS[1]; whose = 'you'; turn = 0; busy(false); sync(); return; }
+      t += d; turnEl.textContent = 'deskmate turn: ' + t; api.sfx.blip(300);
+      if (cpu + t >= GOAL) { cpu += t; sync(); return finish(false); }
+      if (t >= target) { cpu += t; msg.textContent = 'Deskmate banks ' + t + '.'; whose = 'you'; turnEl.textContent = 'this turn: 0'; busy(false); sync(); return; }
+      setTimeout(cpuStep.bind(null, t, target), 560);
+    }
+    function finish(youWon) {
+      over = true; busy(true);
+      if (youWon) { streak++; api.sfx.great(); const r = api.submit(streak); msg.textContent = 'You hit ' + GOAL + '! Win streak ' + streak + '.' + (r.isRecord ? ' Best yet!' : ''); msg.className = 'pig-msg win'; }
+      else { streak = 0; api.sfx.bad(); msg.textContent = 'Deskmate reached ' + GOAL + ' first. Streak reset.'; msg.className = 'pig-msg lose'; }
+      sync();
+    }
+
+    reset();
+    return () => { disposed = true; bagg.dispose(); };
+  }
+
+  Arcade.register({
+    id: 'pig', title: 'Press Your Luck', emoji: 'dice', cat: 'goofy', order: 46,
+    blurb: 'A filthy little dice game. Roll to pile up points, but roll a single 1 and the whole turn evaporates. Bank when your nerve gives out. First to 100 against a deskmate who knows exactly when to quit.',
+    scoreLabel: 'Win streak', tags: ['dice', 'luck', 'press-your-luck'],
+    how: [
+      'On your turn, roll as many times as you dare — each roll adds to your turn total.',
+      'Roll a 1 and you lose everything built this turn. Bank to keep it and pass the dice.',
+      'First to 100 wins. Your deskmate banks around twenty, so out-nerve them.',
+      'The score kept is your streak of games won in a row.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Higher or Lower — one card down, guess the next, ride the streak. */
+(function () {
+  'use strict';
+  const { h, randInt } = Engine;
+  const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+  const SUITS = ['♠', '♥', '♦', '♣'];
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let streak = 0, over = false, cur = null, disposed = false;
+
+    const pStreak = api.pill('streak: 0');
+    const cardEl = h('div', { class: 'hl-card' });
+    const nextEl = h('div', { class: 'hl-card back' }, '?');
+    const msg = h('div', { class: 'hl-msg' }, 'Higher or lower than this card?');
+    const loBtn = h('button', { class: 'btn primary', type: 'button', onclick: () => guess(-1) }, '▼ Lower');
+    const hiBtn = h('button', { class: 'btn primary', type: 'button', onclick: () => guess(1) }, '▲ Higher');
+    root.appendChild(h('div', { class: 'hilo' },
+      h('div', { class: 'hl-cards' }, cardEl, nextEl),
+      msg,
+      h('div', { class: 'hl-btns' }, loBtn, hiBtn)));
+    api.button('New run', reset);
+
+    const draw = () => ({ r: randInt(0, 12), s: randInt(0, 3) });
+    function paint(el, c, faceUp) {
+      if (!faceUp) { el.className = 'hl-card back'; el.textContent = '?'; return; }
+      el.className = 'hl-card' + (c.s === 1 || c.s === 2 ? ' red' : '');
+      el.replaceChildren(h('span', { class: 'hl-rank' }, RANKS[c.r]), h('span', { class: 'hl-suit' }, SUITS[c.s]));
+    }
+    function busy(b) { hiBtn.disabled = b; loBtn.disabled = b; }
+    function sync() { pStreak.textContent = 'streak: ' + streak; }
+
+    function reset() {
+      streak = 0; over = false; cur = draw();
+      paint(cardEl, cur, true); paint(nextEl, null, false);
+      msg.textContent = 'Higher or lower than this card?'; msg.className = 'hl-msg';
+      busy(false); sync();
+      api.status('Guess whether the next card is higher or lower. Equal rank counts as a win. Ride the streak.');
+    }
+    function guess(dir) {
+      if (over) return;
+      busy(true);
+      const nxt = draw();
+      paint(nextEl, nxt, true);
+      const cmp = nxt.r === cur.r ? 0 : (nxt.r > cur.r ? 1 : -1);
+      if (cmp === 0 || cmp === dir) {
+        streak++; api.sfx.good(); sync();
+        const r = api.submit(streak);
+        msg.textContent = 'Correct! Streak ' + streak + '.' + (r.isRecord ? ' Best yet!' : '');
+        msg.className = 'hl-msg win';
+        setTimeout(() => {
+          if (disposed || over) return;
+          cur = nxt; paint(cardEl, cur, true); paint(nextEl, null, false);
+          msg.textContent = 'Higher or lower?'; msg.className = 'hl-msg'; busy(false);
+        }, 700);
+      } else {
+        over = true; streak = 0; api.sfx.bad(); sync();
+        msg.textContent = 'Wrong — the run ends there. Tap New run.'; msg.className = 'hl-msg lose';
+      }
+    }
+
+    reset();
+    return () => { disposed = true; bagg.dispose(); };
+  }
+
+  Arcade.register({
+    id: 'higherlower', title: 'Higher or Lower', emoji: 'cards', cat: 'goofy', order: 47,
+    blurb: 'One card is on the table. Will the next be higher or lower? Ride the streak as far as your luck holds. A tie goes your way — small mercies.',
+    scoreLabel: 'Best streak', tags: ['cards', 'luck', 'quick'],
+    how: [
+      'A card is shown. Guess whether the next card will be higher or lower in rank.',
+      'A correct guess extends your streak and the next card becomes the new one to beat.',
+      'Ties (same rank) count in your favour. One wrong guess ends the run.',
+      'The score kept is your longest streak in a single run.'
     ],
     mount
   });
