@@ -631,6 +631,89 @@
     applyDocTitle();
   }
 
+  /* ---------------- how-to demo animations ----------------
+     Maps each game to a control scheme (drawn by Engine.tutorial) and a
+     one-line goal. Schemes: arrows, wasd, leftright, space, click, aim, tap,
+     type, drag. A game may override by setting its own `tut` in register(). */
+  const TUT = {
+    '2048': ['arrows', 'Slide the board — equal numbers merge and double.'],
+    asteroids: ['arrows', 'Rotate and thrust to fly; space fires. Clear the rocks.'],
+    atc: ['click', 'Click a plane, then click where it should go.'],
+    battleship: ['aim', 'Click the grid to fire on the hidden fleet.'],
+    blackjack: ['click', 'Hit or stand — get closer to 21 than the dealer.'],
+    bubblewrap: ['aim', 'Aim and fire to pop three or more of a colour.'],
+    c1: ['click', 'Click to earn, then buy things that click for you.'],
+    checkers: ['click', 'Click a piece, then a dark square to move or jump.'],
+    climb: ['leftright', 'Steer left and right — you bounce upward on your own.'],
+    coal: ['click', 'Trim supply with the controls to hold the grid steady.'],
+    commute: ['arrows', 'Cross the road and rails without getting clipped.'],
+    connect4: ['click', 'Drop a disc into a column; line up four.'],
+    copycat: ['click', 'Watch the sequence light up, then repeat it.'],
+    deskgolf: ['drag', 'Drag back to aim and set power, release to putt.'],
+    desktoss: ['drag', 'Drag to aim, release to lob it into the bin.'],
+    elevator: ['click', 'Send the lifts to the floors that are waiting.'],
+    fifteen: ['click', 'Click a tile beside the gap to slide it in.'],
+    firedrill: ['click', 'Set the density, then watch it catch and spread.'],
+    flap: ['space', 'Tap or press space to flap through the gaps.'],
+    flood: ['click', 'Pick a colour to flood the board to a single shade.'],
+    frost: ['click', 'Drop seeds and watch the frost branch out.'],
+    hoops: ['wasd', 'A/D to move, W to jump — or the arrow keys for player two.'],
+    intern: ['click', 'Click for coffee, then hire interns to pour it faster.'],
+    invaders: ['arrows', 'Slide left and right, space to fire on the fleet.'],
+    ising: ['click', 'Nudge the temperature and watch the spins flip.'],
+    jam: ['drag', 'Slide the blocking cars aside to free the red one.'],
+    kuramoto: ['click', 'Turn up the coupling and watch them fall in sync.'],
+    life: ['drag', 'Paint some cells, press play, and watch them evolve.'],
+    lightsout: ['click', 'Click a light — it flips its neighbours too. Clear them all.'],
+    logistic: ['click', 'Drag the rate and watch order tip into chaos.'],
+    mastermind: ['click', 'Guess the code; the pegs tell you how close you are.'],
+    match3: ['drag', 'Swap two gems to line up three or more.'],
+    maze: ['arrows', 'Steer through the maze to the exit.'],
+    memory: ['click', 'Flip two cards to find the matching pairs.'],
+    minesweeper: ['click', 'Click to clear a square, flag the ones you suspect.'],
+    mitosis: ['drag', 'Paint a seed and watch the pattern grow and split.'],
+    nonogram: ['click', 'Fill squares using the number clues on each line.'],
+    noughts: ['click', 'Take a square — first to three in a row wins.'],
+    obby: ['arrows', 'Run with left and right, jump the gaps and hazards.'],
+    pipes: ['click', 'Click to rotate pipes until every node is connected.'],
+    pong: ['arrows', 'Move your paddle up and down to return the ball.'],
+    powder: ['drag', 'Pick a material and draw it into the tray.'],
+    racer: ['arrows', 'Hold gas, steer through the traffic, reach the finish.'],
+    rave: ['tap', 'Tap anywhere — or hit Esc — to make it stop.'],
+    reflex: ['tap', 'Wait for green, then tap as fast as you can.'],
+    reversi: ['click', 'Place a disc to flip the trapped line to your colour.'],
+    sandpile: ['click', 'Drop grains and set off the avalanches.'],
+    schelling: ['click', 'Set the tolerance and watch the neighbourhood sort.'],
+    sir: ['click', 'Set the infection rate and watch it sweep through.'],
+    smart: ['click', 'Toggle the lights to keep the cars moving.'],
+    snake: ['arrows', 'Steer into the food; don’t hit a wall or your tail.'],
+    sokoban: ['arrows', 'Push every crate onto a target square.'],
+    solitaire: ['drag', 'Drag cards to build the piles down by alternating colour.'],
+    soundboard: ['tap', 'Tap a pad to fire off the sound.'],
+    spamfilter: ['click', 'Place filters along the path to stop the wave.'],
+    stack: ['space', 'Tap to drop each block as close to centred as you can.'],
+    sudoku: ['click', 'Fill the grid so every row, column and box has 1–9.'],
+    tetris: ['arrows', 'Move and rotate the falling pieces; clear full lines.'],
+    traffic: ['click', 'Set the density and watch a jam appear from nothing.'],
+    turf: ['click', 'Seed the field and watch the three colours spiral.'],
+    typing: ['type', 'Type each word before it scrolls away.'],
+    vicsek: ['click', 'Turn down the noise and watch the flock align.'],
+    videopoker: ['click', 'Hold the cards you want, draw to replace the rest.'],
+    whack: ['tap', 'Whack each meeting the moment it pops up.'],
+    wide: ['leftright', 'Slide the paddle to keep the ball in play.'],
+    wordguess: ['type', 'Type a five-letter guess; the colours score each letter.'],
+    wordsearch: ['drag', 'Drag across the hidden words to circle them.'],
+    workbook: ['click', 'Click to reveal a cell, flag the mines you deduce.']
+  };
+  function tutSpec(g) {
+    if (g.tut) return g.tut;                 // a game can ship its own
+    const m = TUT[g.id];
+    if (m) return { scheme: m[0], goal: m[1] };
+    /* sensible default from category when unmapped */
+    const byCat = { action: 'arrows', sim: 'click', puzzle: 'click', brain: 'click', goof: 'click', goofy: 'tap' };
+    return { scheme: byCat[g.cat] || 'click', goal: '' };
+  }
+
   /* ---------------- game screen ---------------- */
   function renderGame(g, daily) {
     const view = document.getElementById('view');
@@ -680,6 +763,18 @@
       }
     };
 
+    /* how-to panel with an animated controls demo up top; the demo only runs
+       while the panel is open, and is torn down with the game */
+    const howList = h('ul', null, g.how.map((s) => h('li', null, s)));
+    const howBody = h('div', { class: 'how-body' }, howList);
+    let tut = null;
+    try {
+      if (Engine.tutorial) { tut = Engine.tutorial(tutSpec(g)); howBody.insertBefore(tut.el, howBody.firstChild); }
+    } catch (e) { tut = null; }
+    const howto = h('details', { class: 'howto' },
+      h('summary', null, 'How to play'), howBody);
+    if (tut) howto.addEventListener('toggle', () => { if (howto.open) tut.start(); else tut.halt(); });
+
     view.replaceChildren(
       h('div', { class: 'gamehead' },
         h('a', { class: 'back', href: '#' }, '◀ shelf'),
@@ -690,9 +785,7 @@
           h('span', { class: 'pill diff-tag d-' + Arcade.diff().id }, Arcade.diff().label),
           daily ? h('span', { class: 'pill daily-tag', title: 'Everyone gets this exact board today' }, 'DAILY ' + daily) : null,
           bestEl),
-        h('details', { class: 'howto' },
-          h('summary', null, 'How this thing works'),
-          h('ul', null, g.how.map((s) => h('li', null, s))))),
+        howto),
       toolbar, statusEl, stage);
 
     stage.appendChild(h('div', { class: 'rotate-nudge' },
@@ -712,7 +805,7 @@
       stage.classList.toggle('wide', ar > 1.35);
     });
 
-    currentDispose = () => { if (typeof dispose === 'function') dispose(); };
+    currentDispose = () => { if (typeof dispose === 'function') dispose(); if (tut) tut.halt(); };
     currentGame = g;
     applyDocTitle();
   }

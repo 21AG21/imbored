@@ -415,6 +415,18 @@ kbd {
 .howto[open] summary::before { content: "▼ "; }
 .howto ul { margin: 8px 0 10px; padding-left: 26px; font-size: 12px; }
 .howto li { margin: 4px 0; }
+.how-body { padding: 2px 2px 0; }
+.tut { margin: 9px 10px 4px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.tut-canvas {
+  width: 100%; max-width: 340px; height: auto; display: block;
+  border: 3px solid var(--ink); border-radius: 6px; box-shadow: var(--bevel-out);
+  image-rendering: auto;
+}
+.tut-goal {
+  max-width: 340px; text-align: center; font: 700 12px/1.35 Verdana, sans-serif;
+  color: var(--ink); background: var(--panel); border: 2px solid var(--ink);
+  border-radius: 5px; padding: 5px 9px;
+}
 
 .gametools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
 
