@@ -450,7 +450,7 @@ kbd {
 }
 .tut-goal {
   max-width: 340px; text-align: center; font: 700 12px/1.35 Verdana, sans-serif;
-  color: var(--ink); background: var(--panel); border: 2px solid var(--ink);
+  color: var(--ink); background: var(--paper2); border: 2px solid var(--ink);
   border-radius: 5px; padding: 5px 9px;
 }
 
@@ -1486,7 +1486,8 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
 }
 .theme-swatch::before {
   content: ""; width: 18px; height: 18px; flex: none;
-  border: 2px solid var(--ink); background: var(--sw, var(--paper));
+  border: 2px solid var(--ink);
+  background: linear-gradient(135deg, var(--sw-bg, var(--paper)) 55%, var(--sw-ac, var(--grape)) 55%);
 }
 .theme-swatch[data-theme="beige"]::before { background: linear-gradient(135deg, #ded6c2 55%, #ffcb1f 55%); }
 .theme-swatch[data-theme="slate"]::before { background: linear-gradient(135deg, #c3ccd8 55%, #00a6b4 55%); }
@@ -2116,6 +2117,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 @media (prefers-reduced-motion: reduce) {
   .gag-toast { transition: opacity .2s; }
   .gag-konami .view, .gag-konami .topbar { animation: none; }
+  /* catch every remaining decorative animation for people who ask for calm */
+  .g2048 .cell.pop, .match3 .cell.clearing, .sb-pad.lit, .stp-big.pop,
+  .slot-reel.hit, .ana-scramble.shake, .crk-input.shake, .hero,
+  .gk-cell, .mm-shake, .diffbtn, .card:hover { animation: none !important; }
+}
+
+/* larger touch targets on finger-driven screens (aim for ~44px) */
+@media (pointer: coarse) {
+  .btn, .kbd-key, .chip, .sud-key, .hm-key, .nim-take, .rps-btn { min-height: 44px; }
+  .kbd-key, .chip { min-width: 40px; }
 }
 
 /* ================= disguise 7: slides ================= */
@@ -3311,7 +3322,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       vars: {
         '--paper': '#211a12', '--paper2': '#2b2318', '--label': '#352b1d',
         '--chrome': '#473a27', '--shade': '#130e08', '--hilite': '#4e4130',
-        '--ink': '#ecdcc2', '--ink2': '#c9b591', '--ink3': '#9c8967',
+        '--ink': '#ecdcc2', '--ink2': '#c9b591', '--ink3': '#b09b76',
         '--brandink': '#ecdcc2',
         '--teal': '#5fb2a2', '--hotpink': '#df9090', '--banana': '#e4ba62',
         '--grape': '#584a34', '--lime': '#a7bd6a', '--tomato': '#df8a5f',
@@ -3558,6 +3569,13 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     custom: () => custom,
     set(id) { themeId = id; store.set('theme', id); apply(); },
     setCustom(hex) { custom = hex; themeId = 'custom'; store.set('themeCustom', hex); store.set('theme', 'custom'); apply(); },
+    /* [surface, accent] for a theme's picker swatch, from its own tokens so every
+       theme (not just the hand-listed ones) previews correctly */
+    swatch(id) {
+      if (id === 'custom') return [custom, custom];
+      const v = (THEMES[id] || THEMES.beige).vars || {};
+      return [v['--paper'] || '#ded6c2', v['--grape'] || v['--teal'] || v['--banana'] || '#6f3fa8'];
+    },
     apply
   };
   global.Themes = Themes;
@@ -4038,7 +4056,8 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     }
     const frame = h('iframe', {
       class: 'web-frame', src: url, title: 'workspace',
-      referrerpolicy: 'no-referrer'
+      referrerpolicy: 'no-referrer',
+      sandbox: 'allow-forms allow-scripts allow-same-origin allow-popups'
     });
     /* most real sites refuse to be framed, so say so rather than showing a white void */
     const note = h('div', { class: 'web-note' },
@@ -4388,8 +4407,10 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
      browser tab gives nothing away. Drives both the brand and the tab title. */
   function brandName() { return store.get('brand', 'Docs'); }
   function applyDocTitle() {
-    document.title = bossOn ? Boss.title()
-      : (currentGame ? currentGame.title.toUpperCase() + ' - ' + brandName() : brandName());
+    /* keep the neutral document name in the tab at all times (except inside the
+       panic screen, which sets its own believable title) — a tab that reads
+       "TETRIS - Docs" while you are "working" gives the whole thing away */
+    document.title = bossOn ? Boss.title() : brandName();
   }
 
   /* ---------------- public API ---------------- */
@@ -4507,7 +4528,9 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
           onclick: () => { Themes.set(t.id); paintSwatches(); }
         }, h('span', { class: 'theme-name' }, t.name));
         /* preview chip built from that theme's own tokens */
-        btn.style.setProperty('--sw', t.id === 'custom' ? Themes.custom() : '');
+        const sw = Themes.swatch(t.id);
+        btn.style.setProperty('--sw-bg', sw[0]);
+        btn.style.setProperty('--sw-ac', sw[1]);
         btn.dataset.theme = t.id;
         swatches.appendChild(btn);
       }
@@ -5226,7 +5249,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   function renderGame(g, daily) {
     const view = document.getElementById('view');
     const stage = h('div', { class: 'stage' });
-    const statusEl = h('div', { class: 'status' });
+    const statusEl = h('div', { class: 'status', role: 'status', 'aria-live': 'polite' });
     const bestEl = h('span', { class: 'pill best' });
 
     const syncBest = () => {

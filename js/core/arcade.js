@@ -45,8 +45,10 @@
      browser tab gives nothing away. Drives both the brand and the tab title. */
   function brandName() { return store.get('brand', 'Docs'); }
   function applyDocTitle() {
-    document.title = bossOn ? Boss.title()
-      : (currentGame ? currentGame.title.toUpperCase() + ' - ' + brandName() : brandName());
+    /* keep the neutral document name in the tab at all times (except inside the
+       panic screen, which sets its own believable title) — a tab that reads
+       "TETRIS - Docs" while you are "working" gives the whole thing away */
+    document.title = bossOn ? Boss.title() : brandName();
   }
 
   /* ---------------- public API ---------------- */
@@ -164,7 +166,9 @@
           onclick: () => { Themes.set(t.id); paintSwatches(); }
         }, h('span', { class: 'theme-name' }, t.name));
         /* preview chip built from that theme's own tokens */
-        btn.style.setProperty('--sw', t.id === 'custom' ? Themes.custom() : '');
+        const sw = Themes.swatch(t.id);
+        btn.style.setProperty('--sw-bg', sw[0]);
+        btn.style.setProperty('--sw-ac', sw[1]);
         btn.dataset.theme = t.id;
         swatches.appendChild(btn);
       }
@@ -883,7 +887,7 @@
   function renderGame(g, daily) {
     const view = document.getElementById('view');
     const stage = h('div', { class: 'stage' });
-    const statusEl = h('div', { class: 'status' });
+    const statusEl = h('div', { class: 'status', role: 'status', 'aria-live': 'polite' });
     const bestEl = h('span', { class: 'pill best' });
 
     const syncBest = () => {

@@ -65,7 +65,7 @@
       vars: {
         '--paper': '#211a12', '--paper2': '#2b2318', '--label': '#352b1d',
         '--chrome': '#473a27', '--shade': '#130e08', '--hilite': '#4e4130',
-        '--ink': '#ecdcc2', '--ink2': '#c9b591', '--ink3': '#9c8967',
+        '--ink': '#ecdcc2', '--ink2': '#c9b591', '--ink3': '#b09b76',
         '--brandink': '#ecdcc2',
         '--teal': '#5fb2a2', '--hotpink': '#df9090', '--banana': '#e4ba62',
         '--grape': '#584a34', '--lime': '#a7bd6a', '--tomato': '#df8a5f',
@@ -312,6 +312,13 @@
     custom: () => custom,
     set(id) { themeId = id; store.set('theme', id); apply(); },
     setCustom(hex) { custom = hex; themeId = 'custom'; store.set('themeCustom', hex); store.set('theme', 'custom'); apply(); },
+    /* [surface, accent] for a theme's picker swatch, from its own tokens so every
+       theme (not just the hand-listed ones) previews correctly */
+    swatch(id) {
+      if (id === 'custom') return [custom, custom];
+      const v = (THEMES[id] || THEMES.beige).vars || {};
+      return [v['--paper'] || '#ded6c2', v['--grape'] || v['--teal'] || v['--banana'] || '#6f3fa8'];
+    },
     apply
   };
   global.Themes = Themes;

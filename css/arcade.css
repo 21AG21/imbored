@@ -435,7 +435,7 @@ kbd {
 }
 .tut-goal {
   max-width: 340px; text-align: center; font: 700 12px/1.35 Verdana, sans-serif;
-  color: var(--ink); background: var(--panel); border: 2px solid var(--ink);
+  color: var(--ink); background: var(--paper2); border: 2px solid var(--ink);
   border-radius: 5px; padding: 5px 9px;
 }
 
@@ -1471,7 +1471,8 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
 }
 .theme-swatch::before {
   content: ""; width: 18px; height: 18px; flex: none;
-  border: 2px solid var(--ink); background: var(--sw, var(--paper));
+  border: 2px solid var(--ink);
+  background: linear-gradient(135deg, var(--sw-bg, var(--paper)) 55%, var(--sw-ac, var(--grape)) 55%);
 }
 .theme-swatch[data-theme="beige"]::before { background: linear-gradient(135deg, #ded6c2 55%, #ffcb1f 55%); }
 .theme-swatch[data-theme="slate"]::before { background: linear-gradient(135deg, #c3ccd8 55%, #00a6b4 55%); }
@@ -2101,6 +2102,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 @media (prefers-reduced-motion: reduce) {
   .gag-toast { transition: opacity .2s; }
   .gag-konami .view, .gag-konami .topbar { animation: none; }
+  /* catch every remaining decorative animation for people who ask for calm */
+  .g2048 .cell.pop, .match3 .cell.clearing, .sb-pad.lit, .stp-big.pop,
+  .slot-reel.hit, .ana-scramble.shake, .crk-input.shake, .hero,
+  .gk-cell, .mm-shake, .diffbtn, .card:hover { animation: none !important; }
+}
+
+/* larger touch targets on finger-driven screens (aim for ~44px) */
+@media (pointer: coarse) {
+  .btn, .kbd-key, .chip, .sud-key, .hm-key, .nim-take, .rps-btn { min-height: 44px; }
+  .kbd-key, .chip { min-width: 40px; }
 }
 
 /* ================= disguise 7: slides ================= */

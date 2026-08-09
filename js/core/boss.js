@@ -468,7 +468,8 @@
     }
     const frame = h('iframe', {
       class: 'web-frame', src: url, title: 'workspace',
-      referrerpolicy: 'no-referrer'
+      referrerpolicy: 'no-referrer',
+      sandbox: 'allow-forms allow-scripts allow-same-origin allow-popups'
     });
     /* most real sites refuse to be framed, so say so rather than showing a white void */
     const note = h('div', { class: 'web-note' },
