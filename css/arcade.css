@@ -2783,21 +2783,32 @@ body.docmode .gmeta .pill {
   padding: 0; letter-spacing: .02em; text-transform: none;
 }
 
-/* how-to reads as document body text */
-body.docmode .howto { background: none; border: 0; box-shadow: none; margin-top: 12px; }
+/* how-to reads as a quiet document disclosure, its body as real body text */
+body.docmode .howto { background: none; border: 0; box-shadow: none; margin-top: 14px; }
 body.docmode .howto summary {
   background: none; border: 0; box-shadow: none; padding: 0;
-  color: var(--doc-link); font-family: Verdana, Geneva, sans-serif; font-size: 12.5px;
-  text-decoration: underline; text-underline-offset: 2px; text-transform: none;
+  color: var(--doc-mut); font-family: Verdana, Geneva, sans-serif;
+  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  text-decoration: none;
 }
+body.docmode .howto summary::before { content: "§ "; font-size: 11px; color: var(--doc-mut); }
+body.docmode .howto[open] summary::before { content: "§ "; }
+body.docmode .howto[open] summary { border-bottom-color: transparent; }
 body.docmode .how-body {
   font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
   color: var(--doc-ink2); background: none; border: 0; padding: 8px 0 0;
 }
+body.docmode .howto ul {
+  font-size: 14px; line-height: 1.6; color: var(--doc-ink2);
+  padding-left: 22px; margin: 6px 0 4px;
+}
+body.docmode .howto li { margin: 5px 0; }
 
+/* the running hint reads as an italic figure caption, not a game readout */
 body.docmode .status {
   font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
-  color: var(--doc-ink2);
+  font-style: italic; font-size: 13.5px; color: var(--doc-mut);
+  margin: 6px 0 2px;
 }
 
 /* ---- sleek playfield: flip the dark board/canvas to a light one so a game
@@ -2806,11 +2817,17 @@ body.docmode .status {
    hard-coded dark DOM boards), and the control pads flip back so they stay
    natural. Dark disguise keeps the dark playfield, which already fits. ---- */
 body.docmode.in-game .stage { gap: 12px; }
-:root:not([data-dark="1"]) body.docmode.in-game .stage {
-  filter: invert(1) hue-rotate(180deg);          /* dark -> light, hues preserved */
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) {
+  filter: invert(1) hue-rotate(180deg) saturate(.62);   /* dark -> light, hues kept but calmed */
 }
-:root:not([data-dark="1"]) body.docmode.in-game .stage .dpad,
-:root:not([data-dark="1"]) body.docmode.in-game .stage .lander-pad {
+/* the d-pad is a dead giveaway at a glance (no document has one), and on desktop
+   the keyboard already drives every game that uses it — so hide it in disguise
+   mode on pointer devices. Touch keeps it (swipe covers most games anyway). */
+@media (hover: hover) and (pointer: fine) {
+  body.docmode.in-game .dpad { display: none; }
+}
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .dpad,
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .lander-pad {
   filter: invert(1) hue-rotate(180deg);          /* undo the flip on the control pads */
 }
 body.docmode .gcanvas {

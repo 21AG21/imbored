@@ -925,7 +925,9 @@
   /* ---------------- game screen ---------------- */
   function renderGame(g, daily) {
     const view = document.getElementById('view');
-    const stage = h('div', { class: 'stage' });
+    /* games whose board is already light shouldn't get the disguise luminance
+       flip (it would darken them and make them stand out) */
+    const stage = h('div', { class: 'stage' + (g.lightBoard ? ' no-doc-invert' : '') });
     const statusEl = h('div', { class: 'status', role: 'status', 'aria-live': 'polite' });
     const bestEl = h('span', { class: 'pill best' });
 

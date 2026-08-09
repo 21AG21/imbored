@@ -239,6 +239,7 @@
     emoji: 'minesweeper',
     cat: 'puzzle',
     order: 10,
+    lightBoard: true,   // already a light board — skip the disguise luminance flip
     blurb: 'Minesweeper with three board sizes, a first click that is always safe, and chording. Good cover for looking deep in thought.',
     scoreLabel: 'Wins',
     tags: ['mines', 'classic', 'logic'],
