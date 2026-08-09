@@ -237,6 +237,9 @@
     const vars = themeId === 'custom' ? customVars(custom) : (THEMES[themeId] || THEMES.beige).vars;
     for (const k in vars) root.style.setProperty(k, vars[k]);
     root.setAttribute('data-ui', UI[themeId] || 'chunky');
+    /* flag dark themes so CSS can calm the page texture and lift contrast */
+    const pp = hexRGB(vars['--paper'] || '#eeeeee');
+    root.setAttribute('data-dark', (pp.r * 0.299 + pp.g * 0.587 + pp.b * 0.114) < 128 ? '1' : '0');
 
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.setAttribute('content', getComputedStyle(root).getPropertyValue('--grape').trim() || '#6f3fa8');

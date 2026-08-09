@@ -58,6 +58,13 @@ body {
   background-image:
     repeating-linear-gradient(45deg, rgba(0,0,0,.028) 0 2px, transparent 2px 7px),
     repeating-linear-gradient(-45deg, rgba(255,255,255,.35) 0 2px, transparent 2px 7px);
+}
+/* dark themes: a bright white weave turns to visual noise and fights text, so
+   drop it to a whisper and lean on a faint dark grain instead */
+:root[data-dark="1"] body {
+  background-image:
+    repeating-linear-gradient(45deg, rgba(0,0,0,.10) 0 2px, transparent 2px 7px),
+    repeating-linear-gradient(-45deg, rgba(255,255,255,.045) 0 2px, transparent 2px 7px);
   color: var(--ink);
   font: 14px/1.55 Verdana, Geneva, Tahoma, sans-serif;
   display: flex;
@@ -492,7 +499,7 @@ kbd {
   margin-bottom: 12px;
   font-size: 12.5px;
   font-weight: 700;
-  color: var(--ink2);
+  color: var(--ink);            /* instructions must stay crisp on every theme */
 }
 
 .stage { display: flex; flex-direction: column; align-items: center; gap: 14px; }
@@ -3234,6 +3241,9 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     const vars = themeId === 'custom' ? customVars(custom) : (THEMES[themeId] || THEMES.beige).vars;
     for (const k in vars) root.style.setProperty(k, vars[k]);
     root.setAttribute('data-ui', UI[themeId] || 'chunky');
+    /* flag dark themes so CSS can calm the page texture and lift contrast */
+    const pp = hexRGB(vars['--paper'] || '#eeeeee');
+    root.setAttribute('data-dark', (pp.r * 0.299 + pp.g * 0.587 + pp.b * 0.114) < 128 ? '1' : '0');
 
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.setAttribute('content', getComputedStyle(root).getPropertyValue('--grape').trim() || '#6f3fa8');
