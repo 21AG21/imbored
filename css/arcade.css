@@ -109,7 +109,7 @@ kbd {
 .brand-text {
   font-family: Impact, Haettenschweiler, "Arial Narrow Bold", Arial Black, sans-serif;
   font-size: 21px;
-  color: var(--label);
+  color: var(--brandink, var(--label));   /* dark themes can force light topbar text */
   letter-spacing: .02em;
   text-shadow: 2px 2px 0 var(--ink);
   white-space: nowrap;

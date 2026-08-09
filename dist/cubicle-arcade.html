@@ -124,7 +124,7 @@ kbd {
 .brand-text {
   font-family: Impact, Haettenschweiler, "Arial Narrow Bold", Arial Black, sans-serif;
   font-size: 21px;
-  color: var(--label);
+  color: var(--brandink, var(--label));   /* dark themes can force light topbar text */
   letter-spacing: .02em;
   text-shadow: 2px 2px 0 var(--ink);
   white-space: nowrap;
@@ -3016,6 +3016,49 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
      colours and the CRT the games sit in — so they read as genuinely different
      skins, not just tinted backgrounds. */
   const THEMES = {
+    /* --- the polished set: high contrast, restrained palettes --- */
+    paper: {
+      name: 'Paper (refined)',
+      vars: {
+        '--paper': '#efece4', '--paper2': '#e1ddd1', '--label': '#ffffff',
+        '--chrome': '#c9c3b4', '--shade': '#9a9280', '--hilite': '#ffffff',
+        '--ink': '#191713', '--ink2': '#46423a', '--ink3': '#726d61',
+        '--teal': '#2f7c86', '--hotpink': '#b25574', '--banana': '#d7a13c',
+        '--grape': '#33506c', '--lime': '#4e8a52', '--tomato': '#bf4a34'
+      }
+    },
+    mono: {
+      name: 'Mono (minimal)',
+      vars: {
+        '--paper': '#f3f3f5', '--paper2': '#e7e7ea', '--label': '#ffffff',
+        '--chrome': '#d3d3d8', '--shade': '#9f9fa6', '--hilite': '#ffffff',
+        '--ink': '#151518', '--ink2': '#45454b', '--ink3': '#74747b',
+        '--teal': '#2b8a97', '--hotpink': '#5f6b7a', '--banana': '#d3ddec',
+        '--grape': '#1f242e', '--lime': '#cdd8cf', '--tomato': '#d6493a'
+      }
+    },
+    ink: {
+      name: 'Ink (bold)',
+      vars: {
+        '--paper': '#e4ddcb', '--paper2': '#d5ccb5', '--label': '#fffdf4',
+        '--chrome': '#a99f86', '--shade': '#726a52', '--hilite': '#fffef8',
+        '--ink': '#14110b', '--ink2': '#3b3527', '--ink3': '#675e48',
+        '--teal': '#0c8a97', '--hotpink': '#df2d78', '--banana': '#f2b60c',
+        '--grape': '#582b84', '--lime': '#4e9c37', '--tomato': '#d83a22'
+      }
+    },
+    graphite: {
+      name: 'Graphite (dark)',
+      vars: {
+        '--paper': '#1b1d22', '--paper2': '#262933', '--label': '#333744',
+        '--chrome': '#3b3f4a', '--shade': '#0f1014', '--hilite': '#41454f',
+        '--ink': '#f2f4f8', '--ink2': '#c0c4ce', '--ink3': '#888d9a',
+        '--brandink': '#f2f4f8',
+        '--teal': '#33c0d0', '--hotpink': '#ff6b9d', '--banana': '#3f4c8c',
+        '--grape': '#23262f', '--lime': '#54c46e', '--tomato': '#ff6a54',
+        '--crt': '#0a0d12'
+      }
+    },
     beige: { name: 'Beige', vars: {} },
     slate: {
       name: 'Slate',
@@ -3186,7 +3229,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     }
   };
 
-  let themeId = store.get('theme', 'beige');
+  let themeId = store.get('theme', 'paper');
   let custom = store.get('themeCustom', '#5b8cff');
 
   /* build a full theme from a single accent colour the user picks */
@@ -3223,6 +3266,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
      corner radius, shadow style and background texture — so themes restyle the
      whole layout, not just the colours */
   const UI = {
+    paper: 'chunky', ink: 'chunky', graphite: 'chunky', mono: 'soft',
     beige: 'chunky', slate: 'chunky', pumpkin: 'chunky', dusk: 'chunky', carbon: 'chunky',
     mint: 'soft', rose: 'soft', forest: 'soft', ice: 'soft',
     bubblegum: 'neon', miami: 'neon', grapesoda: 'neon',
