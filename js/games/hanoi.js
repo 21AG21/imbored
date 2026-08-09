@@ -5,7 +5,7 @@
 
   function mount(root, api) {
     const bagg = Engine.bag();
-    let N = 4, n = 4, pegs = [[], [], []], moves = 0, sel = null, over = false;
+    let N = Engine.clamp(Math.round(2 + api.dm * 1.6), 3, 6), n = N, pegs = [[], [], []], moves = 0, sel = null, over = false;   // opening disk count from difficulty
 
     const pMoves = api.pill('moves: 0');
     const pMin = api.pill('best: —');
@@ -18,7 +18,7 @@
     const msg = h('div', { class: 'hn-msg' }, '');
     root.appendChild(h('div', { class: 'hanoi-wrap' }, board, msg));
 
-    api.select('Disks', [3, 4, 5, 6].map((v) => ({ value: String(v), label: v + ' disks' })), '4', (v) => { N = +v; reset(); });
+    api.select('Disks', [3, 4, 5, 6].map((v) => ({ value: String(v), label: v + ' disks' })), String(N), (v) => { N = +v; reset(); });
     api.button('Restart', reset);
 
     function reset() {

@@ -53,7 +53,7 @@
     function endTurn() {
       turn = 0; sync();
       whose = whose === 'you' ? 'cpu' : 'you';
-      if (whose === 'cpu') { busy(true); setTimeout(cpuStep.bind(null, 0, 18 + randInt(0, 6)), 650); }
+      if (whose === 'cpu') { busy(true); setTimeout(cpuStep.bind(null, 0, Math.round(20 / api.dm) + randInt(0, 4)), 650); }
       else busy(false);
     }
     function cpuStep(t, target) {

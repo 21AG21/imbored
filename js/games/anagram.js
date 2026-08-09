@@ -20,10 +20,11 @@
 
   function mount(root, api) {
     const bagg = Engine.bag();
-    let word = '', solved = 0, timeLeft = SPRINT, running = false, disposed = false, acc = 0;
+    const dur = Math.max(15, Math.round(SPRINT / api.dm));   // less time on harder tiers
+    let word = '', solved = 0, timeLeft = dur, running = false, disposed = false, acc = 0;
 
     const pSolved = api.pill('solved: 0');
-    const pTime = api.pill('time: ' + SPRINT + 's');
+    const pTime = api.pill('time: ' + dur + 's');
     const scr = h('div', { class: 'ana-scramble' }, '');
     const input = h('input', { class: 'ana-input', type: 'text', spellcheck: 'false', autocomplete: 'off', placeholder: 'unscramble it…' });
     const msg = h('div', { class: 'ana-msg' }, '');
@@ -34,11 +35,11 @@
     api.button('Start / restart', start);
 
     function start() {
-      solved = 0; timeLeft = SPRINT; running = true;
+      solved = 0; timeLeft = dur; running = true;
       msg.textContent = ''; msg.className = 'ana-msg';
       input.disabled = false; input.value = '';
       newWord(); sync(); try { input.focus(); } catch (e) { /* */ }
-      api.status('Unscramble as many office words as you can in ' + SPRINT + ' seconds. Enter to submit, Skip for a new word.');
+      api.status('Unscramble as many office words as you can in ' + dur + ' seconds. Enter to submit, Skip for a new word.');
     }
     function newWord() {
       word = WORDS[randInt(0, WORDS.length - 1)];

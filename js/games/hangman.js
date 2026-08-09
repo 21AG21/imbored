@@ -12,10 +12,11 @@
 
   function mount(root, api) {
     const bagg = Engine.bag();
+    const stages = Engine.clamp(Math.round(7 - api.dm * 2), 3, 6);   // fewer misses allowed on harder tiers
     let word = '', guessed = {}, misses = 0, streak = 0, over = false;
 
     const pStreak = api.pill('streak: 0');
-    const pLives = api.pill('misses: 0/' + STAGES);
+    const pLives = api.pill('misses: 0/' + stages);
     const face = h('div', { class: 'hm-gallows' }, FACES[0]);
     const wordEl = h('div', { class: 'hm-word' });
     const msg = h('div', { class: 'hm-msg' }, '');
@@ -35,14 +36,14 @@
       ALPHA.forEach((c) => { keyBtns[c].disabled = false; keyBtns[c].className = 'btn hm-key'; });
       msg.textContent = ''; msg.className = 'hm-msg';
       render();
-      api.status('Guess the hidden office word a letter at a time. Six misses ends it. Type letters or tap the keys.');
+      api.status('Guess the hidden office word a letter at a time. ' + stages + ' misses ends it. Type letters or tap the keys.');
     }
     function render() {
       wordEl.replaceChildren.apply(wordEl, word.split('').map((ch) =>
         h('span', { class: 'hm-slot' + (guessed[ch] || over ? ' shown' : '') }, guessed[ch] || over ? ch : '')));
       pStreak.textContent = 'streak: ' + streak;
-      pLives.textContent = 'misses: ' + misses + '/' + STAGES;
-      face.textContent = FACES[Math.min(misses, STAGES)];
+      pLives.textContent = 'misses: ' + misses + '/' + stages;
+      face.textContent = FACES[Math.min(6, Math.round(misses / stages * 6))];
     }
     function guess(c) {
       if (over || guessed[c] !== undefined) return;
@@ -52,7 +53,7 @@
         if (word.split('').every((ch) => guessed[ch])) win();
       } else {
         guessed[c] = null; keyBtns[c].classList.add('miss'); misses++; api.sfx.bad(); render();
-        if (misses >= STAGES) lose();
+        if (misses >= stages) lose();
       }
     }
     function win() {

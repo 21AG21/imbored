@@ -11864,7 +11864,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   function mount(root, api) {
     const bagg = Engine.bag();
-    let N = 4, n = 4, pegs = [[], [], []], moves = 0, sel = null, over = false;
+    let N = Engine.clamp(Math.round(2 + api.dm * 1.6), 3, 6), n = N, pegs = [[], [], []], moves = 0, sel = null, over = false;   // opening disk count from difficulty
 
     const pMoves = api.pill('moves: 0');
     const pMin = api.pill('best: —');
@@ -11877,7 +11877,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     const msg = h('div', { class: 'hn-msg' }, '');
     root.appendChild(h('div', { class: 'hanoi-wrap' }, board, msg));
 
-    api.select('Disks', [3, 4, 5, 6].map((v) => ({ value: String(v), label: v + ' disks' })), '4', (v) => { N = +v; reset(); });
+    api.select('Disks', [3, 4, 5, 6].map((v) => ({ value: String(v), label: v + ' disks' })), String(N), (v) => { N = +v; reset(); });
     api.button('Restart', reset);
 
     function reset() {
@@ -15026,6 +15026,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   function mount(root, api) {
     const bagg = Engine.bag();
     let streak = 0;
+    const hist = [0, 0, 0];   // how often you have thrown each move, for the CPU to read on harder tiers
 
     const pStreak = api.pill('streak: 0');
     const pBest = api.pill('best: 0');
@@ -15046,7 +15047,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       pBest.textContent = 'best: ' + (api.best() || 0);
     }
     function play(myId) {
-      const cpu = MOVES[randInt(0, 2)];
+      const myIdx = MOVES.findIndex((m) => m.id === myId);
+      if (myIdx >= 0) hist[myIdx]++;
+      /* harder tiers read your habits: with rising probability the deskmate
+         throws the move that beats your most-played one */
+      const readP = Engine.clamp((api.dm - 1) / 1.3, 0, 1);
+      let cpu;
+      if (Math.random() < readP) {
+        let top = 0; for (let i = 1; i < 3; i++) if (hist[i] > hist[top]) top = i;
+        cpu = MOVES.find((m) => m.beats === MOVES[top].id) || MOVES[randInt(0, 2)];
+      } else cpu = MOVES[randInt(0, 2)];
       youCard.textContent = ico(myId);
       cpuCard.textContent = cpu.ico;
       const me = MOVES.find((m) => m.id === myId);
@@ -15096,10 +15106,11 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   function mount(root, api) {
     const bagg = Engine.bag();
+    const stages = Engine.clamp(Math.round(7 - api.dm * 2), 3, 6);   // fewer misses allowed on harder tiers
     let word = '', guessed = {}, misses = 0, streak = 0, over = false;
 
     const pStreak = api.pill('streak: 0');
-    const pLives = api.pill('misses: 0/' + STAGES);
+    const pLives = api.pill('misses: 0/' + stages);
     const face = h('div', { class: 'hm-gallows' }, FACES[0]);
     const wordEl = h('div', { class: 'hm-word' });
     const msg = h('div', { class: 'hm-msg' }, '');
@@ -15119,14 +15130,14 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       ALPHA.forEach((c) => { keyBtns[c].disabled = false; keyBtns[c].className = 'btn hm-key'; });
       msg.textContent = ''; msg.className = 'hm-msg';
       render();
-      api.status('Guess the hidden office word a letter at a time. Six misses ends it. Type letters or tap the keys.');
+      api.status('Guess the hidden office word a letter at a time. ' + stages + ' misses ends it. Type letters or tap the keys.');
     }
     function render() {
       wordEl.replaceChildren.apply(wordEl, word.split('').map((ch) =>
         h('span', { class: 'hm-slot' + (guessed[ch] || over ? ' shown' : '') }, guessed[ch] || over ? ch : '')));
       pStreak.textContent = 'streak: ' + streak;
-      pLives.textContent = 'misses: ' + misses + '/' + STAGES;
-      face.textContent = FACES[Math.min(misses, STAGES)];
+      pLives.textContent = 'misses: ' + misses + '/' + stages;
+      face.textContent = FACES[Math.min(6, Math.round(misses / stages * 6))];
     }
     function guess(c) {
       if (over || guessed[c] !== undefined) return;
@@ -15136,7 +15147,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
         if (word.split('').every((ch) => guessed[ch])) win();
       } else {
         guessed[c] = null; keyBtns[c].classList.add('miss'); misses++; api.sfx.bad(); render();
-        if (misses >= STAGES) lose();
+        if (misses >= stages) lose();
       }
     }
     function win() {
@@ -15200,10 +15211,11 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   function mount(root, api) {
     const bagg = Engine.bag();
-    let word = '', solved = 0, timeLeft = SPRINT, running = false, disposed = false, acc = 0;
+    const dur = Math.max(15, Math.round(SPRINT / api.dm));   // less time on harder tiers
+    let word = '', solved = 0, timeLeft = dur, running = false, disposed = false, acc = 0;
 
     const pSolved = api.pill('solved: 0');
-    const pTime = api.pill('time: ' + SPRINT + 's');
+    const pTime = api.pill('time: ' + dur + 's');
     const scr = h('div', { class: 'ana-scramble' }, '');
     const input = h('input', { class: 'ana-input', type: 'text', spellcheck: 'false', autocomplete: 'off', placeholder: 'unscramble it…' });
     const msg = h('div', { class: 'ana-msg' }, '');
@@ -15214,11 +15226,11 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     api.button('Start / restart', start);
 
     function start() {
-      solved = 0; timeLeft = SPRINT; running = true;
+      solved = 0; timeLeft = dur; running = true;
       msg.textContent = ''; msg.className = 'ana-msg';
       input.disabled = false; input.value = '';
       newWord(); sync(); try { input.focus(); } catch (e) { /* */ }
-      api.status('Unscramble as many office words as you can in ' + SPRINT + ' seconds. Enter to submit, Skip for a new word.');
+      api.status('Unscramble as many office words as you can in ' + dur + ' seconds. Enter to submit, Skip for a new word.');
     }
     function newWord() {
       word = WORDS[randInt(0, WORDS.length - 1)];
@@ -15487,11 +15499,12 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   function mount(root, api) {
     const bagg = Engine.bag();
+    const maxg = Engine.clamp(Math.round(11 - api.dm * 2), 5, 12);   // fewer guesses on harder tiers
     let secret, guesses, over, streak, disposed = false;
     streak = api.load('streak', 0);
 
     const pStreak = api.pill('win streak: ' + streak);
-    const pLeft = api.pill('guesses: ' + MAXG);
+    const pLeft = api.pill('guesses: ' + maxg);
     const list = h('div', { class: 'crk-list' });
     const input = h('input', { class: 'crk-input', type: 'text', inputmode: 'numeric', maxlength: String(LEN), placeholder: '4 digits', spellcheck: 'false', autocomplete: 'off' });
     const form = h('form', { class: 'crk-form' }, input, h('button', { class: 'btn primary', type: 'submit' }, 'Guess'));
@@ -15510,7 +15523,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       secret = newSecret(); guesses = []; over = false;
       list.replaceChildren(); msg.textContent = ''; msg.className = 'crk-msg';
       input.disabled = false; input.value = ''; try { input.focus(); } catch (e) { /* */ }
-      pLeft.textContent = 'guesses: ' + MAXG; pStreak.textContent = 'win streak: ' + streak;
+      pLeft.textContent = 'guesses: ' + maxg; pStreak.textContent = 'win streak: ' + streak;
       api.status('Crack the four-digit code. Each digit is different. Read the pegs and narrow it down.');
     }
     function score(g) {
@@ -15535,10 +15548,10 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       list.appendChild(h('div', { class: 'crk-row' }, h('span', { class: 'crk-guess' }, g.split('').map((d) => h('span', { class: 'crk-digit' }, d))), pegs));
       list.scrollTop = list.scrollHeight;
       input.value = ''; msg.textContent = ''; msg.className = 'crk-msg';
-      pLeft.textContent = 'guesses: ' + (MAXG - guesses.length);
+      pLeft.textContent = 'guesses: ' + (maxg - guesses.length);
       if (bulls === LEN) { over = true; streak++; api.save('streak', streak); api.submit(streak); api.sfx.great(); msg.textContent = 'Cracked it in ' + guesses.length + '! Streak ' + streak + '.'; msg.className = 'crk-msg win'; input.disabled = true; return; }
       api.sfx.blip(300 + bulls * 120);
-      if (guesses.length >= MAXG) { over = true; streak = 0; api.save('streak', 0); api.sfx.bad(); msg.textContent = 'Out of guesses. The code was ' + secret + '.'; msg.className = 'crk-msg lose'; input.disabled = true; return; }
+      if (guesses.length >= maxg) { over = true; streak = 0; api.save('streak', 0); api.sfx.bad(); msg.textContent = 'Out of guesses. The code was ' + secret + '.'; msg.className = 'crk-msg lose'; input.disabled = true; return; }
       try { input.focus(); } catch (e) { /* */ }
     }
     function shake() { input.classList.remove('shake'); void input.offsetWidth; input.classList.add('shake'); api.sfx.bad(); }
@@ -22927,7 +22940,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     function endTurn() {
       turn = 0; sync();
       whose = whose === 'you' ? 'cpu' : 'you';
-      if (whose === 'cpu') { busy(true); setTimeout(cpuStep.bind(null, 0, 18 + randInt(0, 6)), 650); }
+      if (whose === 'cpu') { busy(true); setTimeout(cpuStep.bind(null, 0, Math.round(20 / api.dm) + randInt(0, 4)), 650); }
       else busy(false);
     }
     function cpuStep(t, target) {

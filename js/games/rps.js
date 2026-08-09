@@ -12,6 +12,7 @@
   function mount(root, api) {
     const bagg = Engine.bag();
     let streak = 0;
+    const hist = [0, 0, 0];   // how often you have thrown each move, for the CPU to read on harder tiers
 
     const pStreak = api.pill('streak: 0');
     const pBest = api.pill('best: 0');
@@ -32,7 +33,16 @@
       pBest.textContent = 'best: ' + (api.best() || 0);
     }
     function play(myId) {
-      const cpu = MOVES[randInt(0, 2)];
+      const myIdx = MOVES.findIndex((m) => m.id === myId);
+      if (myIdx >= 0) hist[myIdx]++;
+      /* harder tiers read your habits: with rising probability the deskmate
+         throws the move that beats your most-played one */
+      const readP = Engine.clamp((api.dm - 1) / 1.3, 0, 1);
+      let cpu;
+      if (Math.random() < readP) {
+        let top = 0; for (let i = 1; i < 3; i++) if (hist[i] > hist[top]) top = i;
+        cpu = MOVES.find((m) => m.beats === MOVES[top].id) || MOVES[randInt(0, 2)];
+      } else cpu = MOVES[randInt(0, 2)];
       youCard.textContent = ico(myId);
       cpuCard.textContent = cpu.ico;
       const me = MOVES.find((m) => m.id === myId);

@@ -6,11 +6,12 @@
 
   function mount(root, api) {
     const bagg = Engine.bag();
+    const maxg = Engine.clamp(Math.round(11 - api.dm * 2), 5, 12);   // fewer guesses on harder tiers
     let secret, guesses, over, streak, disposed = false;
     streak = api.load('streak', 0);
 
     const pStreak = api.pill('win streak: ' + streak);
-    const pLeft = api.pill('guesses: ' + MAXG);
+    const pLeft = api.pill('guesses: ' + maxg);
     const list = h('div', { class: 'crk-list' });
     const input = h('input', { class: 'crk-input', type: 'text', inputmode: 'numeric', maxlength: String(LEN), placeholder: '4 digits', spellcheck: 'false', autocomplete: 'off' });
     const form = h('form', { class: 'crk-form' }, input, h('button', { class: 'btn primary', type: 'submit' }, 'Guess'));
@@ -29,7 +30,7 @@
       secret = newSecret(); guesses = []; over = false;
       list.replaceChildren(); msg.textContent = ''; msg.className = 'crk-msg';
       input.disabled = false; input.value = ''; try { input.focus(); } catch (e) { /* */ }
-      pLeft.textContent = 'guesses: ' + MAXG; pStreak.textContent = 'win streak: ' + streak;
+      pLeft.textContent = 'guesses: ' + maxg; pStreak.textContent = 'win streak: ' + streak;
       api.status('Crack the four-digit code. Each digit is different. Read the pegs and narrow it down.');
     }
     function score(g) {
@@ -54,10 +55,10 @@
       list.appendChild(h('div', { class: 'crk-row' }, h('span', { class: 'crk-guess' }, g.split('').map((d) => h('span', { class: 'crk-digit' }, d))), pegs));
       list.scrollTop = list.scrollHeight;
       input.value = ''; msg.textContent = ''; msg.className = 'crk-msg';
-      pLeft.textContent = 'guesses: ' + (MAXG - guesses.length);
+      pLeft.textContent = 'guesses: ' + (maxg - guesses.length);
       if (bulls === LEN) { over = true; streak++; api.save('streak', streak); api.submit(streak); api.sfx.great(); msg.textContent = 'Cracked it in ' + guesses.length + '! Streak ' + streak + '.'; msg.className = 'crk-msg win'; input.disabled = true; return; }
       api.sfx.blip(300 + bulls * 120);
-      if (guesses.length >= MAXG) { over = true; streak = 0; api.save('streak', 0); api.sfx.bad(); msg.textContent = 'Out of guesses. The code was ' + secret + '.'; msg.className = 'crk-msg lose'; input.disabled = true; return; }
+      if (guesses.length >= maxg) { over = true; streak = 0; api.save('streak', 0); api.sfx.bad(); msg.textContent = 'Out of guesses. The code was ' + secret + '.'; msg.className = 'crk-msg lose'; input.disabled = true; return; }
       try { input.focus(); } catch (e) { /* */ }
     }
     function shake() { input.classList.remove('shake'); void input.offsetWidth; input.classList.add('shake'); api.sfx.bad(); }
