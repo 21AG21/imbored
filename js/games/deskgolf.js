@@ -6,6 +6,8 @@
   const W = 860, H = 560;
   const BR = 9;                    // ball radius
   const STOP = 14;                 // below this speed the ball has stopped
+  const MAXPULL = 260;             // longest useful drag-back (px)
+  const PWR = 6.8;                 // drag px -> launch speed; higher = more power
 
   /* x, y, w, h for walls; circles for sand and coffee */
   const HOLES = [
@@ -85,7 +87,7 @@
       const d = Math.hypot(dx, dy);
       aim = null;
       if (d < 8) return;
-      const power = Math.min(d, 190) * 5.2;
+      const power = Math.min(d, MAXPULL) * PWR;
       const a = Math.atan2(dy, dx);
       vel.x = Math.cos(a) * power;
       vel.y = Math.sin(a) * power;
@@ -273,7 +275,7 @@
       /* aim */
       if (aim) {
         const dx = ball.x - aim.x, dy = ball.y - aim.y;
-        const d = Math.min(Math.hypot(dx, dy), 190);
+        const d = Math.min(Math.hypot(dx, dy), MAXPULL);
         const a = Math.atan2(dy, dx);
         ctx.strokeStyle = 'rgba(255,203,31,.9)';
         ctx.lineWidth = 4;
@@ -286,8 +288,8 @@
         /* power bar */
         ctx.fillStyle = '#1d1722';
         ctx.fillRect(ball.x - 32, ball.y + 22, 64, 8);
-        ctx.fillStyle = d > 150 ? '#e8402a' : d > 80 ? '#ffcb1f' : '#6fcf2f';
-        ctx.fillRect(ball.x - 32, ball.y + 22, 64 * (d / 190), 8);
+        ctx.fillStyle = d > MAXPULL * 0.78 ? '#e8402a' : d > MAXPULL * 0.42 ? '#ffcb1f' : '#6fcf2f';
+        ctx.fillRect(ball.x - 32, ball.y + 22, 64 * (d / MAXPULL), 8);
       }
 
       if (!sunk) {

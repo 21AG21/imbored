@@ -98,28 +98,36 @@
      games are fixed-pixel grids, so in big-screen mode they were left stranded
      at ~330px on an empty page. Scale the whole board to fill the freed space —
      transform keeps every cell's hit area mapped, so they stay clickable. */
-  function fitBigDOM() {
-    const stage = document.querySelector('#view .stage');
+  function fitStage() {
+    const view = document.getElementById('view');
+    const stage = view && view.querySelector('.stage');
     if (!stage) return;
     stage.style.transform = '';
     stage.style.transformOrigin = '';
-    if (!bigOn || stage.querySelector('canvas')) return;   // off, or a canvas game (scales itself)
+    if (stage.querySelector('canvas')) return;   // canvas games size themselves
     const rect = stage.getBoundingClientRect();
     /* the stage is full-width but its board is a narrow centred child, so size to
        the widest real child, not the stage's own width */
     let natW = 0;
-    for (const c of stage.children) { const r = c.getBoundingClientRect(); if (r.height > 0) natW = Math.max(natW, r.width); }
+    for (const c of stage.children) { const r = c.getBoundingClientRect(); if (r.height > 4) natW = Math.max(natW, r.width); }
     const natH = stage.scrollHeight;
     if (!natW || !natH) return;
-    const availH = global.innerHeight - rect.top - 16;
-    const availW = global.innerWidth - 24;
+    /* Bound growth to the space the board actually has: down to the bottom of
+       #view (which is exactly where the footer starts, so the scaled board never
+       collides with it) in normal mode, or the whole viewport in big-screen. */
+    const vBottom = bigOn ? global.innerHeight - 8 : view.getBoundingClientRect().bottom - 6;
+    const availH = vBottom - rect.top;
+    const availW = view.clientWidth - 8;
+    if (availH < 40 || availW < 40) return;
     const scale = Math.min(availW / natW, availH / natH);
-    if (scale > 1.03) {
+    const cap = bigOn ? 3.2 : 2.6;
+    if (scale > 1.04) {
       stage.style.transformOrigin = 'top center';
-      stage.style.transform = 'scale(' + Math.min(scale, 3) + ')';
+      stage.style.transform = 'scale(' + Math.min(scale, cap).toFixed(3) + ')';
     }
   }
-  Arcade.fitBig = fitBigDOM;
+  Arcade.fitBig = fitStage;
+  function fitStageSoon() { requestAnimationFrame(fitStage); setTimeout(fitStage, 90); setTimeout(fitStage, 260); }
   function setBig(on) {
     bigOn = on;
     document.body.classList.toggle('bigscreen', bigOn);
@@ -131,10 +139,9 @@
     } else if (!bigOn && document.fullscreenElement && document.exitFullscreen) {
       document.exitFullscreen().catch(() => { });
     }
-    requestAnimationFrame(fitBigDOM);
-    setTimeout(fitBigDOM, 90);
+    fitStageSoon();
   }
-  global.addEventListener('resize', () => { if (bigOn) fitBigDOM(); });
+  global.addEventListener('resize', () => fitStage());
   Arcade.toggleBig = () => setBig(!bigOn);
 
   let skinSel = null;
@@ -914,10 +921,23 @@
       stage.classList.toggle('wide', ar > 1.35);
     });
 
-    currentDispose = () => { if (typeof dispose === 'function') dispose(); };
+    /* Scale a DOM board up to fill the screen, and keep it filled as its content
+       changes size (cards dealt, board resized). Canvas games size themselves. */
+    let ro = null;
+    try {
+      if (global.ResizeObserver && !stage.querySelector('canvas')) {
+        ro = new global.ResizeObserver(() => fitStage());
+        ro.observe(stage);
+      }
+    } catch (e) { ro = null; }
+
+    currentDispose = () => {
+      if (ro) { try { ro.disconnect(); } catch (e) { /* ignore */ } ro = null; }
+      if (typeof dispose === 'function') dispose();
+    };
     currentGame = g;
     applyDocTitle();
-    if (bigOn) { requestAnimationFrame(fitBigDOM); setTimeout(fitBigDOM, 90); }
+    fitStageSoon();
   }
 
   /* ---------------- router ---------------- */

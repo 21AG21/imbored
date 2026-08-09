@@ -74,16 +74,16 @@
     c.style.setProperty('--gw', w + 'px');
     c.style.setProperty('--ar', String(w / hh));
     c.style.maxWidth = 'var(--gw)';
-    if (opts.maxHeight) c.style.maxHeight = opts.maxHeight;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     parent.appendChild(c);
 
-    /* Fit the playfield to the space actually left on the device so a canvas
-       game's bottom never sits past the fold on a phone (the flap bug, but for
-       every canvas game). Caps WIDTH — aspect-ratio derives the height, so it
-       never distorts — and leaves room for any control pad or panel sitting
-       below the canvas in the same container. Only shrinks when needed, so
-       desktop and roomy screens are untouched. Self-removes when detached. */
+    /* Fit the playfield to the space actually available so a canvas game fills
+       most of the screen instead of floating tiny in the middle of it. Sizes to
+       the largest box that fits both the free width AND the free height (aspect
+       ratio derives the other dimension, so it never distorts), leaving room for
+       any control pad or panel sitting below the canvas in the same container.
+       Grows past the intrinsic size on roomy screens and shrinks on cramped
+       ones. Self-removes when detached. */
     function fitCanvas() {
       if (!c.isConnected) {
         global.removeEventListener('resize', fitCanvas);
@@ -95,15 +95,19 @@
       const cr = c.getBoundingClientRect();
       /* overhang = pixels from the canvas bottom down to the lowest thing below
          it (a control pad, panels), gaps and margins included. Independent of the
-         canvas size, so shrinking the canvas leaves exactly that much room. */
+         canvas size, so resizing the canvas leaves exactly that much room. */
       let lowest = cr.bottom;
       for (let sib = c.nextElementSibling; sib; sib = sib.nextElementSibling) {
         const rb = sib.getBoundingClientRect().bottom;
         if (rb > lowest) lowest = rb;
       }
       const overhang = lowest - cr.bottom;
-      const availH = Math.max(118, vpH - cr.top - overhang - 10);
-      c.style.maxWidth = Math.min(w, Math.round(availH * w / hh)) + 'px';
+      const availH = Math.max(140, vpH - cr.top - overhang - 12);
+      const parentW = (c.parentElement && c.parentElement.clientWidth) || cr.width;
+      const availW = Math.max(140, parentW);
+      /* largest width that respects both the free height (via aspect ratio) and
+         the free width — no intrinsic-size ceiling, so it upscales to fill */
+      c.style.maxWidth = Math.round(Math.min(availW, availH * w / hh)) + 'px';
     }
     global.addEventListener('resize', fitCanvas);
     if (global.visualViewport) global.visualViewport.addEventListener('resize', fitCanvas);

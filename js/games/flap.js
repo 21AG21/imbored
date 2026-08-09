@@ -11,7 +11,7 @@
     const cv = Engine.canvas(root, W, H);   // Engine.canvas now auto-fits the playfield to the screen
     const ctx = cv.ctx;
 
-    let by, bv, pipes, score, started, over, restartT, lastScore;
+    let by, bv, pipes, score, started, over, restartT, lastScore, lastCy;
 
     const pScore = api.pill('Score: 0');
     const banner = h('div', { class: 'banner', style: { display: 'none' } });
@@ -20,9 +20,21 @@
 
     const gap = () => Math.max(120, 190 - api.dm * 24);
     const speed = () => 196 + api.dm * 48;
+    const MIN_CY = 130, MAX_CY = H - 130;
+    /* How far a gap centre may jump from the previous one. The bird can only
+       climb so much between two pipes, so an unbounded random walk produces
+       gaps that are physically unreachable — the "sometimes impossible" runs.
+       Bound the step to what a flap chain can actually cover in the time
+       between pipes (with a safety margin), so every gap is always threadable. */
+    function maxStep() {
+      const t = SPACING / speed();                 // seconds between pipes
+      const climb = -FLAP_V * t * 0.7;             // px a held flap-chain can gain
+      return clamp(climb, 120, MAX_CY - MIN_CY);
+    }
 
     function reset() {
       by = H / 2; bv = 0; pipes = []; score = 0; started = false; over = false; restartT = 0;
+      lastCy = H / 2;                               // first gap is reachable from the start
       spawn(W + 120);
       spawn(W + 120 + SPACING);
       spawn(W + 120 + SPACING * 2);
@@ -32,7 +44,10 @@
     }
 
     function spawn(x) {
-      pipes.push({ x, cy: randInt(130, H - 130), g: gap(), passed: false });
+      const step = maxStep();
+      const cy = clamp(lastCy + randInt(-Math.round(step), Math.round(step)), MIN_CY, MAX_CY);
+      lastCy = cy;
+      pipes.push({ x, cy, g: gap(), passed: false });
     }
 
     function flap() {

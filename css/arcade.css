@@ -493,6 +493,20 @@ kbd {
 }
 
 .stage { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+/* DOM boards are scaled up to fill the screen via a transform on the stage
+   (see fitStage). The stage is full-width, so its transparent side-space
+   overflows sideways when scaled — clip it horizontally (the board itself is
+   always sized to fit within the view width, so only empty space is clipped). */
+body.in-game .view { overflow-x: clip; }
+/* Hand most of the screen to the playfield while a game is open: drop the
+   settings/info footer (still on the shelf and reachable with the back button)
+   and tighten the chrome above the board so canvas and DOM games alike fill
+   the space instead of floating in the middle of it. */
+body.in-game .foot { display: none; }
+body.in-game .view { padding-top: 8px; padding-bottom: 12px; }
+body.in-game .gamehead { padding: 6px 12px; margin-bottom: 8px; }
+body.in-game .gametools { margin-bottom: 8px; }
+body.in-game .status { margin: 2px 0; font-size: 12px; }
 
 /* the CRT bezel that every canvas game sits inside */
 .gcanvas {

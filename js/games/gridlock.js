@@ -308,7 +308,7 @@
       spawnT -= dt;
       if (spawnT <= 0) {
         spawn();
-        spawnT = clamp(shift.rate - day * 0.045, 0.3, 3) * rand(0.65, 1.4) / dm;
+        spawnT = clamp(shift.rate - day * 0.03, 0.5, 3) * rand(0.65, 1.4) / dm;
       }
       ambT -= dt;
       if (ambT <= 0 && !prefill) {
@@ -367,7 +367,7 @@
         a.v += clamp(allowed - a.v, -a.K.dec * dt, a.K.acc * dt);
         a.v = clamp(a.v, 0, a.K.vmax * speedScale());
         a.s += a.v * dt;
-        if (a.v < 8) { a.wait += dt; if (a.wait > 3) jammed++; }
+        if (a.v < 8) { a.wait += dt; if (a.wait > 4.5) jammed++; }
         else a.wait = Math.max(0, a.wait - dt * 2.5);
       }
 
@@ -389,7 +389,7 @@
       let pedAnger = 0;
       for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) if (nodes[r][c].pedWait > 13) pedAnger++;
 
-      rage = clamp(rage + dt * (jammed * 0.8 * dm + pedAnger * 0.9 - 2.6 / dm), 0, 100);
+      rage = clamp(rage + dt * (jammed * 0.5 * dm + pedAnger * 0.55 - 3.6 / dm), 0, 100);
       if (rage >= 100 && !prefill) return endGame();
 
       if (hintT > 0) hintT -= dt;

@@ -1,7 +1,7 @@
 /* Company Car — a pseudo-3D arcade racer. A proper curving, cresting road drawn
- * the OutRun way (projected road segments), traffic to weave through, twenty
- * procedurally-built stages you can jump between freely, and a clock. Keyboard
- * or on-screen buttons. */
+ * the OutRun way (projected road segments), roadside scenery, traffic to weave
+ * through, twenty procedurally-built stages you can jump between freely, and a
+ * clock. Keyboard or on-screen buttons. */
 (function () {
   'use strict';
   const { h, clamp } = Engine;
@@ -24,13 +24,13 @@
   const LEVELS = 20;
 
   const COL = {
-    sky: ['#4a90d9', '#7ec0ee'],
     tree: '#1c5a2a',
     grassL: '#3a9d3a', grassD: '#329033',
     roadL: '#6b6b6b', roadD: '#666666',
     rumbleL: '#e8402a', rumbleD: '#f4f4f4',
     lane: '#f4f4f4'
   };
+  const CARCOLS = ['#ffcb1f', '#e8402a', '#6f3fa8', '#00a6b4', '#f4f4f4', '#2a4bbd'];
 
   function ease(a, b, p) { return a + (b - a) * (-Math.cos(p * Math.PI) / 2 + 0.5); }
   function easeIn(a, b, p) { return a + (b - a) * p * p; }
@@ -38,11 +38,12 @@
 
   function mount(root, api) {
     const bagg = Engine.bag();
-    const cv = Engine.canvas(root, W, H, { maxHeight: '62vh' });
+    const cv = Engine.canvas(root, W, H);
     const ctx = cv.ctx;
     const keys = Engine.keys(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 's', 'a', 'd', 'W', 'S', 'A', 'D', ' ']);
 
     let segs, trackLen, cars, level, pos, playerX, speed, t, over, won, started;
+    let cd, shakeT, screechT;
     level = clamp(api.load('level', 1), 1, LEVELS);
 
     const pLevel = api.pill('Stage 1');
@@ -69,7 +70,7 @@
       segs.push({
         i: n, curve,
         p1: { wx: 0, wy: y1, wz: n * SEG }, p2: { wx: 0, wy: y, wz: (n + 1) * SEG },
-        color: Math.floor(n / RUMBLE) % 2 ? 'd' : 'l', cars: []
+        color: Math.floor(n / RUMBLE) % 2 ? 'd' : 'l', cars: [], sprite: null
       });
     }
     function addRoad(enter, hold, leave, curve, y) {
@@ -98,15 +99,34 @@
       }
       addRoad(30, 60, 30, 0, 0);                  // finish straight
       trackLen = segs.length * SEG;
+
+      /* roadside scenery — trees, signs and marker posts sprinkled down both
+         shoulders. Sprites live just off the tarmac (|x| > 1) and give the
+         projection real depth as they rush past. */
+      for (let i = 20; i < segs.length; i++) {
+        if (rng() < 0.16) {
+          const side = rng() < 0.5 ? -1 : 1;
+          const x = side * (1.35 + rng() * 2.2);
+          const r = rng();
+          const type = r < 0.68 ? 'tree' : r < 0.86 ? 'bush' : r < 0.95 ? 'sign' : 'post';
+          segs[i].sprite = { x, type, seed: rng() };
+        }
+      }
+      /* evenly spaced marker posts along the very edge for a sense of speed */
+      for (let i = 24; i < segs.length; i += 8) {
+        if (!segs[i].sprite) segs[i].sprite = { x: (i % 16 === 0 ? -1 : 1) * 1.15, type: 'post', seed: 0 };
+      }
+
       /* traffic: more and denser on later stages, and the difficulty dial packs
          the road tighter on top of that (chill ~0.8x, nightmare ~1.7x) */
       const nCars = Math.round((8 + level * 3) * (0.55 + api.dm * 0.45));
       for (let c = 0; c < nCars; c++) {
         const i = 40 + Math.floor(rng() * (segs.length - 80));
         const lane = (rng() * LANES | 0) - 1;   // -1,0,1
-        segs[i].cars.push({ x: lane * 0.55, col: ['#ffcb1f', '#e8402a', '#6f3fa8', '#00a6b4'][rng() * 4 | 0], spd: (0.35 + rng() * 0.25) });
+        segs[i].cars.push({ x: lane * 0.55, col: CARCOLS[rng() * CARCOLS.length | 0], spd: (0.35 + rng() * 0.25) });
       }
       pos = 0; playerX = 0; speed = 0; t = 0; over = false; won = false; started = false;
+      cd = 2.6; shakeT = 0; screechT = 0;
       banner.style.display = 'none';
       pLevel.textContent = 'Stage ' + level;
       const b = api.load('best:' + level, null);
@@ -123,14 +143,19 @@
 
     function update(dt) {
       if (over || !segs) return;
+      if (cd > 0) { cd -= dt; return; }          // start-line countdown holds the car
+      if (shakeT > 0) shakeT -= dt;
+      if (screechT > 0) screechT -= dt;
       const cur = segAt(pos);
       if (!cur) return;
       const spdPct = speed / MAXSPD;
       const dir = (keys.get('ArrowLeft') || keys.get('a') || keys.get('A')) ? -1 : (keys.get('ArrowRight') || keys.get('d') || keys.get('D')) ? 1 : 0;
       if (dir) started = true;
-      playerX += dir * dt * 2.4 * spdPct;
+      playerX += dir * dt * 2.6 * spdPct;
       /* centrifugal push on curves */
       playerX -= dt * spdPct * cur.curve * CENTRI;
+      /* tyres protest when you hold a fast, tight curve */
+      if (Math.abs(cur.curve) > 2.4 && spdPct > 0.55 && screechT <= 0) { api.sfx.noise({ dur: 0.16, cutoff: 2600, vol: 0.05 }); screechT = 0.22; }
 
       const gas = keys.get('ArrowUp') || keys.get('w') || keys.get('W') || keys.get(' ');
       const brk = keys.get('ArrowDown') || keys.get('s') || keys.get('S');
@@ -143,7 +168,7 @@
 
       /* traffic collision */
       for (const car of cur.cars) {
-        if (speed > 0 && Math.abs(playerX - car.x) < 0.5) { speed = MAXSPD * 0.18; playerX += (playerX > car.x ? 1 : -1) * dt * 2; api.sfx.thud(); }
+        if (speed > 0 && Math.abs(playerX - car.x) < 0.5) { speed = MAXSPD * 0.18; playerX += (playerX > car.x ? 1 : -1) * dt * 2; api.sfx.thud(); shakeT = 0.32; }
       }
 
       pos += speed * dt;
@@ -181,13 +206,74 @@
       ctx.closePath(); ctx.fill();
     }
 
-    function draw() {
-      /* sky + ground */
+    function drawSky(base) {
       const g = ctx.createLinearGradient(0, 0, 0, H);
-      g.addColorStop(0, COL.sky[0]); g.addColorStop(1, COL.sky[1]);
+      g.addColorStop(0, '#2f6fb0'); g.addColorStop(0.55, '#6aa8e0'); g.addColorStop(1, '#bfe0f5');
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      /* sun drifts opposite the road's lean so bends feel like they sweep past */
+      const sunX = W * 0.5 - (base ? base.curve : 0) * 26 - playerX * 40;
+      const sunY = H * 0.30;
+      const sg = ctx.createRadialGradient(sunX, sunY, 6, sunX, sunY, 120);
+      sg.addColorStop(0, 'rgba(255,246,196,.95)'); sg.addColorStop(0.4, 'rgba(255,221,120,.55)'); sg.addColorStop(1, 'rgba(255,221,120,0)');
+      ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(sunX, sunY, 120, 0, 7); ctx.fill();
+      ctx.fillStyle = '#fff2b0'; ctx.beginPath(); ctx.arc(sunX, sunY, 34, 0, 7); ctx.fill();
+      /* distant hill band on the horizon */
+      ctx.fillStyle = 'rgba(46,120,70,.55)';
+      ctx.beginPath(); ctx.moveTo(0, H * 0.52);
+      for (let i = 0; i <= 8; i++) ctx.lineTo(W * i / 8, H * 0.52 - Math.sin(i * 1.3 + (base ? base.i * 0.02 : 0)) * 18 - 10);
+      ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
+    }
 
+    function drawScenery(sp, spr) {
+      const x = sp.sx + sp.sw * spr.x, y = sp.sy, s = sp.sw;
+      if (s < 1.5) return;
+      if (spr.type === 'tree') {
+        const th = s * (1.9 + spr.seed * 1.4), tw = s * 0.62;
+        ctx.fillStyle = '#5a3b1c'; ctx.fillRect(x - s * 0.06, y - th * 0.34, s * 0.12, th * 0.34);
+        ctx.fillStyle = spr.seed > 0.5 ? '#1c5a2a' : '#237a35';
+        ctx.beginPath(); ctx.moveTo(x, y - th); ctx.lineTo(x - tw, y - th * 0.34); ctx.lineTo(x + tw, y - th * 0.34); ctx.closePath(); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(x, y - th * 0.78); ctx.lineTo(x - tw * 1.15, y - th * 0.18); ctx.lineTo(x + tw * 1.15, y - th * 0.18); ctx.closePath(); ctx.fill();
+      } else if (spr.type === 'bush') {
+        const r = s * 0.5;
+        ctx.fillStyle = '#2f8a3a';
+        ctx.beginPath(); ctx.arc(x, y - r * 0.6, r, 0, 7); ctx.arc(x - r * 0.7, y - r * 0.3, r * 0.7, 0, 7); ctx.arc(x + r * 0.7, y - r * 0.3, r * 0.7, 0, 7); ctx.fill();
+      } else if (spr.type === 'sign') {
+        const bw = s * 1.5, bh = s * 0.9, ph = s * 1.1;
+        ctx.fillStyle = '#3a2f22'; ctx.fillRect(x - s * 0.08, y - ph, s * 0.16, ph);
+        ctx.fillStyle = '#1666a8'; ctx.fillRect(x - bw / 2, y - ph - bh, bw, bh);
+        ctx.fillStyle = '#fff'; ctx.fillRect(x - bw / 2 + 3, y - ph - bh + 3, bw - 6, Math.max(1, bh * 0.22));
+        ctx.fillRect(x - bw / 2 + 3, y - ph - bh * 0.5, bw * 0.6, Math.max(1, bh * 0.18));
+      } else { /* post */
+        const ph = s * 1.2;
+        ctx.fillStyle = '#f4f4f4'; ctx.fillRect(x - s * 0.05, y - ph, s * 0.1, ph);
+        ctx.fillStyle = '#e8402a'; ctx.fillRect(x - s * 0.05, y - ph, s * 0.1, ph * 0.3);
+      }
+    }
+
+    function drawTraffic(sp, car) {
+      const cw = sp.sw * 0.9, cx = sp.sx + sp.sw * car.x, cy = sp.sy;
+      if (cw < 2) return;
+      const bw = cw * 0.6, bh = cw * 0.34;
+      ctx.fillStyle = 'rgba(0,0,0,.28)';
+      ctx.beginPath(); ctx.ellipse(cx, cy + 1, bw * 0.6, bh * 0.22, 0, 0, 7); ctx.fill();
+      ctx.fillStyle = car.col; ctx.fillRect(cx - bw / 2, cy - bh, bw, bh);              // body
+      ctx.fillStyle = 'rgba(0,0,0,.18)'; ctx.fillRect(cx - bw / 2, cy - bh * 0.36, bw, bh * 0.36);  // lower shade
+      ctx.fillStyle = '#1a2733'; ctx.fillRect(cx - bw * 0.32, cy - bh * 0.9, bw * 0.64, bh * 0.42); // rear window
+      ctx.fillStyle = '#3a0d0a'; ctx.fillRect(cx - bw / 2, cy - bh * 0.28, bw * 0.16, bh * 0.2);     // tail lights
+      ctx.fillRect(cx + bw / 2 - bw * 0.16, cy - bh * 0.28, bw * 0.16, bh * 0.2);
+      ctx.fillStyle = '#111'; ctx.fillRect(cx - bw / 2 - 1, cy - bh * 0.06, bw * 0.14, bh * 0.16);
+      ctx.fillRect(cx + bw / 2 - bw * 0.13, cy - bh * 0.06, bw * 0.14, bh * 0.16);
+    }
+
+    function draw() {
       const base = segAt(pos), basePct = (pos % SEG) / SEG;
+      const shx = shakeT > 0 ? (Math.random() - 0.5) * 10 * shakeT : 0;
+      const shy = shakeT > 0 ? (Math.random() - 0.5) * 10 * shakeT : 0;
+      ctx.save();
+      ctx.translate(shx, shy);
+
+      drawSky(base);
+
       let x = 0, dx = -(base.curve * basePct);
       let maxy = H;
       const camY = CAMH + base.p1.wy;
@@ -199,7 +285,7 @@
         project(seg.p1, playerX * ROADW - x, camY, camZ);
         project(seg.p2, playerX * ROADW - x - dx, camY, camZ);
         x += dx; dx += seg.curve;
-        if (seg.p1.cz <= CAMD || seg.p2.sy >= seg.p1.sy || seg.p2.sy >= maxy) continue;
+        if (seg.p1.cz <= CAMD || seg.p2.sy >= seg.p1.sy || seg.p2.sy >= maxy) { seg._p1 = null; continue; }
         const p1 = seg.p1, p2 = seg.p2, dark = seg.color === 'd';
         /* grass band */
         poly(W / 2, p1.sy, W / 2, W / 2, p2.sy, W / 2, dark ? COL.grassD : COL.grassL);
@@ -219,43 +305,89 @@
         seg._p1 = { sx: p1.sx, sy: p1.sy, sw: p1.sw };   // stash for sprite pass
       }
 
-      /* traffic sprites, back to front */
+      /* horizon haze softens the far clip line */
+      const hz = ctx.createLinearGradient(0, H * 0.42, 0, H * 0.58);
+      hz.addColorStop(0, 'rgba(191,224,245,.5)'); hz.addColorStop(1, 'rgba(191,224,245,0)');
+      ctx.fillStyle = hz; ctx.fillRect(0, H * 0.42, W, H * 0.16);
+
+      /* scenery + traffic sprites, back to front */
       for (let n = DRAW - 1; n >= 0; n--) {
         const seg = segs[(base.i + n) % segs.length];
-        if (!seg._p1 || !seg.cars.length) continue;
-        for (const car of seg.cars) {
-          const sp = seg._p1, cw = sp.sw * 0.9, cx = sp.sx + sp.sw * car.x, cy = sp.sy;
-          if (cw < 2) continue;
-          ctx.fillStyle = car.col;
-          ctx.fillRect(cx - cw * 0.28, cy - cw * 0.4, cw * 0.56, cw * 0.34);
-          ctx.fillStyle = '#111';
-          ctx.fillRect(cx - cw * 0.28, cy - cw * 0.08, cw * 0.56, cw * 0.08);
-        }
+        if (!seg._p1) continue;
+        if (seg.sprite) drawScenery(seg._p1, seg.sprite);
+        if (seg.cars.length) for (const car of seg.cars) drawTraffic(seg._p1, car);
         seg._p1 = null;
       }
 
       /* player car */
-      const pcW = 120, pcH = 60, pcx = W / 2 + playerX * 40 * 0, pcy = H - 68;
       const bounce = speed > 0 ? Math.sin(t * 30) * 1.5 * (speed / MAXSPD) : 0;
-      drawCar(W / 2, pcy + bounce, pcW, pcH, '#e8402a', (keys.get('ArrowLeft') || keys.get('a')) ? -1 : (keys.get('ArrowRight') || keys.get('d')) ? 1 : 0);
-      void pcx; void pcH;
+      const steer = (keys.get('ArrowLeft') || keys.get('a')) ? -1 : (keys.get('ArrowRight') || keys.get('d')) ? 1 : 0;
+      drawCar(W / 2, H - 74 + bounce, 132, 66, steer, keys.get('ArrowDown') || keys.get('s'));
 
-      /* HUD */
-      pSpeed.textContent = Math.round(speed / MAXSPD * 140) + ' mph';
-      pTime.textContent = t.toFixed(1) + 's';
+      /* speed lines when you're really moving */
+      const sp = speed / MAXSPD;
+      if (sp > 0.6) {
+        ctx.strokeStyle = 'rgba(255,255,255,' + (sp - 0.6) * 0.4 + ')';
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 6; i++) {
+          const yy = 40 + Math.random() * (H - 120), len = 20 + Math.random() * 40, side = i < 3 ? 40 : W - 40;
+          ctx.beginPath(); ctx.moveTo(side, yy); ctx.lineTo(side, yy + len); ctx.stroke();
+        }
+      }
+
+      ctx.restore();   // end shake
+
+      drawHUD();
+
+      if (cd > 0) {
+        const n = Math.ceil(cd - 0.6);
+        ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(0, 0, W, H);
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#fff'; ctx.strokeStyle = '#1d1722'; ctx.lineWidth = 6;
+        ctx.font = 'bold 120px Impact, Arial Black, sans-serif';
+        const label = n <= 0 ? 'GO!' : String(n);
+        ctx.strokeText(label, W / 2, H / 2); ctx.fillText(label, W / 2, H / 2);
+        ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+      }
+    }
+
+    function drawCar(cx, cy, w, hh, lean, braking) {
+      ctx.save(); ctx.translate(cx + lean * 7, cy);
+      ctx.fillStyle = 'rgba(0,0,0,.32)'; ctx.beginPath(); ctx.ellipse(0, hh * 0.44, w * 0.52, hh * 0.17, 0, 0, 7); ctx.fill();
+      /* tyres */
+      ctx.fillStyle = '#111'; ctx.fillRect(-w / 2, hh * 0.16, w * 0.2, hh * 0.34); ctx.fillRect(w / 2 - w * 0.2, hh * 0.16, w * 0.2, hh * 0.34);
+      /* body */
+      ctx.fillStyle = '#c0331f'; ctx.fillRect(-w / 2, -hh * 0.24, w, hh * 0.62);
+      ctx.fillStyle = '#e8402a'; ctx.fillRect(-w / 2, -hh * 0.24, w, hh * 0.24);
+      /* cabin + rear window */
+      ctx.fillStyle = '#12303f'; ctx.fillRect(-w * 0.33, -hh * 0.4, w * 0.66, hh * 0.26);
+      ctx.fillStyle = '#8fd0e8'; ctx.fillRect(-w * 0.29, -hh * 0.37, w * 0.58, hh * 0.14);
+      /* spoiler + brake lights */
+      ctx.fillStyle = '#1d1722'; ctx.fillRect(-w * 0.42, -hh * 0.3, w * 0.84, hh * 0.08);
+      ctx.fillStyle = braking ? '#ff5b47' : '#7a1810';
+      ctx.fillRect(-w / 2 + 6, hh * 0.02, w * 0.2, hh * 0.14); ctx.fillRect(w / 2 - w * 0.2 - 6, hh * 0.02, w * 0.2, hh * 0.14);
+      ctx.restore();
+    }
+
+    function drawHUD() {
       /* progress bar */
       ctx.fillStyle = 'rgba(0,0,0,.4)'; ctx.fillRect(10, 10, W - 20, 8);
       ctx.fillStyle = '#6fcf2f'; ctx.fillRect(10, 10, (W - 20) * clamp(pos / trackLen, 0, 1), 8);
-    }
-
-    function drawCar(cx, cy, w, hh, col, lean) {
-      ctx.save(); ctx.translate(cx + lean * 6, cy);
-      ctx.fillStyle = 'rgba(0,0,0,.3)'; ctx.beginPath(); ctx.ellipse(0, hh * 0.42, w * 0.5, hh * 0.16, 0, 0, 7); ctx.fill();
-      ctx.fillStyle = col; ctx.fillRect(-w / 2, -hh * 0.2, w, hh * 0.55);
-      ctx.fillStyle = '#8fd0e8'; ctx.fillRect(-w * 0.32, -hh * 0.34, w * 0.64, hh * 0.2);
-      ctx.fillStyle = '#111'; ctx.fillRect(-w / 2, hh * 0.28, w * 0.22, hh * 0.2); ctx.fillRect(w / 2 - w * 0.22, hh * 0.28, w * 0.22, hh * 0.2);
-      ctx.fillStyle = '#ffcb1f'; ctx.fillRect(-w / 2 + 4, -hh * 0.16, 8, 6); ctx.fillRect(w / 2 - 12, -hh * 0.16, 8, 6);
-      ctx.restore();
+      /* mph readout + a little speedo arc, bottom-left */
+      const mph = Math.round(speed / MAXSPD * 140);
+      const gx = 52, gy = H - 40, gr = 30;
+      ctx.strokeStyle = 'rgba(0,0,0,.45)'; ctx.lineWidth = 7;
+      ctx.beginPath(); ctx.arc(gx, gy, gr, Math.PI * 0.85, Math.PI * 2.15); ctx.stroke();
+      ctx.strokeStyle = '#ffcb1f';
+      ctx.beginPath(); ctx.arc(gx, gy, gr, Math.PI * 0.85, Math.PI * 0.85 + (Math.PI * 1.3) * clamp(speed / MAXSPD, 0, 1)); ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.strokeStyle = '#1d1722'; ctx.lineWidth = 3;
+      ctx.textAlign = 'center'; ctx.font = 'bold 18px "Courier New", monospace';
+      ctx.strokeText(mph, gx, gy + 6); ctx.fillText(mph, gx, gy + 6);
+      ctx.font = 'bold 9px "Courier New", monospace'; ctx.fillText('MPH', gx, gy + 20);
+      ctx.textAlign = 'left';
+      /* pills mirror the on-canvas HUD */
+      pSpeed.textContent = mph + ' mph';
+      pTime.textContent = t.toFixed(1) + 's';
     }
 
     bagg.add(Engine.onKey((e) => { if ((e.key === 'r' || e.key === 'R') && over) { build(); return true; } }));
@@ -263,10 +395,11 @@
     /* ---- test seam ---- */
     window.__racer = {
       build(lv) { if (lv != null) level = lv; build(); },
-      stats: () => ({ level, pos, trackLen, speed, playerX, t, over, won, segs: segs.length, cars: segs.reduce((a, s) => a + s.cars.length, 0) }),
+      stats: () => ({ level, pos, trackLen, speed, playerX, t, over, won, cd, segs: segs.length, cars: segs.reduce((a, s) => a + s.cars.length, 0) }),
       hold(code, v) { keys.state[code] = v; },
       tick(sec) { let s = sec; while (s > 0) { const dt = Math.min(1 / 60, s); update(dt); s -= dt; } },
-      setPos(z) { pos = z; }
+      setPos(z) { pos = z; },
+      skipCountdown() { cd = 0; }
     };
     bagg.add(() => { if (window.__racer) delete window.__racer; });
 
@@ -281,11 +414,11 @@
     emoji: 'car',
     cat: 'action',
     order: 20,
-    blurb: 'An arcade racer down a curving, cresting highway with traffic to weave through. Twenty stages get twistier and busier as you go, and you can jump straight to any of them.',
+    blurb: 'An arcade racer down a curving, cresting highway lined with scenery and traffic to weave through. Twenty stages get twistier and busier as you go, and you can jump straight to any of them.',
     scoreLabel: 'Stages cleared',
     tags: ['racing', 'driving', 'arcade', '3d'],
     how: [
-      'Hold gas to speed up, brake to slow, and steer left or right to stay on the road. Use arrow keys, WASD, or the on-screen buttons on touch.',
+      'Wait for the lights, then hold gas to speed up, brake to slow, and steer left or right to stay on the road. Use arrow keys, WASD, or the on-screen buttons on touch.',
       'The road bends and rolls over hills. On a curve the car drifts toward the outside, so steer into the bend to hold your line. Drift onto the grass and you bog down.',
       'Traffic is scattered along every stage. Clip a car and you lose almost all your speed, so pick your lane early.',
       'Reach the finish to clear the stage and bank your time. Later stages run longer, curvier and more crowded.',
