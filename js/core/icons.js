@@ -198,7 +198,8 @@
     traffic: r(8, 2, 8, 20, P.dark) + line(12, 3, 12, 8, 1.6, P.yellow) + line(12, 12, 12, 18, 1.6, P.yellow) + r(9, 4, 6, 3.4, P.tomato) + r(9, 10, 6, 3.4, P.yellow) + r(9, 16, 6, 3.4, P.lime),
     frost: line(12, 2, 12, 22, 1.6, P.teal) + line(3, 7, 21, 17, 1.6, P.teal) + line(3, 17, 21, 7, 1.6, P.teal) + line(9, 4, 12, 7, 1.4, P.teal) + line(15, 4, 12, 7, 1.4, P.teal) + line(4, 12, 8, 12, 1.4, P.teal) + line(20, 12, 16, 12, 1.4, P.teal) + c(12, 12, 2, P.paper),
     boom: line(3, 12, 9, 12, 1.7, P.teal) + line(9, 12, 15, 7, 1.5, P.teal) + line(9, 12, 15, 17, 1.5, P.teal) + line(15, 7, 21, 4, 1.3, P.tomato) + line(15, 7, 21, 10, 1.3, P.tomato) + line(15, 17, 21, 14, 1.3, P.tomato) + line(15, 17, 21, 20, 1.3, P.tomato),
-    life: r(9, 3, 5, 5, P.lime) + r(15, 9, 5, 5, P.lime) + r(3, 15, 5, 5, P.lime) + r(9, 15, 5, 5, P.lime) + r(15, 15, 5, 5, P.lime)
+    life: r(9, 3, 5, 5, P.lime) + r(15, 9, 5, 5, P.lime) + r(3, 15, 5, 5, P.lime) + r(9, 15, 5, 5, P.lime) + r(15, 15, 5, 5, P.lime),
+    powder: p('M6 4h12l-6 8z', P.yellow) + p('M6 20h12l-6-8z', P.grey) + c(12, 13, 1.1, P.yellow) + c(12, 16, 1, P.yellow) + line(5, 4, 19, 4, 2, P.grey) + line(5, 20, 19, 20, 2, P.grey)
   };
 
   const Icons = {
