@@ -14,12 +14,15 @@
     bagg.add(() => keys.dispose());
 
     let ship, terrain, pads, state, landings, msgT;
-    // difficulty: stronger pull, thinner fuel, narrower pads as it climbs
-    const GRAV = 26 + api.dm * 10;
-    const THRUST = 78;
+    // difficulty: stronger pull, thinner fuel, narrower pads as it climbs — but
+    // every tier must stay physically landable (THRUST-GRAV net decel with fuel
+    // to spare), so nightmare only tightens the margin, it doesn't make it a coin
+    // toss with no coin.
+    const GRAV = 26 + api.dm * 7;                        // normal 33 ... nightmare 44
+    const THRUST = 82;
     const ROT = 2.6;
-    const FUEL0 = clamp(Math.round(150 - api.dm * 30), 70, 200);
-    const SAFE_V = clamp(46 - api.dm * 8, 24, 60);      // max safe descent speed
+    const FUEL0 = clamp(Math.round(170 - api.dm * 20), 118, 220);   // nightmare still ~4s of burn
+    const SAFE_V = clamp(46 - api.dm * 6, 30, 60);      // max safe descent speed (floor raised)
     const SAFE_A = 0.30;                                 // max tilt off vertical (rad)
 
     const pFuel = api.pill('fuel 100');
@@ -41,30 +44,48 @@
     pad.append(mk('◀', 'ArrowLeft'), mk('THRUST', 'ArrowUp', 'thrust'), mk('▶', 'ArrowRight'));
     root.appendChild(pad);
 
+    /* Build terrain LEFT TO RIGHT with strictly-increasing x (so the collision
+       scan is valid) and lay each landing pad flat, snapping the walk to the pad
+       start so a pad can never be jumped over and lost. */
     function buildTerrain() {
       terrain = []; pads = [];
-      const nPads = api.dm >= 1.8 ? 1 : api.dm >= 1 ? 2 : 2;
-      const padW = clamp(78 - api.dm * 16, 40, 90);
-      let x = 0, y = H - randInt(40, 90);
-      terrain.push({ x: 0, y });
-      // decide pad x-positions
-      const padXs = [];
-      for (let i = 0; i < nPads; i++) padXs.push(60 + randInt(0, W - 120));
+      const nPads = api.dm >= 1.8 ? 1 : 2;
+      const padW = clamp(82 - api.dm * 12, 50, 92);
+      const padStarts = [];
+      for (let i = 0; i < nPads; i++) {
+        const slot = (W - 120) / nPads;
+        padStarts.push(Math.round(70 + i * slot + randInt(0, Math.max(1, Math.floor(slot - padW - 10)))));
+      }
+      padStarts.sort((a, b) => a - b);
+      let y = H - randInt(40, 90), x = 0, lastX = -4, pi = 0;
+      const push = (nx, ny, pad) => { nx = Math.max(nx, lastX + 4); terrain.push({ x: nx, y: ny, pad: !!pad }); lastX = nx; };
+      push(0, y);
       while (x < W) {
-        const onPad = padXs.find((px) => x >= px && x < px + padW);
-        if (onPad !== undefined) {
-          const py = y;
-          terrain.push({ x: onPad, y: py });
-          terrain.push({ x: onPad + padW, y: py, pad: true });
-          pads.push({ x1: onPad, x2: onPad + padW, y: py });
-          x = onPad + padW; y = clamp(py + randInt(-40, 40), H - 150, H - 30);
-          padXs.splice(padXs.indexOf(onPad), 1);
+        if (pi < padStarts.length && padStarts[pi] < W && x + 46 >= padStarts[pi]) {
+          push(padStarts[pi], y);                       // pad left edge (flat, at current y)
+          const left = terrain[terrain.length - 1].x;
+          push(Math.min(left + padW, W - 2), y, true);  // pad right edge
+          const right = terrain[terrain.length - 1].x;
+          pads.push({ x1: left, x2: right, y });
+          x = right; pi++;
+          y = clamp(y + randInt(-42, 42), H - 150, H - 30);
         } else {
-          x += randInt(24, 52); y = clamp(y + randInt(-34, 34), H - 170, H - 24);
-          terrain.push({ x: Math.min(x, W), y });
+          let nx = x + randInt(28, 56);
+          if (pi < padStarts.length) nx = Math.min(nx, padStarts[pi]);   // never overshoot a pad start
+          nx = Math.min(nx, W);
+          y = clamp(y + randInt(-34, 34), H - 172, H - 24);
+          push(nx, y);
+          x = nx;
         }
       }
-      terrain.push({ x: W, y });
+      if (terrain[terrain.length - 1].x < W) push(W, y);
+      // belt-and-braces: if a pad somehow didn't land, flatten a mid segment
+      if (!pads.length) {
+        const i = Math.floor(terrain.length / 2);
+        const py = terrain[i].y;
+        terrain[i - 1].y = py; terrain[i].pad = true;
+        pads.push({ x1: terrain[i - 1].x, x2: terrain[i].x, y: py });
+      }
     }
 
     function groundYAt(px) {
@@ -176,6 +197,13 @@
       ctx.fillRect(W - 60, 10, 50, 6);
       ctx.fillStyle = 'rgba(0,0,0,.5)'; ctx.fillRect(W - 60, 10, 50 * clamp(spd / (SAFE_V * 2), 0, 1), 6);
     }
+
+    /* ---- test seam ---- */
+    window.__lander = {
+      get: () => ({ pads: pads.map((p) => ({ ...p })), ship: { ...ship }, state, landings: landings || 0, SAFE_V }),
+      key: (code, v) => { keys.state[code] = v; }
+    };
+    bagg.add(() => { if (window.__lander) delete window.__lander; });
 
     reset(true);
     bagg.add(Engine.loop((dt) => { update(Math.min(0.05, dt)); draw(); }));

@@ -9,7 +9,10 @@
      connected (lots of one-letter neighbours) so ladders always exist */
   const DICT = ('able acid aged also arch area army atom aunt back bake ball band bane bang bank bare barn base bath bead beak beam bean bear beat beed been beer bell belt bend bent best bike bile bill bind bird bite blot blow blue blur boar boat body bold bolt bond bone book boot bore born boss both bout bowl brag bran brat bred brew brow buck bulk bull bump bunk burn bush bust busy cake calf call calm came camp cane cape card care cart case cash cast cave cell cent chap chat chef chin chip chop city clad clam clan clap claw clay clip clop club clue coal coat code coil coin cold cole colt come cone cook cool cope copy cord core cork corn cost cove crab crew crib crop crow cube cuff curb cure curl curt dale dame damp dark darn dart dash date dawn daze dead deaf deal dean dear debt deck deed deem deep deer dell demo dent desk dial dice diet dime dine ding dirt dish disk dive dock does dole doll dome done doom door dork dose dote dove down doze drag draw drew drip drop drug drum dual duck duct dude duel duke dull dumb dune dunk dusk dust duty each earl earn ease east easy echo edge fable face fact fade fail fair fake fall fame fang fare farm fast fate fawn fear feat feed feel fell felt fend fern fest feud file fill film find fine fire firm fish fist five flag flap flat flaw flea fled flee flew flip flit flog flop flow foam foil fold folk fond font food fool foot ford fore fork form fort foul four fowl free fret frog from fuel full fume fund fung fury fuse gain gait gala gale gall game gang gaol gape gash gate gave gaze gear geek gene gift gild gill gilt girl give glad glee glob glow glue goal goat goes gold golf gone good gore gown grab gram gray grew grey grid grim grin grip grit grow gulf gull gulp gush gust guts hail hair half hall halt hand hang hard hare hark harm harp hash hate haul have hawk haze head heal heap hear heat heed heel heir held hell helm help hemp hera herd here hero hers hide high hike hill hilt hind hint hire hiss hive hoax hold hole holy home hone hood hoof hook hoop hoot hope horn hose host hour howl huge hulk hull hump hung hunt hurl hurt hush hymn icon idea idle inch iron isle item jade jail jamb jazz jeep jest jibe join joke jolt jump june junk jury just kale keel keen keep kelp kept kick kill kiln kind king kiss kite knee knew knit knot know lace lack lady laid lair lake lamb lame lamp land lane lard lark lash last late lawn lazy lead leaf leak lean leap left lend lens lent less lest liar lice lick lied life lift like lily limb lime limp line link lint lion list live load loaf loan lobe lock lode loft loge logo lone long look loom loop loot lord lore lose loss lost loud love luck lull lump lung lure lurk lush lust lute made maid mail main make male mall malt mane mare mark mars mash mask mass mast mate math maze mead meal mean meat meek meet meld melt mend menu mere mesh mess mice mild mile milk mill mind mine mint mire miss mist mite moan moat mock mode mold mole monk mood moon moor moot more moss most moth move much muck mule mull muse mush must mute myth nail name nape near neat neck need nest news next nice nick nine node nook noon nope norm nose note noun nova nude numb oath oboe odor okay omen once only onto onyx ooze open oral ouch oust oval oven over pace pack pact page paid pail pain pair pale palm pane pang pant pare park part pass past pate path pave pawn peak peal pear peat peck peek peel peer pelt pend pent perk pest pick pier pike pile pill pine pink pint pipe pith plan play plea plod plot plow plug plum plus poem poet poke pole poll pond pony pool poor pope pore pork port pose posh post pour pout pray prep prey prim prod prom prop puff pull pulp pump punk pure push putt quad quay quit quiz race rack raft rage raid rail rain rake ramp rang rank rant rare rash rasp rate rave read real ream reap rear reed reef reek reel rein rely rend rent rest rice rich ride rife rift ring rink riot ripe rise risk road roam roar robe rock rode role roll roof rook room root rope rose rosy rote rout ruby rude ruff rule rump rune rung runt rush rust sack safe saga sage said sail sake sale salt same sand sane sang sank sash save saw scab scan scar seal seam sear seat sect seed seek seem seen self sell send sent sept sew shed shin ship shod shoe shop shot show shun shut sick side sift sigh sign silk sill silo sing sink site sire size skew skid skim skin skip skit slab slam slap slat sled slew slid slim slip slit slob slog slot slow slug slum smog smug snag snap snip snob snot snow snub snug soak soap soar sock soda sofa soft soil sold sole solo song soon soot sore sort soul soup sour sown span spar spat sped spin spit spot spry spud spun spur stab stag star stay stem step stew stir stop stow stub stud stun such suck suit sulk sung sunk sure surf swab swam swan swap swat sway swig swim tab tack tact tail take tale talk tall tame tang tank tape task taut teak teal team tear teem tell temp tend tent term tern test text than that thaw thee them then thew thin this thud thus tick tide tidy tied tier tile till tilt time tine tint tiny tire toad toe tofu toga togs toil told toll tomb tone tong took tool toot tore torn toss tote tour town toys trap tray tree trek trim trio trip trod trot troy true tsar tuba tube tuck tuft tuna tune turf turn tusk twig twin type ugly undo unit unto upon urge used user vain vale vane vary vase vast veal veer veil vein vend vent verb vest veto vial vice view vile vine visa vise void volt vote wade wady waft wage wail wait wake wale walk wall wand wane want ward ware warm warn warp wart wary wash wasp wave wavy waxy weak wean wear webs weed week weep weld well went wept were west what when whet whim whip whir whit whiz whom wick wide wife wild will wilt wind wine wing wink wipe wire wise wish wisp with woes woke wolf womb wont wood wool word wore work worm worn wrap wren writ yard yarn yawn yeah year yell yoga yoke yolk your zeal zero zest zinc zone zoom').split(' ');
 
-  const SET = new Set(DICT);
+  /* keep only true four-letter words — a few 3/5-letter tokens slipped into the
+     list and a 4-letter game must never start from or reach them */
+  const WORDS = DICT.filter((w) => w.length === 4);
+  const SET = new Set(WORDS);
   const neighbours = (w) => {
     const out = [];
     for (let i = 0; i < 4; i++) for (let ch = 97; ch <= 122; ch++) {
@@ -23,7 +26,7 @@
      distance; returns {start,target,par} guaranteed solvable */
   function makePuzzle(minD, maxD) {
     for (let tries = 0; tries < 60; tries++) {
-      const start = DICT[randInt(0, DICT.length - 1)];
+      const start = WORDS[randInt(0, WORDS.length - 1)];
       const dist = { [start]: 0 };
       const q = [start]; const atDist = {};
       while (q.length) {
@@ -53,7 +56,14 @@
     const msg = h('div', { class: 'lad-msg' }, '');
     root.appendChild(h('div', { class: 'ladder' }, goalRow, chain, slots, msg, keyRows));
     api.button('New ladder', fresh);
+    api.button('Undo rung', undoRung);
     api.button('Hint', hint);
+
+    function undoRung() {
+      if (over || path.length <= 1) return;   // can't undo the start word
+      path.pop(); draft = ''; api.sfx.click(); paint();
+      msg.textContent = ''; msg.className = 'lad-msg';
+    }
 
     function fresh() {
       const lo = api.dm <= 0.8 ? 3 : api.dm >= 2 ? 6 : 4;
@@ -96,13 +106,15 @@
     function hint() {
       if (over) return;
       const prev = path[path.length - 1];
-      // BFS from prev to target, suggest the first step
+      /* BFS from the current rung to the target, refusing to step onto a word
+         already used — otherwise the hint suggests a rung submit() will reject */
+      const used = new Set(path);
       const dist = { [prev]: 0 }, from = {}; const q = [prev];
       while (q.length) {
         const w = q.shift(); if (w === puzzle.target) break;
-        for (const n of neighbours(w)) if (dist[n] === undefined) { dist[n] = dist[w] + 1; from[n] = w; q.push(n); }
+        for (const n of neighbours(w)) if (dist[n] === undefined && !used.has(n)) { dist[n] = dist[w] + 1; from[n] = w; q.push(n); }
       }
-      if (dist[puzzle.target] === undefined) { flash('No hint from here — try a New ladder.'); return; }
+      if (dist[puzzle.target] === undefined) { flash('Dead end from “' + prev.toUpperCase() + '” — Undo a rung and try another way.'); return; }
       let step = puzzle.target; while (from[step] && from[step] !== prev) step = from[step];
       draft = step; paint(); flash('Try ' + step.toUpperCase() + '.'); api.sfx.tone ? api.sfx.tone(660) : api.sfx.blip(660);
     }
@@ -162,6 +174,7 @@
 
   Arcade.register({
     id: 'ladder', title: 'Word Ladder', emoji: 'ladder', cat: 'brain', order: 26,
+    usesLetters: true,   // typed letters are gameplay — keep the shell's 'r' = restart shortcut off
     blurb: 'Turn one word into another by changing a single letter at a time — and every step in between has to be a real word. Each puzzle is built to have a solution and a par.',
     scoreLabel: 'Solved', tags: ['word', 'puzzle', 'vocabulary'],
     how: [

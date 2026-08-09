@@ -25,9 +25,10 @@
     api.button('New round', reset);
 
     function buildSlots(e) {
-      // 9 slots, symmetric: big at the edges, dead zero just inside them, safe middle
+      // 9 slots, symmetric: big pay at the edges, a real PENALTY just inside them,
+      // then a calm middle — so the edges genuinely pay big and sting big
       const t = Math.round(e / 3);
-      return [e, t, 3, 1, 0, 1, 3, t, e];
+      return [e, -t, 3, 1, 0, 1, 3, -t, e];
     }
 
     function build() {
@@ -51,7 +52,7 @@
       chips = []; banked = 0; left = CHIPS; over = false;
       banner.style.display = 'none';
       pBank.textContent = 'banked 0'; pLeft.textContent = 'chips ' + CHIPS;
-      api.status('Tap along the top to drop a chip. It bounces down through the pegs into a slot — the edges pay the most and cost the most. You get ' + CHIPS + ' chips.');
+      api.status('Tap along the top to drop a chip. It rattles down into a slot — the outer slots pay the most, the two just inside them take points away, and the middle is a wash. You get ' + CHIPS + ' chips.');
     }
 
     function drop(x) {
@@ -93,11 +94,12 @@
     function landChip(c) {
       c.done = true;
       const s = slots.find((sl) => c.x >= sl.x1 && c.x < sl.x2) || slots[slots.length - 1];
-      banked += s.v;
+      banked = Math.max(0, banked + s.v);        // a penalty slot can eat into the bank, but not below zero
       pBank.textContent = 'banked ' + banked;
       c.slot = s;
-      if (s.v >= SLOTVALS[0]) { api.sfx.great(); }
-      else if (s.v === 0) { api.sfx.thud(); }
+      if (s.v >= SLOTVALS[0]) api.sfx.great();
+      else if (s.v < 0) api.sfx.bad();
+      else if (s.v === 0) api.sfx.thud();
       else api.sfx.good();
     }
 
@@ -118,8 +120,8 @@
       ctx.fillStyle = '#1b1630'; ctx.fillRect(0, 0, W, H);
       // slots
       for (const s of slots) {
-        const big = s.v >= SLOTVALS[0], zero = s.v === 0;
-        ctx.fillStyle = big ? '#e8402a' : zero ? '#3a3450' : s.v >= 3 ? '#6f3fa8' : '#00838d';
+        const big = s.v >= SLOTVALS[0], zero = s.v === 0, neg = s.v < 0;
+        ctx.fillStyle = big ? '#3a9d3a' : neg ? '#b3312a' : zero ? '#3a3450' : s.v >= 3 ? '#6f3fa8' : '#00838d';
         ctx.fillRect(s.x1 + 1, BOT + 4, s.x2 - s.x1 - 2, H - BOT - 8);
         ctx.fillStyle = '#fff'; ctx.font = 'bold 13px system-ui'; ctx.textAlign = 'center';
         ctx.fillText((s.v > 0 ? '+' : '') + s.v, (s.x1 + s.x2) / 2, BOT + 26);
@@ -145,13 +147,13 @@
 
   Arcade.register({
     id: 'plinko', title: 'Quarter Plinko', emoji: 'plinko', cat: 'goofy', order: 44,
-    blurb: 'Drop a chip and watch it rattle down through the pegs into a payout slot. The edges pay the most and sting the most. Fifteen chips to a round.',
-    scoreLabel: 'Best round', tags: ['luck', 'physics', 'satisfying'],
+    blurb: 'Drop a chip and watch it rattle down through the pegs into a payout slot. The outer slots pay big — but the two just inside them take points away, so aiming for the edge is a gamble. Fifteen chips to a round.',
+    scoreLabel: 'Best round', tags: ['luck', 'physics', 'risk'],
     how: [
       'Tap anywhere along the top to drop a chip from that spot.',
       'It clatters down through the pegs — where it ends up is mostly up to the bounces.',
-      'Each slot at the bottom adds its number to your bank. The outer slots pay big; the ones just inside them are worth nothing.',
-      'You get fifteen chips a round. Bank as much as you can.'
+      'The outer slots pay the most; the two slots just inside them are penalties that eat into your bank; the middle is a wash.',
+      'You get fifteen chips a round. Your bank never drops below zero. Bank as much as you dare.'
     ],
     mount
   });

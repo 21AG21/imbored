@@ -16567,7 +16567,10 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
      connected (lots of one-letter neighbours) so ladders always exist */
   const DICT = ('able acid aged also arch area army atom aunt back bake ball band bane bang bank bare barn base bath bead beak beam bean bear beat beed been beer bell belt bend bent best bike bile bill bind bird bite blot blow blue blur boar boat body bold bolt bond bone book boot bore born boss both bout bowl brag bran brat bred brew brow buck bulk bull bump bunk burn bush bust busy cake calf call calm came camp cane cape card care cart case cash cast cave cell cent chap chat chef chin chip chop city clad clam clan clap claw clay clip clop club clue coal coat code coil coin cold cole colt come cone cook cool cope copy cord core cork corn cost cove crab crew crib crop crow cube cuff curb cure curl curt dale dame damp dark darn dart dash date dawn daze dead deaf deal dean dear debt deck deed deem deep deer dell demo dent desk dial dice diet dime dine ding dirt dish disk dive dock does dole doll dome done doom door dork dose dote dove down doze drag draw drew drip drop drug drum dual duck duct dude duel duke dull dumb dune dunk dusk dust duty each earl earn ease east easy echo edge fable face fact fade fail fair fake fall fame fang fare farm fast fate fawn fear feat feed feel fell felt fend fern fest feud file fill film find fine fire firm fish fist five flag flap flat flaw flea fled flee flew flip flit flog flop flow foam foil fold folk fond font food fool foot ford fore fork form fort foul four fowl free fret frog from fuel full fume fund fung fury fuse gain gait gala gale gall game gang gaol gape gash gate gave gaze gear geek gene gift gild gill gilt girl give glad glee glob glow glue goal goat goes gold golf gone good gore gown grab gram gray grew grey grid grim grin grip grit grow gulf gull gulp gush gust guts hail hair half hall halt hand hang hard hare hark harm harp hash hate haul have hawk haze head heal heap hear heat heed heel heir held hell helm help hemp hera herd here hero hers hide high hike hill hilt hind hint hire hiss hive hoax hold hole holy home hone hood hoof hook hoop hoot hope horn hose host hour howl huge hulk hull hump hung hunt hurl hurt hush hymn icon idea idle inch iron isle item jade jail jamb jazz jeep jest jibe join joke jolt jump june junk jury just kale keel keen keep kelp kept kick kill kiln kind king kiss kite knee knew knit knot know lace lack lady laid lair lake lamb lame lamp land lane lard lark lash last late lawn lazy lead leaf leak lean leap left lend lens lent less lest liar lice lick lied life lift like lily limb lime limp line link lint lion list live load loaf loan lobe lock lode loft loge logo lone long look loom loop loot lord lore lose loss lost loud love luck lull lump lung lure lurk lush lust lute made maid mail main make male mall malt mane mare mark mars mash mask mass mast mate math maze mead meal mean meat meek meet meld melt mend menu mere mesh mess mice mild mile milk mill mind mine mint mire miss mist mite moan moat mock mode mold mole monk mood moon moor moot more moss most moth move much muck mule mull muse mush must mute myth nail name nape near neat neck need nest news next nice nick nine node nook noon nope norm nose note noun nova nude numb oath oboe odor okay omen once only onto onyx ooze open oral ouch oust oval oven over pace pack pact page paid pail pain pair pale palm pane pang pant pare park part pass past pate path pave pawn peak peal pear peat peck peek peel peer pelt pend pent perk pest pick pier pike pile pill pine pink pint pipe pith plan play plea plod plot plow plug plum plus poem poet poke pole poll pond pony pool poor pope pore pork port pose posh post pour pout pray prep prey prim prod prom prop puff pull pulp pump punk pure push putt quad quay quit quiz race rack raft rage raid rail rain rake ramp rang rank rant rare rash rasp rate rave read real ream reap rear reed reef reek reel rein rely rend rent rest rice rich ride rife rift ring rink riot ripe rise risk road roam roar robe rock rode role roll roof rook room root rope rose rosy rote rout ruby rude ruff rule rump rune rung runt rush rust sack safe saga sage said sail sake sale salt same sand sane sang sank sash save saw scab scan scar seal seam sear seat sect seed seek seem seen self sell send sent sept sew shed shin ship shod shoe shop shot show shun shut sick side sift sigh sign silk sill silo sing sink site sire size skew skid skim skin skip skit slab slam slap slat sled slew slid slim slip slit slob slog slot slow slug slum smog smug snag snap snip snob snot snow snub snug soak soap soar sock soda sofa soft soil sold sole solo song soon soot sore sort soul soup sour sown span spar spat sped spin spit spot spry spud spun spur stab stag star stay stem step stew stir stop stow stub stud stun such suck suit sulk sung sunk sure surf swab swam swan swap swat sway swig swim tab tack tact tail take tale talk tall tame tang tank tape task taut teak teal team tear teem tell temp tend tent term tern test text than that thaw thee them then thew thin this thud thus tick tide tidy tied tier tile till tilt time tine tint tiny tire toad toe tofu toga togs toil told toll tomb tone tong took tool toot tore torn toss tote tour town toys trap tray tree trek trim trio trip trod trot troy true tsar tuba tube tuck tuft tuna tune turf turn tusk twig twin type ugly undo unit unto upon urge used user vain vale vane vary vase vast veal veer veil vein vend vent verb vest veto vial vice view vile vine visa vise void volt vote wade wady waft wage wail wait wake wale walk wall wand wane want ward ware warm warn warp wart wary wash wasp wave wavy waxy weak wean wear webs weed week weep weld well went wept were west what when whet whim whip whir whit whiz whom wick wide wife wild will wilt wind wine wing wink wipe wire wise wish wisp with woes woke wolf womb wont wood wool word wore work worm worn wrap wren writ yard yarn yawn yeah year yell yoga yoke yolk your zeal zero zest zinc zone zoom').split(' ');
 
-  const SET = new Set(DICT);
+  /* keep only true four-letter words — a few 3/5-letter tokens slipped into the
+     list and a 4-letter game must never start from or reach them */
+  const WORDS = DICT.filter((w) => w.length === 4);
+  const SET = new Set(WORDS);
   const neighbours = (w) => {
     const out = [];
     for (let i = 0; i < 4; i++) for (let ch = 97; ch <= 122; ch++) {
@@ -16581,7 +16584,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
      distance; returns {start,target,par} guaranteed solvable */
   function makePuzzle(minD, maxD) {
     for (let tries = 0; tries < 60; tries++) {
-      const start = DICT[randInt(0, DICT.length - 1)];
+      const start = WORDS[randInt(0, WORDS.length - 1)];
       const dist = { [start]: 0 };
       const q = [start]; const atDist = {};
       while (q.length) {
@@ -16611,7 +16614,14 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     const msg = h('div', { class: 'lad-msg' }, '');
     root.appendChild(h('div', { class: 'ladder' }, goalRow, chain, slots, msg, keyRows));
     api.button('New ladder', fresh);
+    api.button('Undo rung', undoRung);
     api.button('Hint', hint);
+
+    function undoRung() {
+      if (over || path.length <= 1) return;   // can't undo the start word
+      path.pop(); draft = ''; api.sfx.click(); paint();
+      msg.textContent = ''; msg.className = 'lad-msg';
+    }
 
     function fresh() {
       const lo = api.dm <= 0.8 ? 3 : api.dm >= 2 ? 6 : 4;
@@ -16654,13 +16664,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     function hint() {
       if (over) return;
       const prev = path[path.length - 1];
-      // BFS from prev to target, suggest the first step
+      /* BFS from the current rung to the target, refusing to step onto a word
+         already used — otherwise the hint suggests a rung submit() will reject */
+      const used = new Set(path);
       const dist = { [prev]: 0 }, from = {}; const q = [prev];
       while (q.length) {
         const w = q.shift(); if (w === puzzle.target) break;
-        for (const n of neighbours(w)) if (dist[n] === undefined) { dist[n] = dist[w] + 1; from[n] = w; q.push(n); }
+        for (const n of neighbours(w)) if (dist[n] === undefined && !used.has(n)) { dist[n] = dist[w] + 1; from[n] = w; q.push(n); }
       }
-      if (dist[puzzle.target] === undefined) { flash('No hint from here — try a New ladder.'); return; }
+      if (dist[puzzle.target] === undefined) { flash('Dead end from “' + prev.toUpperCase() + '” — Undo a rung and try another way.'); return; }
       let step = puzzle.target; while (from[step] && from[step] !== prev) step = from[step];
       draft = step; paint(); flash('Try ' + step.toUpperCase() + '.'); api.sfx.tone ? api.sfx.tone(660) : api.sfx.blip(660);
     }
@@ -16720,6 +16732,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   Arcade.register({
     id: 'ladder', title: 'Word Ladder', emoji: 'ladder', cat: 'brain', order: 26,
+    usesLetters: true,   // typed letters are gameplay — keep the shell's 'r' = restart shortcut off
     blurb: 'Turn one word into another by changing a single letter at a time — and every step in between has to be a real word. Each puzzle is built to have a solution and a par.',
     scoreLabel: 'Solved', tags: ['word', 'puzzle', 'vocabulary'],
     how: [
@@ -22966,12 +22979,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     bagg.add(() => keys.dispose());
 
     let ship, terrain, pads, state, landings, msgT;
-    // difficulty: stronger pull, thinner fuel, narrower pads as it climbs
-    const GRAV = 26 + api.dm * 10;
-    const THRUST = 78;
+    // difficulty: stronger pull, thinner fuel, narrower pads as it climbs — but
+    // every tier must stay physically landable (THRUST-GRAV net decel with fuel
+    // to spare), so nightmare only tightens the margin, it doesn't make it a coin
+    // toss with no coin.
+    const GRAV = 26 + api.dm * 7;                        // normal 33 ... nightmare 44
+    const THRUST = 82;
     const ROT = 2.6;
-    const FUEL0 = clamp(Math.round(150 - api.dm * 30), 70, 200);
-    const SAFE_V = clamp(46 - api.dm * 8, 24, 60);      // max safe descent speed
+    const FUEL0 = clamp(Math.round(170 - api.dm * 20), 118, 220);   // nightmare still ~4s of burn
+    const SAFE_V = clamp(46 - api.dm * 6, 30, 60);      // max safe descent speed (floor raised)
     const SAFE_A = 0.30;                                 // max tilt off vertical (rad)
 
     const pFuel = api.pill('fuel 100');
@@ -22993,30 +23009,48 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     pad.append(mk('◀', 'ArrowLeft'), mk('THRUST', 'ArrowUp', 'thrust'), mk('▶', 'ArrowRight'));
     root.appendChild(pad);
 
+    /* Build terrain LEFT TO RIGHT with strictly-increasing x (so the collision
+       scan is valid) and lay each landing pad flat, snapping the walk to the pad
+       start so a pad can never be jumped over and lost. */
     function buildTerrain() {
       terrain = []; pads = [];
-      const nPads = api.dm >= 1.8 ? 1 : api.dm >= 1 ? 2 : 2;
-      const padW = clamp(78 - api.dm * 16, 40, 90);
-      let x = 0, y = H - randInt(40, 90);
-      terrain.push({ x: 0, y });
-      // decide pad x-positions
-      const padXs = [];
-      for (let i = 0; i < nPads; i++) padXs.push(60 + randInt(0, W - 120));
+      const nPads = api.dm >= 1.8 ? 1 : 2;
+      const padW = clamp(82 - api.dm * 12, 50, 92);
+      const padStarts = [];
+      for (let i = 0; i < nPads; i++) {
+        const slot = (W - 120) / nPads;
+        padStarts.push(Math.round(70 + i * slot + randInt(0, Math.max(1, Math.floor(slot - padW - 10)))));
+      }
+      padStarts.sort((a, b) => a - b);
+      let y = H - randInt(40, 90), x = 0, lastX = -4, pi = 0;
+      const push = (nx, ny, pad) => { nx = Math.max(nx, lastX + 4); terrain.push({ x: nx, y: ny, pad: !!pad }); lastX = nx; };
+      push(0, y);
       while (x < W) {
-        const onPad = padXs.find((px) => x >= px && x < px + padW);
-        if (onPad !== undefined) {
-          const py = y;
-          terrain.push({ x: onPad, y: py });
-          terrain.push({ x: onPad + padW, y: py, pad: true });
-          pads.push({ x1: onPad, x2: onPad + padW, y: py });
-          x = onPad + padW; y = clamp(py + randInt(-40, 40), H - 150, H - 30);
-          padXs.splice(padXs.indexOf(onPad), 1);
+        if (pi < padStarts.length && padStarts[pi] < W && x + 46 >= padStarts[pi]) {
+          push(padStarts[pi], y);                       // pad left edge (flat, at current y)
+          const left = terrain[terrain.length - 1].x;
+          push(Math.min(left + padW, W - 2), y, true);  // pad right edge
+          const right = terrain[terrain.length - 1].x;
+          pads.push({ x1: left, x2: right, y });
+          x = right; pi++;
+          y = clamp(y + randInt(-42, 42), H - 150, H - 30);
         } else {
-          x += randInt(24, 52); y = clamp(y + randInt(-34, 34), H - 170, H - 24);
-          terrain.push({ x: Math.min(x, W), y });
+          let nx = x + randInt(28, 56);
+          if (pi < padStarts.length) nx = Math.min(nx, padStarts[pi]);   // never overshoot a pad start
+          nx = Math.min(nx, W);
+          y = clamp(y + randInt(-34, 34), H - 172, H - 24);
+          push(nx, y);
+          x = nx;
         }
       }
-      terrain.push({ x: W, y });
+      if (terrain[terrain.length - 1].x < W) push(W, y);
+      // belt-and-braces: if a pad somehow didn't land, flatten a mid segment
+      if (!pads.length) {
+        const i = Math.floor(terrain.length / 2);
+        const py = terrain[i].y;
+        terrain[i - 1].y = py; terrain[i].pad = true;
+        pads.push({ x1: terrain[i - 1].x, x2: terrain[i].x, y: py });
+      }
     }
 
     function groundYAt(px) {
@@ -23128,6 +23162,13 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       ctx.fillRect(W - 60, 10, 50, 6);
       ctx.fillStyle = 'rgba(0,0,0,.5)'; ctx.fillRect(W - 60, 10, 50 * clamp(spd / (SAFE_V * 2), 0, 1), 6);
     }
+
+    /* ---- test seam ---- */
+    window.__lander = {
+      get: () => ({ pads: pads.map((p) => ({ ...p })), ship: { ...ship }, state, landings: landings || 0, SAFE_V }),
+      key: (code, v) => { keys.state[code] = v; }
+    };
+    bagg.add(() => { if (window.__lander) delete window.__lander; });
 
     reset(true);
     bagg.add(Engine.loop((dt) => { update(Math.min(0.05, dt)); draw(); }));
@@ -25185,9 +25226,10 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     api.button('New round', reset);
 
     function buildSlots(e) {
-      // 9 slots, symmetric: big at the edges, dead zero just inside them, safe middle
+      // 9 slots, symmetric: big pay at the edges, a real PENALTY just inside them,
+      // then a calm middle — so the edges genuinely pay big and sting big
       const t = Math.round(e / 3);
-      return [e, t, 3, 1, 0, 1, 3, t, e];
+      return [e, -t, 3, 1, 0, 1, 3, -t, e];
     }
 
     function build() {
@@ -25211,7 +25253,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       chips = []; banked = 0; left = CHIPS; over = false;
       banner.style.display = 'none';
       pBank.textContent = 'banked 0'; pLeft.textContent = 'chips ' + CHIPS;
-      api.status('Tap along the top to drop a chip. It bounces down through the pegs into a slot — the edges pay the most and cost the most. You get ' + CHIPS + ' chips.');
+      api.status('Tap along the top to drop a chip. It rattles down into a slot — the outer slots pay the most, the two just inside them take points away, and the middle is a wash. You get ' + CHIPS + ' chips.');
     }
 
     function drop(x) {
@@ -25253,11 +25295,12 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     function landChip(c) {
       c.done = true;
       const s = slots.find((sl) => c.x >= sl.x1 && c.x < sl.x2) || slots[slots.length - 1];
-      banked += s.v;
+      banked = Math.max(0, banked + s.v);        // a penalty slot can eat into the bank, but not below zero
       pBank.textContent = 'banked ' + banked;
       c.slot = s;
-      if (s.v >= SLOTVALS[0]) { api.sfx.great(); }
-      else if (s.v === 0) { api.sfx.thud(); }
+      if (s.v >= SLOTVALS[0]) api.sfx.great();
+      else if (s.v < 0) api.sfx.bad();
+      else if (s.v === 0) api.sfx.thud();
       else api.sfx.good();
     }
 
@@ -25278,8 +25321,8 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       ctx.fillStyle = '#1b1630'; ctx.fillRect(0, 0, W, H);
       // slots
       for (const s of slots) {
-        const big = s.v >= SLOTVALS[0], zero = s.v === 0;
-        ctx.fillStyle = big ? '#e8402a' : zero ? '#3a3450' : s.v >= 3 ? '#6f3fa8' : '#00838d';
+        const big = s.v >= SLOTVALS[0], zero = s.v === 0, neg = s.v < 0;
+        ctx.fillStyle = big ? '#3a9d3a' : neg ? '#b3312a' : zero ? '#3a3450' : s.v >= 3 ? '#6f3fa8' : '#00838d';
         ctx.fillRect(s.x1 + 1, BOT + 4, s.x2 - s.x1 - 2, H - BOT - 8);
         ctx.fillStyle = '#fff'; ctx.font = 'bold 13px system-ui'; ctx.textAlign = 'center';
         ctx.fillText((s.v > 0 ? '+' : '') + s.v, (s.x1 + s.x2) / 2, BOT + 26);
@@ -25305,13 +25348,13 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   Arcade.register({
     id: 'plinko', title: 'Quarter Plinko', emoji: 'plinko', cat: 'goofy', order: 44,
-    blurb: 'Drop a chip and watch it rattle down through the pegs into a payout slot. The edges pay the most and sting the most. Fifteen chips to a round.',
-    scoreLabel: 'Best round', tags: ['luck', 'physics', 'satisfying'],
+    blurb: 'Drop a chip and watch it rattle down through the pegs into a payout slot. The outer slots pay big — but the two just inside them take points away, so aiming for the edge is a gamble. Fifteen chips to a round.',
+    scoreLabel: 'Best round', tags: ['luck', 'physics', 'risk'],
     how: [
       'Tap anywhere along the top to drop a chip from that spot.',
       'It clatters down through the pegs — where it ends up is mostly up to the bounces.',
-      'Each slot at the bottom adds its number to your bank. The outer slots pay big; the ones just inside them are worth nothing.',
-      'You get fifteen chips a round. Bank as much as you can.'
+      'The outer slots pay the most; the two slots just inside them are penalties that eat into your bank; the middle is a wash.',
+      'You get fifteen chips a round. Your bank never drops below zero. Bank as much as you dare.'
     ],
     mount
   });
