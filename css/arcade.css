@@ -1915,3 +1915,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   border: 4px solid #fff; border-radius: 8px; cursor: pointer; box-shadow: 0 0 0 4px #000; animation: rave-wobble .3s infinite; }
 @keyframes rave-wobble { 0%, 100% { transform: rotate(-3deg) scale(1); } 50% { transform: rotate(3deg) scale(1.06); } }
 @media (prefers-reduced-motion: reduce) { .rave-stop { animation: none; } }
+
+/* Soundboard */
+.sb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px;
+  width: 100%; max-width: 620px; margin: 0 auto; }
+.sb-pad { position: relative; aspect-ratio: 1.3; border: 3px solid var(--ink); box-shadow: var(--bevel-out);
+  background: var(--paper); cursor: pointer; display: grid; place-items: center; gap: 2px; padding: 8px;
+  transition: transform .05s; }
+.sb-pad:active { box-shadow: var(--bevel-in); transform: translate(1px, 1px); }
+.sb-pad.lit { animation: sb-flash .3s; }
+@keyframes sb-flash { 0% { background: var(--banana); } 100% { background: var(--paper); } }
+.sb-emoji { font-size: 26px; line-height: 1; }
+.sb-label { font: 700 12px Verdana, sans-serif; color: var(--ink); text-align: center; }
+.sb-key { position: absolute; top: 4px; right: 6px; font: 700 9px "Courier New", monospace; color: var(--ink3); }
