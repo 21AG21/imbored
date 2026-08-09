@@ -452,11 +452,13 @@
   /* a curated first-run shelf, so 55 games are not a wall of equal choices */
   const FEATURED = [
     { id: 'workbook', hook: 'Minesweeper wearing a spreadsheet. Hide in plain sight.' },
+    { id: 'spamfilter', hook: 'Tower defense for your inbox. Hold the line.' },
+    { id: 'bubblewrap', hook: 'Aim, fire, pop clusters. Endlessly satisfying.' },
     { id: 'life', hook: 'Draw a colony, drop a glider gun, watch it breathe.' },
+    { id: 'turf', hook: 'Rock-paper-scissors that curls into living spirals.' },
     { id: 'logistic', hook: 'One knob turns calm into chaos — the famous route.' },
-    { id: 'connect4', hook: 'Beat the CPU, or a coworker by hotseat or code.' },
-    { id: 'minesweeper', hook: 'The original meeting game.' },
-    { id: '2048', hook: 'Slide, merge, lose an afternoon.' }
+    { id: 'busywork', hook: 'File reports, hire interns, reorg. Forever.' },
+    { id: 'connect4', hook: 'Beat the CPU, or a coworker by hotseat or code.' }
   ];
 
   function renderHub() {
@@ -715,7 +717,7 @@
 
   /* ---------------- router ---------------- */
   /* ---------------- Daily challenge (same seeded board for everyone) ---------------- */
-  const DAILY_POOL = ['minesweeper', '2048', 'fifteen', 'flood', 'jam', 'sokoban', 'pipes', 'maze', 'sudoku', 'lightsout', 'nonogram', 'wordguess', 'match3'];
+  const DAILY_POOL = ['minesweeper', '2048', 'fifteen', 'flood', 'jam', 'sokoban', 'pipes', 'maze', 'sudoku', 'lightsout', 'nonogram', 'wordguess', 'match3', 'workbook', 'wordsearch'];
   let restoreRandom = null;
   function installSeed(s) { const orig = Math.random; Math.random = Engine.rng(s); return () => { Math.random = orig; }; }
   function todayStamp() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
