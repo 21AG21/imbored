@@ -329,6 +329,52 @@
     };
   })();
 
+  /* ---------- Engine.fx: a shared confetti burst overlay ----------
+     One fixed pointer-through canvas over the page; particles self-clean when
+     they die and the rAF loop stops. Skipped entirely under reduced-motion. */
+  Engine.fx = (function () {
+    let cv = null, fctx = null, parts = [], raf = 0;
+    const COLORS = ['#ffcb1f', '#e8402a', '#00a6b4', '#6fcf2f', '#ff2d87', '#6f3fa8'];
+    const reduce = () => { try { return global.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } };
+    function resize() { if (cv) { cv.width = global.innerWidth; cv.height = global.innerHeight; } }
+    function ensure() {
+      if (cv) return;
+      cv = document.createElement('canvas');
+      cv.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:950';
+      document.body.appendChild(cv);
+      fctx = cv.getContext('2d');
+      resize();
+      global.addEventListener('resize', resize);
+    }
+    function loop() {
+      if (!parts.length) { raf = 0; if (fctx) fctx.clearRect(0, 0, cv.width, cv.height); return; }
+      fctx.clearRect(0, 0, cv.width, cv.height);
+      for (let i = parts.length - 1; i >= 0; i--) {
+        const p = parts[i];
+        p.vy += 0.35; p.x += p.vx; p.y += p.vy; p.life -= 0.016; p.rot += p.vr;
+        if (p.life <= 0) { parts.splice(i, 1); continue; }
+        fctx.save();
+        fctx.globalAlpha = clamp(p.life * 2, 0, 1);
+        fctx.translate(p.x, p.y); fctx.rotate(p.rot);
+        fctx.fillStyle = p.c; fctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s * 0.6);
+        fctx.restore();
+      }
+      raf = requestAnimationFrame(loop);
+    }
+    return {
+      burst(x, y, n) {
+        if (reduce()) return;
+        ensure();
+        n = n || 42;
+        for (let i = 0; i < n; i++) {
+          const a = Math.random() * Math.PI * 2, sp = 3 + Math.random() * 7;
+          parts.push({ x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 4, life: 0.8 + Math.random() * 0.6, s: 5 + Math.random() * 5, c: COLORS[(Math.random() * COLORS.length) | 0], rot: Math.random() * 6, vr: (Math.random() - 0.5) * 0.4 });
+        }
+        if (!raf) raf = requestAnimationFrame(loop);
+      }
+    };
+  })();
+
   /* ---------- share a board position as a short, checksummed code ----------
      Packs an array of small cell values (0/1/2) plus one extra bit (whose turn)
      into a base-36 code with a tag and a checksum char, so a board can travel
@@ -382,6 +428,7 @@
       h('p', null, body),
       h('div', { class: 'banner-btns' }, btn, stay),
       countWrap);
+    try { const r = banner.getBoundingClientRect(); Engine.fx.burst(r.left + r.width / 2, r.top + Math.min(r.height / 2, 60), 46); } catch (e) { /* ignore */ }
 
     function tickFn(now) {
       if (cancelled) return;
