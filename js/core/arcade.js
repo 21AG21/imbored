@@ -788,8 +788,11 @@
     addEventListener('keydown', (e) => {
       const t = e.target;
       const typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
-      if (!typing && (e.key === '`' || (e.ctrlKey && !e.altKey && e.key.toLowerCase() === 'b'))) {
+      /* the panic key works from ANYWHERE — even mid-typing in a text box — so you
+         are never one stuck keystroke away from hiding (or unhiding) the games */
+      if (e.key === '`' || (e.ctrlKey && !e.altKey && e.key.toLowerCase() === 'b')) {
         e.preventDefault();
+        if (typing && t.blur) t.blur();
         toggleBoss();
         return;
       }

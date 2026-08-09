@@ -1915,6 +1915,22 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 .vp-deal { font-size: 16px; padding: 10px 28px; }
 .vp-status { text-align: center; font: 13px Verdana, sans-serif; color: var(--ink2); min-height: 18px; }
 
+/* Rave Mode */
+.rave-warn { max-width: 460px; margin: 10px auto; text-align: center; border: 3px solid var(--ink);
+  background: var(--paper); box-shadow: var(--hard); padding: 20px; }
+.rave-warn h3 { margin: 0 0 8px; }
+.rave-warn p { margin: 0 0 14px; color: var(--ink2); font: 13px/1.5 Verdana, sans-serif; }
+.rave-warn-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.rave-hint { text-align: center; color: var(--ink2); font: 13px Verdana, sans-serif; }
+.rave-overlay { position: fixed; inset: 0; z-index: 99999; cursor: pointer; touch-action: none;
+  display: grid; place-items: end center; }
+.rave-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.rave-stop { position: relative; margin-bottom: 6vh; z-index: 1; padding: 14px 26px;
+  font: 700 18px Impact, "Arial Black", sans-serif; letter-spacing: 1px; color: #fff; background: #000;
+  border: 4px solid #fff; border-radius: 8px; cursor: pointer; box-shadow: 0 0 0 4px #000; animation: rave-wobble .3s infinite; }
+@keyframes rave-wobble { 0%, 100% { transform: rotate(-3deg) scale(1); } 50% { transform: rotate(3deg) scale(1.06); } }
+@media (prefers-reduced-motion: reduce) { .rave-stop { animation: none; } }
+
 </style>
 </head>
 <body>
@@ -2635,7 +2651,9 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     turf: line(8, 7, 16, 7, 1.6, INK) + line(16, 7, 12, 17, 1.6, INK) + line(12, 17, 8, 7, 1.6, INK) + c(8, 7, 3.2, P.tomato) + c(16, 7, 3.2, P.lime) + c(12, 17, 3.2, P.teal),
     find: r(3, 3, 18, 18, P.paper) + r(4.5, 4.5, 4, 4, P.banana) + r(9.5, 9.5, 4, 4, P.banana) + r(14.5, 14.5, 4, 4, P.banana) + line(9, 3, 9, 21, 1, P.grey) + line(15, 3, 15, 21, 1, P.grey) + line(3, 9, 21, 9, 1, P.grey) + line(3, 15, 21, 15, 1, P.grey),
     bubble: c(8, 7, 3.4, P.tomato) + c(15, 7, 3.4, P.teal) + c(11.5, 13, 3.4, P.banana) + c(7, 15, 3.4, P.lime) + c(16, 15, 3.4, P.grape) + c(7, 6, 1, P.paper) + c(14, 6, 1, P.paper),
-    cards: r(5, 6, 11, 15, P.paper, ' transform="rotate(-10 10 13)"') + r(9, 4, 11, 15, P.paper, ' transform="rotate(8 14 11)"') + p('M14 8l2 3-2 3-2-3z', P.tomato) + line(14, 4, 14, 6, 1.4, P.grey)
+    cards: r(5, 6, 11, 15, P.paper, ' transform="rotate(-10 10 13)"') + r(9, 4, 11, 15, P.paper, ' transform="rotate(8 14 11)"') + p('M14 8l2 3-2 3-2-3z', P.tomato) + line(14, 4, 14, 6, 1.4, P.grey),
+    rave: c(12, 12, 6, P.hotpink) + c(8, 8, 2.2, P.banana) + c(16, 9, 2.2, P.teal) + c(9, 16, 2.2, P.lime) + c(15, 15, 2.2, P.tomato) + c(12, 6, 1.8, P.grape) + line(12, 12, 4, 4, 1.4, P.banana) + line(12, 12, 20, 5, 1.4, P.teal),
+    speaker: r(4, 9, 5, 6, P.dark) + p('M9 9l6-4v14l-6-4z', P.paper) + p('M17 8a5 5 0 0 1 0 8', 'none').replace('fill="none"', 'fill="none" stroke="' + P.tomato + '" stroke-width="2" stroke-linecap="round"') + p('M19 6a8 8 0 0 1 0 12', 'none').replace('fill="none"', 'fill="none" stroke="' + P.banana + '" stroke-width="1.6" stroke-linecap="round"')
   };
 
   const Icons = {
@@ -4222,8 +4240,11 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     addEventListener('keydown', (e) => {
       const t = e.target;
       const typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
-      if (!typing && (e.key === '`' || (e.ctrlKey && !e.altKey && e.key.toLowerCase() === 'b'))) {
+      /* the panic key works from ANYWHERE — even mid-typing in a text box — so you
+         are never one stuck keystroke away from hiding (or unhiding) the games */
+      if (e.key === '`' || (e.ctrlKey && !e.altKey && e.key.toLowerCase() === 'b')) {
         e.preventDefault();
+        if (typing && t.blur) t.blur();
         toggleBoss();
         return;
       }
@@ -19867,6 +19888,126 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       'Your final five are paid by the table: a pair of jacks or better pays, on up through two pair, straights, flushes, full houses, quads, and the royal flush at the top.',
       'The royal flush pays a big bonus at the maximum bet of five, which is why Max bet exists. Everything else pays straight multiples of your bet.',
       'Credits are pretend and saved between visits; if you bust out, Add credits tops you back up. Your score is the highest credit balance you reach.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Rave — the anti-panic key. Where the backtick turns the site into a spreadsheet,
+ * this turns the whole screen into a screaming rainbow nightclub, on purpose, to
+ * make a hovering boss decide they saw nothing and leave. Full-viewport takeover,
+ * one tap to stop. Carries a photosensitivity heads-up because the flashing is
+ * real. */
+(function () {
+  'use strict';
+  const { h, clamp } = Engine;
+  const store = Arcade.store;
+
+  const LINES = ['PARTY MODE', 'MAXIMUM VIBES', 'DO NOT DISTURB', 'CONTENT UNAVAILABLE', 'GPU GO BRRR', 'RENDERING…', 'MORALE.EXE', '10x ENERGY', 'SYNERGY ACHIEVED'];
+  const EMO = ['✦', '★', '●', '▲', '◆', '♥', '✚', '☀', '❄', '♪'];
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let overlay = null, raf = 0;
+
+    function warn() {
+      root.replaceChildren(h('div', { class: 'rave-warn' },
+        h('h3', null, '⚠ Loud flashing colours'),
+        h('p', null, 'This fills your entire screen with fast, saturated, strobing colour to scare off anyone reading over your shoulder. If you are sensitive to flashing light, sit this one out.'),
+        h('div', { class: 'rave-warn-btns' },
+          h('button', { class: 'btn primary', type: 'button', onclick: () => { store.set('raveok', true); start(); } }, 'Start the party'),
+          h('button', { class: 'btn', type: 'button', onclick: () => { location.hash = ''; } }, 'No thanks'))));
+      api.status('Fair warning: this one is genuinely loud and flashy.');
+    }
+
+    function start() {
+      root.replaceChildren(h('p', { class: 'rave-hint' }, 'The party is on your whole screen. Tap it (or press Esc) to make it stop.'));
+      api.status('RAVE ENGAGED. Tap the screen or hit Esc to return to something that looks like work.');
+
+      overlay = h('div', { class: 'rave-overlay', tabindex: '0' });
+      const cv = h('canvas', { class: 'rave-canvas' });
+      const stop = h('button', { class: 'rave-stop', type: 'button' }, 'MAKE IT STOP');
+      overlay.append(cv, stop);
+      document.body.appendChild(overlay);
+      const ctx = cv.getContext('2d');
+
+      function size() { cv.width = Math.floor(innerWidth * Math.min(2, devicePixelRatio || 1)); cv.height = Math.floor(innerHeight * Math.min(2, devicePixelRatio || 1)); }
+      size();
+      bagg.listen(window, 'resize', size);
+
+      const blobs = [];
+      for (let i = 0; i < 26; i++) blobs.push({ x: Math.random(), y: Math.random(), vx: (Math.random() - 0.5) * 0.6, vy: (Math.random() - 0.5) * 0.6, r: 0.05 + Math.random() * 0.14, h: Math.random() * 360, s: (Math.random() * EMO.length) | 0 });
+
+      let t = 0, lineI = 0, lineT = 0;
+      function frame() {
+        const W = cv.width, H = cv.height;
+        t += 1;
+        /* rapid rainbow wash — hue spins fast, brightness stays high-ish to look
+           wild while avoiding the worst full-field luminance strobe */
+        const baseHue = (t * 11) % 360;
+        const g = ctx.createLinearGradient(0, 0, W, H);
+        g.addColorStop(0, 'hsl(' + baseHue + ',100%,55%)');
+        g.addColorStop(0.5, 'hsl(' + ((baseHue + 120) % 360) + ',100%,50%)');
+        g.addColorStop(1, 'hsl(' + ((baseHue + 240) % 360) + ',100%,55%)');
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+        for (const b of blobs) {
+          b.x += b.vx * 0.016; b.y += b.vy * 0.016; b.h = (b.h + 7) % 360;
+          if (b.x < 0 || b.x > 1) b.vx *= -1; if (b.y < 0 || b.y > 1) b.vy *= -1;
+          b.x = clamp(b.x, 0, 1); b.y = clamp(b.y, 0, 1);
+          const px = b.x * W, py = b.y * H, rr = b.r * Math.min(W, H) * (1 + 0.15 * Math.sin(t * 0.3 + b.h));
+          ctx.fillStyle = 'hsl(' + b.h + ',100%,60%)';
+          ctx.font = 'bold ' + rr + 'px Impact, Arial Black, sans-serif';
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(EMO[b.s], px, py);
+        }
+
+        lineT -= 1;
+        if (lineT <= 0) { lineI = (Math.random() * LINES.length) | 0; lineT = 22; }
+        const scale = 1 + 0.08 * Math.sin(t * 0.6);
+        ctx.save();
+        ctx.translate(W / 2, H / 2); ctx.scale(scale, scale);
+        ctx.font = 'bold ' + Math.floor(Math.min(W, H) * 0.11) + 'px Impact, Arial Black, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.lineWidth = Math.max(4, W * 0.006); ctx.strokeStyle = '#000';
+        ctx.fillStyle = 'hsl(' + ((baseHue + 180) % 360) + ',100%,92%)';
+        ctx.strokeText(LINES[lineI], 0, 0); ctx.fillText(LINES[lineI], 0, 0);
+        ctx.restore();
+
+        raf = requestAnimationFrame(frame);
+      }
+      raf = requestAnimationFrame(frame);
+
+      const kill = () => { location.hash = ''; };
+      bagg.listen(overlay, 'pointerdown', kill);
+      bagg.listen(stop, 'pointerdown', (e) => { e.stopPropagation(); kill(); });
+      bagg.add(Engine.onKey((e) => { if (e.key === 'Escape') { kill(); return true; } }));
+      overlay.focus();
+    }
+
+    bagg.add(() => { if (raf) cancelAnimationFrame(raf); if (overlay && overlay.parentNode) overlay.remove(); });
+
+    if (store.get('raveok', false)) start(); else warn();
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'rave',
+    title: 'Rave Mode',
+    emoji: 'rave',
+    cat: 'goofy',
+    order: 45,
+    blurb: 'The opposite of the panic key. Instead of hiding your games behind a spreadsheet, this detonates your entire screen into a strobing rainbow so aggressively that anyone reading over your shoulder decides they would rather be anywhere else. Tap to stop.',
+    scoreLabel: 'Parties thrown',
+    tags: ['toy', 'prank', 'boss'],
+    how: [
+      'Opening it takes over your whole screen — every pixel — with fast, saturated, spinning colour and giant flashing nonsense text.',
+      'It exists to be seen by the wrong person. A boss glancing at a screen mid-seizure of rainbow tends to keep walking.',
+      'Tap anywhere on the screen, press the Make It Stop button, or hit Escape to snap back to the calm arcade.',
+      'It flashes fast and bright on purpose, so there is a one-time heads-up for anyone who is photosensitive — you can always back out there.',
+      'Pair it with the real panic key (the backtick turns the site into a spreadsheet) for the full range of workplace camouflage: invisible, or extremely visible.'
     ],
     mount
   });
