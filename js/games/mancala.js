@@ -108,7 +108,7 @@
       paint(); sync();
       if (sweepIfDone(board)) { paint(); busy = false; return finish(); }
       if (res.again && !sideEmpty(2)) { setTimeout(cpuTurn, 480); return; }
-      turn = 1; busy = false; sync();
+      turn = 1; busy = false; paint(); sync();   // paint re-enables the player's pits (turn flipped back)
       pTurn.textContent = 'your move';
     }
 

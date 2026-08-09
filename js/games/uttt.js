@@ -95,7 +95,7 @@
       paint();
       const gw = winner(macro.map((v) => (v === 3 ? 0 : v)));
       if (gw || legalBoards().length === 0) return finish(gw);
-      turn = 1; syncTurn();
+      turn = 1; paint(); syncTurn();   // repaint so the player's cells re-enable for their turn
     }
 
     function scoreMove(moves) {

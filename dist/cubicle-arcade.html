@@ -16263,7 +16263,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       paint();
       const gw = winner(macro.map((v) => (v === 3 ? 0 : v)));
       if (gw || legalBoards().length === 0) return finish(gw);
-      turn = 1; syncTurn();
+      turn = 1; paint(); syncTurn();   // repaint so the player's cells re-enable for their turn
     }
 
     function scoreMove(moves) {
@@ -16467,7 +16467,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       paint(); sync();
       if (sweepIfDone(board)) { paint(); busy = false; return finish(); }
       if (res.again && !sideEmpty(2)) { setTimeout(cpuTurn, 480); return; }
-      turn = 1; busy = false; sync();
+      turn = 1; busy = false; paint(); sync();   // paint re-enables the player's pits (turn flipped back)
       pTurn.textContent = 'your move';
     }
 
