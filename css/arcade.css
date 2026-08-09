@@ -2330,3 +2330,47 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 .slot-msg { font: 700 15px Verdana, sans-serif; min-height: 22px; text-align: center; }
 .slot-msg.win { color: var(--lime); } .slot-msg.lose { color: var(--tomato); }
 .slot-btns { display: flex; gap: 10px; }
+
+/* ================= Timesheet Math ================= */
+.mathrace { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 18px; }
+.mr-q { font: 800 clamp(32px, 8vw, 56px) Impact, "Arial Black", sans-serif; color: var(--ink); letter-spacing: 1px; }
+.mr-q.shake { animation: ana-shake .3s; }
+.mr-form { display: flex; gap: 8px; }
+.mr-input { font: 800 26px Impact, "Arial Black", sans-serif; width: 130px; text-align: center; padding: 8px; border: 3px solid var(--ink); border-radius: 6px; background: var(--label); color: var(--ink); box-shadow: var(--bevel-in); }
+.mr-msg { font: 700 15px Verdana, sans-serif; min-height: 22px; text-align: center; }
+.mr-msg.win { color: var(--lime); }
+
+/* ================= Dots and Boxes ================= */
+.dotsboxes { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 16px; }
+.db-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
+.db-msg.win { color: var(--lime); } .db-msg.lose { color: var(--tomato); }
+.db-grid { display: grid; align-items: center; justify-items: center; }
+.db-dot { width: 11px; height: 11px; border-radius: 50%; background: var(--ink); }
+.db-edge { border: 0; background: transparent; padding: 0; cursor: pointer; display: block; }
+.db-edge.h { width: 46px; height: 14px; }
+.db-edge.v { width: 14px; height: 46px; }
+.db-edge::after { content: ''; display: block; background: var(--chrome); border-radius: 3px; }
+.db-edge.h::after { width: 100%; height: 6px; margin-top: 4px; }
+.db-edge.v::after { width: 6px; height: 100%; margin-left: 4px; }
+.db-edge:hover::after { background: var(--shade); }
+.db-edge.on::after { background: var(--grape); }
+.db-box { width: 46px; height: 46px; }
+.db-box.you { background: var(--teal); } .db-box.cpu { background: var(--hotpink); }
+
+/* ================= Deadline Dice (yahtzee) ================= */
+.yahtzee { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 14px; width: 100%; max-width: 420px; margin: 0 auto; }
+.yz-dice { display: flex; gap: 8px; }
+.yz-die { width: 56px; height: 56px; font-size: 38px; line-height: 1; background: var(--label); border: 3px solid var(--ink); border-radius: 10px; cursor: pointer; padding: 0; box-shadow: var(--bevel-out); color: var(--ink); }
+.yz-die.held { background: var(--banana); box-shadow: inset 0 0 0 3px var(--ink); }
+.yz-ctrl { display: flex; gap: 10px; }
+.yz-card { width: 100%; display: flex; flex-direction: column; gap: 3px; }
+.yz-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; border: 2px solid var(--ink); background: var(--paper2); font: 700 13px Verdana, sans-serif; color: var(--ink); border-radius: 5px; cursor: default; }
+.yz-row.pickable { cursor: pointer; }
+.yz-row.pickable:hover { background: var(--label); }
+.yz-row.filled { opacity: .72; background: var(--chrome); }
+.yz-row.bonus { background: transparent; border-style: dashed; }
+.yz-name { text-align: left; }
+.yz-val { font: 800 15px Impact, "Arial Black", sans-serif; min-width: 28px; text-align: right; }
+.yz-val.preview { color: var(--ink3); }
+.yz-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
+.yz-msg.win { color: var(--lime); }
