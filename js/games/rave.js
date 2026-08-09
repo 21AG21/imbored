@@ -6,7 +6,6 @@
 (function () {
   'use strict';
   const { h, clamp } = Engine;
-  const store = Arcade.store;
 
   const LINES = ['PARTY MODE', 'MAXIMUM VIBES', 'DO NOT DISTURB', 'CONTENT UNAVAILABLE', 'GPU GO BRRR', 'RENDERING…', 'MORALE.EXE', '10x ENERGY', 'SYNERGY ACHIEVED'];
   const EMO = ['✦', '★', '●', '▲', '◆', '♥', '✚', '☀', '❄', '♪'];
@@ -14,16 +13,6 @@
   function mount(root, api) {
     const bagg = Engine.bag();
     let overlay = null, raf = 0;
-
-    function warn() {
-      root.replaceChildren(h('div', { class: 'rave-warn' },
-        h('h3', null, '⚠ Loud flashing colours'),
-        h('p', null, 'This fills your entire screen with fast, saturated, strobing colour to scare off anyone reading over your shoulder. If you are sensitive to flashing light, sit this one out.'),
-        h('div', { class: 'rave-warn-btns' },
-          h('button', { class: 'btn primary', type: 'button', onclick: () => { store.set('raveok', true); start(); } }, 'Start the party'),
-          h('button', { class: 'btn', type: 'button', onclick: () => { location.hash = ''; } }, 'No thanks'))));
-      api.status('Fair warning: this one is genuinely loud and flashy.');
-    }
 
     function start() {
       root.replaceChildren(h('p', { class: 'rave-hint' }, 'The party is on your whole screen. Tap it (or press Esc) to make it stop.'));
@@ -92,7 +81,7 @@
 
     bagg.add(() => { if (raf) cancelAnimationFrame(raf); if (overlay && overlay.parentNode) overlay.remove(); });
 
-    if (store.get('raveok', false)) start(); else warn();
+    start();          // no gate — it fires the moment you open it
     return () => bagg.dispose();
   }
 
@@ -109,7 +98,7 @@
       'Opening it takes over your whole screen — every pixel — with fast, saturated, spinning colour and giant flashing nonsense text.',
       'It exists to be seen by the wrong person. A boss glancing at a screen mid-seizure of rainbow tends to keep walking.',
       'Tap anywhere on the screen, press the Make It Stop button, or hit Escape to snap back to the calm arcade.',
-      'It flashes fast and bright on purpose, so there is a one-time heads-up for anyone who is photosensitive — you can always back out there.',
+      'It fires the instant you open it — no confirmation step. It flashes fast and bright by design, so only reach for it when that is what you want.',
       'Pair it with the real panic key (the backtick turns the site into a spreadsheet) for the full range of workplace camouflage: invisible, or extremely visible.',
       'Summon it from anywhere without hunting for the tile: press Shift and the backtick key together (that is the ~ key, just above Tab) and the party starts instantly.'
     ],

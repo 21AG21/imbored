@@ -61,6 +61,7 @@
 
   Arcade.register({
     id: 'soundboard',
+    usesDigits: true,   // number keys fire pads — the "1 = Docs" shortcut yields here
     title: 'Soundboard',
     emoji: 'speaker',
     cat: 'goofy',

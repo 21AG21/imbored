@@ -423,6 +423,7 @@
         h('a', { class: 'foot-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener' }, 'PHANTOM: why traffic jams happen for no reason')),
       h('span', null,
         h('kbd', null, '`'), ' look busy   ',
+        h('kbd', null, '1'), ' jump to Docs   ',
         h('kbd', null, 'Shift'), '+', h('kbd', null, '`'), ' rave   ',
         h('kbd', null, '['), h('kbd', null, ']'), ' switch game   ',
         h('kbd', null, 'R'), ' restart   ',
@@ -1058,6 +1059,16 @@
          — the loud opposite of the quiet panic key right next to it. Match the
          physical key too, for dead-key layouts where the tilde never arrives. */
       if (e.key === '~' || (e.shiftKey && e.code === 'Backquote')) { e.preventDefault(); Arcade.go('rave'); return; }
+      /* the 1 key: a one-press jump straight into the Docs disguise — not a
+         toggle, always the document, wherever you are. It steps aside for the
+         few games that actually use number keys (they set usesDigits), matching
+         "the 1 key if it's not being used". */
+      if (e.key === '1' && !e.ctrlKey && !e.metaKey && !e.altKey && (!currentGame || !currentGame.usesDigits)) {
+        e.preventDefault();
+        if (Boss.setSkin) Boss.setSkin('docs');
+        if (!bossOn) toggleBoss(true);
+        return;
+      }
       /* in a game: [ and ] flick to the previous/next game on the shelf,
          R restarts the current one (skipped where letters are the controls) */
       if (currentGame) {

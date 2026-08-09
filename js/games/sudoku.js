@@ -264,6 +264,7 @@
 
   Arcade.register({
     id: 'sudoku',
+    usesDigits: true,   // 1-9 fill cells — the "1 = Docs" shortcut yields here
     title: 'Sudoku',
     emoji: 'sudoku',
     cat: 'brain',

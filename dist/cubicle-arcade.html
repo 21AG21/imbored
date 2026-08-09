@@ -4367,6 +4367,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
         h('a', { class: 'foot-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener' }, 'PHANTOM: why traffic jams happen for no reason')),
       h('span', null,
         h('kbd', null, '`'), ' look busy   ',
+        h('kbd', null, '1'), ' jump to Docs   ',
         h('kbd', null, 'Shift'), '+', h('kbd', null, '`'), ' rave   ',
         h('kbd', null, '['), h('kbd', null, ']'), ' switch game   ',
         h('kbd', null, 'R'), ' restart   ',
@@ -5002,6 +5003,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
          — the loud opposite of the quiet panic key right next to it. Match the
          physical key too, for dead-key layouts where the tilde never arrives. */
       if (e.key === '~' || (e.shiftKey && e.code === 'Backquote')) { e.preventDefault(); Arcade.go('rave'); return; }
+      /* the 1 key: a one-press jump straight into the Docs disguise — not a
+         toggle, always the document, wherever you are. It steps aside for the
+         few games that actually use number keys (they set usesDigits), matching
+         "the 1 key if it's not being used". */
+      if (e.key === '1' && !e.ctrlKey && !e.metaKey && !e.altKey && (!currentGame || !currentGame.usesDigits)) {
+        e.preventDefault();
+        if (Boss.setSkin) Boss.setSkin('docs');
+        if (!bossOn) toggleBoss(true);
+        return;
+      }
       /* in a game: [ and ] flick to the previous/next game on the shelf,
          R restarts the current one (skipped where letters are the controls) */
       if (currentGame) {
@@ -9899,7 +9910,10 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       const before = JSON.stringify(grid);
       const snapshot = { grid: grid.map((r) => r.slice()), score };
 
-      const turns = { left: 0, up: 1, right: 2, down: 3 }[dir];
+      /* rot() turns the board clockwise, so bringing a given edge to the left
+         takes the CW count below — up needs 3 (=one CCW), down needs 1. Getting
+         these backwards silently inverts the vertical controls. */
+      const turns = { left: 0, up: 3, right: 2, down: 1 }[dir];
       let g = grid;
       for (let i = 0; i < turns; i++) g = rot(g);
       let gained = 0;
@@ -9985,7 +9999,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: '2048',
     cat: 'puzzle',
     order: 11,
-    blurb: 'Slide, merge, and lose forty minutes without noticing. Now with exactly one undo, because you have earned it.',
+    blurb: 'The famous slide-and-merge number puzzle. Shove the whole board one way; two tiles with the same number fuse into their sum. Keep combining — 2, 4, 8, 16 — and try to build a 2048 tile before the grid jams. Now with exactly one undo, because you have earned it.',
     scoreLabel: 'Score',
     tags: ['tiles', 'merge', 'numbers'],
     how: [
@@ -13699,6 +13713,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   Arcade.register({
     id: 'sudoku',
+    usesDigits: true,   // 1-9 fill cells — the "1 = Docs" shortcut yields here
     title: 'Sudoku',
     emoji: 'sudoku',
     cat: 'brain',
@@ -14137,6 +14152,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   Arcade.register({
     id: 'mastermind',
+    usesDigits: true,   // number keys pick pegs — the "1 = Docs" shortcut yields here
     title: 'Password Reset',
     emoji: 'mastermind',
     cat: 'brain',
@@ -14988,6 +15004,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   Arcade.register({
     id: 'copycat',
+    usesDigits: true,   // 1-4 press the pads — the "1 = Docs" shortcut yields here
     title: 'Copycat',
     emoji: 'copycat',
     cat: 'brain',
@@ -21455,7 +21472,6 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 (function () {
   'use strict';
   const { h, clamp } = Engine;
-  const store = Arcade.store;
 
   const LINES = ['PARTY MODE', 'MAXIMUM VIBES', 'DO NOT DISTURB', 'CONTENT UNAVAILABLE', 'GPU GO BRRR', 'RENDERING…', 'MORALE.EXE', '10x ENERGY', 'SYNERGY ACHIEVED'];
   const EMO = ['✦', '★', '●', '▲', '◆', '♥', '✚', '☀', '❄', '♪'];
@@ -21463,16 +21479,6 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   function mount(root, api) {
     const bagg = Engine.bag();
     let overlay = null, raf = 0;
-
-    function warn() {
-      root.replaceChildren(h('div', { class: 'rave-warn' },
-        h('h3', null, '⚠ Loud flashing colours'),
-        h('p', null, 'This fills your entire screen with fast, saturated, strobing colour to scare off anyone reading over your shoulder. If you are sensitive to flashing light, sit this one out.'),
-        h('div', { class: 'rave-warn-btns' },
-          h('button', { class: 'btn primary', type: 'button', onclick: () => { store.set('raveok', true); start(); } }, 'Start the party'),
-          h('button', { class: 'btn', type: 'button', onclick: () => { location.hash = ''; } }, 'No thanks'))));
-      api.status('Fair warning: this one is genuinely loud and flashy.');
-    }
 
     function start() {
       root.replaceChildren(h('p', { class: 'rave-hint' }, 'The party is on your whole screen. Tap it (or press Esc) to make it stop.'));
@@ -21541,7 +21547,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
     bagg.add(() => { if (raf) cancelAnimationFrame(raf); if (overlay && overlay.parentNode) overlay.remove(); });
 
-    if (store.get('raveok', false)) start(); else warn();
+    start();          // no gate — it fires the moment you open it
     return () => bagg.dispose();
   }
 
@@ -21558,7 +21564,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       'Opening it takes over your whole screen — every pixel — with fast, saturated, spinning colour and giant flashing nonsense text.',
       'It exists to be seen by the wrong person. A boss glancing at a screen mid-seizure of rainbow tends to keep walking.',
       'Tap anywhere on the screen, press the Make It Stop button, or hit Escape to snap back to the calm arcade.',
-      'It flashes fast and bright on purpose, so there is a one-time heads-up for anyone who is photosensitive — you can always back out there.',
+      'It fires the instant you open it — no confirmation step. It flashes fast and bright by design, so only reach for it when that is what you want.',
       'Pair it with the real panic key (the backtick turns the site into a spreadsheet) for the full range of workplace camouflage: invisible, or extremely visible.',
       'Summon it from anywhere without hunting for the tile: press Shift and the backtick key together (that is the ~ key, just above Tab) and the party starts instantly.'
     ],
@@ -21631,6 +21637,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   Arcade.register({
     id: 'soundboard',
+    usesDigits: true,   // number keys fire pads — the "1 = Docs" shortcut yields here
     title: 'Soundboard',
     emoji: 'speaker',
     cat: 'goofy',

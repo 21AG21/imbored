@@ -74,7 +74,10 @@
       const before = JSON.stringify(grid);
       const snapshot = { grid: grid.map((r) => r.slice()), score };
 
-      const turns = { left: 0, up: 1, right: 2, down: 3 }[dir];
+      /* rot() turns the board clockwise, so bringing a given edge to the left
+         takes the CW count below — up needs 3 (=one CCW), down needs 1. Getting
+         these backwards silently inverts the vertical controls. */
+      const turns = { left: 0, up: 3, right: 2, down: 1 }[dir];
       let g = grid;
       for (let i = 0; i < turns; i++) g = rot(g);
       let gained = 0;
@@ -160,7 +163,7 @@
     emoji: '2048',
     cat: 'puzzle',
     order: 11,
-    blurb: 'Slide, merge, and lose forty minutes without noticing. Now with exactly one undo, because you have earned it.',
+    blurb: 'The famous slide-and-merge number puzzle. Shove the whole board one way; two tiles with the same number fuse into their sum. Keep combining — 2, 4, 8, 16 — and try to build a 2048 tile before the grid jams. Now with exactly one undo, because you have earned it.',
     scoreLabel: 'Score',
     tags: ['tiles', 'merge', 'numbers'],
     how: [

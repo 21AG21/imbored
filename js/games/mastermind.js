@@ -214,6 +214,7 @@
 
   Arcade.register({
     id: 'mastermind',
+    usesDigits: true,   // number keys pick pegs — the "1 = Docs" shortcut yields here
     title: 'Password Reset',
     emoji: 'mastermind',
     cat: 'brain',

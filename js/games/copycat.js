@@ -264,6 +264,7 @@
 
   Arcade.register({
     id: 'copycat',
+    usesDigits: true,   // 1-4 press the pads — the "1 = Docs" shortcut yields here
     title: 'Copycat',
     emoji: 'copycat',
     cat: 'brain',
