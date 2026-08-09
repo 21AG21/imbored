@@ -162,11 +162,45 @@
     root.append(boardEl, banner);
 
     api.button('New game', reset);
-    api.select('Players', [
+    const playerSel = api.select('Players', [
       { value: '1p', label: '1 player (vs CPU)' },
       { value: '2p', label: '2 players (hotseat)' }
     ], '1p', function (v) { mode = v; reset(); });
     bagg.add(function () { alive = false; });
+
+    /* play-by-paste: the 32 dark squares (5 states each) + whose turn, as a
+       short checksummed code you send over any chat — correspondence draughts
+       for a building where you cannot share a link. */
+    const DARK = [];
+    for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) if ((r + c) % 2 === 1) DARK.push([r, c]);
+    const flat = function () { return DARK.map(function (sq) { return board[sq[0]][sq[1]]; }); };
+    function loadPosition(res) {
+      board = [];
+      for (let r = 0; r < 8; r++) board.push(new Array(8).fill(0));
+      DARK.forEach(function (sq, i) { board[sq[0]][sq[1]] = res.cells[i]; });
+      mode = '2p'; if (playerSel) playerSel.value = '2p';
+      turn = res.extra ? BLK : RED;
+      selected = null; done = false; busy = false;
+      banner.style.display = 'none';
+      legalMoves = genMoves(board, turn);
+      if (legalMoves.length === 0) { finish(turn); return; }
+      api.status('Loaded. ' + nameOf(turn) + ' to move — make your move, then Share the new code back.');
+      render();
+    }
+    const codeInput = h('input', { type: 'text', class: 'boss-url', placeholder: 'board code', spellcheck: 'false', style: { width: '150px' } });
+    api.toolbar.appendChild(codeInput);
+    api.button('Share code', function () {
+      mode = '2p'; if (playerSel) playerSel.value = '2p';
+      codeInput.value = Engine.packCode('CK', flat(), turn === BLK ? 1 : 0, 5);
+      codeInput.select();
+      try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(codeInput.value).catch(function () { }); } catch (e) { /* ignore */ }
+      api.status('Board code ready — send it to your opponent. They paste it here and press Load.');
+    });
+    api.button('Load code', function () {
+      const res = Engine.unpackCode('CK', codeInput.value, DARK.length, 5);
+      if (!res) { api.status('That code did not scan — paste the whole thing.'); return; }
+      loadPosition(res);
+    });
 
     function nameOf(side) {
       if (mode === '2p') return side === RED ? 'Player 1 (red)' : 'Player 2 (black)';
@@ -320,13 +354,14 @@
     order: 28,
     blurb: 'English draughts on company time. Jumps are compulsory, so is that 4pm sync. Chain your captures and crown a king before the CPU does.',
     scoreLabel: 'Wins',
-    tags: ['checkers', 'draughts', 'board', 'vs-cpu'],
+    tags: ['checkers', 'draughts', 'board', 'vs-cpu', 'correspondence'],
     how: [
       'You are red at the bottom; the CPU is black at the top. Reduce the other side to no pieces or no legal move.',
       'Click or tap one of your pieces, then click a glowing square to move it there. Men step diagonally forward, kings step either way.',
       'Captures are forced: if any jump exists you must take one, and a piece that can keep jumping keeps jumping in the same turn.',
       'Reach the far back rank and the piece is crowned a king. Career wins are your score.',
-      'Difficulty sets how deep the CPU thinks: chill barely plans ahead, nightmare reads eight plies. Set Players to 2 for hotseat and the CPU steps aside.'
+      'Difficulty sets how deep the CPU thinks: chill barely plans ahead, nightmare reads eight plies. Set Players to 2 for hotseat and the CPU steps aside.',
+      'Play a coworker with no network: make your move, hit Share code, and send the short code over any chat. They paste it, press Load, play their reply, and Share back. It is full correspondence draughts that travels as a dull reference number.'
     ],
     usesLetters: false,
     mount: mount
