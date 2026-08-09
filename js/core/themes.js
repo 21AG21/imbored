@@ -8,11 +8,13 @@
     set(k, v) { try { localStorage.setItem('cubicle:' + k, JSON.stringify(v)); } catch (e) { } }
   };
 
-  /* each theme overrides the paper/ink family; the loud accent colours stay put */
+  /* a theme overrides the paper/ink family and, for the louder ones, the accent
+     colours and the CRT the games sit in — so they read as genuinely different
+     skins, not just tinted backgrounds. */
   const THEMES = {
-    beige: { name: 'Beige (classic)', vars: {} },
+    beige: { name: 'Beige', vars: {} },
     slate: {
-      name: 'Cool slate',
+      name: 'Slate',
       vars: {
         '--paper': '#c3ccd8', '--paper2': '#b0bccb', '--label': '#f4f7fb',
         '--chrome': '#8b98a9', '--shade': '#5f6b7c', '--hilite': '#ffffff',
@@ -35,8 +37,58 @@
         '--ink': '#2a141c', '--ink2': '#5a3644', '--ink3': '#8a6472'
       }
     },
+    ice: {
+      name: 'Ice',
+      vars: {
+        '--paper': '#d6e6f0', '--paper2': '#c2d8e8', '--label': '#f2f9ff',
+        '--chrome': '#92aec8', '--shade': '#5a7690', '--hilite': '#ffffff',
+        '--ink': '#12283a', '--ink2': '#34506a', '--ink3': '#6088a8',
+        '--teal': '#1aa6c0', '--hotpink': '#e05a9a', '--banana': '#e0c84a',
+        '--grape': '#7a7ad0', '--lime': '#5ac09a', '--tomato': '#e06a5a'
+      }
+    },
+    pumpkin: {
+      name: 'Pumpkin',
+      vars: {
+        '--paper': '#f0d9b8', '--paper2': '#e6c99e', '--label': '#fbf1df',
+        '--chrome': '#c79a68', '--shade': '#9a6a3a', '--hilite': '#fffbf0',
+        '--ink': '#3a1e0e', '--ink2': '#6a3e22', '--ink3': '#9a6a44',
+        '--teal': '#2a9a8a', '--hotpink': '#e0567a', '--banana': '#f0a828',
+        '--grape': '#9a5aa8', '--lime': '#8aa82a', '--tomato': '#e0492a'
+      }
+    },
+    bubblegum: {
+      name: 'Bubblegum',
+      vars: {
+        '--paper': '#f6cfe0', '--paper2': '#efb9d2', '--label': '#fdf0f6',
+        '--chrome': '#d896b8', '--shade': '#a85f88', '--hilite': '#ffffff',
+        '--ink': '#3a0f28', '--ink2': '#6a2450', '--ink3': '#9a5080',
+        '--teal': '#2ac0d0', '--hotpink': '#ff3d97', '--banana': '#ffd23a',
+        '--grape': '#a05fd8', '--lime': '#6fdf6a', '--tomato': '#ff6a5a'
+      }
+    },
+    newsprint: {
+      name: 'Newsprint',
+      vars: {
+        '--paper': '#e7dfca', '--paper2': '#dbd1b6', '--label': '#f6f1e2',
+        '--chrome': '#b0a480', '--shade': '#7a6e50', '--hilite': '#fffef8',
+        '--ink': '#201a12', '--ink2': '#4a4030', '--ink3': '#7a6e58',
+        '--teal': '#4a7a6a', '--hotpink': '#b05a6a', '--banana': '#c89a3a',
+        '--grape': '#6a5a8a', '--lime': '#7a8a3a', '--tomato': '#b0503a'
+      }
+    },
+    noir: {
+      name: 'Noir',
+      vars: {
+        '--paper': '#cfcfcf', '--paper2': '#bebebe', '--label': '#f2f2f2',
+        '--chrome': '#949494', '--shade': '#626262', '--hilite': '#ffffff',
+        '--ink': '#161616', '--ink2': '#444444', '--ink3': '#767676',
+        '--teal': '#8a8a8a', '--hotpink': '#d83a3a', '--banana': '#b0b0b0',
+        '--grape': '#5a5a5a', '--lime': '#9a9a9a', '--tomato': '#b02020'
+      }
+    },
     dusk: {
-      name: 'Dusk (dark)',
+      name: 'Dusk',
       vars: {
         '--paper': '#242a3d', '--paper2': '#2e3650', '--label': '#333c58',
         '--chrome': '#454f6e', '--shade': '#151a28', '--hilite': '#4a5578',
@@ -44,11 +96,88 @@
       }
     },
     carbon: {
-      name: 'Carbon (dark)',
+      name: 'Carbon',
       vars: {
         '--paper': '#1c1c22', '--paper2': '#26262e', '--label': '#2c2c36',
         '--chrome': '#3a3a46', '--shade': '#0e0e12', '--hilite': '#43434f',
         '--ink': '#f2f2f5', '--ink2': '#c2c2cc', '--ink3': '#8a8a98'
+      }
+    },
+    terminal: {
+      name: 'Terminal',
+      vars: {
+        '--paper': '#0e1a10', '--paper2': '#13251a', '--label': '#17311f',
+        '--chrome': '#1f4a2b', '--shade': '#060f09', '--hilite': '#256034',
+        '--ink': '#7dff92', '--ink2': '#46b862', '--ink3': '#2f7a44',
+        '--teal': '#29e0c2', '--hotpink': '#ff5f8f', '--banana': '#b6ff4a',
+        '--grape': '#4dffab', '--lime': '#57ff42', '--tomato': '#ff8a3a',
+        '--crt': '#04120a'
+      }
+    },
+    amber: {
+      name: 'Amber',
+      vars: {
+        '--paper': '#17110a', '--paper2': '#221809', '--label': '#2e230d',
+        '--chrome': '#4a3814', '--shade': '#0c0803', '--hilite': '#5c481c',
+        '--ink': '#ffcf6b', '--ink2': '#d69a3a', '--ink3': '#a67320',
+        '--teal': '#ffb02e', '--hotpink': '#ff7a5a', '--banana': '#ffd94a',
+        '--grape': '#ff9a3a', '--lime': '#ffe07a', '--tomato': '#ff5a2a',
+        '--crt': '#0f0a03'
+      }
+    },
+    blueprint: {
+      name: 'Blueprint',
+      vars: {
+        '--paper': '#123a63', '--paper2': '#0f3252', '--label': '#164c7e',
+        '--chrome': '#2c609a', '--shade': '#08213a', '--hilite': '#3c74ac',
+        '--ink': '#eef4ff', '--ink2': '#b8d4f0', '--ink3': '#86aad0',
+        '--teal': '#5fe0ff', '--hotpink': '#ff8ac0', '--banana': '#ffe15a',
+        '--grape': '#b08aff', '--lime': '#7affc0', '--tomato': '#ff9a6a',
+        '--crt': '#06172a'
+      }
+    },
+    miami: {
+      name: 'Miami',
+      vars: {
+        '--paper': '#241234', '--paper2': '#2f1644', '--label': '#3c1c54',
+        '--chrome': '#52306e', '--shade': '#140a1e', '--hilite': '#603c82',
+        '--ink': '#ffe6ff', '--ink2': '#e0a0e8', '--ink3': '#b070c0',
+        '--teal': '#21e6d4', '--hotpink': '#ff4fb0', '--banana': '#ffe15a',
+        '--grape': '#a05fff', '--lime': '#5affc0', '--tomato': '#ff6a8a',
+        '--crt': '#120820'
+      }
+    },
+    forest: {
+      name: 'Forest',
+      vars: {
+        '--paper': '#2b3f2a', '--paper2': '#223421', '--label': '#35492e',
+        '--chrome': '#48603f', '--shade': '#16220f', '--hilite': '#55704a',
+        '--ink': '#f0f4e2', '--ink2': '#c4d0a8', '--ink3': '#93a678',
+        '--teal': '#35b58a', '--hotpink': '#e86a9a', '--banana': '#e8c34a',
+        '--grape': '#a07acc', '--lime': '#8fcf3a', '--tomato': '#e0632f',
+        '--crt': '#0e1a0c'
+      }
+    },
+    grapesoda: {
+      name: 'Grape soda',
+      vars: {
+        '--paper': '#4a2a6a', '--paper2': '#3f2258', '--label': '#5a3a7e',
+        '--chrome': '#6e4e92', '--shade': '#2a1640', '--hilite': '#7e5aa2',
+        '--ink': '#f4ecff', '--ink2': '#d0b8ee', '--ink3': '#a888c8',
+        '--teal': '#3ad0d0', '--hotpink': '#ff6ac0', '--banana': '#ffd84a',
+        '--grape': '#c89aff', '--lime': '#9aef5a', '--tomato': '#ff7a5a',
+        '--crt': '#1c0f2c'
+      }
+    },
+    hazard: {
+      name: 'Hazard',
+      vars: {
+        '--paper': '#1c1c14', '--paper2': '#26261a', '--label': '#33301c',
+        '--chrome': '#4a4620', '--shade': '#0c0c08', '--hilite': '#5c5620',
+        '--ink': '#ffe14a', '--ink2': '#c8a82a', '--ink3': '#8a7420',
+        '--teal': '#2ac0a0', '--hotpink': '#ff7a3a', '--banana': '#ffd21f',
+        '--grape': '#c89aff', '--lime': '#b6e02a', '--tomato': '#ff5a1f',
+        '--crt': '#0d0d06'
       }
     }
   };
