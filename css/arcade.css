@@ -25,6 +25,14 @@
   --lime:    #6fcf2f;
   --tomato:  #e8402a;
 
+  /* text that sits ON a bright accent surface. Dark reads well on every theme's
+     banana/lime except the few that remap them dark (graphite), which override
+     these. --focus is the keyboard ring, overridable where grape collapses into
+     a theme's neutrals. */
+  --onbanana: #1d1722;
+  --onlime:   #1d1722;
+  --focus:    var(--grape);
+
   /* the CRT the games live inside */
   --crt:     #0c1119;
 
@@ -81,7 +89,7 @@ kbd {
    whatever the theme's accent does */
 ::selection { background: var(--ink); color: var(--paper); }
 
-:focus-visible { outline: 3px dashed var(--grape); outline-offset: 2px; }
+:focus-visible { outline: 3px dashed var(--focus, var(--grape)); outline-offset: 2px; }
 
 /* ---------------- top chrome: a window title bar ---------------- */
 .topbar {
@@ -214,7 +222,7 @@ kbd {
   max-width: 60ch;
   font-size: 13px;
   font-weight: 700;
-  color: var(--ink);
+  color: var(--onbanana);        /* the hero panel is always banana */
 }
 
 .sticker {
@@ -396,7 +404,7 @@ kbd {
 .gtitle {
   margin: 0;
   font-size: 24px;
-  color: var(--label);
+  color: var(--brandink, var(--label));   /* dark themes force a light title over the grape header */
   text-shadow: 2px 2px 0 var(--ink);
   display: flex;
   align-items: center;
@@ -418,6 +426,7 @@ kbd {
   text-transform: uppercase;
   list-style: none;
   background: var(--banana);
+  color: var(--onbanana);
   border-bottom: 3px solid transparent;
 }
 .howto summary::-webkit-details-marker { display: none; }
@@ -453,9 +462,9 @@ kbd {
 }
 .btn:hover { background: var(--paper); }
 .btn:active { box-shadow: var(--bevel-in); transform: translate(1px, 1px); }
-.btn.primary { background: var(--banana); }
+.btn.primary { background: var(--banana); color: var(--onbanana); }
 .btn.danger { background: var(--tomato); color: var(--label); }
-.btn.on { background: var(--lime); }
+.btn.on { background: var(--lime); color: var(--onlime); }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
 
 .pill {
@@ -469,9 +478,9 @@ kbd {
   text-transform: uppercase;
   white-space: nowrap;
 }
-.pill.best { background: var(--banana); }
-.pill.good { background: var(--lime); }
-.pill.warn { background: #ffa229; }
+.pill.best { background: var(--banana); color: var(--onbanana); }
+.pill.good { background: var(--lime); color: var(--onlime); }
+.pill.warn { background: #ffa229; color: #241a06; }
 .pill.bad  { background: var(--tomato); color: var(--label); }
 
 .sel-wrap { display: inline-flex; align-items: center; gap: 6px; font: 700 11px/1 Verdana, sans-serif; text-transform: uppercase; }
@@ -634,7 +643,7 @@ kbd {
 .ms .board { gap: 2px; }
 .ms .cell { width: 30px; height: 30px; font-size: 15px; background: var(--paper); box-shadow: var(--bevel-out); border-width: 2px; }
 .ms .cell:hover { background: var(--label); }
-.ms .cell.open { background: var(--label); box-shadow: none; cursor: default; }
+.ms .cell.open { background: #f4efe3; box-shadow: none; cursor: default; }  /* fixed light — the digit palette below is fixed and tuned for it */
 .ms .cell.mine { background: var(--tomato); }
 .ms .cell.flag { background: var(--banana); }
 .ms .n1 { color: #1147c9; } .ms .n2 { color: #1a7a26; } .ms .n3 { color: #c41b1b; }
@@ -1075,7 +1084,7 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
 .diff-tag { font-family: Impact, Haettenschweiler, Arial Black, sans-serif; font-size: 12px; letter-spacing: .04em; }
 .d-chill     { background: var(--teal);   color: var(--label); }
 .d-normal    { background: var(--paper2); color: var(--ink); }
-.d-hard      { background: #ff8a1f;       color: var(--ink); }
+.d-hard      { background: #ff8a1f;       color: #241a06; }  /* fixed orange, so a fixed dark ink survives dark themes */
 .d-nightmare { background: var(--tomato); color: var(--label); }
 .d-nightmare.diffbtn { animation: throb 1.1s steps(2) infinite; }
 @keyframes throb { 50% { background: var(--ink); color: var(--tomato); } }
@@ -1115,8 +1124,8 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
   font-size: 11.5px; font-weight: 700; opacity: 0; transition: opacity .3s;
 }
 .coffee-event.show { opacity: 1; }
-.coffee-event.up { background: var(--lime); }
-.coffee-event.down { background: #ffb0a3; }
+.coffee-event.up { background: var(--lime); color: var(--onlime); }
+.coffee-event.down { background: #ffb0a3; color: #241a06; }
 
 .shop { flex: 1 1 340px; min-width: 300px; max-width: 460px; background: var(--label); border: 4px solid var(--ink); box-shadow: var(--hard); padding: 10px; }
 .shop-head { margin: 0 0 8px; font-size: 15px; letter-spacing: .08em; }

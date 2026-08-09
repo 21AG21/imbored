@@ -54,6 +54,9 @@
         '--brandink': '#f2f4f8',
         '--teal': '#33c0d0', '--hotpink': '#ff6b9d', '--banana': '#3f4c8c',
         '--grape': '#23262f', '--lime': '#54c46e', '--tomato': '#ff6a54',
+        /* banana is a dark blue here, and grape collapses into the neutrals, so
+           flip the on-banana text light and give the focus ring its own bright teal */
+        '--onbanana': '#f2f4f8', '--focus': '#33c0d0',
         '--crt': '#0a0d12'
       }
     },
