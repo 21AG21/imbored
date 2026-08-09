@@ -1737,3 +1737,7 @@ body.crt.boss-on::after, body.crt.boss-on::before { display: none; }
   .sud-board { border-color: #000 !important; box-shadow: none !important; background: #fff !important; }
   .sud-cell { border-color: #000 !important; color: #000 !important; background: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* colour-safe: redundant symbols where colour is the only channel */
+body.colorsafe .flood .cell { display: grid; place-items: center; font: 700 11px/1 Verdana, sans-serif; color: #14110c; text-shadow: 0 0 2px rgba(255,255,255,.9); }
+body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20px/1 Verdana, sans-serif; color: #14110c; text-shadow: 0 0 2px rgba(255,255,255,.9); }

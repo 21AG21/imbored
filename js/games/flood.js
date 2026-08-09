@@ -4,6 +4,7 @@
   const { h, randInt } = Engine;
   const N = 14;
   const COLORS = ['#e8402a', '#ffcb1f', '#6fcf2f', '#00a6b4', '#6f3fa8', '#ff2d87'];
+  const SYMS = ['●', '▲', '■', '◆', '✦', '✚'];   // ● ▲ ■ ◆ ✦ ✚
 
   function mount(root, api) {
     const bagg = Engine.bag();
@@ -68,8 +69,9 @@
     }
 
     function render() {
-      for (let i = 0; i < N * N; i++) cells[i].style.background = COLORS[grid[i]];
-      for (const b of swatches) b.classList.remove('cur');
+      const cs = document.body.classList.contains('colorsafe');
+      for (let i = 0; i < N * N; i++) { cells[i].style.background = COLORS[grid[i]]; cells[i].textContent = cs ? SYMS[grid[i]] : ''; }
+      swatches.forEach((b, ci) => { b.textContent = cs ? SYMS[ci] : ''; b.classList.remove('cur'); });
       swatches[grid[0]].classList.add('cur');
       pMoves.textContent = 'Moves: ' + moves;
       pPar.textContent = 'Par: ' + par();

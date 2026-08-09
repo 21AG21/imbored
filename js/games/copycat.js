@@ -139,6 +139,15 @@
           ctx.lineWidth = 3;
           ctx.stroke();
         }
+        /* colour-safe: a number on each pad so it never depends on the colour */
+        if (document.body.classList.contains('colorsafe')) {
+          const mid = (p.a0 + p.a1) / 2, rr = R * 0.62;
+          ctx.fillStyle = '#0c1119';
+          ctx.font = 'bold 42px Impact, Haettenschweiler, Arial Black, sans-serif';
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(String(i + 1), cx + Math.cos(mid) * rr, cy + Math.sin(mid) * rr);
+          ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+        }
       });
 
       /* hub */

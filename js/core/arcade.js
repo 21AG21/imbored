@@ -133,7 +133,13 @@
           type: 'checkbox', checked: store.get('crt', false) ? true : null,
           onchange: (e) => { document.body.classList.toggle('crt', e.target.checked); store.set('crt', e.target.checked); }
         }),
-        h('span', null, 'CRT screen')));
+        h('span', null, 'CRT screen')),
+      h('label', { class: 'theme-crt' },
+        h('input', {
+          type: 'checkbox', checked: store.get('colorsafe', false) ? true : null,
+          onchange: (e) => { document.body.classList.toggle('colorsafe', e.target.checked); store.set('colorsafe', e.target.checked); }
+        }),
+        h('span', null, 'Colour-safe symbols')));
 
     function paintSwatches() {
       swatches.replaceChildren();
@@ -720,6 +726,7 @@
   Arcade.start = function start() {
     games.sort((a, b) => (a.order || 50) - (b.order || 50));
     if (store.get('crt', false)) document.body.classList.add('crt');
+    if (store.get('colorsafe', false)) document.body.classList.add('colorsafe');
     buildChrome();
     document.body.appendChild(Boss.build());
     buildChomps();

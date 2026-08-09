@@ -1753,6 +1753,10 @@ body.crt.boss-on::after, body.crt.boss-on::before { display: none; }
   .sud-cell { border-color: #000 !important; color: #000 !important; background: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 
+/* colour-safe: redundant symbols where colour is the only channel */
+body.colorsafe .flood .cell { display: grid; place-items: center; font: 700 11px/1 Verdana, sans-serif; color: #14110c; text-shadow: 0 0 2px rgba(255,255,255,.9); }
+body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20px/1 Verdana, sans-serif; color: #14110c; text-shadow: 0 0 2px rgba(255,255,255,.9); }
+
 </style>
 </head>
 <body>
@@ -3195,7 +3199,13 @@ body.crt.boss-on::after, body.crt.boss-on::before { display: none; }
           type: 'checkbox', checked: store.get('crt', false) ? true : null,
           onchange: (e) => { document.body.classList.toggle('crt', e.target.checked); store.set('crt', e.target.checked); }
         }),
-        h('span', null, 'CRT screen')));
+        h('span', null, 'CRT screen')),
+      h('label', { class: 'theme-crt' },
+        h('input', {
+          type: 'checkbox', checked: store.get('colorsafe', false) ? true : null,
+          onchange: (e) => { document.body.classList.toggle('colorsafe', e.target.checked); store.set('colorsafe', e.target.checked); }
+        }),
+        h('span', null, 'Colour-safe symbols')));
 
     function paintSwatches() {
       swatches.replaceChildren();
@@ -3782,6 +3792,7 @@ body.crt.boss-on::after, body.crt.boss-on::before { display: none; }
   Arcade.start = function start() {
     games.sort((a, b) => (a.order || 50) - (b.order || 50));
     if (store.get('crt', false)) document.body.classList.add('crt');
+    if (store.get('colorsafe', false)) document.body.classList.add('colorsafe');
     buildChrome();
     document.body.appendChild(Boss.build());
     buildChomps();
@@ -7597,6 +7608,7 @@ body.crt.boss-on::after, body.crt.boss-on::before { display: none; }
   const { h, randInt } = Engine;
   const N = 14;
   const COLORS = ['#e8402a', '#ffcb1f', '#6fcf2f', '#00a6b4', '#6f3fa8', '#ff2d87'];
+  const SYMS = ['●', '▲', '■', '◆', '✦', '✚'];   // ● ▲ ■ ◆ ✦ ✚
 
   function mount(root, api) {
     const bagg = Engine.bag();
@@ -7661,8 +7673,9 @@ body.crt.boss-on::after, body.crt.boss-on::before { display: none; }
     }
 
     function render() {
-      for (let i = 0; i < N * N; i++) cells[i].style.background = COLORS[grid[i]];
-      for (const b of swatches) b.classList.remove('cur');
+      const cs = document.body.classList.contains('colorsafe');
+      for (let i = 0; i < N * N; i++) { cells[i].style.background = COLORS[grid[i]]; cells[i].textContent = cs ? SYMS[grid[i]] : ''; }
+      swatches.forEach((b, ci) => { b.textContent = cs ? SYMS[ci] : ''; b.classList.remove('cur'); });
       swatches[grid[0]].classList.add('cur');
       pMoves.textContent = 'Moves: ' + moves;
       pPar.textContent = 'Par: ' + par();
@@ -11174,6 +11187,15 @@ body.crt.boss-on::after, body.crt.boss-on::before { display: none; }
           ctx.strokeStyle = 'rgba(255,255,255,.85)';
           ctx.lineWidth = 3;
           ctx.stroke();
+        }
+        /* colour-safe: a number on each pad so it never depends on the colour */
+        if (document.body.classList.contains('colorsafe')) {
+          const mid = (p.a0 + p.a1) / 2, rr = R * 0.62;
+          ctx.fillStyle = '#0c1119';
+          ctx.font = 'bold 42px Impact, Haettenschweiler, Arial Black, sans-serif';
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(String(i + 1), cx + Math.cos(mid) * rr, cy + Math.sin(mid) * rr);
+          ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
         }
       });
 
