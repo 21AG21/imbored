@@ -69,10 +69,14 @@
 
     let phase = 'setup';       /* setup | battle | over */
     let turn = 'player';       /* player | cpu */
+    let mode = '1p';           /* 1p vs CPU | 2p hotseat pass-and-play */
     let busy = false;
     let reveal = false;
     let playerBoard, enemyBoard;
     let pShots, eShots;        /* shots taken AT a board: 0 unknown, 1 miss, 2 hit */
+    /* 2p canonical state: each player owns a board; the render vars above are
+       pointed at the current player's perspective by setView() */
+    let boardA, boardB, shotsAtA, shotsAtB, cur = 1;
     let setupIdx = 0;
     let orient = 'h';
     let hoverCell = null;
@@ -108,11 +112,28 @@
     }
     const me = buildBoard('me');
     const them = buildBoard('them');
+    const meTitle = h('h4', null, 'Your floor');
     const wrap = h('div', { class: 'battleship' },
       h('div', { class: 'panelrow' },
-        h('div', { class: 'bs-side' }, h('h4', null, 'Your floor'), me.el),
+        h('div', { class: 'bs-side' }, meTitle, me.el),
         h('div', { class: 'bs-side' }, h('h4', null, 'Enemy floor'), them.el)));
+    /* full-cover interstitial so a passing player never sees the other's fleet */
+    const passScreen = h('div', { class: 'bs-pass', style: { display: 'none' } });
+    wrap.appendChild(passScreen);
     root.append(banner, wrap);
+
+    function showPass(nextPlayer, msg, onReady) {
+      busy = true;
+      passScreen.replaceChildren(
+        h('div', { class: 'bs-pass-card' },
+          h('h3', null, 'Pass the device to Player ' + nextPlayer),
+          h('p', null, msg),
+          h('button', {
+            class: 'btn primary', type: 'button',
+            onclick: function () { passScreen.style.display = 'none'; onReady(); }
+          }, 'I am Player ' + nextPlayer + ' — Ready')));
+      passScreen.style.display = '';
+    }
 
     /* ---------------- toolbar ---------------- */
     const pTurn = api.pill('Setup');
@@ -123,15 +144,35 @@
     const btnRandom = api.button('Re-roll fleet', randomiseSetup);
     const btnClear = api.button('Place by hand', clearSetup);
     const btnRotate = api.button('Rotate (R)', rotate);
-    const btnStart = api.button('Start battle', startBattle, 'primary');
+    const btnStart = api.button('Start battle', primaryAction, 'primary');
+    api.select('Players', [
+      { value: '1p', label: '1 player (vs CPU)' },
+      { value: '2p', label: '2 players (hotseat)' }
+    ], '1p', function (v) { mode = v; resetForMode(); });
     const setupBtns = [btnRandom, btnClear, btnRotate, btnStart];
     void btnNew;
+
+    function resetForMode() { banner.style.display = 'none'; if (mode === '2p') newSetup2p(); else newSetup(); }
+    function primaryAction() { if (mode === '2p') return primary2p(); return startBattle(); }
+    /* point the shared render vars at a player's perspective (own board on the
+       left, opponent's hidden board on the right) */
+    function setView(player) {
+      cur = player;
+      if (player === 1) { playerBoard = boardA; pShots = shotsAtA; enemyBoard = boardB; eShots = shotsAtB; }
+      else { playerBoard = boardB; pShots = shotsAtB; enemyBoard = boardA; eShots = shotsAtA; }
+    }
+    function syncCanonical() {
+      if (mode !== '2p') return;
+      if (cur === 1) boardA = playerBoard; else boardB = playerBoard;
+    }
 
     /* ---------------- listeners ---------------- */
     bagg.listen(them.el, 'click', function (e) {
       const t = e.target.closest('.cell');
       if (!t) return;
-      if (phase !== 'battle' || busy || turn !== 'player') return;
+      if (phase !== 'battle' || busy) return;
+      if (mode === '2p') { fire2p(+t.dataset.r, +t.dataset.c); return; }
+      if (turn !== 'player') return;
       playerFire(+t.dataset.r, +t.dataset.c);
     });
     bagg.listen(me.el, 'click', function (e) {
@@ -159,11 +200,13 @@
     }));
 
     /* ---------------- setup phase ---------------- */
-    function newGame() { banner.style.display = 'none'; newSetup(); }
+    function newGame() { resetForMode(); }
 
     function newSetup() {
-      phase = 'setup'; turn = 'player'; busy = false; reveal = false;
+      phase = 'setup'; mode = '1p'; turn = 'player'; busy = false; reveal = false;
       hoverCell = null; orient = 'h';
+      btnStart.textContent = 'Start battle';
+      passScreen.style.display = 'none';
       playerBoard = emptyBoard();
       enemyBoard = randomBoard();
       pShots = new Array(N * N).fill(0);
@@ -175,19 +218,23 @@
     function randomiseSetup() {
       if (phase !== 'setup') return;
       playerBoard = randomBoard();
+      syncCanonical();
       setupIdx = FLEET.length;
       hoverCell = null;
       api.sfx.click();
-      api.status('Fleet moored. Re-roll, place it by hand, or start the drill.');
+      api.status(mode === '2p'
+        ? 'Player ' + cur + ': fleet moored. Re-roll, place by hand, then hit ' + (cur === 1 ? 'Pass to Player 2.' : 'Start battle.')
+        : 'Fleet moored. Re-roll, place it by hand, or start the drill.');
       updateToolbar(); updatePills(); renderAll();
     }
 
     function clearSetup() {
       if (phase !== 'setup') return;
       playerBoard = emptyBoard();
+      syncCanonical();
       setupIdx = 0; hoverCell = null;
       api.sfx.click();
-      api.status('Placing your ' + FLEET[0].name + ' (' + FLEET[0].size + '). Click a square; press R to rotate.');
+      api.status((mode === '2p' ? 'Player ' + cur + ': placing your ' : 'Placing your ') + FLEET[0].name + ' (' + FLEET[0].size + '). Click a square; press R to rotate.');
       updateToolbar(); updatePills(); renderAll();
     }
 
@@ -221,6 +268,71 @@
       api.sfx.good();
       api.status('Battle stations. Click a square on the enemy floor to fire.');
       updateToolbar(); updatePills(); renderAll();
+    }
+
+    /* ---------------- 2-player hotseat (pass-and-play) ---------------- */
+    function newSetup2p() {
+      phase = 'setup'; mode = '2p'; reveal = false; busy = false; hoverCell = null; orient = 'h';
+      boardA = emptyBoard(); boardB = emptyBoard();
+      shotsAtA = new Array(N * N).fill(0); shotsAtB = new Array(N * N).fill(0);
+      setView(1);
+      playerBoard = randomBoard(); syncCanonical(); setupIdx = FLEET.length;
+      btnStart.textContent = 'Pass to Player 2';
+      api.status('Player 1: place your fleet. Re-roll or place by hand, then Pass to Player 2. Player 2, look away.');
+      updateToolbar(); updatePills(); renderAll();
+    }
+
+    function primary2p() {
+      if (phase !== 'setup' || setupIdx < FLEET.length) return;
+      api.sfx.good();
+      if (cur === 1) {
+        showPass(2, 'Player 2, set up your own fleet. No peeking at Player 1’s floor.', function () {
+          setView(2);
+          playerBoard = randomBoard(); syncCanonical(); setupIdx = FLEET.length;
+          hoverCell = null; orient = 'h';
+          btnStart.textContent = 'Start battle';
+          api.status('Player 2: place your fleet, then Start battle.');
+          updateToolbar(); updatePills(); renderAll();
+        });
+      } else {
+        showPass(1, 'Battle stations — Player 1 fires first.', function () {
+          phase = 'battle'; reveal = false; busy = false; hoverCell = null;
+          setView(1);
+          api.status('Player 1: click a square on the enemy floor to fire.');
+          updateToolbar(); updatePills(); renderAll();
+        });
+      }
+    }
+
+    function fire2p(r, c) {
+      const i = r * N + c;
+      if (eShots[i] !== 0) return;
+      const res = resolveShot(enemyBoard, eShots, r, c);
+      renderThem(); updatePills();
+      const shooter = cur, nxt = cur === 1 ? 2 : 1;
+      if (allSunk(enemyBoard)) { endGame2p(shooter); return; }
+      const msg = res.sunk ? ('You sank their ' + res.name + ' (' + res.size + ').')
+        : res.hit ? 'Direct hit.' : 'Splash — a miss.';
+      busy = true;
+      after(700, function () {
+        if (!alive || phase !== 'battle') return;
+        showPass(nxt, msg + ' Player ' + shooter + ', look away.', function () {
+          setView(nxt); busy = false; reveal = false;
+          api.status('Player ' + nxt + ': fire at the enemy floor.');
+          updatePills(); renderAll();
+        });
+      });
+    }
+
+    function endGame2p(winner) {
+      phase = 'over'; busy = true; reveal = true;
+      updateToolbar(); updatePills(); renderAll();
+      api.sfx.great();
+      banner.style.display = '';
+      banner.replaceChildren(
+        h('h3', null, 'Player ' + winner + ' wins.'),
+        h('p', null, 'Player ' + winner + ' sank the entire enemy fleet.'),
+        h('button', { class: 'btn primary', type: 'button', onclick: newGame }, 'Rematch'));
     }
 
     /* ---------------- combat ---------------- */
@@ -411,7 +523,7 @@
     }
 
     function renderThem() {
-      const live = phase === 'battle' && turn === 'player' && !busy;
+      const live = phase === 'battle' && !busy && (mode === '2p' || turn === 'player');
       for (let i = 0; i < N * N; i++) {
         let cls = 'cell';
         if (eShots[i] === 2) cls += enemyBoard.ships[enemyBoard.grid[i]].sunk ? ' sunk' : ' hit';
@@ -428,6 +540,16 @@
     function renderAll() { renderMe(); renderThem(); }
 
     function updatePills() {
+      if (mode === '2p') {
+        meTitle.textContent = 'Player ' + cur + ' — your floor';
+        pTurn.textContent = phase === 'setup' ? 'Player ' + cur + ' setup'
+          : phase === 'over' ? 'Game over' : 'Player ' + cur + ' fires';
+        pTurn.className = 'pill' + (phase === 'battle' ? ' good' : '');
+        pEnemy.textContent = 'Enemy assets: ' + (enemyBoard ? unsunk(enemyBoard) : FLEET.length);
+        pStreak.textContent = 'Hotseat';
+        return;
+      }
+      meTitle.textContent = 'Your floor';
       pTurn.textContent = phase === 'setup' ? 'Setup'
         : phase === 'over' ? 'Game over'
           : (turn === 'player' ? 'Your move' : 'CPU firing');
@@ -457,13 +579,14 @@
     order: 24,
     blurb: 'Classic salvo warfare relabelled as a floor-by-floor asset audit. Moor your fleet, call your shots, and out-sink a CPU that gets meaner the higher you crank it.',
     scoreLabel: 'Win streak',
-    tags: ['battleship', 'strategy', 'vs-cpu', 'grid'],
+    tags: ['battleship', 'strategy', 'vs-cpu', 'hotseat', 'grid'],
     how: [
       'Two 10x10 floors. Sink every asset on the enemy floor before the CPU clears yours.',
       'Click or tap a square on the enemy grid to fire. During setup, use Re-roll fleet, or Place by hand and press R (or Rotate) to turn the ship.',
       'A hit that fills a whole ship clears it. The CPU fires blind until it lands a hit, then works along the line it has uncovered.',
       'Each win extends your streak; a loss resets it to zero. Your best streak is the score to beat.',
-      'Chill fires purely at random. Hard adds a checkerboard search; nightmare runs a probability map that hunts your fleet without mercy.'
+      'Chill fires purely at random. Hard adds a checkerboard search; nightmare runs a probability map that hunts your fleet without mercy.',
+      'Set Players to 2 for hotseat on one device: each of you secretly places a fleet, and between every turn a cover screen slides up so the person passing the phone never sees the other floor. Take turns firing until one fleet is gone.'
     ],
     usesLetters: true,
     mount: mount

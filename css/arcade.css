@@ -1624,7 +1624,14 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
 .fire-plot { width: 100%; max-width: 520px; border: 4px solid var(--ink); box-shadow: var(--hard); background: #12100c; }
 
 /* battleship */
-.battleship { --bsc: 27px; width: 100%; }
+.battleship { --bsc: 27px; width: 100%; position: relative; }
+/* hotseat pass-and-play: full-cover screen so the next player cannot peek */
+.bs-pass { position: absolute; inset: 0; z-index: 20; display: grid; place-items: center;
+  background: repeating-linear-gradient(45deg, #12100c, #12100c 14px, #171410 14px, #171410 28px); }
+.bs-pass-card { text-align: center; max-width: 320px; padding: 22px; border: 3px solid var(--ink);
+  background: var(--paper); box-shadow: var(--hard); }
+.bs-pass-card h3 { margin: 0 0 8px; }
+.bs-pass-card p { margin: 0 0 14px; color: var(--ink2); font: 13px/1.5 Verdana, sans-serif; }
 .battleship .panelrow { align-items: flex-start; gap: 20px; }
 .battleship .bs-side { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .bs-board { display: grid; grid-template-columns: 18px repeat(10, var(--bsc)); grid-auto-rows: var(--bsc); gap: 2px; background: var(--ink); padding: 6px; border: 4px solid var(--ink); box-shadow: var(--hard); }
