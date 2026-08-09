@@ -1,11 +1,13 @@
 /* Rave — the anti-panic key. Where the backtick turns the site into a spreadsheet,
  * this turns the whole screen into a screaming rainbow nightclub, on purpose, to
  * make a hovering boss decide they saw nothing and leave. Full-viewport takeover.
- * Every pointer is now an identical white circle, and the whole swarm drifts WITH
- * your hand instead of wandering, so there is no "yours is the one that follows
- * your mouse" tell left. There is no button and no Escape — the only way out is
- * to hold a secret key combo. Carries a photosensitivity + loud-audio heads-up
- * because the flashing and screeching are both very real. */
+ * Every pointer is now an identical white circle, and the whole field drifts in
+ * the direction of your hand at ONE uniform speed — same for every circle — so
+ * there is no "yours is the faster one that follows my mouse" tell left. There is
+ * no button and no Escape; the secret exits are instant Shift+S (quit) and Shift+M
+ * (mute), and even closing the tab nags you about unsaved work. Carries a
+ * photosensitivity + loud-audio heads-up because the flashing and screeching are
+ * both very real. */
 (function () {
   'use strict';
   const { h, clamp } = Engine;
@@ -131,8 +133,8 @@
     }
 
     function start() {
-      root.replaceChildren(h('p', { class: 'rave-hint' }, 'The party owns your whole screen — and it is now a blizzard of identical circles that all drift whichever way you move, so your real one is completely lost in the swarm. There is no button and no Escape. Turning it off is a secret you have to find, and hang onto.'));
-      api.status('RAVE ENGAGED. Loud, bright, and very hard to kill — every pointer is an identical circle and the whole swarm follows your hand, so there is no tell left. There is a way out, but you have to discover it and commit to it.');
+      root.replaceChildren(h('p', { class: 'rave-hint' }, 'The party owns your whole screen — a blizzard of identical circles that all drift the same way at the same speed whenever you move, so your real one is gone for good. No button, no Escape, and closing the tab just nags you. Turning it off is a secret you have to find.'));
+      api.status('RAVE ENGAGED. Loud, bright, and very hard to kill — every circle is identical and moves at the same speed, so there is no tell left at all. There is a way out, but you have to discover it.');
 
       overlay = h('div', { class: 'rave-overlay', tabindex: '0', style: { cursor: 'none' } });
       const cv = h('canvas', { class: 'rave-canvas' });
@@ -152,22 +154,24 @@
       const blobs = [];
       for (let i = 0; i < 26; i++) blobs.push({ x: Math.random(), y: Math.random(), vx: (Math.random() - 0.5) * 0.6, vy: (Math.random() - 0.5) * 0.6, r: 0.05 + Math.random() * 0.14, h: Math.random() * 360, s: (Math.random() * EMO.length) | 0 });
 
-      /* a crowd of decoy cursors, in CSS-pixel space (0..innerWidth/Height). They
-         no longer wander on their own — every frame the whole swarm is shoved in
-         the direction YOU just moved your mouse, plus a hair of jitter so it is
-         not a rigid grid. Because your real pointer moves the same way, there is
-         no motion tell left: the crowd goes wherever your hand goes. They wrap at
-         the edges so the screen stays full instead of piling up on one wall. */
-      const DECOYS = Math.max(28, Math.min(60, Math.round(innerWidth * innerHeight / 26000)));
-      const decoys = [];
-      for (let i = 0; i < DECOYS; i++) decoys.push({ x: Math.random() * innerWidth, y: Math.random() * innerHeight });
+      /* a field of identical circles in CSS-pixel space (0..innerWidth/Height).
+         Every frame the WHOLE field slides by one and the same vector, in whatever
+         direction you last moved your mouse, at a single fixed speed — no per-dot
+         variation at all, so there is no faster or slower "yours" to pick out.
+         Only the direction follows your hand; the speed never changes. They wrap
+         at the edges so the screen stays full instead of piling up on one wall. */
+      const DECOYS = Math.max(30, Math.min(64, Math.round(innerWidth * innerHeight / 24000)));
+      const dots = [];
+      for (let i = 0; i < DECOYS; i++) dots.push({ x: Math.random() * innerWidth, y: Math.random() * innerHeight });
 
-      let realX = innerWidth / 2, realY = innerHeight / 2, haveReal = false;
-      let lastX = realX, lastY = realY, driftX = 0, driftY = 0;
+      const SPEED = 520;                               // px/sec — the same for every single circle
+      let haveReal = false, lastX = 0, lastY = 0, dirX = 0, dirY = 0, moveT = 0;
       bagg.listen(overlay, 'pointermove', (e) => {
-        if (haveReal) { driftX += e.clientX - lastX; driftY += e.clientY - lastY; }   // impulse from this move
-        lastX = e.clientX; lastY = e.clientY;
-        realX = e.clientX; realY = e.clientY; haveReal = true;
+        if (haveReal) {
+          const dx = e.clientX - lastX, dy = e.clientY - lastY, len = Math.hypot(dx, dy);
+          if (len > 0.5) { dirX = dx / len; dirY = dy / len; moveT = 0.14; }   // take the direction only, not the speed
+        }
+        lastX = e.clientX; lastY = e.clientY; haveReal = true;
       });
 
       const wrap = (v, hi) => { v %= hi; return v < 0 ? v + hi : v; };
@@ -209,19 +213,17 @@
         ctx.strokeText(LINES[lineI], 0, 0); ctx.fillText(LINES[lineI], 0, 0);
         ctx.restore();
 
-        /* the whole swarm rides your last mouse move; the impulse decays so the
-           crowd coasts to a stop when your hand does — same as your real circle */
+        /* every circle slides the exact same distance this frame in the mouse
+           direction — one uniform speed, so none of them can be singled out as
+           yours. Movement fades a beat after your hand stops. */
         const dotR = scaleX * 9;                        // dot radius in device px
-        for (const d of decoys) {
-          d.x = wrap(d.x + driftX + (Math.random() - 0.5) * 1.4, innerWidth);
-          d.y = wrap(d.y + driftY + (Math.random() - 0.5) * 1.4, innerHeight);
+        const stepPx = moveT > 0 ? SPEED * dt : 0;
+        if (moveT > 0) moveT -= dt;
+        for (const d of dots) {
+          d.x = wrap(d.x + dirX * stepPx, innerWidth);
+          d.y = wrap(d.y + dirY * stepPx, innerHeight);
           drawDot(ctx, d.x * scaleX, d.y * scaleY, dotR);
         }
-        driftX *= 0.72; driftY *= 0.72;
-        if (Math.abs(driftX) < 0.05) driftX = 0;
-        if (Math.abs(driftY) < 0.05) driftY = 0;
-        /* your real circle, identical, drawn last so it is buried in the pile */
-        if (haveReal) drawDot(ctx, realX * scaleX, realY * scaleY, dotR);
 
         raf = requestAnimationFrame(frame);
       }
@@ -229,29 +231,28 @@
       screamer.start();
 
       const kill = () => { location.hash = ''; };
+      let muted = false;
+      const toggleMute = () => { muted = !muted; if (muted) screamer.stop(); else screamer.start(); };
       /* While the rave is up it OWNS the keyboard: a capture-phase listener eats
          every keydown before the site's global shortcuts (Escape-to-exit, the
          panic key, difficulty keys…) can see it, so none of them bail you out.
-         Escape now does nothing. The single way out is to HOLD Shift+S — a quick
-         tap will not do it; you must press it and keep both keys down for a beat,
-         and releasing either one resets the hold. (You can still close the tab or
-         reload — this is a prank toy, not a real trap.) */
-      const HOLD_MS = 1500;
-      let holdTimer = 0;
-      const clearHold = () => { if (holdTimer) { clearTimeout(holdTimer); holdTimer = 0; } };
+         Escape now does nothing. Two secret instant combos: Shift+S quits, Shift+M
+         mutes/unmutes the screeching. Browser accelerators (Ctrl/Cmd+W, reload) are
+         left alone so the unsaved-changes nag below can catch them. */
       bagg.listen(window, 'keydown', (e) => {
-        e.preventDefault();
         e.stopImmediatePropagation();                              // nothing else on the page hears this key
-        if (e.shiftKey && (e.code === 'KeyS' || (e.key || '').toLowerCase() === 's')) {
-          if (!holdTimer) holdTimer = setTimeout(kill, HOLD_MS);   // keydown repeats while held; only the first arms it
-        }
+        if (e.shiftKey && (e.code === 'KeyS' || (e.key || '').toLowerCase() === 's')) { e.preventDefault(); kill(); return; }
+        if (e.shiftKey && (e.code === 'KeyM' || (e.key || '').toLowerCase() === 'm')) { e.preventDefault(); toggleMute(); return; }
+        if (!e.ctrlKey && !e.metaKey && !e.altKey) e.preventDefault();   // block page defaults, but not real browser shortcuts
       }, true);
-      bagg.listen(window, 'keyup', (e) => {
-        e.stopImmediatePropagation();
-        const k = (e.key || '').toLowerCase();
-        if (k === 's' || k === 'shift') clearHold();               // release either key and you start over
-      }, true);
-      bagg.add(clearHold);
+      /* trying to close the tab or navigate away nags you about "unsaved work" —
+         one more speed bump on the way out. The Shift+S exit only changes the URL
+         hash, which never triggers this, so the secret quit stays instant. */
+      bagg.listen(window, 'beforeunload', (e) => {
+        e.preventDefault();
+        e.returnValue = 'You have unsaved changes that will be lost. Leave anyway?';
+        return e.returnValue;
+      });
       overlay.focus();
     }
 
@@ -272,8 +273,8 @@
     tags: ['toy', 'prank', 'boss'],
     how: [
       'Opening it takes over the whole screen with fast spinning colour, giant flashing text, and loud, ever-changing animal screeches. It fires the instant you open it, with no confirmation.',
-      'It sprays dozens of identical white circles across the screen. The whole swarm drifts in whatever direction you move your mouse, so your real one is completely lost in the crowd — there is no tell.',
-      'There is no stop button, no press-any-key, and Escape does nothing. Getting out is a secret you have to figure out and hold onto — that is the point. (You can always just close the tab.)',
+      'It sprays dozens of identical white circles across the screen. The whole field drifts in whatever direction you move your mouse, and every circle moves at the exact same speed, so your real one is completely lost in the crowd — there is no tell at all.',
+      'There is no stop button, no press-any-key, and Escape does nothing. Even closing the tab throws up an "unsaved changes" warning. Getting out is a secret you have to figure out — that is the point.',
       'It flashes fast and bright and gets loud, so open it only when you actually want that.',
       'Pair it with the panic key (the backtick turns the site into a spreadsheet) for cover at both extremes.',
       'Press Shift and the backtick key (the ~ key above Tab) to summon it from anywhere.'
