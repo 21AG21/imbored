@@ -488,6 +488,12 @@
       webHint);
     syncWebRow();
 
+    /* the document-style home screen (renderHub) reuses these from its own
+       understated footer, since the topbar/footer are hidden there */
+    Arcade._downloadSelf = downloadSelf;
+    Arcade._syncSound = syncSound;
+    Arcade._brandText = brandText;
+
     document.body.append(bar, view, foot);
     document.body.appendChild(h('div', { class: 'bigscreen-note' }, 'big screen on • press \\ or Esc to shrink'));
     return view;
@@ -669,76 +675,117 @@
     { id: 'connect4', hook: 'Beat the CPU, or a coworker by hotseat or code.' }
   ];
 
+  /* one dry line of framing per section, so the index reads like a real
+     internal catalogue rather than an arcade shelf */
+  const CATMETA = {
+    sim: 'Working models of systems that arrange themselves — traffic, crowds, epidemics, growth. Change the conditions and watch the behaviour emerge.',
+    puzzle: 'Logic and spatial problems, solved at your own pace. No clock unless you go looking for one.',
+    brain: 'Word, number, and strategy games. Several can be played against the computer, or a colleague at the same desk.',
+    action: 'Timing and reflex exercises. Keyboard or touch, quick to pick up.',
+    goof: 'Short diversions, novelties, and games of chance for a spare minute.'
+  };
+  const DOC_ORDER = ['sim', 'puzzle', 'brain', 'action', 'goof'];
+
+  /* The home screen is a plain, professional document. No cards, no buttons,
+     no colour — every game is opened by clicking its title, the way you would
+     follow a link in a report. The office disguise, but sincere. */
   function renderHub() {
     const view = document.getElementById('view');
     if (!view) return;
-    const q = ((Arcade._search && Arcade._search.value) || '').trim().toLowerCase();
+    const n = games.length;
 
-    const list = games.filter((g) => {
-      if (activeCat !== 'all' && g.cat !== activeCat) return false;
-      if (!q) return true;
-      return (g.title + ' ' + g.blurb + ' ' + (g.tags || []).join(' ') + ' ' + g.cat).toLowerCase().includes(q);
+    /* the document title doubles as the site name and stays editable, kept in
+       sync with the hidden topbar brand */
+    const title = h('h1', {
+      class: 'doc-title', contenteditable: 'true', spellcheck: 'false',
+      title: 'Click to rename. Enter to save.', 'aria-label': 'Document title (editable)'
+    }, brandName());
+    const readTitle = () => title.textContent.replace(/\s+/g, ' ').trim();
+    const commit = () => {
+      const t = readTitle() || 'Docs';
+      store.set('brand', t); applyDocTitle();
+      if (Arcade._brandText && Arcade._brandText.textContent !== t) Arcade._brandText.textContent = t;
+    };
+    title.addEventListener('input', commit);
+    title.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); title.blur(); } });
+    title.addEventListener('blur', () => { const t = readTitle() || 'Docs'; if (title.textContent !== t) title.textContent = t; commit(); });
+
+    const masthead = h('header', { class: 'doc-masthead' },
+      h('div', { class: 'doc-overline' }, 'Internal reference · For personal use only'),
+      title,
+      h('p', { class: 'doc-deck' },
+        'An index of ' + n + ' interactive modules that run entirely inside this browser tab. ' +
+        'Nothing installs, and nothing you do here ever leaves your machine. Open one by clicking its title.'),
+      h('div', { class: 'doc-meta' },
+        'Document 1-A · Revision 4.2 · ' + n + ' entries · Updated ' + todayStamp()));
+
+    const usage = h('p', { class: 'doc-usage' },
+      'Press ', h('kbd', null, 'Ctrl'), '+', h('kbd', null, 'F'), ' to jump to any title. Press ',
+      h('kbd', null, '`'), ' to blank the screen to a plain document, and ',
+      h('kbd', null, '−'), ' / ', h('kbd', null, '='), ' to set the challenge level.');
+
+    const sections = DOC_ORDER.map((cat, idx) => {
+      const listing = games.filter((g) => g.cat === cat);
+      if (!listing.length) return null;
+      const label = (CATS.find((c) => c.id === cat) || { label: cat }).label;
+      const entries = listing.map((g) => {
+        const best = Arcade.best(g.id);
+        const note = best == null ? null
+          : h('span', { class: 'doc-note' }, '  ' + (g.scoreLabel || 'best') + ' ' + (g.formatScore ? g.formatScore(best) : best));
+        return h('p', { class: 'doc-entry' },
+          h('a', { class: 'doc-open', href: '#g/' + g.id }, g.title),
+          h('span', { class: 'doc-desc' }, ' ' + g.blurb),
+          note);
+      });
+      return h('section', { class: 'doc-sec' },
+        h('h2', { class: 'doc-h2' },
+          h('span', { class: 'doc-num' }, String(idx + 1).padStart(2, '0')),
+          h('span', { class: 'doc-h2-t' }, label),
+          h('span', { class: 'doc-count' }, listing.length + ' entries')),
+        h('p', { class: 'doc-lead' }, CATMETA[cat] || ''),
+        h('div', { class: 'doc-list' }, entries));
     });
 
-    const chips = h('div', { class: 'chips' },
-      ['all'].concat(CATS.map((c) => c.id)).map((id) =>
-        h('button', {
-          class: 'chip' + (activeCat === id ? ' active' : ''), type: 'button',
-          onclick: () => { activeCat = id; renderHub(); }
-        }, id === 'all'
-          ? 'Everything (' + games.length + ')'
-          : (CATS.find((c) => c.id === id) || {}).label + ' (' + games.filter((g) => g.cat === id).length + ')')));
+    /* discreet document-footer controls — styled as plain text links, so the
+       page stays button-free while sound / appearance / offline copy / the log
+       remain reachable without the topbar */
+    const isDark = () => document.documentElement.getAttribute('data-dark') === '1';
+    const apBtn = h('button', { class: 'doc-tool', type: 'button', title: 'Switch the page between light and dark' });
+    const syncAp = () => { apBtn.textContent = 'Appearance: ' + (isDark() ? 'Dark' : 'Light'); };
+    apBtn.addEventListener('click', () => { Themes.set(isDark() ? 'paper' : 'graphite'); syncAp(); });
+    syncAp();
 
-    const cards = list.map((g) => {
-      const best = Arcade.best(g.id);
-      return h('a', { class: 'card cat-' + g.cat, href: '#g/' + g.id },
-        h('span', { class: 'card-emoji', html: Icons.svg(g.emoji, 28) }),
-        h('span', { class: 'card-cat' }, (CATS.find((c) => c.id === g.cat) || { label: g.cat }).label),
-        h('h3', { class: 'card-title' }, g.title),
-        h('p', { class: 'card-blurb' }, g.blurb),
-        h('span', { class: 'card-best' + (best == null ? '' : ' played') },
-          best == null ? 'never touched' : g.scoreLabel + ': ' + (g.formatScore ? g.formatScore(best) : best)));
+    const sndBtn = h('button', { class: 'doc-tool', type: 'button', title: 'Sound effects on or off' });
+    const syncSnd = () => { sndBtn.textContent = 'Sound: ' + (Engine.audio.muted ? 'off' : 'on'); };
+    sndBtn.addEventListener('click', () => {
+      Engine.audio.muted = !Engine.audio.muted;
+      store.set('muted', Engine.audio.muted);
+      if (!Engine.audio.muted) Engine.audio.good();
+      if (Arcade._syncSound) Arcade._syncSound();
+      syncSnd();
     });
+    syncSnd();
 
-    view.replaceChildren(
-      h('section', { class: 'hero' },
-        h('span', { class: 'sticker s1' }, games.length + ' games'),
-        h('span', { class: 'sticker s2' }, '0 calories'),
-        h('span', { class: 'sticker s3' }, 'no install!'),
-        h('h1', null, 'Look busy. ', h('span', { class: 'accent' }, 'Be busy.')),
-        h('p', null,
-          'The complete shareware collection for people whose meeting has no agenda. ',
-          'Everything runs in this tab. Hit ', h('kbd', null, '`'), ' and the whole thing turns into a spreadsheet so fast nobody sees a thing.'),
-        h('button', { class: 'btn primary daily-btn', type: 'button', onclick: () => Arcade.daily() }, 'Play today’s Daily')),
-      (!q && activeCat === 'all') ? h('section', { class: 'featured' },
-        h('h2', { class: 'featured-h' }, 'Start here'),
-        h('div', { class: 'pick-row' },
-          FEATURED.map((f) => {
-            const g = games.find((x) => x.id === f.id);
-            if (!g) return null;
-            return h('a', { class: 'pick cat-' + g.cat, href: '#g/' + g.id },
-              h('span', { class: 'pick-emoji', html: Icons.svg(g.emoji, 22) }),
-              h('span', { class: 'pick-title' }, g.title),
-              h('span', { class: 'pick-hook' }, f.hook));
-          }))) : null,
-      chips,
-      h('div', { class: 'grid' },
-        cards.length ? cards : h('p', { class: 'empty' }, 'Nothing by that name. Try fewer letters.'),
-        (!q && (activeCat === 'all' || activeCat === 'sim')) ? h('a', {
-          class: 'card card-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener'
-        },
-          h('span', { class: 'card-emoji', html: Icons.svg('road', 28) }),
-          h('span', { class: 'card-cat' }, 'Bonus'),
-          h('h3', { class: 'card-title' }, 'Phantom'),
-          h('p', { class: 'card-blurb' }, 'A traffic jam with no cause at all. One driver taps the brakes and the pulse outlives them, travelling backwards through the traffic forever. Watch it, then go play Gridlock again.'),
-          h('span', { class: 'card-best' }, 'opens in a new tab \u2197')) : null),
-      h('div', { class: 'ticker' }, h('span', null,
-        '*** NOW WITH ' + games.length + ' GAMES ***' + TICKER.slice(2).join(''))));
-    const gridEl = view.querySelector('.grid');
-    if (gridEl) wireGridKeys(gridEl);
+    const dlBtn = h('button', {
+      class: 'doc-tool', type: 'button',
+      title: 'Save the whole thing as one file you can reopen with no internet'
+    }, 'Save an offline copy');
+    dlBtn.addEventListener('click', () => { if (Arcade._downloadSelf) Arcade._downloadSelf(dlBtn); });
+
+    const sep = () => h('span', { class: 'doc-sep' }, '·');
+    const tools = h('div', { class: 'doc-tools' },
+      apBtn, sep(), sndBtn, sep(), dlBtn, sep(),
+      h('a', { class: 'doc-tool', href: '#stats' }, 'Activity log'));
+
+    const foot = h('footer', { class: 'doc-foot' },
+      tools,
+      h('p', { class: 'doc-fine' },
+        'No account, no cookies, no tracking, no storage of any kind — scores live only in this tab and are forgotten when you close it. ' +
+        'Use “Save an offline copy” to keep everything as one portable file.'));
+
+    view.replaceChildren(h('article', { class: 'docpage' }, masthead, usage, sections, foot));
     applyDocTitle();
   }
-
   /* ---------------- your timesheet (stats, doubles as camouflage) ---------------- */
   const LADDER = [
     [0, 'Intern'], [15, 'Junior Associate'], [40, 'Associate'], [80, 'Senior Associate'],
@@ -972,6 +1019,8 @@
     if (dmatch && byId.get(dmatch[1])) { g = byId.get(dmatch[1]); daily = decodeURIComponent(dmatch[2]); }
     else if (m) g = byId.get(m[1]);
     document.body.classList.toggle('in-game', !!g);
+    /* the hub renders as a plain document; flag it so the chrome can step aside */
+    document.body.classList.toggle('home-doc', !g && (location.hash || '') !== '#stats');
     if (g) {
       if (daily) restoreRandom = installSeed('daily:' + daily + ':' + g.id);
       const recent = store.get('recent', []).filter((x) => x !== g.id);
