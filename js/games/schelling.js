@@ -176,8 +176,9 @@
     };
     bagg.add(() => { if (window.__schelling) delete window.__schelling; });
 
-    ref = measureReference();
     fill();
+    const rt = setTimeout(() => { ref = measureReference(); }, 60);   // defer the heavy sweep so the field paints first
+    bagg.add(() => clearTimeout(rt));
     bagg.add(Engine.loop(() => {
       if (running) {
         const moved = step();

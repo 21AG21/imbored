@@ -817,7 +817,9 @@ kbd {
    THE PANIC SCREEN
    Four disguises. All of them typeable. None of them beige.
    ============================================================ */
-.boss { position: fixed; inset: 0; z-index: 999; display: flex; flex-direction: column; background: #fff; }
+/* the disguise must sit ABOVE every gag layer (screensaver 9990 … modal 9998),
+   or a stray toast / bouncing badge paints over the cover and gives it away */
+.boss { position: fixed; inset: 0; z-index: 10000; display: flex; flex-direction: column; background: #fff; }
 .boss.hidden { display: none; }
 body.boss-on { overflow: hidden; }
 .boss .skin { flex: 1; display: flex; flex-direction: column; min-height: 0; }
@@ -825,7 +827,12 @@ body.boss-on { overflow: hidden; }
   position: fixed; right: 8px; bottom: 4px;
   font: 10px/1 -apple-system, "Segoe UI", system-ui, sans-serif;
   color: rgba(120,120,120,.45); pointer-events: none; z-index: 2;
+  /* show the escape reminder only for a moment on entry, then fade it away — a
+     permanent "press ` to resume" over a spreadsheet gives the cover away */
+  animation: boss-hint-fade 4s ease-out forwards;
 }
+@keyframes boss-hint-fade { 0%, 45% { opacity: 1; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .boss-hint { animation: none; opacity: 0; } }
 /* Invisible escape hatch sitting on the disguise's top-left logo. Looks like
    part of the app until you hover; a tap or click returns to the arcade. */
 .boss-exit {
@@ -4193,6 +4200,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     const reply = h('div', { class: 'mail-reply', contenteditable: 'true', spellcheck: 'false', html: '<p>Thanks for flagging this.</p><p><br></p>' });
     const subject = h('div', { class: 'mail-subject' }, MAIL[3].s);
     const from = h('div', { class: 'mail-from' }, MAIL[3].f, h('span', null, ' to me'));
+    const replyHead = h('div', { class: 'mail-reply-head' }, 'Reply to ' + MAIL[3].f);
     const bodyText = h('div', { class: 'mail-body' },
       h('p', null, MAIL[3].p),
       h('p', null, 'Main thing is whether we keep the Friday slot or move it. I do not have a strong view, but a few people have said the current time clashes with the other standing meeting.'),
@@ -4208,6 +4216,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
           list.children[i].classList.remove('unread');
           subject.textContent = m.s;
           from.replaceChildren(m.f, h('span', null, ' to me'));
+          replyHead.textContent = 'Reply to ' + m.f;
           bodyText.replaceChildren(h('p', null, m.p), h('p', null, 'Let me know what you think when you get a chance.'), h('p', null, 'Thanks'));
         }
       },
@@ -4238,7 +4247,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
           list,
           h('div', { class: 'mail-read' }, subject, from, bodyText,
             h('div', { class: 'mail-reply-wrap' },
-              h('div', { class: 'mail-reply-head' }, 'Reply to ' + MAIL[3].f),
+              replyHead,
               reply,
               h('div', { class: 'mail-reply-foot' }, h('span', { class: 'mail-send' }, 'Send'))))))
     };
@@ -5845,7 +5854,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
         pct,
         h('div', { class: 'gag-modal-note' }, 'Please do not turn off your computer.')));
     document.body.appendChild(modal);
-    let p = 0;
+    let p = 0, dismissed = false;
     const iv = setInterval(() => {
       p += Math.random() * 7 + 1;
       if (p >= 99) p = 99;
@@ -5854,11 +5863,12 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       if (p >= 99) { clearInterval(iv); setTimeout(fail, 1200); }
     }, reduce() ? 350 : 170);
     function fail() {
+      if (dismissed || !modal.isConnected) return;   // user already closed it — don't buzz or toast out of nowhere
       label.textContent = 'Update failed (0x8007000E). Rolling back changes…';
       pct.textContent = ''; bar.style.width = '100%'; bar.classList.add('err');
-      setTimeout(() => { modal.remove(); if (A && A.bad) A.bad(); toast({ icon: '✅', title: 'Just kidding', body: 'Nothing was installed. As you were.' }); }, 1700);
+      setTimeout(() => { if (dismissed) return; modal.remove(); if (A && A.bad) A.bad(); toast({ icon: '✅', title: 'Just kidding', body: 'Nothing was installed. As you were.' }); }, 1700);
     }
-    modal.addEventListener('click', (e) => { if (e.target === modal) { clearInterval(iv); modal.remove(); } });
+    modal.addEventListener('click', (e) => { if (e.target === modal) { dismissed = true; clearInterval(iv); modal.remove(); } });
   }
 
   /* ---------------- matrix rain ---------------- */
@@ -5903,6 +5913,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     document.body.appendChild(saverEl);
     let x = innerWidth * 0.3, y = innerHeight * 0.3, vx = 1.7, vy = 1.35, hue = 200;
     const step = () => {
+      if (bossOn() || document.hidden) { hideSaver(); return; }   // panic screen up (or tab hidden): get off the glass
       const bw = badge.offsetWidth, bh = badge.offsetHeight;
       x += vx; y += vy; let bump = false;
       if (x < 0) { x = 0; vx = Math.abs(vx); bump = true; }
@@ -6878,8 +6889,9 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     };
     bagg.add(() => { if (window.__schelling) delete window.__schelling; });
 
-    ref = measureReference();
     fill();
+    const rt = setTimeout(() => { ref = measureReference(); }, 60);   // defer the heavy sweep so the field paints first
+    bagg.add(() => clearTimeout(rt));
     bagg.add(Engine.loop(() => {
       if (running) {
         const moved = step();
@@ -7183,7 +7195,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
         if (y < L - 1) { height[i + L] += times; if (height[i + L] >= 4) stack.push(i + L); }
         /* grains off the edge are lost — the dissipation that makes SOC work */
       }
-      if (size > 0) { avalanches++; hist[size] = (hist[size] || 0) + 1; if (size > biggest) biggest = size; }
+      if (size > 0) { avalanches++; hist[size] = (hist[size] || 0) + 1; if (size > biggest) { biggest = size; api.submit(biggest); } }
       return size;
     }
 
@@ -7249,7 +7261,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
     reset();
     bagg.add(Engine.loop(() => {
-      if (running) { for (let k = 0; k < 4; k++) drop((Math.random() * L * L) | 0); syncPills(); if (grains % 200 === 0) api.submit(biggest); }
+      if (running) { for (let k = 0; k < 4; k++) drop((Math.random() * L * L) | 0); syncPills(); }   // best is submitted from drop() the instant a record is set
       draw();
     }));
 
@@ -7409,8 +7421,9 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     };
     bagg.add(() => { if (window.__vicsek) delete window.__vicsek; });
 
-    ref = measureReference();
     reset();
+    const rt = setTimeout(() => { ref = measureReference(); }, 60);   // defer the heavy sweep so the field paints first
+    bagg.add(() => clearTimeout(rt));
     bagg.add(Engine.loop(() => {
       if (running) { step(); if ((Math.random() * 30 | 0) === 0) { const ph = phi(); samples.push({ eta: eta, phi: ph }); if (samples.length > 60) samples.shift(); api.submit(Math.round(ph * 100)); } }
       syncPills();
@@ -7559,8 +7572,9 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     };
     bagg.add(() => { if (window.__kuramoto) delete window.__kuramoto; });
 
-    ref = measureReference();
     reset();
+    const rt = setTimeout(() => { ref = measureReference(); }, 60);   // defer the heavy sweep so the field paints first
+    bagg.add(() => clearTimeout(rt));
     bagg.add(Engine.loop(() => {
       if (running) { step(); if ((Math.random() * 30 | 0) === 0) { const r = order().r; samples.push({ K: K, r: r }); if (samples.length > 60) samples.shift(); api.submit(Math.round(r * 100)); } }
       syncPills();
@@ -7644,9 +7658,9 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     dSlider.addEventListener('input', () => { density = parseFloat(dSlider.value); reset(); });
     api.toolbar.appendChild(h('label', { class: 'sel-wrap' }, h('span', null, 'density'), dSlider));
     const pSlider = h('input', { type: 'range', min: '0', max: '0.6', step: '0.02', value: '0.25', class: 'slider' });
-    pSlider.addEventListener('input', () => { pDawdle = parseFloat(pSlider.value); });
+    pSlider.addEventListener('input', () => { pDawdle = parseFloat(pSlider.value); rebuildRef(); });
     api.toolbar.appendChild(h('label', { class: 'sel-wrap' }, h('span', null, 'dawdle p'), pSlider));
-    api.select('Top speed', [3, 4, 5, 6].map((v) => ({ value: String(v), label: 'v_max ' + v })), '5', (v) => { vmax = +v; reset(); });
+    api.select('Top speed', [3, 4, 5, 6].map((v) => ({ value: String(v), label: 'v_max ' + v })), '5', (v) => { vmax = +v; reset(); rebuildRef(); });
     api.button('Reset', reset);
 
     function reset() {
@@ -7783,6 +7797,12 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       }
       return out;
     }
+    /* the reference curve + critical-density marker depend on p and v_max, so
+       rebuild them (debounced — the sweep is heavy) whenever those change,
+       instead of freezing the curve at its mount-time defaults */
+    let refTimer = 0;
+    function rebuildRef() { clearTimeout(refTimer); refTimer = setTimeout(() => { ref = measureReference(); }, 130); }
+    bagg.add(() => clearTimeout(refTimer));
 
     /* ---- test seam: lets a headless sweep find the peak of the diagram ---- */
     window.__traffic = {
@@ -7801,8 +7821,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     bagg.add(() => { if (window.__traffic) delete window.__traffic; });
 
     reset();
-    const refTimer = setTimeout(() => { ref = measureReference(); }, 60);
-    bagg.add(() => clearTimeout(refTimer));
+    rebuildRef();
     bagg.add(Engine.loop(() => {
       if (running) { step(); pushRow(); }
       syncPills();
@@ -8401,7 +8420,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     }
     function randomize(p) {
       for (let i = 0; i < grid.length; i++) grid[i] = Math.random() < p ? 1 : 0;
-      gen = 0; hist.length = 0; countPop(); peak = pop;
+      gen = 0; hist.length = 0; countPop(); peak = pop; api.submit(peak);
       running = true; btnRun.textContent = 'Pause';
       api.status('Random soup at ' + Math.round(p * 100) + '%. Watch the crowd crash and settle to a low equilibrium of a few percent, near the marked 0.0287.');
       syncPills(); draw();
@@ -8414,7 +8433,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       const oy = name === 'gun' ? 6 : Math.floor((N - maxY) / 2);
       grid.fill(0);
       for (const [x, y] of pat) grid[((oy + y) % N) * N + ((ox + x) % N)] = 1;
-      gen = 0; hist.length = 0; countPop(); peak = pop;
+      gen = 0; hist.length = 0; countPop(); peak = pop; api.submit(peak);
       api.status('Dropped a ' + name + '. Press play and watch what one rule does with it.');
       syncPills(); draw();
     }
@@ -16936,6 +16955,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   Arcade.register({
     id: 'cryptogram', title: 'Memo Decoder', emoji: 'cipher', cat: 'brain', order: 27,
+    usesLetters: true,   // typed letters are gameplay — keep the shell's 'r' = restart shortcut off
     blurb: 'A cryptogram of office-speak. Every letter has been swapped for another; crack the substitution and read the platitude underneath. Chill hands you a few letters to start; harder settings do not.',
     scoreLabel: 'Solved', tags: ['word', 'logic', 'cipher'],
     how: [
@@ -23259,7 +23279,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       api.status('Tap or click anywhere in the sky to fire an interceptor there — its blast clears any request caught in it. Protect the buildings. Each wave is faster and busier; you get fresh ammo every wave.');
     }
     function startWave() {
-      ammo = ammoFor(); spawnLeft = waveCount(); spawnT = 0.4;
+      ammo = ammoFor(); spawnLeft = waveCount(); spawnT = 0.4; betweenT = 0;   // must be 0 during the wave, or the clear-gate never fires again
       pWave.textContent = 'Wave ' + wave;
       sync();
     }
@@ -23334,7 +23354,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
         }
       }
       // wave clear?
-      if (spawnLeft === 0 && incoming.length === 0 && betweenT === 0) {
+      if (spawnLeft === 0 && incoming.length === 0 && betweenT <= 0) {
         score += ammo * 5 + 50;                 // bonus for spare ammo + survival
         betweenT = 1.6; api.sfx.great();
       }
@@ -23402,6 +23422,13 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
         ctx.fillText('out of ammo — hold on', W / 2, GROUND / 2 + 26); ctx.textAlign = 'left';
       }
     }
+
+    /* ---- test seam ---- */
+    window.__missile = {
+      get: () => ({ wave, betweenT: +betweenT.toFixed(3), spawnLeft, incoming: incoming.length, over }),
+      clearWave: () => { incoming.length = 0; spawnLeft = 0; }   // as if every request was intercepted
+    };
+    bagg.add(() => { if (window.__missile) delete window.__missile; });
 
     reset();
     bagg.add(Engine.loop((dt) => { update(Math.min(0.05, dt)); draw(); }));

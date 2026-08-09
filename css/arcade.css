@@ -802,7 +802,9 @@ kbd {
    THE PANIC SCREEN
    Four disguises. All of them typeable. None of them beige.
    ============================================================ */
-.boss { position: fixed; inset: 0; z-index: 999; display: flex; flex-direction: column; background: #fff; }
+/* the disguise must sit ABOVE every gag layer (screensaver 9990 … modal 9998),
+   or a stray toast / bouncing badge paints over the cover and gives it away */
+.boss { position: fixed; inset: 0; z-index: 10000; display: flex; flex-direction: column; background: #fff; }
 .boss.hidden { display: none; }
 body.boss-on { overflow: hidden; }
 .boss .skin { flex: 1; display: flex; flex-direction: column; min-height: 0; }
@@ -810,7 +812,12 @@ body.boss-on { overflow: hidden; }
   position: fixed; right: 8px; bottom: 4px;
   font: 10px/1 -apple-system, "Segoe UI", system-ui, sans-serif;
   color: rgba(120,120,120,.45); pointer-events: none; z-index: 2;
+  /* show the escape reminder only for a moment on entry, then fade it away — a
+     permanent "press ` to resume" over a spreadsheet gives the cover away */
+  animation: boss-hint-fade 4s ease-out forwards;
 }
+@keyframes boss-hint-fade { 0%, 45% { opacity: 1; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .boss-hint { animation: none; opacity: 0; } }
 /* Invisible escape hatch sitting on the disguise's top-left logo. Looks like
    part of the app until you hover; a tap or click returns to the arcade. */
 .boss-exit {

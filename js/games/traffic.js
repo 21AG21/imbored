@@ -50,9 +50,9 @@
     dSlider.addEventListener('input', () => { density = parseFloat(dSlider.value); reset(); });
     api.toolbar.appendChild(h('label', { class: 'sel-wrap' }, h('span', null, 'density'), dSlider));
     const pSlider = h('input', { type: 'range', min: '0', max: '0.6', step: '0.02', value: '0.25', class: 'slider' });
-    pSlider.addEventListener('input', () => { pDawdle = parseFloat(pSlider.value); });
+    pSlider.addEventListener('input', () => { pDawdle = parseFloat(pSlider.value); rebuildRef(); });
     api.toolbar.appendChild(h('label', { class: 'sel-wrap' }, h('span', null, 'dawdle p'), pSlider));
-    api.select('Top speed', [3, 4, 5, 6].map((v) => ({ value: String(v), label: 'v_max ' + v })), '5', (v) => { vmax = +v; reset(); });
+    api.select('Top speed', [3, 4, 5, 6].map((v) => ({ value: String(v), label: 'v_max ' + v })), '5', (v) => { vmax = +v; reset(); rebuildRef(); });
     api.button('Reset', reset);
 
     function reset() {
@@ -189,6 +189,12 @@
       }
       return out;
     }
+    /* the reference curve + critical-density marker depend on p and v_max, so
+       rebuild them (debounced — the sweep is heavy) whenever those change,
+       instead of freezing the curve at its mount-time defaults */
+    let refTimer = 0;
+    function rebuildRef() { clearTimeout(refTimer); refTimer = setTimeout(() => { ref = measureReference(); }, 130); }
+    bagg.add(() => clearTimeout(refTimer));
 
     /* ---- test seam: lets a headless sweep find the peak of the diagram ---- */
     window.__traffic = {
@@ -207,8 +213,7 @@
     bagg.add(() => { if (window.__traffic) delete window.__traffic; });
 
     reset();
-    const refTimer = setTimeout(() => { ref = measureReference(); }, 60);
-    bagg.add(() => clearTimeout(refTimer));
+    rebuildRef();
     bagg.add(Engine.loop(() => {
       if (running) { step(); pushRow(); }
       syncPills();

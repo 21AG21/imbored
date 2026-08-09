@@ -115,8 +115,9 @@
     };
     bagg.add(() => { if (window.__kuramoto) delete window.__kuramoto; });
 
-    ref = measureReference();
     reset();
+    const rt = setTimeout(() => { ref = measureReference(); }, 60);   // defer the heavy sweep so the field paints first
+    bagg.add(() => clearTimeout(rt));
     bagg.add(Engine.loop(() => {
       if (running) { step(); if ((Math.random() * 30 | 0) === 0) { const r = order().r; samples.push({ K: K, r: r }); if (samples.length > 60) samples.shift(); api.submit(Math.round(r * 100)); } }
       syncPills();

@@ -64,7 +64,7 @@
         if (y < L - 1) { height[i + L] += times; if (height[i + L] >= 4) stack.push(i + L); }
         /* grains off the edge are lost — the dissipation that makes SOC work */
       }
-      if (size > 0) { avalanches++; hist[size] = (hist[size] || 0) + 1; if (size > biggest) biggest = size; }
+      if (size > 0) { avalanches++; hist[size] = (hist[size] || 0) + 1; if (size > biggest) { biggest = size; api.submit(biggest); } }
       return size;
     }
 
@@ -130,7 +130,7 @@
 
     reset();
     bagg.add(Engine.loop(() => {
-      if (running) { for (let k = 0; k < 4; k++) drop((Math.random() * L * L) | 0); syncPills(); if (grains % 200 === 0) api.submit(biggest); }
+      if (running) { for (let k = 0; k < 4; k++) drop((Math.random() * L * L) | 0); syncPills(); }   // best is submitted from drop() the instant a record is set
       draw();
     }));
 

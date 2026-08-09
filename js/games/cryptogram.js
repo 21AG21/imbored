@@ -168,6 +168,7 @@
 
   Arcade.register({
     id: 'cryptogram', title: 'Memo Decoder', emoji: 'cipher', cat: 'brain', order: 27,
+    usesLetters: true,   // typed letters are gameplay — keep the shell's 'r' = restart shortcut off
     blurb: 'A cryptogram of office-speak. Every letter has been swapped for another; crack the substitution and read the platitude underneath. Chill hands you a few letters to start; harder settings do not.',
     scoreLabel: 'Solved', tags: ['word', 'logic', 'cipher'],
     how: [

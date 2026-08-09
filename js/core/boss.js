@@ -334,6 +334,7 @@
     const reply = h('div', { class: 'mail-reply', contenteditable: 'true', spellcheck: 'false', html: '<p>Thanks for flagging this.</p><p><br></p>' });
     const subject = h('div', { class: 'mail-subject' }, MAIL[3].s);
     const from = h('div', { class: 'mail-from' }, MAIL[3].f, h('span', null, ' to me'));
+    const replyHead = h('div', { class: 'mail-reply-head' }, 'Reply to ' + MAIL[3].f);
     const bodyText = h('div', { class: 'mail-body' },
       h('p', null, MAIL[3].p),
       h('p', null, 'Main thing is whether we keep the Friday slot or move it. I do not have a strong view, but a few people have said the current time clashes with the other standing meeting.'),
@@ -349,6 +350,7 @@
           list.children[i].classList.remove('unread');
           subject.textContent = m.s;
           from.replaceChildren(m.f, h('span', null, ' to me'));
+          replyHead.textContent = 'Reply to ' + m.f;
           bodyText.replaceChildren(h('p', null, m.p), h('p', null, 'Let me know what you think when you get a chance.'), h('p', null, 'Thanks'));
         }
       },
@@ -379,7 +381,7 @@
           list,
           h('div', { class: 'mail-read' }, subject, from, bodyText,
             h('div', { class: 'mail-reply-wrap' },
-              h('div', { class: 'mail-reply-head' }, 'Reply to ' + MAIL[3].f),
+              replyHead,
               reply,
               h('div', { class: 'mail-reply-foot' }, h('span', { class: 'mail-send' }, 'Send'))))))
     };

@@ -82,7 +82,7 @@
     }
     function randomize(p) {
       for (let i = 0; i < grid.length; i++) grid[i] = Math.random() < p ? 1 : 0;
-      gen = 0; hist.length = 0; countPop(); peak = pop;
+      gen = 0; hist.length = 0; countPop(); peak = pop; api.submit(peak);
       running = true; btnRun.textContent = 'Pause';
       api.status('Random soup at ' + Math.round(p * 100) + '%. Watch the crowd crash and settle to a low equilibrium of a few percent, near the marked 0.0287.');
       syncPills(); draw();
@@ -95,7 +95,7 @@
       const oy = name === 'gun' ? 6 : Math.floor((N - maxY) / 2);
       grid.fill(0);
       for (const [x, y] of pat) grid[((oy + y) % N) * N + ((ox + x) % N)] = 1;
-      gen = 0; hist.length = 0; countPop(); peak = pop;
+      gen = 0; hist.length = 0; countPop(); peak = pop; api.submit(peak);
       api.status('Dropped a ' + name + '. Press play and watch what one rule does with it.');
       syncPills(); draw();
     }

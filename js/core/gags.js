@@ -59,7 +59,7 @@
         pct,
         h('div', { class: 'gag-modal-note' }, 'Please do not turn off your computer.')));
     document.body.appendChild(modal);
-    let p = 0;
+    let p = 0, dismissed = false;
     const iv = setInterval(() => {
       p += Math.random() * 7 + 1;
       if (p >= 99) p = 99;
@@ -68,11 +68,12 @@
       if (p >= 99) { clearInterval(iv); setTimeout(fail, 1200); }
     }, reduce() ? 350 : 170);
     function fail() {
+      if (dismissed || !modal.isConnected) return;   // user already closed it — don't buzz or toast out of nowhere
       label.textContent = 'Update failed (0x8007000E). Rolling back changes…';
       pct.textContent = ''; bar.style.width = '100%'; bar.classList.add('err');
-      setTimeout(() => { modal.remove(); if (A && A.bad) A.bad(); toast({ icon: '✅', title: 'Just kidding', body: 'Nothing was installed. As you were.' }); }, 1700);
+      setTimeout(() => { if (dismissed) return; modal.remove(); if (A && A.bad) A.bad(); toast({ icon: '✅', title: 'Just kidding', body: 'Nothing was installed. As you were.' }); }, 1700);
     }
-    modal.addEventListener('click', (e) => { if (e.target === modal) { clearInterval(iv); modal.remove(); } });
+    modal.addEventListener('click', (e) => { if (e.target === modal) { dismissed = true; clearInterval(iv); modal.remove(); } });
   }
 
   /* ---------------- matrix rain ---------------- */
@@ -117,6 +118,7 @@
     document.body.appendChild(saverEl);
     let x = innerWidth * 0.3, y = innerHeight * 0.3, vx = 1.7, vy = 1.35, hue = 200;
     const step = () => {
+      if (bossOn() || document.hidden) { hideSaver(); return; }   // panic screen up (or tab hidden): get off the glass
       const bw = badge.offsetWidth, bh = badge.offsetHeight;
       x += vx; y += vy; let bump = false;
       if (x < 0) { x = 0; vx = Math.abs(vx); bump = true; }

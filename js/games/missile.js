@@ -39,7 +39,7 @@
       api.status('Tap or click anywhere in the sky to fire an interceptor there — its blast clears any request caught in it. Protect the buildings. Each wave is faster and busier; you get fresh ammo every wave.');
     }
     function startWave() {
-      ammo = ammoFor(); spawnLeft = waveCount(); spawnT = 0.4;
+      ammo = ammoFor(); spawnLeft = waveCount(); spawnT = 0.4; betweenT = 0;   // must be 0 during the wave, or the clear-gate never fires again
       pWave.textContent = 'Wave ' + wave;
       sync();
     }
@@ -114,7 +114,7 @@
         }
       }
       // wave clear?
-      if (spawnLeft === 0 && incoming.length === 0 && betweenT === 0) {
+      if (spawnLeft === 0 && incoming.length === 0 && betweenT <= 0) {
         score += ammo * 5 + 50;                 // bonus for spare ammo + survival
         betweenT = 1.6; api.sfx.great();
       }
@@ -182,6 +182,13 @@
         ctx.fillText('out of ammo — hold on', W / 2, GROUND / 2 + 26); ctx.textAlign = 'left';
       }
     }
+
+    /* ---- test seam ---- */
+    window.__missile = {
+      get: () => ({ wave, betweenT: +betweenT.toFixed(3), spawnLeft, incoming: incoming.length, over }),
+      clearWave: () => { incoming.length = 0; spawnLeft = 0; }   // as if every request was intercepted
+    };
+    bagg.add(() => { if (window.__missile) delete window.__missile; });
 
     reset();
     bagg.add(Engine.loop((dt) => { update(Math.min(0.05, dt)); draw(); }));
