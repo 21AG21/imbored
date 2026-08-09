@@ -1,7 +1,7 @@
 /* Five in a Row — get five of your stones in a line before the deskmate does. */
 (function () {
   'use strict';
-  const { h } = Engine;
+  const { h, clamp, randInt } = Engine;
   const SIZE = 13;
   const DIRS = [[1, 0], [0, 1], [1, 1], [1, -1]];
   const HUMAN = 1, CPU = 2;
@@ -91,16 +91,24 @@
     }
     function cpuTurn(lastHuman) {
       if (disposed || over) return;
-      let bestI = -1, bestV = -1;
+      /* the dial decides how hard it defends and how often it settles for a
+         near-best move instead of the best one — chill blocks loosely and
+         wanders, nightmare blocks hard and always plays the top move */
+      const defW = clamp(0.55 + api.dm * 0.3, 0.5, 1.4);
+      const cand = [];
       for (let i = 0; i < board.length; i++) {
         if (board[i]) continue;
         const r = Math.floor(i / SIZE), c = i % SIZE;
         const off = placeScore(r, c, CPU);
         const def = placeScore(r, c, HUMAN);
-        const v = off + def * 0.92 + (Math.abs(r - 6) + Math.abs(c - 6) < 5 ? 3 : 0);
-        if (v > bestV) { bestV = v; bestI = i; }
+        const v = off + def * defW + (Math.abs(r - 6) + Math.abs(c - 6) < 5 ? 3 : 0);
+        cand.push({ i, v });
       }
-      if (bestI < 0) { over = true; return; }
+      if (!cand.length) { over = true; return; }
+      cand.sort((a, b) => b.v - a.v);
+      const wander = clamp(0.42 - api.dm * 0.2, 0, 0.36);   // pick from the top few instead of the top
+      const k = Math.random() < wander ? Math.min(cand.length, 3) : 1;
+      const bestI = cand[randInt(0, k - 1)].i;
       board[bestI] = CPU; api.sfx.blip(300);
       const win = winThrough(bestI, CPU);
       if (win) { over = true; streak = 0; api.save('streak', 0); api.sfx.bad(); render(lastHuman, bestI, win); msg.textContent = 'Deskmate got five. Streak reset.'; msg.className = 'gk-msg lose'; pTurn.textContent = 'you lose'; busy = false; return; }

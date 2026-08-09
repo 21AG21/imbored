@@ -32,7 +32,9 @@
     }
 
     function spawn() {
-      const r = rand(24, 42);
+      /* targets shrink as the dial climbs, so aim tightens on every tier —
+         not just the two that expire early */
+      const r = clamp(rand(30, 46) - api.dm * 8, 12, 44);
       target = {
         x: rand(r + 14, W - r - 14),
         y: rand(r + 14, H - r - 14),
@@ -93,7 +95,7 @@
       } else if (target) {
         target.grow = Math.min(1, target.grow + dt * 9);
         /* on the mean settings a target you ignore simply leaves */
-        if (api.hard && t - target.born > Math.max(0.95, 1.6 / api.dm)) {
+        if (api.hard && t - target.born > Math.max(0.45, 1.6 / api.dm)) {
           target = null; misses++; api.sfx.bad(); sync();
           waiting = true; waitT = rand(0.3, 0.9);
         }

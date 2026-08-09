@@ -35,9 +35,10 @@
     function play(myId) {
       const myIdx = MOVES.findIndex((m) => m.id === myId);
       if (myIdx >= 0) hist[myIdx]++;
-      /* harder tiers read your habits: with rising probability the deskmate
-         throws the move that beats your most-played one */
-      const readP = Engine.clamp((api.dm - 1) / 1.3, 0, 1);
+      /* the deskmate always reads your habits a little — enough that leaning on
+         one throw gets punished, which is the whole game against otherwise-random
+         hands — and reads harder as the dial climbs */
+      const readP = Engine.clamp(0.18 + (api.dm - 0.6) * 0.42, 0.15, 0.96);
       let cpu;
       if (Math.random() < readP) {
         let top = 0; for (let i = 1; i < 3; i++) if (hist[i] > hist[top]) top = i;
@@ -64,10 +65,10 @@
 
   Arcade.register({
     id: 'rps', title: 'Desk Duel', emoji: 'circle', cat: 'brain', order: 26,
-    blurb: 'Rock, paper, scissors against a deskmate who throws at random. Chase the longest winning streak you can string together.',
-    scoreLabel: 'Best streak', tags: ['quick', 'luck', 'classic'],
+    blurb: 'Rock, paper, scissors against a deskmate who quietly reads your habits. Keep leaning on one throw and it will start punishing you for it. Chase the longest winning streak you can.',
+    scoreLabel: 'Best streak', tags: ['quick', 'mind games', 'classic'],
     how: [
-      'Pick rock, paper or scissors. Your deskmate picks at the same moment, at random.',
+      'Pick rock, paper or scissors. Your deskmate picks at the same moment — and it watches which move you lean on.',
       'Rock beats scissors, scissors beats paper, paper beats rock. Matching throws tie and nothing changes.',
       'Every win extends your streak. One loss resets it to zero.',
       'Your score is the longest streak you manage.'

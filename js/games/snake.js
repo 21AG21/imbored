@@ -37,7 +37,7 @@
       snake = [{ x: 8, y: 10 }, { x: 7, y: 10 }, { x: 6, y: 10 }];
       dir = { x: 1, y: 0 };
       queue = [];
-      score = 0; speed = 8 * (0.75 + api.dm * 0.25); acc = 0; dead = false; grow = 0; flash = 0;
+      score = 0; speed = 8 * (0.45 + api.dm * 0.55); acc = 0; dead = false; grow = 0; flash = 0;
       gold = null; goldT = 0; started = false;
       placeFood();
       banner.style.display = 'none';
@@ -95,7 +95,7 @@
       } else if (gold && head.x === gold.x && head.y === gold.y) {
         score += 50;
         grow += 3;
-        speed = Math.min(19, speed + 0.4);
+        speed = Math.min(24, speed + 0.4);
         gold = null;
         flash = 0.35;
         api.sfx.great();

@@ -98,8 +98,9 @@
       }
       addRoad(30, 60, 30, 0, 0);                  // finish straight
       trackLen = segs.length * SEG;
-      /* traffic: more and denser on later stages */
-      const nCars = 8 + level * 3;
+      /* traffic: more and denser on later stages, and the difficulty dial packs
+         the road tighter on top of that (chill ~0.8x, nightmare ~1.7x) */
+      const nCars = Math.round((8 + level * 3) * (0.55 + api.dm * 0.45));
       for (let c = 0; c < nCars; c++) {
         const i = 40 + Math.floor(rng() * (segs.length - 80));
         const lane = (rng() * LANES | 0) - 1;   // -1,0,1

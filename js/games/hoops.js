@@ -69,8 +69,13 @@
     }
 
     function cpu(pl) {
-      const left = ball.x < pl.x - 12, right = ball.x > pl.x + 12;
-      const jump = ball.y < pl.y - 40 && Math.abs(ball.x - pl.x) < 90 && pl.y >= GROUND - 0.5;
+      /* the difficulty dial sets how sharply the deskmate reacts: a wide
+         deadzone (laggy tracking) on chill, a tight one on nightmare, and it
+         only reliably goes up for the ball on the harder tiers */
+      const dz = clamp(46 - api.dm * 16, 6, 46);
+      const left = ball.x < pl.x - dz, right = ball.x > pl.x + dz;
+      const inRange = ball.y < pl.y - 40 && Math.abs(ball.x - pl.x) < 90 && pl.y >= GROUND - 0.5;
+      const jump = inRange && (api.dm >= 1.4 || Math.random() < 0.14 + api.dm * 0.1);
       return { left, right, jump };
     }
 

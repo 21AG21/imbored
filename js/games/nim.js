@@ -1,7 +1,7 @@
 /* Last Stick — misère Nim. Take 1–3; get stuck with the last one and you lose. */
 (function () {
   'use strict';
-  const { h, randInt } = Engine;
+  const { h, randInt, clamp } = Engine;
   const MAX = 3;
 
   /* a start count where the FIRST mover (you) can still win with perfect play,
@@ -45,8 +45,16 @@
     }
     function cpu() {
       if (disposed || over) return;
-      let k = (sticks - 1) % (MAX + 1);        // move to leave opponent at ≡1 (mod 4)
-      if (k === 0) k = randInt(1, Math.min(MAX, sticks)); // already losing — play on
+      /* the dial decides how often the deskmate fluffs it: chill and normal
+         hand you openings, hard and nightmare play the perfect misère line */
+      const blunder = clamp(0.6 - api.dm * 0.35, 0, 0.5);
+      let k;
+      if (Math.random() < blunder) {
+        k = randInt(1, Math.min(MAX, sticks));   // random legal take — a gift
+      } else {
+        k = (sticks - 1) % (MAX + 1);            // leave opponent at ≡1 (mod 4)
+        if (k === 0) k = randInt(1, Math.min(MAX, sticks)); // already losing — play on
+      }
       k = Math.max(1, Math.min(k, MAX, sticks));
       sticks -= k; api.sfx.blip(360); render();
       if (sticks === 0) {

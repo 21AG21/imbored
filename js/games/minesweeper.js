@@ -81,7 +81,11 @@
         }
       }
       b.addEventListener('contextmenu', (e) => e.preventDefault());
+      /* Mouse only — touch is handled by touchstart/touchend below so a tap
+         can dig while a long-press flags. Without this guard the synthesized
+         touch pointerdown digs instantly and the long-press never gets a turn. */
       b.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'touch') return;
         const t = e.target.closest('.cell');
         if (!t || dead || won) return;
         const x = +t.dataset.x, y = +t.dataset.y;
@@ -89,18 +93,24 @@
         else if (e.button === 0) { dig(x, y); }
         render();
       });
-      /* long-press flags on touch */
-      let holdT = 0;
+      /* touch: a short tap digs, a long press (420ms) plants a flag */
+      let holdT = 0, holdCell = null, flagged = false;
       b.addEventListener('touchstart', (e) => {
         const t = e.target.closest('.cell');
-        if (!t) return;
+        if (!t || dead || won) { holdCell = null; return; }
+        holdCell = { x: +t.dataset.x, y: +t.dataset.y };
+        flagged = false;
         holdT = setTimeout(() => {
-          toggleFlag(+t.dataset.x, +t.dataset.y);
-          render();
+          if (holdCell) { toggleFlag(holdCell.x, holdCell.y); render(); flagged = true; }
           holdT = 0;
         }, 420);
       }, { passive: true });
-      b.addEventListener('touchend', () => { if (holdT) clearTimeout(holdT); holdT = 0; }, { passive: true });
+      b.addEventListener('touchend', (e) => {
+        if (holdT) { clearTimeout(holdT); holdT = 0; }
+        if (holdCell && !flagged && !dead && !won) { e.preventDefault(); dig(holdCell.x, holdCell.y); render(); }
+        holdCell = null;
+      });
+      b.addEventListener('touchmove', () => { if (holdT) { clearTimeout(holdT); holdT = 0; } holdCell = null; }, { passive: true });
       boardWrap.appendChild(b);
       render();
     }
