@@ -284,7 +284,8 @@
       'Drag a car along the way it points. Cars do not turn. Cars have never turned.',
       'Only the red one gets out, and only through the gap on the right.',
       'Par is the shortest possible solution, found by exhaustive search. Matching it is a genuine flex.',
-      'Levels are ordered by that shortest solution, so the difficulty climbs honestly.'
+      'Levels are ordered by that shortest solution, so the difficulty climbs honestly.',
+      'Use the Level menu to jump straight to any of the twenty-eight boards whenever you like.'
     ],
     mount
   });

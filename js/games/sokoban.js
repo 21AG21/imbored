@@ -222,7 +222,7 @@
       'You can never pull. A crate in a corner is there forever.',
       'Z or the Undo button rewinds. Use it constantly, nobody is watching.',
       'Every crate on a ringed marker finishes the level.',
-      'All thirteen warehouses were checked by solver before shipping. One did not survive.'
+      'All twenty-five warehouses were checked by a solver before shipping, ramping from easy to hard. Use the Level menu to jump straight to any of them.'
     ],
     mount
   });
