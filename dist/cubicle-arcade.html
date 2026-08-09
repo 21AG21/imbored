@@ -662,13 +662,16 @@ kbd {
   width: 56px; height: 56px;
   border: 3px solid var(--ink);
   background: var(--label);
-  font: 400 27px/1 Impact, Haettenschweiler, Arial Black, sans-serif;
+  color: var(--ink);
+  font: 700 28px/1 Impact, Haettenschweiler, Arial Black, sans-serif;
   text-transform: uppercase;
 }
-.wg-tile.filled { background: var(--paper); }
-.wg-tile.hit  { background: var(--lime); }
-.wg-tile.near { background: var(--banana); }
-.wg-tile.miss { background: #9a917f; color: var(--label); }
+/* result colours are FIXED and high-contrast so letters stay legible in every
+   theme (dark themes were painting near-white letters on bright accent tiles) */
+.wg-tile.filled { background: var(--paper); color: var(--ink); }
+.wg-tile.hit  { background: #2e9e3f; color: #fff; border-color: #143a1a; }
+.wg-tile.near { background: #d8a400; color: #1a1305; border-color: #5c4600; }
+.wg-tile.miss { background: #5f5a4e; color: #f2efe6; border-color: #2c2820; }
 .wg-tile.shake { animation: shake .32s steps(4); }
 @keyframes shake { 25% { transform: translateX(-7px); } 75% { transform: translateX(7px); } }
 .kbd-row { display: flex; gap: 4px; justify-content: center; margin-bottom: 4px; }
@@ -684,9 +687,9 @@ kbd {
 }
 .kbd-key:active { box-shadow: var(--bevel-in); }
 .kbd-key.wide { min-width: 56px; font-size: 10px; }
-.kbd-key.hit  { background: var(--lime); }
-.kbd-key.near { background: var(--banana); }
-.kbd-key.miss { background: #9a917f; color: var(--label); box-shadow: var(--bevel-in); }
+.kbd-key.hit  { background: #2e9e3f; color: #fff; }
+.kbd-key.near { background: #d8a400; color: #1a1305; }
+.kbd-key.miss { background: #4a463c; color: #e8e4d8; box-shadow: var(--bevel-in); }
 @media (max-width: 430px) {
   .wg-row { grid-template-columns: repeat(5, 46px); }
   .wg-tile { width: 46px; height: 46px; font-size: 22px; }
