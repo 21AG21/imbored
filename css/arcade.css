@@ -1813,3 +1813,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 .wb-tab.active { background: #fff; color: #188038; font-weight: 700;
   box-shadow: inset 0 -2px 0 #188038; }
 .wb-tab.wb-add { background: transparent; border: none; color: #80868b; font-weight: 700; }
+
+/* Data Entry — typing test */
+.type-wrap { width: 100%; max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+.type-text { font: 20px/1.7 "Courier New", Courier, monospace; letter-spacing: .5px;
+  background: var(--paper); border: 3px solid var(--ink); box-shadow: var(--bevel-out);
+  padding: 16px 18px; min-height: 96px; word-break: break-word; color: var(--ink3); }
+.type-text .ch { border-radius: 2px; }
+.type-text .ch.ok { color: var(--ink); }
+.type-text .ch.cur { background: var(--banana); color: var(--ink); box-shadow: 0 2px 0 0 var(--ink); }
+.type-text .ch.cur.bad { background: var(--tomato); color: var(--label); }
+.type-input { font: 700 15px "Courier New", monospace; padding: 12px 14px; border: 3px solid var(--ink);
+  box-shadow: var(--bevel-in); background: var(--label); color: var(--ink); width: 100%; box-sizing: border-box; }
+.type-input:focus { outline: 3px solid var(--grape); outline-offset: 1px; }

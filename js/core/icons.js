@@ -199,7 +199,8 @@
     frost: line(12, 2, 12, 22, 1.6, P.teal) + line(3, 7, 21, 17, 1.6, P.teal) + line(3, 17, 21, 7, 1.6, P.teal) + line(9, 4, 12, 7, 1.4, P.teal) + line(15, 4, 12, 7, 1.4, P.teal) + line(4, 12, 8, 12, 1.4, P.teal) + line(20, 12, 16, 12, 1.4, P.teal) + c(12, 12, 2, P.paper),
     boom: line(3, 12, 9, 12, 1.7, P.teal) + line(9, 12, 15, 7, 1.5, P.teal) + line(9, 12, 15, 17, 1.5, P.teal) + line(15, 7, 21, 4, 1.3, P.tomato) + line(15, 7, 21, 10, 1.3, P.tomato) + line(15, 17, 21, 14, 1.3, P.tomato) + line(15, 17, 21, 20, 1.3, P.tomato),
     life: r(9, 3, 5, 5, P.lime) + r(15, 9, 5, 5, P.lime) + r(3, 15, 5, 5, P.lime) + r(9, 15, 5, 5, P.lime) + r(15, 15, 5, 5, P.lime),
-    powder: p('M6 4h12l-6 8z', P.yellow) + p('M6 20h12l-6-8z', P.grey) + c(12, 13, 1.1, P.yellow) + c(12, 16, 1, P.yellow) + line(5, 4, 19, 4, 2, P.grey) + line(5, 20, 19, 20, 2, P.grey)
+    powder: p('M6 4h12l-6 8z', P.yellow) + p('M6 20h12l-6-8z', P.grey) + c(12, 13, 1.1, P.yellow) + c(12, 16, 1, P.yellow) + line(5, 4, 19, 4, 2, P.grey) + line(5, 20, 19, 20, 2, P.grey),
+    keys: r(2, 7, 20, 11, P.dark) + r(4, 9, 2.4, 2, P.paper) + r(7.5, 9, 2.4, 2, P.paper) + r(11, 9, 2.4, 2, P.paper) + r(14.5, 9, 2.4, 2, P.paper) + r(18, 9, 1.8, 2, P.paper) + r(4, 12, 2.4, 2, P.paper) + r(7.5, 12, 2.4, 2, P.paper) + r(11, 12, 2.4, 2, P.paper) + r(14.5, 12, 2.4, 2, P.paper) + r(7, 15, 10, 2, P.paper)
   };
 
   const Icons = {
