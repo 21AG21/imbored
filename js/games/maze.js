@@ -236,7 +236,7 @@
     emoji: 'maze',
     cat: 'puzzle',
     order: 16,
-    blurb: 'Get from the top-left corner to the flag. Every maze is perfect, so exactly one path connects any two cells and there is always a way out.',
+    blurb: 'Get from the top-left corner to the flag. There is always exactly one route through, so you can never get boxed in with no way out.',
     scoreLabel: 'Level',
     tags: ['maze', 'labyrinth', 'navigation'],
     how: [

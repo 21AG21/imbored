@@ -281,7 +281,7 @@
     emoji: 'car',
     cat: 'action',
     order: 20,
-    blurb: 'A pseudo-3D arcade racer with a curving, cresting highway and traffic to weave through. Twenty stages get twistier and busier as you go, and you can jump straight to any of them.',
+    blurb: 'An arcade racer down a curving, cresting highway with traffic to weave through. Twenty stages get twistier and busier as you go, and you can jump straight to any of them.',
     scoreLabel: 'Stages cleared',
     tags: ['racing', 'driving', 'arcade', '3d'],
     how: [

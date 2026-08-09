@@ -185,9 +185,17 @@
       if (solved) return;
       if (isSolved()) win();
     }
+    const sameClue = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
+    const clueSum = (arr) => arr.reduce((a, b) => a + (b || 0), 0);
+    /* judge by the CLUES, not the one hidden target: a random target can admit
+       several clue-consistent layouts, so any board whose row and column runs
+       match the clues is a valid solve — not just the exact generated one */
     function isSolved() {
-      for (let i = 0; i < N * N; i++) {
-        if ((state[i] === 1) !== (target[i] === 1)) return false;
+      for (let r = 0; r < N; r++) {
+        if (!sameClue(clueFor((c) => state[r * N + c] === 1), rowCluesArr[r])) return false;
+      }
+      for (let c = 0; c < N; c++) {
+        if (!sameClue(clueFor((r) => state[r * N + c] === 1), colCluesArr[c])) return false;
       }
       return true;
     }
@@ -197,21 +205,29 @@
     }
     function doCheck() {
       if (solved) return;
+      clearErrors();
+      /* flag only genuine contradictions — a row or column that already has more
+         filled cells than its clue allows can never be right, whatever the rest
+         of the board does. Correct-but-alternate cells are never flagged. */
       let bad = 0;
-      for (let i = 0; i < N * N; i++) {
-        if (state[i] === 1 && target[i] === 0) {
-          cellEls[i].classList.add('error');
-          bad++;
+      for (let r = 0; r < N; r++) {
+        if (clueSum(clueFor((c) => state[r * N + c] === 1)) > clueSum(rowCluesArr[r])) {
+          for (let c = 0; c < N; c++) if (state[r * N + c] === 1) { cellEls[r * N + c].classList.add('error'); bad++; }
+        }
+      }
+      for (let c = 0; c < N; c++) {
+        if (clueSum(clueFor((r) => state[r * N + c] === 1)) > clueSum(colCluesArr[c])) {
+          for (let r = 0; r < N; r++) if (state[r * N + c] === 1) { cellEls[r * N + c].classList.add('error'); bad++; }
         }
       }
       if (bad) {
         api.sfx.bad();
-        api.status(bad + (bad === 1 ? ' cell breaks' : ' cells break') + ' the clues. Flagged red for a moment.');
+        api.status('A line has more filled squares than its clue allows. Flagged red for a moment.');
         if (errTimer) clearTimeout(errTimer);
         errTimer = setTimeout(function () { clearErrors(); errTimer = 0; }, 1500);
       } else {
         api.sfx.good();
-        api.status('No contradictions so far. Keep going.');
+        api.status('No line is over-filled. Keep going.');
       }
     }
 

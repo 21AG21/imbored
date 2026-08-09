@@ -7,7 +7,7 @@
 
   function mount(root, api) {
     const bagg = Engine.bag();
-    let streak = 0, over = false, cur = null, disposed = false;
+    let streak = 0, over = false, cur = null, disposed = false, epoch = 0;
 
     const pStreak = api.pill('streak: 0');
     const cardEl = h('div', { class: 'hl-card' });
@@ -31,11 +31,12 @@
     function sync() { pStreak.textContent = 'streak: ' + streak; }
 
     function reset() {
+      epoch++;                       // invalidate any pending reveal timeout from the last run
       streak = 0; over = false; cur = draw();
       paint(cardEl, cur, true); paint(nextEl, null, false);
       msg.textContent = 'Higher or lower than this card?'; msg.className = 'hl-msg';
       busy(false); sync();
-      api.status('Guess whether the next card is higher or lower. Equal rank counts as a win. Ride the streak.');
+      api.status('Guess whether the next card is higher or lower. A tie counts as a win. Keep the run alive.');
     }
     function guess(dir) {
       if (over) return;
@@ -48,8 +49,9 @@
         const r = api.submit(streak);
         msg.textContent = 'Correct! Streak ' + streak + '.' + (r.isRecord ? ' Best yet!' : '');
         msg.className = 'hl-msg win';
+        const myEpoch = epoch;
         setTimeout(() => {
-          if (disposed || over) return;
+          if (disposed || over || epoch !== myEpoch) return;   // a New run since? drop this stale reveal
           cur = nxt; paint(cardEl, cur, true); paint(nextEl, null, false);
           msg.textContent = 'Higher or lower?'; msg.className = 'hl-msg'; busy(false);
         }, 700);

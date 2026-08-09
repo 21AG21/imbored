@@ -624,10 +624,10 @@
   const FEATURED = [
     { id: 'workbook', hook: 'Minesweeper wearing a spreadsheet. Hide in plain sight.' },
     { id: 'spamfilter', hook: 'Tower defense for your inbox. Hold the line.' },
-    { id: 'bubblewrap', hook: 'Aim, fire, pop clusters. Endlessly satisfying.' },
+    { id: 'bubblewrap', hook: 'Aim, fire, pop clusters of three. Keep the wall off the line.' },
     { id: 'life', hook: 'Draw a colony, drop a glider gun, watch it breathe.' },
     { id: 'turf', hook: 'Rock-paper-scissors that curls into living spirals.' },
-    { id: 'logistic', hook: 'One knob turns calm into chaos — the famous route.' },
+    { id: 'logistic', hook: 'One knob turns calm into chaos, the classic road to it.' },
     { id: 'busywork', hook: 'File reports, hire interns, reorg. Forever.' },
     { id: 'connect4', hook: 'Beat the CPU, or a coworker by hotseat or code.' }
   ];

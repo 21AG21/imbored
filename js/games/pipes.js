@@ -214,7 +214,7 @@
     emoji: 'pipes',
     cat: 'puzzle',
     order: 14,
-    blurb: 'Rotate every pipe until the whole grid connects to the glowing source. Endless levels, all solvable by construction.',
+    blurb: 'Rotate every pipe until the whole grid connects to the glowing source. New levels forever, and every one has a solution.',
     scoreLabel: 'Level',
     tags: ['net', 'rotate', 'connect', 'plumbing'],
     how: [

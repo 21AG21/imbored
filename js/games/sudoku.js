@@ -269,7 +269,7 @@
     emoji: 'sudoku',
     cat: 'brain',
     order: 20,
-    blurb: 'A fresh puzzle every time, machine-checked to have exactly one solution. You never have to guess.',
+    blurb: 'A fresh puzzle every time, always with exactly one solution, so you never have to guess.',
     scoreLabel: 'Solved',
     tags: ['sudoku', 'numbers', 'logic', 'classic'],
     how: [

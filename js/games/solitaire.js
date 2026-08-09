@@ -64,7 +64,10 @@
     }
 
     function snapshot() {
-      return JSON.stringify({ stock, waste, found, tab, moves, redealsLeft });
+      /* redealsLeft is Infinity on the easier tiers, and JSON turns Infinity
+         into null — which then reads as <= 0 and softlocks the stock. Stash it
+         as a sentinel and restore it on undo. */
+      return JSON.stringify({ stock, waste, found, tab, moves, redealsLeft: redealsLeft === Infinity ? -1 : redealsLeft });
     }
     function pushUndo() {
       undoStack.push(snapshot());
@@ -74,7 +77,7 @@
       if (!undoStack.length || won) return;
       const s = JSON.parse(undoStack.pop());
       stock = s.stock; waste = s.waste; found = s.found; tab = s.tab;
-      moves = s.moves; redealsLeft = s.redealsLeft;
+      moves = s.moves; redealsLeft = s.redealsLeft === -1 ? Infinity : s.redealsLeft;
       drag = null;
       api.sfx.click();
       sync();

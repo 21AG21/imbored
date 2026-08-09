@@ -310,7 +310,7 @@
     emoji: 'blackjack',
     cat: 'goof',
     order: 6,
-    blurb: 'Single-deck blackjack against a dealer who plays a fixed policy. The chips are dressed up as unspent PTO, so nothing real rides on it.',
+    blurb: 'Single-deck blackjack against a dealer who plays a fixed policy. The chips are dressed up as unspent PTO, so at least the losses are imaginary.',
     scoreLabel: 'Chip high',
     tags: ['cards', 'blackjack', 'dealer', 'chips'],
     usesLetters: true,

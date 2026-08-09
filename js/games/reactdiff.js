@@ -192,7 +192,7 @@
     bagg.add(() => { if (window.__rd) delete window.__rd; });
 
     seed({ f: PRESETS[0].f, k: PRESETS[0].k });
-    api.status('Two chemicals, one reaction rule, no special cases. Drag on the field to add reagent. Slide f and k to roam the map — the interesting band is narrow.');
+    api.status('Two chemicals, one reaction rule. Drag on the field to add reagent. Slide f and k to roam the map — the interesting band is narrow.');
 
     bagg.add(Engine.loop(() => {
       if (running) for (let i = 0; i < 8; i++) step();
@@ -209,7 +209,7 @@
     emoji: 'reactdiff',
     cat: 'sim',
     order: 5,
-    blurb: 'Two make-believe chemicals under one Gray-Scott rule applied to every cell. No code places the patterns; the spots, stripes, mazes and dividing cells are what the equations produce. Drag to add reagent.',
+    blurb: 'Two chemicals, one Gray-Scott rule per cell. The spots, stripes, mazes and dividing blobs are what the equation grows on its own. Drag to add reagent.',
     scoreLabel: 'Peak coverage',
     tags: ['gray-scott', 'turing', 'chemistry', 'emergence'],
     how: [

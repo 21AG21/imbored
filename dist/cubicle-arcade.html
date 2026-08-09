@@ -5194,10 +5194,10 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   const FEATURED = [
     { id: 'workbook', hook: 'Minesweeper wearing a spreadsheet. Hide in plain sight.' },
     { id: 'spamfilter', hook: 'Tower defense for your inbox. Hold the line.' },
-    { id: 'bubblewrap', hook: 'Aim, fire, pop clusters. Endlessly satisfying.' },
+    { id: 'bubblewrap', hook: 'Aim, fire, pop clusters of three. Keep the wall off the line.' },
     { id: 'life', hook: 'Draw a colony, drop a glider gun, watch it breathe.' },
     { id: 'turf', hook: 'Rock-paper-scissors that curls into living spirals.' },
-    { id: 'logistic', hook: 'One knob turns calm into chaos — the famous route.' },
+    { id: 'logistic', hook: 'One knob turns calm into chaos, the classic road to it.' },
     { id: 'busywork', hook: 'File reports, hire interns, reorg. Forever.' },
     { id: 'connect4', hook: 'Beat the CPU, or a coworker by hotseat or code.' }
   ];
@@ -6108,7 +6108,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     bagg.add(() => { if (window.__rd) delete window.__rd; });
 
     seed({ f: PRESETS[0].f, k: PRESETS[0].k });
-    api.status('Two chemicals, one reaction rule, no special cases. Drag on the field to add reagent. Slide f and k to roam the map — the interesting band is narrow.');
+    api.status('Two chemicals, one reaction rule. Drag on the field to add reagent. Slide f and k to roam the map — the interesting band is narrow.');
 
     bagg.add(Engine.loop(() => {
       if (running) for (let i = 0; i < 8; i++) step();
@@ -6125,7 +6125,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'reactdiff',
     cat: 'sim',
     order: 5,
-    blurb: 'Two make-believe chemicals under one Gray-Scott rule applied to every cell. No code places the patterns; the spots, stripes, mazes and dividing cells are what the equations produce. Drag to add reagent.',
+    blurb: 'Two chemicals, one Gray-Scott rule per cell. The spots, stripes, mazes and dividing blobs are what the equation grows on its own. Drag to add reagent.',
     scoreLabel: 'Peak coverage',
     tags: ['gray-scott', 'turing', 'chemistry', 'emergence'],
     how: [
@@ -7807,7 +7807,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       stick(CX | 0, CY | 0);             // the seed
       launch();
       buf.fill(0xff1a1208 >>> 0);
-      api.status('Cold glass, one speck of ice in the middle. Wandering molecules freeze the instant they touch it, and the crystal branches into frost. The panel fits its fractal dimension as it grows — it climbs into the mid 1.6s on a finite crystal, bracketing the textbook 1.71.');
+      api.status('Cold glass, one speck of ice in the middle. Wandering molecules freeze the instant they touch it and branch into frost. The panel tracks its fractal dimension as it grows — it climbs into the mid 1.6s, near the textbook 1.71.');
     }
 
     function stick(ix, iy) {
@@ -11964,9 +11964,17 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       if (solved) return;
       if (isSolved()) win();
     }
+    const sameClue = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
+    const clueSum = (arr) => arr.reduce((a, b) => a + (b || 0), 0);
+    /* judge by the CLUES, not the one hidden target: a random target can admit
+       several clue-consistent layouts, so any board whose row and column runs
+       match the clues is a valid solve — not just the exact generated one */
     function isSolved() {
-      for (let i = 0; i < N * N; i++) {
-        if ((state[i] === 1) !== (target[i] === 1)) return false;
+      for (let r = 0; r < N; r++) {
+        if (!sameClue(clueFor((c) => state[r * N + c] === 1), rowCluesArr[r])) return false;
+      }
+      for (let c = 0; c < N; c++) {
+        if (!sameClue(clueFor((r) => state[r * N + c] === 1), colCluesArr[c])) return false;
       }
       return true;
     }
@@ -11976,21 +11984,29 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     }
     function doCheck() {
       if (solved) return;
+      clearErrors();
+      /* flag only genuine contradictions — a row or column that already has more
+         filled cells than its clue allows can never be right, whatever the rest
+         of the board does. Correct-but-alternate cells are never flagged. */
       let bad = 0;
-      for (let i = 0; i < N * N; i++) {
-        if (state[i] === 1 && target[i] === 0) {
-          cellEls[i].classList.add('error');
-          bad++;
+      for (let r = 0; r < N; r++) {
+        if (clueSum(clueFor((c) => state[r * N + c] === 1)) > clueSum(rowCluesArr[r])) {
+          for (let c = 0; c < N; c++) if (state[r * N + c] === 1) { cellEls[r * N + c].classList.add('error'); bad++; }
+        }
+      }
+      for (let c = 0; c < N; c++) {
+        if (clueSum(clueFor((r) => state[r * N + c] === 1)) > clueSum(colCluesArr[c])) {
+          for (let r = 0; r < N; r++) if (state[r * N + c] === 1) { cellEls[r * N + c].classList.add('error'); bad++; }
         }
       }
       if (bad) {
         api.sfx.bad();
-        api.status(bad + (bad === 1 ? ' cell breaks' : ' cells break') + ' the clues. Flagged red for a moment.');
+        api.status('A line has more filled squares than its clue allows. Flagged red for a moment.');
         if (errTimer) clearTimeout(errTimer);
         errTimer = setTimeout(function () { clearErrors(); errTimer = 0; }, 1500);
       } else {
         api.sfx.good();
-        api.status('No contradictions so far. Keep going.');
+        api.status('No line is over-filled. Keep going.');
       }
     }
 
@@ -13420,7 +13436,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'pipes',
     cat: 'puzzle',
     order: 14,
-    blurb: 'Rotate every pipe until the whole grid connects to the glowing source. Endless levels, all solvable by construction.',
+    blurb: 'Rotate every pipe until the whole grid connects to the glowing source. New levels forever, and every one has a solution.',
     scoreLabel: 'Level',
     tags: ['net', 'rotate', 'connect', 'plumbing'],
     how: [
@@ -13674,7 +13690,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'maze',
     cat: 'puzzle',
     order: 16,
-    blurb: 'Get from the top-left corner to the flag. Every maze is perfect, so exactly one path connects any two cells and there is always a way out.',
+    blurb: 'Get from the top-left corner to the flag. There is always exactly one route through, so you can never get boxed in with no way out.',
     scoreLabel: 'Level',
     tags: ['maze', 'labyrinth', 'navigation'],
     how: [
@@ -13756,7 +13772,10 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     }
 
     function snapshot() {
-      return JSON.stringify({ stock, waste, found, tab, moves, redealsLeft });
+      /* redealsLeft is Infinity on the easier tiers, and JSON turns Infinity
+         into null — which then reads as <= 0 and softlocks the stock. Stash it
+         as a sentinel and restore it on undo. */
+      return JSON.stringify({ stock, waste, found, tab, moves, redealsLeft: redealsLeft === Infinity ? -1 : redealsLeft });
     }
     function pushUndo() {
       undoStack.push(snapshot());
@@ -13766,7 +13785,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       if (!undoStack.length || won) return;
       const s = JSON.parse(undoStack.pop());
       stock = s.stock; waste = s.waste; found = s.found; tab = s.tab;
-      moves = s.moves; redealsLeft = s.redealsLeft;
+      moves = s.moves; redealsLeft = s.redealsLeft === -1 ? Infinity : s.redealsLeft;
       drag = null;
       api.sfx.click();
       sync();
@@ -14779,7 +14798,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'sudoku',
     cat: 'brain',
     order: 20,
-    blurb: 'A fresh puzzle every time, machine-checked to have exactly one solution. You never have to guess.',
+    blurb: 'A fresh puzzle every time, always with exactly one solution, so you never have to guess.',
     scoreLabel: 'Solved',
     tags: ['sudoku', 'numbers', 'logic', 'classic'],
     how: [
@@ -21862,7 +21881,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'car',
     cat: 'action',
     order: 20,
-    blurb: 'A pseudo-3D arcade racer with a curving, cresting highway and traffic to weave through. Twenty stages get twistier and busier as you go, and you can jump straight to any of them.',
+    blurb: 'An arcade racer down a curving, cresting highway with traffic to weave through. Twenty stages get twistier and busier as you go, and you can jump straight to any of them.',
     scoreLabel: 'Stages cleared',
     tags: ['racing', 'driving', 'arcade', '3d'],
     how: [
@@ -23903,7 +23922,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'blackjack',
     cat: 'goof',
     order: 6,
-    blurb: 'Single-deck blackjack against a dealer who plays a fixed policy. The chips are dressed up as unspent PTO, so nothing real rides on it.',
+    blurb: 'Single-deck blackjack against a dealer who plays a fixed policy. The chips are dressed up as unspent PTO, so at least the losses are imaginary.',
     scoreLabel: 'Chip high',
     tags: ['cards', 'blackjack', 'dealer', 'chips'],
     usesLetters: true,
@@ -24234,7 +24253,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   function mount(root, api) {
     const bagg = Engine.bag();
-    let streak = 0, over = false, cur = null, disposed = false;
+    let streak = 0, over = false, cur = null, disposed = false, epoch = 0;
 
     const pStreak = api.pill('streak: 0');
     const cardEl = h('div', { class: 'hl-card' });
@@ -24258,11 +24277,12 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     function sync() { pStreak.textContent = 'streak: ' + streak; }
 
     function reset() {
+      epoch++;                       // invalidate any pending reveal timeout from the last run
       streak = 0; over = false; cur = draw();
       paint(cardEl, cur, true); paint(nextEl, null, false);
       msg.textContent = 'Higher or lower than this card?'; msg.className = 'hl-msg';
       busy(false); sync();
-      api.status('Guess whether the next card is higher or lower. Equal rank counts as a win. Ride the streak.');
+      api.status('Guess whether the next card is higher or lower. A tie counts as a win. Keep the run alive.');
     }
     function guess(dir) {
       if (over) return;
@@ -24275,8 +24295,9 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
         const r = api.submit(streak);
         msg.textContent = 'Correct! Streak ' + streak + '.' + (r.isRecord ? ' Best yet!' : '');
         msg.className = 'hl-msg win';
+        const myEpoch = epoch;
         setTimeout(() => {
-          if (disposed || over) return;
+          if (disposed || over || epoch !== myEpoch) return;   // a New run since? drop this stale reveal
           cur = nxt; paint(cardEl, cur, true); paint(nextEl, null, false);
           msg.textContent = 'Higher or lower?'; msg.className = 'hl-msg'; busy(false);
         }, 700);

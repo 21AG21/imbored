@@ -63,7 +63,7 @@
       stick(CX | 0, CY | 0);             // the seed
       launch();
       buf.fill(0xff1a1208 >>> 0);
-      api.status('Cold glass, one speck of ice in the middle. Wandering molecules freeze the instant they touch it, and the crystal branches into frost. The panel fits its fractal dimension as it grows — it climbs into the mid 1.6s on a finite crystal, bracketing the textbook 1.71.');
+      api.status('Cold glass, one speck of ice in the middle. Wandering molecules freeze the instant they touch it and branch into frost. The panel tracks its fractal dimension as it grows — it climbs into the mid 1.6s, near the textbook 1.71.');
     }
 
     function stick(ix, iy) {
