@@ -64,7 +64,7 @@
     usesDigits: true,   // number keys fire pads — the "1 = Docs" shortcut yields here
     title: 'Soundboard',
     emoji: 'speaker',
-    cat: 'goofy',
+    cat: 'goof',
     order: 43,
     blurb: 'Eighteen unserious noises: air horn, sad trombone, rimshot, vine boom and more. Everything is synthesized live in the browser, with no sound files at all.',
     scoreLabel: 'Noises made',

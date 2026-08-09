@@ -113,7 +113,7 @@
   }
 
   Arcade.register({
-    id: 'yahtzee', title: 'Deadline Dice', emoji: 'dice', cat: 'goofy', order: 50,
+    id: 'yahtzee', title: 'Deadline Dice', emoji: 'dice', cat: 'goof', order: 50,
     blurb: 'Yahtzee under an office coat of paint. Five dice, three rolls a turn, thirteen boxes to fill. Chase the straights and the five-of-a-kind for your best total.',
     scoreLabel: 'Best total', tags: ['dice', 'yahtzee', 'classic'],
     how: [

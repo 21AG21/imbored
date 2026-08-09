@@ -43,14 +43,22 @@
       let cx = 220, ci = 1;
       const count = 12 + level * 2;
       for (let i = 0; i < count; i++) {
-        const gap = 55 + rng() * (60 + diff * 90);
+        /* Gap is capped to the jump's actual reach — a running jump covers
+           MOVE * (2*JUMP/GRAV) ~= 198px flat, so keep the widest gap well under
+           that. The difficulty dial narrows pads and adds hazards, never widens
+           gaps, since a gap past the jump arc hard-walls the whole stage. */
+        const gap = 55 + rng() * Math.min(60 + diff * 90, 105);   // <= 160px
         const gapStart = cx;
         cx += gap;
-        /* the difficulty dial narrows the landing pads and adds hazards, but
-           never widens the GAPS — those are already near the jump's reach, and
-           stretching them would make stages unclearable */
         const pw = Math.max(46, 90 - diff * 30 - (api.dm - 1) * 8 + rng() * 60);
-        y = clamp(y + (rng() - 0.5) * (110 + diff * 90), 130, H - 44);
+        /* clamp the next platform's height so the jump across this gap is
+           physically clearable: at the moment you've crossed the gap you must be
+           at or above the target top */
+        const tCross = gap / MOVE;
+        const maxRise = JUMP * tCross - 0.5 * GRAV * tCross * tCross;   // px the next top may sit higher
+        let ny = clamp(y + (rng() - 0.5) * (110 + diff * 90), 130, H - 44);
+        ny = Math.max(ny, y - maxRise + 12);                            // 12px safety under the ceiling
+        y = clamp(ny, 130, H - 44);
         plats.push({ x: cx, y, w: pw, h: H - y, c: (i % PLAT_COLS.length) });
         /* lava under some gaps */
         if (rng() < clamp(0.35 + diff * 0.2 + (api.dm - 1) * 0.12, 0.1, 0.85) && i > 1) hazards.push({ x: gapStart, y: H - 16, w: gap, h: 16, t: 'lava' });

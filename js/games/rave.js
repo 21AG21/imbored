@@ -93,7 +93,7 @@
     id: 'rave',
     title: 'Rave Mode',
     emoji: 'rave',
-    cat: 'goofy',
+    cat: 'goof',
     order: 45,
     blurb: 'The opposite of the panic key. It fills your whole screen with strobing rainbow colour so anyone reading over your shoulder looks away. Tap to stop.',
     scoreLabel: 'Parties thrown',

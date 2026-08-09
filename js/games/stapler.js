@@ -83,7 +83,7 @@
   }
 
   Arcade.register({
-    id: 'stapler', title: 'Staple Empire', emoji: 'busywork', cat: 'goofy', order: 48,
+    id: 'stapler', title: 'Staple Empire', emoji: 'busywork', cat: 'goof', order: 48,
     blurb: 'An office idle clicker. Click the stapler for staples, then spend them on interns and machines that staple for you while the number climbs on its own.',
     scoreLabel: 'Staples made', tags: ['idle', 'clicker', 'numbers'],
     formatScore: (v) => (function f(n) { if (n < 1000) return String(n); const u = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx']; let i = 0; while (n >= 1000 && i < u.length - 1) { n /= 1000; i++; } return (n < 10 ? n.toFixed(2) : n < 100 ? n.toFixed(1) : Math.floor(n)) + u[i]; })(v),

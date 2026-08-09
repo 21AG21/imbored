@@ -71,7 +71,7 @@
       paint();
       const gw = winner(macro.map((v) => (v === 3 ? 0 : v)));
       if (gw || legalBoards().length === 0) return finish(gw);
-      turn = p === 1 ? 2 : 1; syncTurn();
+      turn = p === 1 ? 2 : 1; syncTurn(); paint();   // repaint disables cells while the deskmate thinks
       if (turn === 2) setTimeout(cpu, 380);
     }
 
@@ -110,9 +110,16 @@
           const test = macro.slice(); test[b] = 2;
           if (winner(test.map((v) => (v === 3 ? 0 : v))) === 2) sc += 1000;
         }
-        // block: does the human threaten to win board b next?
-        if (threatens(micro[b], 1) && !wonHere) sc -= 5;
-        if (wonHere && threatens(micro[b], 1)) sc += 8;   // taking a board they wanted
+        // block: if the human would WIN board b by taking cell c, taking it
+        // ourselves denies them — worth a lot, and enormous if that board would
+        // have completed their meta-line (this is the defense the CPU was missing)
+        const hc = micro[b].slice(); hc[c] = 1;
+        if (winner(hc) === 1) {
+          sc += 40;
+          const mt = macro.slice(); mt[b] = 1;
+          if (winner(mt.map((v) => (v === 3 ? 0 : v))) === 1) sc += 800;
+        }
+        if (wonHere && threatens(micro[b], 1)) sc += 8;   // taking a board they were building
         // avoid sending them to a board where they can win a macro-critical board
         const sendTo = (macro[c] || full(micro[c])) ? -1 : c;
         if (sendTo >= 0 && threatens(micro[sendTo], 1)) sc -= 12;

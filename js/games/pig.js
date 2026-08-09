@@ -77,7 +77,7 @@
   }
 
   Arcade.register({
-    id: 'pig', title: 'Press Your Luck', emoji: 'dice', cat: 'goofy', order: 46,
+    id: 'pig', title: 'Press Your Luck', emoji: 'dice', cat: 'goof', order: 46,
     blurb: 'Roll to build up points, but a single 1 wipes the whole turn. Bank before that happens. First to 100 beats your deskmate.',
     scoreLabel: 'Win streak', tags: ['dice', 'luck', 'press-your-luck'],
     how: [

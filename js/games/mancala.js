@@ -94,7 +94,7 @@
       paint(); sync();
       if (sweepIfDone(board)) { paint(); return finish(); }
       if (res.again) { pTurn.textContent = 'go again'; return; }
-      turn = 2; sync(); busy = true; setTimeout(cpuTurn, 480);
+      turn = 2; paint(); sync(); busy = true; setTimeout(cpuTurn, 480);   // repaint disables pits during the deskmate's think-time
     }
 
     function cpuTurn() {

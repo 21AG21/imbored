@@ -191,7 +191,7 @@
     id: 'videopoker',
     title: 'Video Poker',
     emoji: 'cards',
-    cat: 'goofy',
+    cat: 'goof',
     order: 42,
     blurb: 'Jacks-or-Better video poker for the break room. Deal five, hold the keepers, draw once, get paid by the table. The credits are fake.',
     scoreLabel: 'Best credits',

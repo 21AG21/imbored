@@ -231,7 +231,7 @@
     id: 'busywork',
     title: 'Busywork',
     emoji: 'busywork',
-    cat: 'goofy',
+    cat: 'goof',
     order: 41,
     blurb: 'An office idle clicker: file reports by hand, then hire interns and machines to file them for you. Reorganise to bank permanent clout, and it keeps earning while the tab is closed.',
     scoreLabel: 'Lifetime reports',

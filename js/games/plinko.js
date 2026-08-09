@@ -146,7 +146,7 @@
   }
 
   Arcade.register({
-    id: 'plinko', title: 'Quarter Plinko', emoji: 'plinko', cat: 'goofy', order: 44,
+    id: 'plinko', title: 'Quarter Plinko', emoji: 'plinko', cat: 'goof', order: 44,
     blurb: 'Drop a chip and watch it rattle down through the pegs into a payout slot. The outer slots pay big — but the two just inside them take points away, so aiming for the edge is a gamble. Fifteen chips to a round.',
     scoreLabel: 'Best round', tags: ['luck', 'physics', 'risk'],
     how: [

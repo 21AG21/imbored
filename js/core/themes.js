@@ -72,6 +72,8 @@
         '--brandink': '#ecdcc2',
         '--teal': '#5fb2a2', '--hotpink': '#df9090', '--banana': '#e4ba62',
         '--grape': '#584a34', '--lime': '#a7bd6a', '--tomato': '#df8a5f',
+        /* grape is a muted brown here, so the focus ring needs its own warm glow */
+        '--focus': '#e4ba62',
         '--crt': '#160f08'
       }
     },

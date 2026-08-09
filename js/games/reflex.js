@@ -45,7 +45,7 @@
     }
 
     function sync() {
-      pShot.textContent = shown + ' / ' + TOTAL;
+      pShot.textContent = times.length + ' / ' + TOTAL;   // progress is hits made, not targets shown (expired ones don't count)
       pLast.textContent = 'last: ' + (times.length ? Math.round(times[times.length - 1]) + 'ms' : '--');
       const avg = times.length ? times.reduce((a, b) => a + b, 0) / times.length + misses * MISS_PENALTY / TOTAL : 0;
       lastAvg = avg;

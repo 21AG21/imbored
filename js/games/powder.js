@@ -257,7 +257,7 @@
     id: 'powder',
     title: 'Powder',
     emoji: 'powder',
-    cat: 'goofy',
+    cat: 'goof',
     order: 40,
     blurb: 'A falling-sand sandbox with a dozen materials and no score to chase. Sand piles up, water finds its level, oil floats, fire spreads, and lava hardens to stone in water. Pick a material and draw.',
     scoreLabel: 'Messes made',
