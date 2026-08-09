@@ -2504,6 +2504,28 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 .lad-key.wide { max-width: 48px; flex-basis: 44px; }
 .lad-key.go { background: var(--lime); }
 
+/* ================= Memo Decoder (cryptogram) ================= */
+.cryptogram { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 10px; width: 100%; max-width: 640px; margin: 0 auto; }
+.cg-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
+.cg-msg.win { color: var(--lime); }
+.cg-puzzle { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; padding: 10px; background: var(--paper2); border: 3px solid var(--ink); box-shadow: var(--hard); width: 100%; }
+.cg-word { display: flex; gap: 3px; }
+.cg-punc { align-self: flex-end; font: 800 18px Verdana, sans-serif; color: var(--ink); padding-bottom: 2px; }
+.cg-cell { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 24px; padding: 2px 0 0; background: transparent; border: 0; cursor: pointer; }
+.cg-plain { font: 800 17px "Courier New", monospace; line-height: 1; min-height: 18px; color: var(--ink); }
+.cg-code { font: 700 9px "Courier New", monospace; color: var(--ink3); border-top: 2px solid var(--ink); width: 100%; text-align: center; padding-top: 1px; }
+.cg-cell.sel .cg-code { border-top-color: var(--grape); }
+.cg-cell.sel .cg-plain, .cg-cell.sel { background: var(--banana); }
+.cg-cell.filled .cg-plain { color: var(--grape); }
+.cg-cell.lock .cg-plain { color: var(--teal); }
+.cg-cell.lock { cursor: default; }
+.cg-keys { display: flex; flex-direction: column; gap: 5px; width: 100%; max-width: 460px; }
+.cg-keyrow { display: flex; gap: 4px; justify-content: center; }
+.cg-key { min-width: 26px; height: 40px; flex: 1 1 auto; max-width: 40px; border: 2px solid var(--ink); background: var(--label); box-shadow: var(--bevel-out); font: 800 13px system-ui; color: var(--ink); cursor: pointer; padding: 0; border-radius: 5px; }
+.cg-key:active { box-shadow: var(--bevel-in); }
+.cg-key.used { opacity: .45; }
+.cg-key.wide { max-width: 52px; flex-basis: 48px; }
+
 /* ================= Desk Lander pad ================= */
 .lander-pad { display: none; gap: 8px; justify-content: center; margin-top: 10px; }
 .lander-btn { flex: 1; max-width: 120px; height: 56px; border: 3px solid var(--ink); box-shadow: var(--bevel-out);
@@ -3457,7 +3479,12 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       r(3, 20, 18, 2, P.dark) +
       r(5, 15, 3, 5, P.teal) + r(10.5, 14, 3, 6, P.teal) + r(16, 15, 3, 5, P.teal) +
       line(12, 3, 6, 14, 1.6, P.tomato) + c(6, 15, 2.2, P.yellow) +
-      line(12, 3, 12, 3, 1, P.tomato) + c(12, 4, 1.4, P.paper)
+      line(12, 3, 12, 3, 1, P.tomato) + c(12, 4, 1.4, P.paper),
+    cipher:
+      r(3, 4, 18, 16, P.paper, ' rx="2"') +
+      r(6, 8, 3, 3, P.dark) + r(11, 8, 3, 3, P.tomato) + r(16, 8, 3, 3, P.dark) +
+      line(6, 15, 18, 15, 1.6, P.grape) + line(6, 17.5, 15, 17.5, 1.6, P.grape) +
+      p('M15.5 8.5l1.5 1.5-1.5 1.5', 'none').replace('fill="none"', 'fill="none" stroke="' + P.paper + '" stroke-width="1"')
   };
 
   const Icons = {
@@ -16700,6 +16727,190 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       'Each rung changes exactly one letter, and must itself be a real word from the list.',
       'Type on your keyboard or tap the on-screen keys; ✓ or Enter submits the rung, ⌫ deletes.',
       'Par is the shortest possible ladder. Beat it if you can — and use Hint if you get stuck.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Memo Decoder — a cryptogram. Every letter has been swapped for another; work
+   out the substitution and read the office platitude underneath. */
+(function () {
+  'use strict';
+  const { h, clamp, randInt, shuffle } = Engine;
+  const A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  /* short, self-contained office lines — common words so they're deducible */
+  const PHRASES = [
+    'LETS CIRCLE BACK ON THIS OFFLINE',
+    'PLEASE FIND ATTACHED THE REVISED DECK',
+    'PER MY LAST EMAIL THE DEADLINE STANDS',
+    'THE PRINTER IS OUT OF TONER AGAIN',
+    'THIS MEETING COULD HAVE BEEN AN EMAIL',
+    'LOW HANGING FRUIT FOR A QUICK WIN',
+    'LETS TAKE THIS CONVERSATION TO A BREAKOUT',
+    'MOVING THE NEEDLE ON KEY DELIVERABLES',
+    'HAPPY TO SYNC ON BANDWIDTH TOMORROW',
+    'THE COFFEE MACHINE IS DOWN ON THE THIRD FLOOR',
+    'RUNNING IT UP THE FLAGPOLE FOR VISIBILITY',
+    'WE ARE BOILING THE OCEAN ON THIS ONE',
+    'ADDING A PLACEHOLDER UNTIL WE HAVE NUMBERS',
+    'THANKS FOR YOUR PATIENCE ON THE TICKET',
+    'A GENTLE NUDGE ON MY EARLIER REQUEST',
+    'THE QUARTERLY REVIEW HAS BEEN PUSHED AGAIN',
+    'LOOPING IN THE WIDER TEAM FOR AWARENESS',
+    'CAN WE PARK THAT IDEA FOR NOW',
+    'DOUBLE CLICKING ON THE ACTION ITEMS',
+    'MY CALENDAR IS A DISASTER THIS WEEK'
+  ];
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let phrase, enc, guess, locked, sel, over, disposed = false;
+
+    const pSolved = api.pill('solved: ' + api.load('solved', 0));
+    const pFilled = api.pill('0 / 0');
+    const msg = h('div', { class: 'cg-msg' }, '');
+    const puzzle = h('div', { class: 'cg-puzzle' });
+    const keys = h('div', { class: 'cg-keys' });
+    root.appendChild(h('div', { class: 'cryptogram' }, msg, puzzle, keys));
+    api.button('New memo', fresh);
+    api.button('Reveal a letter', hintOne);
+
+    function makeCipher() {
+      // a derangement of the alphabet: no letter maps to itself
+      let perm;
+      do { perm = shuffle(A); } while (perm.some((c, i) => c === A[i]));
+      const map = {};
+      A.forEach((c, i) => { map[c] = perm[i]; });
+      return map;
+    }
+
+    function fresh() {
+      phrase = PHRASES[randInt(0, PHRASES.length - 1)];
+      const cipher = makeCipher();
+      enc = phrase.split('').map((ch) => (/[A-Z]/.test(ch) ? cipher[ch] : ch));
+      guess = {};          // cipherLetter -> guessed plain
+      locked = {};         // cipherLetter -> true for freebies (can't change)
+      sel = null; over = false;
+      // freebies: chill hands you several starter letters, nightmare almost none
+      const freebies = clamp(Math.round(6 - api.dm * 2), 0, 6);
+      const cipherLettersUsed = [...new Set(enc.filter((c) => /[A-Z]/.test(c)))];
+      shuffle(cipherLettersUsed).slice(0, freebies).forEach((cl) => {
+        const plain = Object.keys(cipher).find((k) => cipher[k] === cl);
+        guess[cl] = plain; locked[cl] = true;
+      });
+      msg.textContent = ''; msg.className = 'cg-msg';
+      buildKeys(); render();
+      api.status('Every letter was swapped for another. Tap a coded letter to select it, then tap or type the letter you think it stands for — every copy updates at once. Decode the whole memo.');
+    }
+
+    function render() {
+      puzzle.replaceChildren();
+      const words = [];
+      let cur = [];
+      enc.forEach((ch, i) => {
+        if (ch === ' ') { words.push(cur); cur = []; }
+        else cur.push({ ch, i });
+      });
+      words.push(cur);
+      for (const w of words) {
+        const wEl = h('div', { class: 'cg-word' });
+        for (const { ch } of w) {
+          if (!/[A-Z]/.test(ch)) { wEl.appendChild(h('span', { class: 'cg-punc' }, ch)); continue; }
+          const g = guess[ch] || '';
+          const cell = h('button', {
+            class: 'cg-cell' + (sel === ch ? ' sel' : '') + (locked[ch] ? ' lock' : '') + (g ? ' filled' : ''),
+            type: 'button', onclick: () => selectLetter(ch)
+          }, h('b', { class: 'cg-plain' }, g || ''), h('span', { class: 'cg-code' }, ch));
+          wEl.appendChild(cell);
+        }
+        puzzle.appendChild(wEl);
+      }
+      const total = new Set(enc.filter((c) => /[A-Z]/.test(c))).size;
+      const done = new Set(Object.keys(guess).filter((k) => guess[k])).size;
+      pFilled.textContent = done + ' / ' + total;
+    }
+
+    function buildKeys() {
+      keys.replaceChildren();
+      ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'].forEach((row, ri) => {
+        const rowEl = h('div', { class: 'cg-keyrow' });
+        if (ri === 2) rowEl.appendChild(mkKey('⌫', 'clear', 'wide'));
+        row.split('').forEach((c) => rowEl.appendChild(mkKey(c, c)));
+        keys.appendChild(rowEl);
+      });
+    }
+    function mkKey(label, val, cls) {
+      const used = val.length === 1 && Object.keys(guess).some((k) => !locked[k] && guess[k] === val || locked[k] && guess[k] === val);
+      const b = h('button', { class: 'cg-key ' + (cls || '') + (used ? ' used' : ''), type: 'button' }, label);
+      bagg.listen(b, 'click', () => { if (val === 'clear') clearSel(); else assign(val); });
+      return b;
+    }
+
+    function selectLetter(cl) {
+      if (over || locked[cl]) { if (locked[cl]) api.sfx.thud(); return; }
+      sel = (sel === cl ? null : cl); api.sfx.click(); render();
+    }
+    function assign(plain) {
+      if (over || !sel) { if (!sel) msg.textContent = 'Tap a coded letter first.'; return; }
+      guess[sel] = plain; api.sfx.blip(560);
+      // advance selection to the next unsolved coded letter for flow
+      sel = null;
+      render(); buildKeys(); checkWin();
+    }
+    function clearSel() {
+      if (over || !sel) return;
+      delete guess[sel]; api.sfx.click(); render(); buildKeys();
+    }
+    function hintOne() {
+      if (over) return;
+      const cipherLettersUsed = [...new Set(enc.filter((c) => /[A-Z]/.test(c)))];
+      // reveal a coded letter that's currently wrong or empty
+      const wrong = cipherLettersUsed.filter((cl) => {
+        const pos = enc.indexOf(cl);
+        return guess[cl] !== phrase[pos];
+      });
+      if (!wrong.length) { msg.textContent = 'Every letter is already right.'; return; }
+      const cl = wrong[randInt(0, wrong.length - 1)];
+      const pos = enc.indexOf(cl);
+      guess[cl] = phrase[pos]; locked[cl] = true;
+      api.sfx.tone ? api.sfx.tone(660) : api.sfx.blip(660);
+      sel = null; render(); buildKeys(); checkWin();
+    }
+    function checkWin() {
+      for (let i = 0; i < enc.length; i++) {
+        const c = enc[i];
+        if (!/[A-Z]/.test(c)) continue;
+        if (guess[c] !== phrase[i]) return;
+      }
+      over = true; api.sfx.great();
+      const s = api.load('solved', 0) + 1; api.save('solved', s); api.submit(s);
+      pSolved.textContent = 'solved: ' + s;
+      msg.textContent = 'Decoded! “' + phrase + '”'; msg.className = 'cg-msg win';
+      try { const r = msg.getBoundingClientRect(); Engine.fx.burst(r.left + r.width / 2, r.top + 14, 42); } catch (e) { /* ignore */ }
+      render();
+    }
+
+    bagg.add(Engine.onKey((e) => {
+      if (Engine.isEditable(e.target)) return;
+      if (/^[a-z]$/i.test(e.key)) { assign(e.key.toUpperCase()); return true; }
+      if (e.key === 'Backspace') { clearSel(); return true; }
+    }));
+
+    fresh();
+    return () => { disposed = true; bagg.dispose(); };
+  }
+
+  Arcade.register({
+    id: 'cryptogram', title: 'Memo Decoder', emoji: 'cipher', cat: 'brain', order: 27,
+    blurb: 'A cryptogram of office-speak. Every letter has been swapped for another; crack the substitution and read the platitude underneath. Chill hands you a few letters to start; harder settings do not.',
+    scoreLabel: 'Solved', tags: ['word', 'logic', 'cipher'],
+    how: [
+      'The memo has been enciphered — each letter always stands for the same other letter.',
+      'Tap a coded letter to select it, then tap or type the letter you think it really is. Every copy of that code updates together.',
+      'Use letter patterns and short words (a lone letter is usually A or I) to break in.',
+      'Fill every letter correctly to decode the memo. Reveal a letter if you get stuck.'
     ],
     mount
   });

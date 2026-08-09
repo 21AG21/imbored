@@ -240,7 +240,12 @@
       r(3, 20, 18, 2, P.dark) +
       r(5, 15, 3, 5, P.teal) + r(10.5, 14, 3, 6, P.teal) + r(16, 15, 3, 5, P.teal) +
       line(12, 3, 6, 14, 1.6, P.tomato) + c(6, 15, 2.2, P.yellow) +
-      line(12, 3, 12, 3, 1, P.tomato) + c(12, 4, 1.4, P.paper)
+      line(12, 3, 12, 3, 1, P.tomato) + c(12, 4, 1.4, P.paper),
+    cipher:
+      r(3, 4, 18, 16, P.paper, ' rx="2"') +
+      r(6, 8, 3, 3, P.dark) + r(11, 8, 3, 3, P.tomato) + r(16, 8, 3, 3, P.dark) +
+      line(6, 15, 18, 15, 1.6, P.grape) + line(6, 17.5, 15, 17.5, 1.6, P.grape) +
+      p('M15.5 8.5l1.5 1.5-1.5 1.5', 'none').replace('fill="none"', 'fill="none" stroke="' + P.paper + '" stroke-width="1"')
   };
 
   const Icons = {
