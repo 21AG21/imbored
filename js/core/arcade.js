@@ -141,7 +141,19 @@
           type: 'checkbox', checked: store.get('colorsafe', false) ? true : null,
           onchange: (e) => { document.body.classList.toggle('colorsafe', e.target.checked); store.set('colorsafe', e.target.checked); }
         }),
-        h('span', null, 'Colour-safe symbols')));
+        h('span', null, 'Colour-safe symbols')),
+      h('label', { class: 'theme-crt' },
+        h('input', {
+          type: 'checkbox', checked: store.get('saver', false) ? true : null,
+          onchange: (e) => { if (global.Gags) global.Gags.screensaver.set(e.target.checked); }
+        }),
+        h('span', null, 'Screensaver when idle')),
+      h('label', { class: 'theme-crt' },
+        h('input', {
+          type: 'checkbox', checked: store.get('office', false) ? true : null,
+          onchange: (e) => { if (global.Gags) global.Gags.officeAlerts.set(e.target.checked); }
+        }),
+        h('span', null, 'Fake meeting alerts')));
 
     function paintSwatches() {
       swatches.replaceChildren();
@@ -889,7 +901,7 @@
       stage,
       toolbar,
       status(txt) { statusEl.textContent = txt || ''; },
-      submit(v) { const r = Arcade.submit(g.id, v); syncBest(); return r; },
+      submit(v) { const r = Arcade.submit(g.id, v); syncBest(); if (r.isRecord && global.Gags) global.Gags.confetti(); return r; },
       best() { return Arcade.best(g.id); },
       sfx: Engine.audio,
       /* difficulty: multiply your knobs by this. 0.7 chill ... 2.3 nightmare */
@@ -1027,6 +1039,7 @@
     buildChrome();
     document.body.appendChild(Boss.build());
     buildChomps();
+    if (global.Gags) global.Gags.init();
 
     addEventListener('hashchange', route);
     addEventListener('fullscreenchange', () => {
