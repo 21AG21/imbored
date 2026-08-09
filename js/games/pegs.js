@@ -1,9 +1,11 @@
 /* Peg Solitaire — jump pegs to clear the board down to one. */
 (function () {
   'use strict';
-  const { h } = Engine;
+  const { h, randInt } = Engine;
   const N = 7;
   const valid = (r, c) => !((r < 2 || r > 4) && (c < 2 || c > 4));
+  const HOLES = [];
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) if (valid(r, c)) HOLES.push(r * N + c);
 
   function mount(root, api) {
     const bagg = Engine.bag();
@@ -25,8 +27,10 @@
 
     function reset() {
       cell = new Array(N * N).fill(-1);
-      for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) if (valid(r, c)) cell[r * N + c] = 1;
-      cell[3 * N + 3] = 0;
+      for (const hpos of HOLES) cell[hpos] = 1;
+      /* start with a different hole empty each time — every single-vacancy start
+         on this board can still be cleared to one peg, but each plays differently */
+      cell[HOLES[randInt(0, HOLES.length - 1)]] = 0;
       sel = -1; over = false;
       msg.textContent = 'Jump a peg over a neighbour into an empty hole. Aim for one peg left.'; msg.className = 'peg-msg';
       render();

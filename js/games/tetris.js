@@ -5,7 +5,14 @@
 
   const COLS = 10, ROWS = 20, CELL = 26;
   const WX = 28, WY = 34;
-  const W = 520, H = WY + ROWS * CELL + 26;
+  /* on a portrait phone the HOLD/NEXT column was half the canvas, squeezing the
+     well to a sliver once the fit scaled the whole thing to screen width — so
+     shrink the panel (and the total width) there and let the well dominate */
+  const narrow = (typeof matchMedia !== 'undefined') && matchMedia('(orientation: portrait) and (max-width: 620px)').matches;
+  const PANW = narrow ? 86 : 130;
+  const PANGAP = narrow ? 12 : 30;
+  const PANX = WX + COLS * CELL + PANGAP;
+  const W = PANX + PANW + 12, H = WY + ROWS * CELL + 26;
 
   const PIECES = {
     I: { box: 4, cells: [[0, 1], [1, 1], [2, 1], [3, 1]], color: '#38e1ff' },
@@ -314,22 +321,22 @@
       }
 
       /* side panel */
-      const px = WX + COLS * CELL + 30;
+      const px = PANX, midx = px + PANW / 2;
       ctx.fillStyle = '#8f9ab8';
       ctx.font = 'bold 11px system-ui';
       ctx.textAlign = 'left';
       ctx.fillText('HOLD', px, WY + 8);
       ctx.fillStyle = '#0d1424';
-      Engine.roundRect(ctx, px, WY + 16, 130, 70, 8);
+      Engine.roundRect(ctx, px, WY + 16, PANW, 70, 8);
       ctx.fill();
-      if (hold) drawMini(hold, px + 65, WY + 51, 0.72);
+      if (hold) drawMini(hold, midx, WY + 51, narrow ? 0.58 : 0.72);
 
       ctx.fillStyle = '#8f9ab8';
       ctx.fillText('NEXT', px, WY + 118);
       ctx.fillStyle = '#0d1424';
-      Engine.roundRect(ctx, px, WY + 126, 130, 300, 8);
+      Engine.roundRect(ctx, px, WY + 126, PANW, 300, 8);
       ctx.fill();
-      queue.slice(0, 5).forEach((n, i) => drawMini(n, px + 65, WY + 166 + i * 58, 0.62));
+      queue.slice(0, 5).forEach((n, i) => drawMini(n, midx, WY + 166 + i * 58, narrow ? 0.52 : 0.62));
 
       if (paused || over) {
         ctx.fillStyle = 'rgba(8,13,24,.68)';
