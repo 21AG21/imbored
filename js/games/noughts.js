@@ -30,6 +30,32 @@
       { value: '2p', label: '2 players (hotseat)' }
     ], '1p', (v) => { mode = v; tally.X = 0; tally.O = 0; reset(); });
 
+    /* play-by-paste correspondence */
+    const flatBoard = () => b.map((v) => v === 'X' ? 1 : v === 'O' ? 2 : 0);
+    function loadPosition(res) {
+      for (let i = 0; i < 9; i++) b[i] = res.cells[i] === 1 ? 'X' : res.cells[i] === 2 ? 'O' : '';
+      mode = '2p'; turn = res.extra ? 'O' : 'X'; done = false;
+      banner.style.display = 'none';
+      const w = winLine(b);
+      if (w || full(b)) { finish(w ? b[w[0]] : ''); return; }
+      api.status('Loaded. You are ' + turn + ' — make your move, then Share the new code.');
+      render();
+    }
+    const codeInput = h('input', { type: 'text', class: 'boss-url', placeholder: 'move code', spellcheck: 'false', style: { width: '150px' } });
+    api.toolbar.appendChild(codeInput);
+    api.button('Share code', () => {
+      mode = '2p';
+      codeInput.value = Engine.packCode('N3', flatBoard(), turn === 'X' ? 0 : 1);
+      codeInput.select();
+      try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(codeInput.value).catch(function () { }); } catch (e) { /* ignore */ }
+      api.status('Move code ready — send it over. Your opponent pastes it and presses Load.');
+    });
+    api.button('Load code', () => {
+      const res = Engine.unpackCode('N3', codeInput.value, 9);
+      if (!res) { api.status('That code did not scan — paste the whole thing.'); return; }
+      loadPosition(res);
+    });
+
     function reset() {
       b = ['', '', '', '', '', '', '', '', ''];
       turn = 'X'; done = false;

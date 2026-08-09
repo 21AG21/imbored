@@ -239,7 +239,7 @@
       mode = '2p';
       codeInput.value = Engine.packCode('C4', flat(), turn === YOU ? 0 : 1);
       codeInput.select();
-      try { if (navigator.clipboard) navigator.clipboard.writeText(codeInput.value); } catch (e) { /* ignore */ }
+      try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(codeInput.value).catch(function () { }); } catch (e) { /* ignore */ }
       api.status('Move code ready — send it to your opponent. They paste it here and press Load.');
     });
     api.button('Load code', () => {

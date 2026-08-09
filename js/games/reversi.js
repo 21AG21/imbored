@@ -41,6 +41,33 @@
     const sideName = (who) => (who === YOU ? 'dark (P1)' : 'light (P2)');
     bagg.add(() => { if (timer) clearTimeout(timer); });
 
+    /* play-by-paste correspondence */
+    const flatBoard = () => { const a = []; for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) a.push(b[r][c]); return a; };
+    function loadPosition(res) {
+      let k = 0;
+      for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) b[r][c] = res.cells[k++];
+      mode = '2p'; turn = res.extra ? AI : YOU; done = false; busy = false;
+      if (!legal(YOU).length && !legal(AI).length) { finish(); return; }
+      if (!legal(turn).length) turn = turn === YOU ? AI : YOU;
+      banner.style.display = 'none';
+      api.status('Loaded. You are ' + (turn === YOU ? 'dark' : 'light') + ' — click a glowing square, then Share the new code back.');
+      render();
+    }
+    const codeInput = h('input', { type: 'text', class: 'boss-url', placeholder: 'move code', spellcheck: 'false', style: { width: '150px' } });
+    api.toolbar.appendChild(codeInput);
+    api.button('Share code', () => {
+      mode = '2p';
+      codeInput.value = Engine.packCode('RV', flatBoard(), turn === YOU ? 0 : 1);
+      codeInput.select();
+      try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(codeInput.value).catch(function () { }); } catch (e) { /* ignore */ }
+      api.status('Move code ready — send it over. Your opponent pastes it and presses Load.');
+    });
+    api.button('Load code', () => {
+      const res = Engine.unpackCode('RV', codeInput.value, N * N);
+      if (!res) { api.status('That code did not scan — paste the whole thing.'); return; }
+      loadPosition(res);
+    });
+
     function reset() {
       b = [];
       for (let r = 0; r < N; r++) b.push(new Array(N).fill(0));
