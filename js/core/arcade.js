@@ -449,6 +449,16 @@
     });
   }
 
+  /* a curated first-run shelf, so 55 games are not a wall of equal choices */
+  const FEATURED = [
+    { id: 'workbook', hook: 'Minesweeper wearing a spreadsheet. Hide in plain sight.' },
+    { id: 'life', hook: 'Draw a colony, drop a glider gun, watch it breathe.' },
+    { id: 'logistic', hook: 'One knob turns calm into chaos — the famous route.' },
+    { id: 'connect4', hook: 'Beat the CPU, or a coworker by hotseat or code.' },
+    { id: 'minesweeper', hook: 'The original meeting game.' },
+    { id: '2048', hook: 'Slide, merge, lose an afternoon.' }
+  ];
+
   function renderHub() {
     const view = document.getElementById('view');
     if (!view) return;
@@ -490,6 +500,17 @@
           'The complete shareware collection for people whose meeting has no agenda. ',
           'Everything runs in this tab. Hit ', h('kbd', null, '`'), ' and the whole thing turns into a spreadsheet so fast nobody sees a thing.'),
         h('button', { class: 'btn primary daily-btn', type: 'button', onclick: () => Arcade.daily() }, 'Play today’s Daily')),
+      (!q && activeCat === 'all') ? h('section', { class: 'featured' },
+        h('h2', { class: 'featured-h' }, 'Start here'),
+        h('div', { class: 'pick-row' },
+          FEATURED.map((f) => {
+            const g = games.find((x) => x.id === f.id);
+            if (!g) return null;
+            return h('a', { class: 'pick cat-' + g.cat, href: '#g/' + g.id },
+              h('span', { class: 'pick-emoji', html: Icons.svg(g.emoji, 22) }),
+              h('span', { class: 'pick-title' }, g.title),
+              h('span', { class: 'pick-hook' }, f.hook));
+          }))) : null,
       chips,
       h('div', { class: 'grid' },
         cards.length ? cards : h('p', { class: 'empty' }, 'Nothing by that name. Try fewer letters.'),

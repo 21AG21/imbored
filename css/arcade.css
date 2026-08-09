@@ -258,6 +258,25 @@ kbd {
   padding: 22px 20px 26px;
 }
 
+/* "Start here" featured strip on the unfiltered hub */
+.featured { margin: 4px 0 14px; }
+.featured-h { font: 700 15px/1 Impact, Haettenschweiler, "Arial Narrow Bold", Arial Black, sans-serif;
+  letter-spacing: 1px; text-transform: uppercase; color: var(--ink2); margin: 0 0 8px 4px; }
+.pick-row { display: flex; gap: 12px; overflow-x: auto; padding: 2px 4px 8px; scroll-snap-type: x proximity; }
+.pick { scroll-snap-align: start; flex: 0 0 200px; display: grid; grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto; column-gap: 8px; align-items: center; text-decoration: none;
+  padding: 12px 14px; border: 3px solid var(--ink); box-shadow: var(--bevel-out);
+  background: var(--paper); color: var(--ink); transition: transform .08s; }
+.pick:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--ink); }
+.pick:active { box-shadow: var(--bevel-in); transform: translate(1px, 1px); }
+.pick-emoji { grid-row: 1 / span 2; width: 34px; height: 34px; display: grid; place-items: center;
+  border: 2px solid var(--ink); background: var(--label); }
+.pick-title { font: 700 14px/1.1 Verdana, sans-serif; align-self: end; }
+.pick-hook { font: 11px/1.35 Verdana, sans-serif; color: var(--ink2); align-self: start; }
+.pick.cat-sim .pick-emoji { background: var(--banana); }
+.pick.cat-brain .pick-emoji { background: var(--lime); }
+.pick.cat-puzzle .pick-emoji { background: var(--teal); }
+
 .card {
   position: relative;
   display: flex;
