@@ -788,7 +788,7 @@
     emoji: 'gridlock',
     cat: 'sim',
     order: 1,
-    blurb: 'Twelve junctions, a full working day and a budget. Cars, buses, trucks and ambulances all want through, and you own every signal in the city.',
+    blurb: 'Run the lights on a twelve-junction city for a full working day. Cars, buses, trucks and ambulances all want through, and every jam fills the rage bar.',
     scoreLabel: 'Vehicles through',
     link: {
       url: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd',
@@ -796,12 +796,12 @@
     },
     tags: ['traffic', 'jam', 'city', 'lights', 'management'],
     how: [
-      'Click a junction to flip which way gets the green. Each flip runs a short all-red, and that all-red is when the pedestrians finally get to cross.',
-      'Drag a line along a row or column to set a green wave down the whole corridor. This is the good move.',
-      'Buses pull in at a stop and pay nine. Trucks are slow and pay four. Ambulances run red lights and pay thirty if they get there in time, or hurt you badly if they do not.',
-      'Traffic direction swings through the day: inbound at the morning peak, outbound in the evening, and heavier every day you survive.',
-      'You are paid per vehicle delivered. At the end of each day you can buy smart signals, roundabouts, overpasses, wider roads, ambulance priority and a congestion map.',
-      'Queued drivers and stranded pedestrians both fill the rage bar. Fill it and you are out of a job.'
+      'Click a junction to flip which way gets the green. Each flip runs a short all-red, and that is when waiting pedestrians cross.',
+      'Drag along a row or column to set a green wave down the whole corridor.',
+      'Buses pull in at a stop and pay 9; trucks are slow and pay 4. Ambulances run reds and pay 30 if they arrive in time, or spike the rage bar if they do not.',
+      'Traffic direction swings through the day, inbound at the morning peak and outbound in the evening, and gets heavier every day you last.',
+      'You are paid per vehicle delivered. Spend the takings at the end of each day on smart signals, roundabouts, overpasses, wider roads, ambulance priority, or a congestion map.',
+      'Queued drivers and stranded pedestrians both fill the rage bar. Let it fill and you lose the job.'
     ],
     mount
   });

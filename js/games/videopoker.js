@@ -193,15 +193,15 @@
     emoji: 'cards',
     cat: 'goofy',
     order: 42,
-    blurb: 'Jacks-or-Better video poker, the machine every break room secretly wants. Deal five, keep the good ones, draw once, and get paid by the table. The credits are imaginary; the tiny decisions are not.',
+    blurb: 'Jacks-or-Better video poker for the break room. Deal five, hold the keepers, draw once, get paid by the table. The credits are fake.',
     scoreLabel: 'Best credits',
     tags: ['poker', 'cards', 'casino'],
     how: [
-      'Set your bet (1 to 5 credits) and press Deal for five cards. The bet is taken up front.',
-      'Click any cards you want to keep — they show HOLD — then press Draw. Every card you did not hold is replaced once.',
-      'Your final five are paid by the table: a pair of jacks or better pays, on up through two pair, straights, flushes, full houses, quads, and the royal flush at the top.',
-      'The royal flush pays a big bonus at the maximum bet of five, which is why Max bet exists. Everything else pays straight multiples of your bet.',
-      'Credits are pretend and saved between visits; if you bust out, Add credits tops you back up. Your score is the highest credit balance you reach.'
+      'Set your bet (1 to 5 credits) and press Deal for five cards. The bet comes out up front.',
+      'Click the cards you want to keep, marked HOLD, then press Draw. Every unheld card is replaced once.',
+      'The table pays a pair of jacks or better, up through two pair, straights, flushes, full houses, quads, straight flush and royal flush.',
+      'A royal flush pays a 4000 bonus at the max bet of five, which is what Max bet is for. Everything else pays a straight multiple of your bet.',
+      'Credits are fake and saved between visits. Bust out and Add credits tops you back up. Your score is the highest balance you reach.'
     ],
     mount
   });

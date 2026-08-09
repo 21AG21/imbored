@@ -339,15 +339,15 @@
     emoji: 'connect4',
     cat: 'brain',
     order: 25,
-    blurb: 'Drop discs, get four in a line, try to beat a computer that is genuinely quite good at this once you turn the dial up.',
+    blurb: 'Drop discs and line up four before the computer does. It searches deeper the higher you set the difficulty.',
     scoreLabel: 'Wins',
     tags: ['connect four', 'strategy', 'computer opponent', 'board'],
     how: [
-      'Click or tap a column to drop your yellow disc. It falls to the lowest free slot.',
-      'Four in a row wins: across, up and down, or on either diagonal.',
-      'The computer searches ahead with alpha-beta pruning. Chill looks one move ahead and plays loose on purpose; nightmare looks eight moves ahead and does not.',
-      'Your win-loss record against the computer is kept between visits.',
-      'Set Players to 2 for hotseat: two people on one keyboard, yellow versus red, with a running series score.'
+      'Click or tap a column to drop your yellow disc into the lowest free slot.',
+      'Line up four of your discs in any direction to win: across, up-down, or diagonal.',
+      'The computer uses alpha-beta search. Chill looks one move ahead and plays loose; nightmare looks eight moves ahead and plays straight.',
+      'Your win-loss record against the computer carries over between visits.',
+      'Set Players to 2 for hotseat, yellow versus red on one keyboard with a running series score.'
     ],
     mount
   });

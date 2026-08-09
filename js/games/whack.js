@@ -220,15 +220,15 @@
     emoji: 'whack',
     cat: 'goof',
     order: 61,
-    blurb: 'Meeting invites pop up. Click them to decline. But the gold ones are payroll and your own review, so leave those alone.',
+    blurb: 'Meeting invites pop onto your calendar. Click the junk ones to decline them, but leave the gold ones alone. Those are payroll and your own review.',
     scoreLabel: 'Score',
     tags: ['whack a mole', 'calendar', 'meetings', 'reflex'],
     how: [
       'Teal invites are junk. Click them to decline before they book themselves in.',
-      'Gold invites are the ones you actually want. Clicking those counts against you.',
-      'A gold invite you leave alone is worth 25 points when it expires.',
-      'Five bookings and your week is gone. Sixty seconds on the clock.',
-      'Declining without a miss builds a streak, and the streak is worth real points.'
+      'Gold invites are the ones you want. Clicking one counts against you.',
+      'Leave a gold invite alone and it is worth 25 points when it expires.',
+      'Five bookings ends your week, and you have sixty seconds on the clock.',
+      'Declining without a miss builds a streak worth bonus points.'
     ],
     mount
   });

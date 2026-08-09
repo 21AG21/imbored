@@ -202,15 +202,15 @@
     emoji: 'schelling',
     cat: 'sim',
     order: 7,
-    blurb: 'Two teams, some empty desks, and one mild rule about who you want to sit near. Nobody in here is a villain, and the floor still sorts itself into hard blocks. A famous, uncomfortable little model.',
+    blurb: 'Two teams on a floor of desks, each person wanting some fraction of same-team neighbors. Even a mild preference sorts a mixed floor into hard blocks. A famous, uncomfortable little model.',
     scoreLabel: 'Peak segregation',
     tags: ['schelling', 'segregation', 'phase-transition', 'emergence'],
     how: [
-      'Teal and red are two teams; the dark squares are empty desks. Each person is content if at least a fraction T of their occupied neighbours share their team.',
-      'Set that preference T with the slider, then Run. Discontented people get up and take a random empty desk; content people stay.',
-      'The instrument plots the settled segregation against the preference, measured live from the model, against the 50% you would get from pure chance.',
-      'The uncomfortable part: even a preference around a third drives segregation far past 50%. Nobody wanted a segregated floor and you get one anyway.',
-      'Crank it past about 0.75 and it never settles — too fussy to ever be happy — so the floor stays churned and segregation actually falls.'
+      'Teal and red are the two teams; dark squares are empty desks. A person is content when at least a fraction T of their occupied neighbors share their team.',
+      'Set the preference T with the slider, then Run. Discontented people move to a random empty desk; content people stay.',
+      'The panel plots settled segregation against preference, measured live, next to the 50% you would get from pure chance.',
+      'Even a preference around a third drives segregation well past 50%. Nobody wanted a sorted floor and it sorts anyway.',
+      'Push it past about 0.75 and it never settles: too fussy to ever be happy, so the floor stays churned and segregation falls.'
     ],
     mount
   });

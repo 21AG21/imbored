@@ -5846,15 +5846,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'reactdiff',
     cat: 'sim',
     order: 5,
-    blurb: 'Two make-believe chemicals following one three-line rule from the Gray-Scott model. No code decides where a spot goes — the spots, stripes and dividing blobs are what the equations do on their own. Drag to add reagent.',
+    blurb: 'Two make-believe chemicals under one Gray-Scott rule applied to every cell. No code places the patterns; the spots, stripes, mazes and dividing cells are what the equations produce. Drag to add reagent.',
     scoreLabel: 'Peak coverage',
     tags: ['gray-scott', 'turing', 'chemistry', 'emergence'],
     how: [
-      'Chemical A is fed in everywhere; the reaction turns A into B where B already is; B decays. A spreads faster than B.',
-      'That is the whole rulebook, applied identically to every cell. The patterns are emergent, not scripted.',
-      'The Pattern menu jumps to (f, k) values measured to settle into spots, coral, mazes or self-dividing cells.',
-      'Slide feed and kill to explore the map yourself — the band that makes patterns is thin, and just outside it everything goes uniform.',
-      'Drag on the field to paint in reagent and watch the front invade.'
+      'Chemical A is fed in everywhere. The reaction turns A into B where B already sits, and B decays. A spreads faster than B.',
+      'That is the whole rulebook, applied the same to every cell. The patterns are emergent; nothing scripts them.',
+      'The Pattern menu jumps to (f, k) values measured to settle into spots, coral, mazes or dividing cells.',
+      'Slide feed and kill to roam the map yourself. The band that makes patterns is thin, and outside it the field goes uniform.',
+      'Drag on the field to paint in reagent and watch the front spread.'
     ],
     mount
   });
@@ -6312,15 +6312,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'firedrill',
     cat: 'sim',
     order: 6,
-    blurb: 'Scatter flammable paper across the desks at a density you choose, light one edge, and find the knife-edge where a corner fire turns into a floor fire. It is a real percolation threshold, not a vibe.',
+    blurb: 'Pick a paper density with the slider, then ignite the top row. There is a sharp threshold where a small corner fire turns into one that crosses the whole floor.',
     scoreLabel: 'Biggest burn',
     tags: ['percolation', 'phase-transition', 'emergence'],
     how: [
-      'Each desk gets flammable paper with probability p (the density slider). Ignite lights every papered desk in the top row.',
-      'Fire spreads to orthogonally touching papered desks — one rule, applied everywhere, no scripting.',
-      'Below the critical density the fire dies in a corner; above it, it spans the whole floor. The change is astonishingly sharp.',
-      'The panel plots burned-fraction against density, measured live from the model, with the known threshold p_c = 0.5927 marked. Your ignitions drop as yellow dots.',
-      'Your score is the biggest burn fraction you manage to trigger. The interesting play is right at the edge.'
+      'Set the density slider, then press Ignite to light every papered desk in the top row.',
+      'Fire spreads to any papered desk sharing an edge with a burning one. One rule, applied everywhere.',
+      'Below the critical density the fire dies in a corner. Above it, the fire crosses the whole floor, and the switch is sharp.',
+      'The panel plots burned fraction against density and marks the threshold p_c at 0.5927. Each run you ignite drops a yellow dot.',
+      'Your score is the largest burn fraction you set off. Play near the threshold to push it.'
     ],
     mount
   });
@@ -6532,15 +6532,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'schelling',
     cat: 'sim',
     order: 7,
-    blurb: 'Two teams, some empty desks, and one mild rule about who you want to sit near. Nobody in here is a villain, and the floor still sorts itself into hard blocks. A famous, uncomfortable little model.',
+    blurb: 'Two teams on a floor of desks, each person wanting some fraction of same-team neighbors. Even a mild preference sorts a mixed floor into hard blocks. A famous, uncomfortable little model.',
     scoreLabel: 'Peak segregation',
     tags: ['schelling', 'segregation', 'phase-transition', 'emergence'],
     how: [
-      'Teal and red are two teams; the dark squares are empty desks. Each person is content if at least a fraction T of their occupied neighbours share their team.',
-      'Set that preference T with the slider, then Run. Discontented people get up and take a random empty desk; content people stay.',
-      'The instrument plots the settled segregation against the preference, measured live from the model, against the 50% you would get from pure chance.',
-      'The uncomfortable part: even a preference around a third drives segregation far past 50%. Nobody wanted a segregated floor and you get one anyway.',
-      'Crank it past about 0.75 and it never settles — too fussy to ever be happy — so the floor stays churned and segregation actually falls.'
+      'Teal and red are the two teams; dark squares are empty desks. A person is content when at least a fraction T of their occupied neighbors share their team.',
+      'Set the preference T with the slider, then Run. Discontented people move to a random empty desk; content people stay.',
+      'The panel plots settled segregation against preference, measured live, next to the 50% you would get from pure chance.',
+      'Even a preference around a third drives segregation well past 50%. Nobody wanted a sorted floor and it sorts anyway.',
+      'Push it past about 0.75 and it never settles: too fussy to ever be happy, so the floor stays churned and segregation falls.'
     ],
     mount
   });
@@ -6729,15 +6729,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'sir',
     cat: 'sim',
     order: 8,
-    blurb: 'Someone coughs at the coffee machine. Whether it fizzles at three desks or empties the floor comes down to one number crossing one line — the real epidemic threshold, not a scare.',
+    blurb: 'A spreading-illness sim on a grid of desks. Set the spread rate, recovery rate, and how packed the desks are, then watch whether the outbreak fizzles or sweeps the floor. It turns on one number, R0, crossing 1.',
     scoreLabel: 'Worst attack rate',
     tags: ['sir', 'epidemic', 'threshold', 'emergence'],
     how: [
-      'Every desk is susceptible (paper), infected (red), or recovered (grey). Each step an infected desk infects susceptible neighbours with probability beta and recovers with probability gamma.',
-      'R0, shown live, is beta times an effective contact number over gamma, calibrated so it crosses 1 at this lattice\'s measured threshold. Under 1 the outbreak dies out; over 1 it takes off. That crossing is the whole ballgame.',
-      'Your levers are the spread rate, the recovery rate, and occupancy — thinning the desks is literally social distancing.',
-      'The instrument is the classic curve: susceptible falling, the infected hump, recovered rising to the final attack rate.',
-      'Try to keep the attack rate low by dragging R0 back under 1. Your score is the worst attack rate you trigger.'
+      'Each desk is susceptible (paper), infected (red), or recovered (grey). Each step, an infected desk infects susceptible neighbours at rate beta and recovers at rate gamma.',
+      'The live R0 readout is beta times an effective contact number over gamma. Under 1 the outbreak dies out; over 1 it takes off.',
+      'Your levers are the spread rate, the recovery rate, and occupancy. Thinning the desks is social distancing.',
+      'The side plot draws the standard curves: susceptible falling, infected rising to a hump, recovered climbing to the final attack rate.',
+      'Keep the attack rate down by pulling R0 back under 1. Your score is the worst attack rate you set off.'
     ],
     mount
   });
@@ -7204,15 +7204,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'kuramoto',
     cat: 'sim',
     order: 11,
-    blurb: 'A room full of people clapping at their own pace, each nudging toward the room average. Below a critical coupling it stays a wash of noise; above it, the whole crowd falls into one synchronized slow clap. Applause really does do this.',
+    blurb: 'A room of people clapping at their own pace, each nudging toward the room average. Below a critical coupling it stays a wash of noise; above it the whole crowd locks into one slow clap. Real applause does this.',
     scoreLabel: 'Best sync',
     tags: ['kuramoto', 'synchronization', 'phase-transition', 'emergence'],
     how: [
-      'Each dot on the ring is a clapper at its own natural rhythm; its colour is that rhythm. Each step it nudges toward the crowd average.',
-      'The coupling slider is how hard everyone listens to the room. The white arrow is the order parameter r — how synchronized the crowd is.',
-      'Below the critical coupling the dots smear around the ring (r near 0). Above it they clump and travel together (r near 1).',
-      'The instrument plots sync against coupling, measured live, with the critical coupling K_c marked. The onset is sharp.',
-      'Your score is the best sync you reach. Rhythmic applause is a documented real example of this exact transition.'
+      'Each dot on the ring is a clapper at its own rhythm, shown by its color. Each step it nudges toward the crowd average.',
+      'The coupling slider sets how hard everyone listens to the room. The white arrow is the order parameter r, meaning how synchronized the crowd is.',
+      'Below the critical coupling the dots smear around the ring (r near 0). Above it they clump and move together (r near 1).',
+      'The panel plots sync against coupling, measured live, with the critical coupling K_c marked. The onset is sharp.',
+      'Your score is the best sync you reach. Rhythmic applause is a documented example of this transition.'
     ],
     mount
   });
@@ -7446,16 +7446,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'traffic',
     cat: 'sim',
     order: 9,
-    blurb: 'A one-lane ring road where every driver follows the same four rules and jams still appear out of nowhere. Push the density up and watch a phantom traffic wave crawl backwards through the pack — then read the exact point where the road carries the most cars.',
+    blurb: 'A one-lane ring road where every driver follows the same four rules, and jams form anyway. Raise the density and watch a phantom jam crawl backward through the pack, then find the point where the road carries the most cars.',
     scoreLabel: 'Peak flow',
     tags: ['nagel-schreckenberg', 'phase-transition', 'traffic', 'emergence'],
     how: [
-      'Cars sit on a single-lane loop. Each has a speed from 0 to v_max, and the whole road updates together every tick.',
-      'The four rules, applied to every car at once: speed up by one; slow down so you never hit the car ahead; then with probability p tap the brakes for no reason; then move. That one random tap is the only noise in the system.',
-      'At low density everyone reaches v_max and the road is empty stripes of fast traffic. Raise the density slider past the critical point and a single dawdle triggers a jam that spreads backward — a wave of stopped cars moving the wrong way while every driver keeps obeying the rules.',
-      'The main view is a space-time diagram: the top line is the road right now, and each row below is one tick into the past. Jams show up as dark bands leaning backward through time.',
-      'The side panel is the fundamental diagram — flow against density — measured live from the model. Flow climbs, peaks at the critical density (the dashed line), then collapses into gridlock. Your current state is the yellow dot.',
-      'Your score is the highest flow you can sustain, which means parking the density right at that peak. More dawdling (higher p) makes the jams worse and the peak lower.'
+      'Cars sit on a single-lane loop. Each has a speed from 0 to v_max, and the whole road updates every tick.',
+      'Every car follows four rules each tick: speed up by one, brake so you never hit the car ahead, then with probability p tap the brakes at random, then move. That random tap is the only noise.',
+      'At low density every car reaches v_max. Raise the density past the critical point and one random brake seeds a jam that spreads backward while every car keeps following the rules.',
+      'The main view is a space-time diagram. The top row is the road now, and each row below is one tick earlier, so jams show as dark bands leaning backward.',
+      'The side panel plots flow against density, measured live. Flow climbs, peaks at the critical density (the dashed line), then drops into gridlock. The yellow dot is your current state.',
+      'Your score is the highest flow you sustain, so park the density at that peak. Higher dawdle p makes jams worse and the peak lower.'
     ],
     mount
   });
@@ -7690,15 +7690,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'frost',
     cat: 'sim',
     order: 10,
-    blurb: 'One speck of ice on a cold window and a fog of wandering molecules. Each one freezes the moment it touches the crystal, and out of that single rule grows a branching frost fern — a genuine fractal whose dimension the panel measures as it spreads.',
+    blurb: 'One speck of ice on a cold window, and drifting molecules that freeze the moment they touch it. That single rule grows a branching frost fern, and the panel measures its fractal dimension as it spreads.',
     scoreLabel: 'Crystal size',
     tags: ['dla', 'fractal', 'diffusion', 'emergence'],
     how: [
-      'A single frozen cell sits in the middle. Molecules wander in on random walks and freeze onto the crystal the instant they touch it — that is the only rule.',
-      'The tips grow faster than the gaps, because a wanderer almost always bumps an outer branch before it can reach the sheltered interior. That shadowing is what makes frost branch instead of filling in.',
-      'The shape is a fractal: its frozen mass within radius r grows like r to the power D. The panel fits that exponent live on log–log axes, with the known 2D DLA value D ≈ 1.71 drawn as the reference slope. A finite crystal reads a touch under it — the fit climbs into the mid 1.6s as the frost fills the window.',
-      'Fresh tips are drawn bright white, the older core pale blue, so you can read the growth history straight off the crystal.',
-      'Growth speed just changes how many molecules land per moment — it never changes the rule, so the dimension it converges to is the same. Your score is how large a crystal you grow before it reaches the frame.'
+      'A single frozen cell sits in the middle. Molecules wander in on random walks and freeze onto the crystal the instant they touch it. That is the only rule.',
+      'Tips grow faster than gaps. A wanderer usually hits an outer branch before it reaches the sheltered interior, and that shadowing is what makes frost branch.',
+      'The crystal is a fractal: its mass within radius r grows like r to the power D. The panel fits that exponent live on log-log axes against the known 2D DLA value near 1.71.',
+      'A finite crystal reads a little under 1.71, climbing into the mid 1.6s as the frost fills the window. Fresh tips draw white, the older core pale blue.',
+      'Growth speed only changes how many molecules land per frame; it never changes the rule, so the dimension is the same. Your score is the crystal size before it reaches the frame.'
     ],
     mount
   });
@@ -8159,15 +8159,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'life',
     cat: 'sim',
     order: 12,
-    blurb: 'Conway’s famous cellular automaton: one rule about neighbours, and out of it walk gliders, oscillators, and guns that fire forever. Draw your own colony, drop a glider gun, or throw down random noise and watch the crowd thin to its natural density.',
+    blurb: 'Conway\'s cellular automaton on a 150-cell torus. Each step, cells live or die by one rule about their neighbours, and gliders, oscillators, and glider guns emerge. Draw a colony, drop a preset, or scatter noise and watch it settle.',
     scoreLabel: 'Peak population',
     tags: ['conway', 'cellular-automaton', 'emergence', 'gliders'],
     how: [
-      'Every cell is alive or dead. Each generation, all cells update at once by one rule: a live cell survives only with two or three live neighbours; a dead cell is born with exactly three. That is the entire game.',
-      'Draw cells by clicking and dragging on the grid — click a live cell to erase it. Then press play and watch your colony evolve.',
-      'Drop a named pattern from the menu: a glider that crawls diagonally forever, a spaceship, a pulsar that beats every three generations, an R-pentomino that riots for over a thousand generations, or a glider gun that manufactures gliders without end.',
-      'Hit Random to fill the grid with noise. The population crashes, then settles to a low density of a few percent: the panel plots it live against the accepted random-soup equilibrium of about 2.9%, drawn as the dashed line (this finite grid usually settles a hair above it).',
-      'Your score is the largest population you reach — which is unbounded if you let a glider gun run, since it keeps adding cells forever.'
+      'Each step, every cell updates at once: a live cell stays alive with two or three live neighbours, and a dead cell comes alive with exactly three.',
+      'Click and drag on the grid to draw cells. Click a live cell to erase it, then press play.',
+      'Drop a preset from the menu. A glider crawls diagonally, a pulsar beats every three steps, an R-pentomino churns for over a thousand steps, and a glider gun makes gliders without end.',
+      'Hit Random to fill the grid with noise. The population crashes and settles near a few percent, plotted against the marked 0.0287 equilibrium (this finite grid settles a little above it).',
+      'Your score is the highest population reached. A running glider gun keeps adding cells, so it has no ceiling.'
     ],
     mount
   });
@@ -8309,15 +8309,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'turf',
     cat: 'sim',
     order: 13,
-    blurb: 'Rock-paper-scissors played by a whole grid at once. Three colours chase each other in an endless cycle and, all on their own, curl into rotating spiral waves where nobody ever wins — the pattern that lets three rivals share one board forever.',
+    blurb: 'Rock-paper-scissors played across a whole grid, each colour eating the one it beats. Left running, the noise organises into rotating spiral waves where all three colours survive.',
     scoreLabel: 'Coexistence streak',
     tags: ['cyclic-dominance', 'spirals', 'emergence', 'ecology'],
     how: [
-      'Every cell is red, green, blue, or empty. Red beats green, green beats blue, blue beats red — a perfect loop with no top dog.',
-      'Neighbours interact one pair at a time: a predator turns its prey into an empty gap, a colour breeds into a touching gap, or two neighbours simply swap places.',
-      'Start it running and the random speckle reorganises itself into slowly turning spiral arms. That self-made structure is the whole trick: it keeps all three colours alive indefinitely.',
-      'The same three rules with everything well-mixed — no grid, no neighbourhoods — would collapse to a single survivor. Space is what saves the other two. That is a real result from bacterial ecology.',
-      'The mixing slider shuffles neighbours harder, smearing the spirals into coarser blobs; the panel plots the three populations forever chasing one another round the loop. Your score is the longest run you keep all three alive.'
+      'Every cell is red, green, blue, or empty. The colours run in a loop where red beats green, green beats blue, and blue beats red.',
+      'Neighbouring cells interact one pair at a time. A predator clears its prey to an empty gap, a colour breeds into a touching gap, or two neighbours swap places.',
+      'Start it running and the random speckle turns into slowly rotating spiral arms. That self-made structure is what keeps all three colours alive.',
+      'Well-mixed with no grid, the same rules collapse to one survivor. Space is what saves the other two, a real result from bacterial ecology.',
+      'The mixing slider smears the spirals into coarser blobs, and the panel plots the three populations chasing one another round the loop. Your score is the longest run with all three alive.'
     ],
     mount
   });
@@ -9115,7 +9115,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'gridlock',
     cat: 'sim',
     order: 1,
-    blurb: 'Twelve junctions, a full working day and a budget. Cars, buses, trucks and ambulances all want through, and you own every signal in the city.',
+    blurb: 'Run the lights on a twelve-junction city for a full working day. Cars, buses, trucks and ambulances all want through, and every jam fills the rage bar.',
     scoreLabel: 'Vehicles through',
     link: {
       url: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd',
@@ -9123,12 +9123,12 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     },
     tags: ['traffic', 'jam', 'city', 'lights', 'management'],
     how: [
-      'Click a junction to flip which way gets the green. Each flip runs a short all-red, and that all-red is when the pedestrians finally get to cross.',
-      'Drag a line along a row or column to set a green wave down the whole corridor. This is the good move.',
-      'Buses pull in at a stop and pay nine. Trucks are slow and pay four. Ambulances run red lights and pay thirty if they get there in time, or hurt you badly if they do not.',
-      'Traffic direction swings through the day: inbound at the morning peak, outbound in the evening, and heavier every day you survive.',
-      'You are paid per vehicle delivered. At the end of each day you can buy smart signals, roundabouts, overpasses, wider roads, ambulance priority and a congestion map.',
-      'Queued drivers and stranded pedestrians both fill the rage bar. Fill it and you are out of a job.'
+      'Click a junction to flip which way gets the green. Each flip runs a short all-red, and that is when waiting pedestrians cross.',
+      'Drag along a row or column to set a green wave down the whole corridor.',
+      'Buses pull in at a stop and pay 9; trucks are slow and pay 4. Ambulances run reds and pay 30 if they arrive in time, or spike the rage bar if they do not.',
+      'Traffic direction swings through the day, inbound at the morning peak and outbound in the evening, and gets heavier every day you last.',
+      'You are paid per vehicle delivered. Spend the takings at the end of each day on smart signals, roundabouts, overpasses, wider roads, ambulance priority, or a congestion map.',
+      'Queued drivers and stranded pedestrians both fill the rage bar. Let it fill and you lose the job.'
     ],
     mount
   });
@@ -9435,15 +9435,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'elevator',
     cat: 'sim',
     order: 2,
-    blurb: 'Three lifts. Eight floors. A lobby full of people who are already late and have decided that is your fault.',
+    blurb: 'Dispatch three lifts across eight floors. Send each car where you want; riders board and pick their own floor. Five walk-offs ends the shift.',
     scoreLabel: 'Delivered',
     tags: ['lift', 'dispatch', 'tower', 'scheduling'],
     how: [
-      'Click a floor inside a lift shaft to send that lift there. Click again to cancel it.',
-      'People get in by themselves when the doors open, and press their own floor button. You only decide who goes where.',
-      'Five to a lift. The coloured dot is where somebody wants to go.',
-      'The little bar under a person is their patience. Five walk-offs and the shift is over.',
-      'Score is people delivered.'
+      'Click a floor inside a lift shaft to send that car there. Click again to cancel.',
+      'People board on their own when the doors open and press their floor. You only route the cars.',
+      'Five riders per lift. The colored dot shows where each one is headed.',
+      'The bar under a waiting person is their patience. Five walk-offs ends the shift.',
+      'Your score is people delivered.'
     ],
     mount
   });
@@ -9833,15 +9833,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'powergrid',
     cat: 'sim',
     order: 3,
-    blurb: 'Generation has to equal demand every single second or the lights go out. Solar and wind will not be helping.',
+    blurb: 'Match power generation to demand every second or the grid frequency drifts and the lights go out. Solar and wind do their own thing.',
     scoreLabel: 'Hours online',
     tags: ['power', 'grid', 'energy', 'frequency'],
     how: [
-      'Keep the cyan generation line sitting on top of the pink demand line.',
-      'Coal is cheap and slow. Gas is instant and costs a fortune. Hydro drains a reservoir that only refills overnight.',
-      'Solar and wind do whatever they want. Plan around them, not with them.',
-      'The battery pushes 34 MW either way but it is tiny. Fill it overnight, spend it at the evening peak.',
-      'Frequency drifts off 50 Hz the moment supply and demand disagree. Stability drains while it is off band. At zero, blackout.'
+      'Keep the cyan generation line sitting on the pink demand line.',
+      'Coal is cheap but slow to ramp; gas is instant but expensive. Hydro drains a reservoir that only refills overnight.',
+      'Solar and wind you do not control, so plan around them.',
+      'The battery moves 34 MW either way but holds little. Charge it overnight and spend it at the evening peak.',
+      'Frequency leaves 50 Hz the moment supply and demand disagree. Stability drains while it is off band, and hitting zero is a blackout.'
     ],
     mount
   });
@@ -10154,15 +10154,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'atc',
     cat: 'sim',
     order: 4,
-    blurb: 'Draw the flight paths with your finger. Keep everyone apart. Land the pink ones on the pink runway. It gets busy fast.',
+    blurb: 'Drag a route from each plane and it flies the line you draw. Land each one on the matching-colour runway without letting two get too close.',
     scoreLabel: 'Landings',
     tags: ['air traffic', 'planes', 'radar', 'routing'],
     how: [
-      'Drag from an aircraft to draw the route you want it to fly. Let go and it follows the line.',
-      'Each aircraft is coloured for its runway and has to arrive from the correct end. The dashed centreline shows which way.',
-      'Land on the wrong runway and it gets sent around again, which costs you time you do not have.',
-      'If two aircraft get closer than the white ring, that is the end of your shift. So is letting one wander off the screen.',
-      'Score is landings before the incident.'
+      'Drag from a plane to draw its route. Release and it follows the line.',
+      'Match each plane to the runway of its colour, and land it heading along the dashed centreline.',
+      'Touch down on the wrong runway and the plane goes around again, costing you time.',
+      'Let two planes cross inside the white ring and the shift ends. Same if one flies off the screen.',
+      'Your score is the number of planes landed before that happens.'
     ],
     mount
   });
@@ -10584,15 +10584,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: '2048',
     cat: 'puzzle',
     order: 11,
-    blurb: 'The famous slide-and-merge number puzzle. Shove the whole board one way; two tiles with the same number fuse into their sum. Keep combining — 2, 4, 8, 16 — and try to build a 2048 tile before the grid jams. Now with exactly one undo, because you have earned it.',
+    blurb: 'Slide the whole board one way and equal tiles merge into their sum. Keep merging up from 2, 4, 8 toward a 2048 tile before the grid fills. Includes one undo.',
     scoreLabel: 'Score',
     tags: ['tiles', 'merge', 'numbers'],
     how: [
-      'Arrow keys, WASD, or swipe. Everything slides at once.',
-      'Two tiles with the same number become one tile with their sum.',
-      'A new tile appears after any move that actually changed something.',
-      'Undo saves you once. Choose your moment.',
-      'Harder settings deal more 4s, which clog the board much faster than you expect.'
+      'Arrow keys, WASD, or swipe move every tile at once.',
+      'Two tiles of the same number merge into one worth their sum.',
+      'A new tile drops in after any move that changed the board.',
+      'Undo reverts one move. It resets after you use it.',
+      'Harder settings deal more 4-tiles, which fill the board faster.'
     ],
     mount
   });
@@ -10726,16 +10726,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'fifteen',
     cat: 'puzzle',
     order: 14,
-    blurb: 'The little sliding-tile puzzle from the back of a cereal box. Getting it solved is easy. Getting it solved in few moves is the whole game.',
+    blurb: 'The 15-tile sliding puzzle. Slide tiles into the gap until they read 1 to 15, and your score is how few moves that takes.',
     scoreLabel: 'Fewest moves',
     lowerIsBetter: true,
     tags: ['sliding', 'tiles', '15-puzzle'],
     how: [
-      'Click or tap any tile next to the empty gap and it slides in, leaving the gap where it sat.',
-      'Arrow keys, WASD, or a swipe slide tiles too, on desktop or phone.',
-      'Put them in order, 1 through 15, gap in the bottom-right. A tile turns green once it is home, so you can watch your progress.',
-      'Every scramble is built by shuffling a solved board, so a solution always exists — you can never jam it.',
-      'Your score is the fewest moves you have ever solved it in, and harder settings scramble it further from solved.'
+      'Click a tile next to the gap and it slides in.',
+      'Arrow keys, WASD, or a swipe also slide tiles, on desktop or phone.',
+      'Order the tiles 1 to 15 with the gap bottom-right. A tile turns green when it is home.',
+      'Each scramble comes from shuffling a solved board, so it always has a solution.',
+      'Your score is the fewest moves you have used to solve it. Harder settings scramble further from solved.'
     ],
     mount
   });
@@ -11471,16 +11471,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'match3',
     cat: 'puzzle',
     order: 12,
-    blurb: 'The supply closet is overflowing. Swap staplers and sticky notes into rows of three and clear the shelves before the buzzer.',
+    blurb: 'Swap office supplies to line up three or more of a kind and clear the shelves before the buzzer runs out.',
     scoreLabel: 'Points',
     tags: ['match-3', 'bejeweled', 'gems', 'timed'],
     how: [
-      'Goal: clear as many office supplies as you can in one 60-second round.',
-      'Controls: click or tap a supply, then a neighbour, to swap the two.',
-      'A swap only sticks if it makes a line of three or more of one kind, otherwise it snaps back.',
-      'Cleared supplies fall, fresh stock drops from the top, and chain reactions stack a rising multiplier.',
-      'Longer lines and deeper chains pay more; run out of legal moves and the closet auto-restocks.',
-      'Harder settings shorten the clock, and nightmare adds a seventh kind of supply.'
+      'Clear as many supplies as you can before time runs out. A normal round is 60 seconds.',
+      'Click or tap a supply, then an adjacent one, to swap them.',
+      'A swap only holds if it makes a line of three or more; otherwise it snaps back.',
+      'Cleared supplies fall and fresh stock drops in from the top. Chain reactions raise a multiplier.',
+      'Longer lines and deeper chains score more. Run out of legal moves and the closet restocks itself.',
+      'Harder tiers shorten the clock; nightmare adds a seventh kind of supply.'
     ],
     mount
   });
@@ -11768,17 +11768,17 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'nonogram',
     cat: 'puzzle',
     order: 13,
-    blurb: 'Someone left conditional formatting on and lost the legend. Fill the cells the row and column numbers demand.',
+    blurb: 'A nonogram dressed as a spreadsheet with the legend lost. Fill the cells the row and column numbers describe to rebuild the hidden picture.',
     scoreLabel: 'solve time (s)',
     lowerIsBetter: true,
     tags: ['puzzle', 'logic', 'picross', 'grid'],
     how: [
-      'Goal: rebuild the hidden picture. Each number is a run of filled cells in that row or column, in order, with a gap between runs.',
-      'Left-click or tap a cell to fill it; right-click to mark a definite blank with an X. Drag to paint a whole streak.',
+      'Rebuild the hidden picture. Each number is a run of filled cells in that row or column, in order, with a gap between runs.',
+      'Left-click or tap to fill a cell; right-click to mark a blank with an X. Drag to paint a whole streak.',
       'On a touchscreen, flip the Mark button to place X marks instead of fills.',
-      'Check flags any filled cell that cannot belong to the answer (turns it red). New deals a fresh sheet.',
-      'You solve the instant your filled cells match the target exactly. Blank cells never need an X.',
-      'Harder difficulty means a bigger grid: 5, 10, 12 or 15 cells square. Your score is the time, so lower is better.'
+      'Check turns any wrong filled cell red for a moment. New deals a fresh sheet.',
+      'You solve the instant your filled cells match the target. Blank cells never need an X.',
+      'Harder tiers give a bigger grid: 5, 10, 12 or 15 cells square. Score is your solve time, so lower is better.'
     ],
     mount: mount
   });
@@ -12279,15 +12279,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'bubble',
     cat: 'puzzle',
     order: 19,
-    blurb: 'The bubble shooter, restyled as the most satisfying thing in the supply closet. Fire bubbles up the board, pop clusters of three or more, and drop whatever you strand — but every miss sticks, so a lazy shot brings the ceiling down on you.',
+    blurb: 'A bubble shooter. Fire bubbles up the board and pop clusters of three or more of a color. Every miss sticks and pushes the wall down toward the line.',
     scoreLabel: 'Boards cleared',
     tags: ['bubble-shooter', 'match', 'puzzle', 'aim'],
     how: [
-      'Move the mouse to aim the launcher at the bottom, and click to fire the current bubble up the board. It bounces off the side walls, so you can bank shots into tight spots.',
-      'When a fired bubble touches the pack it sticks. Land three or more of the same colour touching each other and the whole cluster pops.',
-      'Popping can strand bubbles that were only hanging on through the ones you cleared — anything no longer connected to the ceiling drops away for bonus pops.',
-      'Every bubble that does not make a match just sticks and adds to the wall. Let the pack grow down past the dashed red line and the game ends.',
-      'Clear every bubble to finish the board and move up a level, where an extra colour joins the mix. Your score is the number of boards you pop clean.'
+      'Move the mouse to aim the launcher at the bottom, click to fire. Shots bounce off the side walls, so you can bank into tight spots.',
+      'A fired bubble sticks when it touches the pack. Three or more of one color touching pops the whole cluster.',
+      'Popping a cluster can cut other bubbles off from the ceiling. Anything left unconnected drops away for bonus points.',
+      'A bubble that makes no match sticks and adds to the wall. Let the pack cross the dashed red line and the game ends.',
+      'Clear every bubble to finish the board and go up a level, which adds another color. Your score is the number of boards you clear.'
     ],
     mount
   });
@@ -13292,15 +13292,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'maze',
     cat: 'puzzle',
     order: 16,
-    blurb: 'Find your way to the flag. Every maze is a perfect maze, so there is always exactly one path and you can never get truly stuck.',
+    blurb: 'Get from the top-left corner to the flag. Every maze is perfect, so exactly one path connects any two cells and there is always a way out.',
     scoreLabel: 'Level',
     tags: ['maze', 'labyrinth', 'navigation'],
     how: [
-      'Arrows, WASD, swipe or the on-screen pad to move one cell at a time.',
-      'Your yellow breadcrumb shows where you have been, so you never retread by accident.',
-      'Reach the green flag in the far corner. Each maze you solve makes the next one bigger.',
-      'Truly stuck? "Show path" draws the way out. There is no shame and no penalty.',
-      'Mazes are carved so exactly one route connects any two cells, meaning a solution always exists.'
+      'Move one cell at a time with the arrows, WASD, a swipe, or the on-screen pad.',
+      'Your yellow breadcrumb marks where you have been so you do not retread.',
+      'Reach the green flag in the far corner. Each maze you clear makes the next one larger.',
+      'Press Show path to draw the route out. It costs you nothing.',
+      'Every maze is carved with one path between any two cells, so a solution always exists.'
     ],
     mount
   });
@@ -13996,16 +13996,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'wordguess',
     cat: 'brain',
     order: 21,
-    blurb: 'Five letters, six goes, as many rounds as your meeting lasts. No daily limit, no share button, no waiting until tomorrow.',
+    blurb: 'Guess the hidden five-letter word in six tries, with unlimited rounds and no daily wait.',
     scoreLabel: 'Best streak',
     usesLetters: true,
     tags: ['words', 'wordle', 'vocabulary'],
     how: [
-      'Type a five letter word and hit Enter.',
-      'Green means right letter, right spot. Yellow means right letter, wrong spot. Grey means forget it.',
-      'Win to extend your streak. Miss and it goes back to zero.',
-      'Hard gives you five guesses. Nightmare gives you four. Good luck.',
-      'Unlike the famous one you can just play again immediately.'
+      'Type a five-letter word and press Enter.',
+      'Green marks a correct letter in the right spot. Yellow marks a correct letter in the wrong spot. Grey means the letter is not in the word.',
+      'Win to extend your streak. Miss and it resets to zero.',
+      'Hard drops you to five guesses and nightmare to four.',
+      'Play as many rounds as you like with no daily wait.'
     ],
     mount
   });
@@ -14110,15 +14110,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'lightsout',
     cat: 'brain',
     order: 22,
-    blurb: 'Every light you poke flips its neighbours too. Looks trivial. Is not. Extremely quiet to play.',
+    blurb: 'Click a light and it toggles itself and its four neighbours. Clear the whole grid to dark.',
     scoreLabel: 'Level',
     tags: ['grid', 'toggle', 'logic'],
     how: [
-      'Click or tap any light. It flips itself and its four orthogonal neighbours — a cross of five.',
-      'The goal is to turn every light off. It looks like it should be easy. It is not.',
-      'Flips cancel out, so the order never matters and pressing the same light twice undoes it — that is the whole key to planning.',
-      'Boards are made by scrambling a solved one, so there is always a route back to all-dark.',
-      'Par is how many presses did the scrambling. Beating it means you found a shorter route than the machine used.'
+      'Click any light to flip it and its four orthogonal neighbours, a cross of five.',
+      'Turn every light off to clear the board.',
+      'Flips cancel, so order never matters and pressing the same light twice undoes it. Plan around that.',
+      'Every board is made by scrambling a solved one, so a route back to all-dark always exists.',
+      'Par is the number of presses used to scramble. Beat it by finding a shorter route than the machine took.'
     ],
     mount
   });
@@ -14599,15 +14599,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'noughts',
     cat: 'brain',
     order: 19,
-    blurb: 'Tic-tac-toe with a difficulty dial. On chill it fumbles and hands you wins. On nightmare it is a brick wall and a draw is a moral victory.',
+    blurb: 'Tic-tac-toe against the computer. On chill it blunders often and lets you win; on nightmare it plays perfectly and the best you can force is a draw.',
     scoreLabel: 'Win streak',
     tags: ['tic-tac-toe', 'xo', 'vs-cpu'],
     how: [
-      'You are X. Click or tap a square to move; the machine replies at once.',
-      'Get three of your marks in a line — across, down, or diagonally — to win.',
-      'Your score is your current win streak. A loss resets it to zero; a draw leaves it untouched.',
-      'Harder settings make the AI blunder less often. On nightmare it never blunders, so a draw is the best you can force.',
-      'Set Players to 2 for hotseat: Player 1 is X, Player 2 is O, taking turns on one screen with a running series score.'
+      'You are X. Click a square to move and the computer replies at once.',
+      'Get three of your marks in a line, across, down, or diagonally, to win.',
+      'Your score is your win streak. A loss resets it to zero; a draw holds it.',
+      'Harder settings make the computer blunder less. On nightmare it never blunders, so a draw is your ceiling.',
+      'Set Players to 2 for hotseat, X versus O on one screen with a running series score.'
     ],
     mount
   });
@@ -15348,17 +15348,17 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'reflex',
     cat: 'brain',
     order: 23,
-    blurb: 'Twenty five targets, one number at the end. The most brutally honest game on the shelf.',
+    blurb: 'Click 25 targets as fast as they appear. You get your average reaction time at the end.',
     scoreLabel: 'Best avg',
     lowerIsBetter: true,
     formatScore: (v) => v + 'ms',
     tags: ['reaction', 'aim', 'speed', 'training'],
     how: [
-      'A circle appears somewhere at a random moment. Click it as fast as you physically can.',
-      'Twenty five targets a run. The bars along the bottom are every single reaction time.',
-      'Clicking empty space is a misclick and costs you 250ms spread across the run.',
-      'Lower is better here. The score kept is your best average.',
-      'On Hard and Nightmare the targets get bored and leave if you take too long.'
+      'A circle appears at a random moment. Click it as fast as you can.',
+      'Each run has 25 targets. The bars along the bottom are your reaction times.',
+      'Clicking empty space is a misclick and adds 250ms spread across the run.',
+      'Lower is better. Your score is your best average.',
+      'On Hard and Nightmare, a target you ignore for too long leaves and counts as a miss.'
     ],
     mount
   });
@@ -15738,15 +15738,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'spam',
     cat: 'brain',
     order: 32,
-    blurb: 'Tower defense for your inbox. Junk mail crawls along the wire; drop keyword filters, shredders and quarantine nodes to delete it before it lands. Earn productivity per block, spend it on more filters, and hold the line for twelve waves.',
+    blurb: 'Tower defense for your inbox. Junk mail crawls the wire toward your inbox; drop filters beside it to shred each message before it lands. Earn productivity per block and hold out for twelve waves.',
     scoreLabel: 'Messages blocked',
     tags: ['tower-defense', 'strategy', 'waves'],
     how: [
-      'Junk mail enters top-left and follows the wire to your inbox. Every message that reaches the inbox costs you one of twenty slots; hit zero and it is game over.',
-      'Click an empty tile beside the wire to drop the selected filter (you cannot build on the wire itself). Keyword filters are cheap and rapid-fire, Shredders hit everything in a small blast, and Quarantine nodes slow the junk to a crawl so your other filters get more shots.',
-      'You earn productivity ($) for every message blocked, plus a bonus at the end of each wave. Spend it on more or better filters between waves.',
-      'Press Send wave when your defences are ready. Each wave brings more messages with more resilience; the Speed button fast-forwards the action.',
-      'Survive all twelve waves to defend the inbox. Your score is the total messages you block.'
+      'Junk mail enters top-left and follows the wire to your inbox. Each message that reaches the inbox costs one of your twenty slots, and hitting zero ends the run.',
+      'Click an empty tile beside the wire to place the selected filter (you cannot build on the wire). Keyword filters are cheap and fast, Shredders hit a small blast, and Quarantine slows the junk so your other filters land more shots.',
+      'You earn productivity for every message blocked, plus a bonus after each wave. Spend it on more filters between waves.',
+      'Press Send wave when you are ready. Each wave brings more messages with more health, and the Speed button fast-forwards.',
+      'Clear all twelve waves to win. Your score is the total messages blocked.'
     ],
     mount
   });
@@ -16025,16 +16025,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'copycat',
     cat: 'brain',
     order: 24,
-    blurb: 'It plays a little tune. You play it back. Then it adds one more note, forever, until your brain gives out.',
+    blurb: 'The game lights a sequence of pads, adding one each round. Watch it, then tap the whole sequence back from memory.',
     scoreLabel: 'Longest',
     tags: ['simon', 'memory', 'sequence', 'sounds'],
     how: [
-      'Watch which pads light up, then click them back in the same order.',
-      'Every round adds one more note to the end.',
-      'Keys 1 2 3 4 work too, or Q W A S if your hand is already there.',
-      'Turn the speaker on. Each pad has its own note and the tune is genuinely easier to remember than the colours.',
-      'Harder difficulties play faster and give you less time to answer.',
-      'Two players (hotseat): no computer tune. You take turns building one shared chain. On your turn, click the whole chain back in order, then add one new pad and pass the device. Miss a note and the other player wins.'
+      'Watch which pads light, then click them back in the same order.',
+      'Each round adds one more note to the end of the sequence.',
+      'Use the mouse, keys 1 2 3 4, or Q W A S.',
+      'Turn the speaker on. Each pad has its own note, which is easier to track than the colours.',
+      'Higher difficulty plays the notes faster and shortens your window to answer.',
+      'Set Players to 2 for hotseat with no computer tune. Take turns on one shared chain: replay the whole thing, then add one pad and pass the device. Miss a note and the other player wins.'
     ],
     mount
   });
@@ -16383,15 +16383,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'connect4',
     cat: 'brain',
     order: 25,
-    blurb: 'Drop discs, get four in a line, try to beat a computer that is genuinely quite good at this once you turn the dial up.',
+    blurb: 'Drop discs and line up four before the computer does. It searches deeper the higher you set the difficulty.',
     scoreLabel: 'Wins',
     tags: ['connect four', 'strategy', 'computer opponent', 'board'],
     how: [
-      'Click or tap a column to drop your yellow disc. It falls to the lowest free slot.',
-      'Four in a row wins: across, up and down, or on either diagonal.',
-      'The computer searches ahead with alpha-beta pruning. Chill looks one move ahead and plays loose on purpose; nightmare looks eight moves ahead and does not.',
-      'Your win-loss record against the computer is kept between visits.',
-      'Set Players to 2 for hotseat: two people on one keyboard, yellow versus red, with a running series score.'
+      'Click or tap a column to drop your yellow disc into the lowest free slot.',
+      'Line up four of your discs in any direction to win: across, up-down, or diagonal.',
+      'The computer uses alpha-beta search. Chill looks one move ahead and plays loose; nightmare looks eight moves ahead and plays straight.',
+      'Your win-loss record against the computer carries over between visits.',
+      'Set Players to 2 for hotseat, yellow versus red on one keyboard with a running series score.'
     ],
     mount
   });
@@ -16615,15 +16615,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'reversi',
     cat: 'brain',
     order: 27,
-    blurb: 'Othello, the boardroom classic. Trap a straight line of light discs between two dark ones and the whole line switches sides. Corners decide everything.',
+    blurb: 'Othello on an 8x8 board. Trap a straight line of light discs between two of your dark ones and the whole line flips to dark. Corners decide most games.',
     scoreLabel: 'Most discs',
     tags: ['othello', 'reversi', 'vs-cpu'],
     how: [
-      'You are the dark discs. Every square you are allowed to play glows — click or tap one.',
-      'Your disc flips every straight run of light discs pinned between it and another of your dark discs, in all directions at once.',
-      'No legal move means your turn passes automatically. Corners can never be flipped back, so they are worth everything.',
+      'You play the dark discs. Legal squares glow, so click one.',
+      'Your disc flips every straight run of light discs pinned between it and another dark disc, in all directions at once.',
+      'With no legal move your turn passes automatically. Corners can never be flipped back, so they are worth the most.',
       'When neither side can move, whoever has more discs wins.',
-      'Set Players to 2 for hotseat: Player 1 is dark, Player 2 is light, sharing one screen. The difficulty dial only tunes the CPU, so it is ignored in two-player.'
+      'Set Players to 2 for hotseat, Player 1 dark and Player 2 light on one screen. The difficulty dial only tunes the CPU, so it does nothing in two-player.'
     ],
     mount
   });
@@ -16985,16 +16985,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'checkers',
     cat: 'brain',
     order: 28,
-    blurb: 'English draughts on company time. Jumps are compulsory, so is that 4pm sync. Chain your captures and crown a king before the CPU does.',
+    blurb: 'English draughts against the CPU or a coworker on company time. Jumps are forced, and reaching the far back rank crowns a king.',
     scoreLabel: 'Wins',
     tags: ['checkers', 'draughts', 'board', 'vs-cpu', 'correspondence'],
     how: [
-      'You are red at the bottom; the CPU is black at the top. Reduce the other side to no pieces or no legal move.',
-      'Click or tap one of your pieces, then click a glowing square to move it there. Men step diagonally forward, kings step either way.',
-      'Captures are forced: if any jump exists you must take one, and a piece that can keep jumping keeps jumping in the same turn.',
-      'Reach the far back rank and the piece is crowned a king. Career wins are your score.',
-      'Difficulty sets how deep the CPU thinks: chill barely plans ahead, nightmare reads eight plies. Set Players to 2 for hotseat and the CPU steps aside.',
-      'Play a coworker with no network: make your move, hit Share code, and send the short code over any chat. They paste it, press Load, play their reply, and Share back. It is full correspondence draughts that travels as a dull reference number.'
+      'Play red at the bottom against black at the top. Win by leaving the other side with no piece or no legal move.',
+      'Click one of your pieces, then click a glowing square to move it. Men move diagonally forward, kings move either way.',
+      'Captures are forced. If a jump exists you must take it, and a piece that can keep jumping must keep going that turn.',
+      'Reach the far back rank to crown a king. Career wins are your score.',
+      'Difficulty sets how far ahead the CPU looks, from two plies on chill to eight on nightmare. Set Players to 2 for hotseat.',
+      'To play a coworker with no network, make your move, hit Share code, and send the code over any chat. They paste it, press Load, reply, and Share back.'
     ],
     usesLetters: false,
     mount: mount
@@ -17581,16 +17581,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'battleship',
     cat: 'brain',
     order: 24,
-    blurb: 'Classic salvo warfare relabelled as a floor-by-floor asset audit. Moor your fleet, call your shots, and out-sink a CPU that gets meaner the higher you crank it.',
+    blurb: 'Hide five ships on your grid, then call shots at the enemy grid until one fleet is sunk. Ships wear office-asset names, but it plays like Battleship.',
     scoreLabel: 'Win streak',
     tags: ['battleship', 'strategy', 'vs-cpu', 'hotseat', 'grid'],
     how: [
-      'Two 10x10 floors. Sink every asset on the enemy floor before the CPU clears yours.',
-      'Click or tap a square on the enemy grid to fire. During setup, use Re-roll fleet, or Place by hand and press R (or Rotate) to turn the ship.',
-      'A hit that fills a whole ship clears it. The CPU fires blind until it lands a hit, then works along the line it has uncovered.',
-      'Each win extends your streak; a loss resets it to zero. Your best streak is the score to beat.',
-      'Chill fires purely at random. Hard adds a checkerboard search; nightmare runs a probability map that hunts your fleet without mercy.',
-      'Set Players to 2 for hotseat on one device: each of you secretly places a fleet, and between every turn a cover screen slides up so the person passing the phone never sees the other floor. Take turns firing until one fleet is gone.'
+      'Sink every ship on the enemy grid before the CPU sinks all of yours. Both grids are 10x10.',
+      'Click a square on the enemy grid to fire. During setup, use Re-roll fleet, or Place by hand and press R to rotate.',
+      'Fill every cell of a ship to sink it. The CPU fires blind until it lands a hit, then works along the ship.',
+      'Win to extend your streak. A loss resets it to zero, and your best streak is the score to beat.',
+      'Raise the difficulty for a smarter CPU. Chill fires at random; nightmare runs a probability map that tracks down your ships.',
+      'Set Players to 2 for hotseat on one device. Each of you places a fleet, a cover screen hides it between turns, and you fire until one fleet is gone.'
     ],
     usesLetters: true,
     mount: mount
@@ -17753,16 +17753,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'memory',
     cat: 'brain',
     order: 26,
-    blurb: 'Flip two cards, keep the pairs that match. Calm, quick, and impossible to lose. Just try to do it in fewer moves.',
+    blurb: 'Flip two cards at a time and keep the pairs that match. You cannot lose, so the score is how few moves it takes.',
     scoreLabel: 'Games won',
     tags: ['memory', 'pairs', 'concentration', 'cards'],
     how: [
-      'Tap a card to flip it, then tap a second one.',
+      'Tap a card to flip it, then tap a second card.',
       'A matching pair stays face up. A mismatch flips both back down.',
-      'Find every pair to win. You cannot lose, so the goal is to do it in as few moves as possible.',
-      'Your fewest-moves record is kept for each board size.',
-      'The difficulty dial only changes the board size: 6 pairs on Chill up to 18 on Nightmare.',
-      'Set Players to 2 for hotseat: take turns, a matched pair lets you go again, and the most pairs wins.'
+      'Find every pair to win. You cannot lose, so aim for the fewest moves.',
+      'Your fewest-moves record is saved for each board size.',
+      'The difficulty dial only sets board size, from 6 pairs on chill to 18 on nightmare.',
+      'Set Players to 2 for hotseat. Take turns flipping; a match lets you go again, and the most pairs wins.'
     ],
     mount
   });
@@ -17957,16 +17957,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'pong',
     cat: 'action',
     order: 29,
-    blurb: 'The original video game, more or less. You, a CPU, and a square that will not stop. Your longest rally is the score worth chasing.',
+    blurb: 'Pong. Your bat against a CPU, first to seven points. Your longest rally is the score that counts.',
     scoreLabel: 'Longest rally',
     tags: ['pong', 'paddle', 'ball', 'vs-cpu'],
     how: [
       'Move your bat with the mouse, a drag, or Up/Down and W/S.',
-      'Where the ball strikes your bat bends its angle — hit near the edge to fire it back sharp.',
-      'First side to seven points wins the match.',
-      'Your recorded score is the longest single rally you keep alive.',
-      'Harder settings give the CPU a faster, steadier bat.',
-      'Set Players to 2 for hotseat on one keyboard: left bat is W/S, right bat is the Up/Down arrows.'
+      'Where the ball hits your bat bends its angle. Hit near an edge to send it back sharp.',
+      'First side to seven points takes the match.',
+      'Your recorded score is the longest single rally you keep going.',
+      'Harder tiers give the CPU a faster, steadier bat.',
+      'Set Players to 2 for hotseat on one keyboard: left bat is W/S, right bat is Up/Down.'
     ],
     mount
   });
@@ -18384,16 +18384,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'invaders',
     cat: 'action',
     order: 30,
-    blurb: 'The unread count is descending in formation. Clear it before it lands on your desk.',
+    blurb: 'A formation of unread email marches down the screen. Shoot every one before it reaches the bottom.',
     scoreLabel: 'Score',
     tags: ['shooter', 'arcade', 'reflex'],
     how: [
-      'Goal: shoot every email invader before the formation reaches the bottom.',
-      'Move with Left/Right or A/D and fire with Space; on touch use the D-pad and the center FIRE button.',
-      'The fewer invaders left, the faster they march and drop. The Out-of-Office bunkers absorb fire but erode away.',
-      'Score by shooting invaders; the URGENT banner sweeping the top is worth a fat bonus.',
-      'You get three lives and lose one if an invader lands or a bomb hits you; a cleared wave respawns faster and lower.',
-      'Harder settings mean quicker invaders, more bombs, and fewer bunkers; nightmare starts with fewer lives.'
+      'Shoot every email invader before the formation reaches the bottom.',
+      'Move with Left/Right or A/D and fire with Space. On touch, use the D-pad and the centre FIRE button.',
+      'The fewer invaders left, the faster they march and drop. Out-of-Office bunkers soak up fire but wear away.',
+      'Score by shooting invaders. The URGENT banner sweeping the top is worth a big bonus.',
+      'You start with three lives and lose one when an invader lands or a bomb hits you. Each cleared wave returns faster and lower.',
+      'Higher settings bring faster invaders, more bombs, and fewer bunkers. Nightmare also starts you with fewer lives.'
     ],
     usesLetters: true,
     mount: mount
@@ -18631,15 +18631,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'snake',
     cat: 'action',
     order: 30,
-    blurb: 'The one everybody already knows, plus a golden apple worth five ordinary ones and a wall toggle for cowards.',
+    blurb: 'The snake you already know, with a golden apple worth five ordinary ones and a toggle for solid or open walls.',
     scoreLabel: 'Score',
     tags: ['classic', 'arcade', 'retro'],
     how: [
-      'Arrows, WASD, swipe, or the on-screen pad. You cannot turn back on yourself, so stop trying.',
-      'Normal apples are 10. The golden one is 50 and vanishes after seven seconds.',
-      'Every apple makes you faster. That is the entire problem with this game.',
-      'Flip Walls to open and you wrap around the edges instead of dying at them. No judgement.',
-      'Harder settings start you faster and speed you up quicker.'
+      'Steer with the arrows, WASD, swipe, or the on-screen pad. You cannot turn straight back on yourself.',
+      'Normal apples score 10. The golden apple scores 50 and vanishes after seven seconds.',
+      'Every apple you eat speeds the snake up, which is the trouble.',
+      'Set Walls to open to wrap around the edges instead of dying at them.',
+      'Higher settings start you faster and speed you up quicker.'
     ],
     mount
   });
@@ -19347,15 +19347,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'tetris',
     cat: 'action',
     order: 32,
-    blurb: 'Falling blocks with hold, ghost piece, hard drop and a proper 7-bag. You already know exactly what to do here.',
+    blurb: 'Tetris with hold, ghost piece, hard drop and a proper 7-bag. Clear lines and do not top out.',
     scoreLabel: 'Score',
     tags: ['tetris', 'blocks', 'stacking'],
     how: [
       'Left and right move. Up or X spins clockwise, Z spins the other way.',
-      'Down soft drops for a point a row. Space hard drops for two.',
-      'C parks a piece in hold. One swap per piece.',
-      'Four lines at once is 800 times the level. Back to back clears build a combo bonus on top.',
-      'P pauses. Hard starts you at level 4 and Nightmare at level 7, which is not a gentle place to begin.'
+      'Down soft drops for one point a row. Space hard drops for two.',
+      'C holds a piece. One swap per piece.',
+      'Four lines at once scores 800 times the level. Back-to-back clears add a combo bonus on top.',
+      'P pauses. Hard starts you at level 4, Nightmare at level 7.'
     ],
     mount
   });
@@ -19373,8 +19373,26 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   function mount(root, api) {
     const bagg = Engine.bag();
-    const cv = Engine.canvas(root, W, H, { maxHeight: '78vh' });
+    const cv = Engine.canvas(root, W, H);
     const ctx = cv.ctx;
+
+    /* Keep the whole playfield on screen. In portrait on a phone the header
+       eats enough height that a fixed 78vh canvas ran the ground past the fold,
+       so you died into a floor you could not see. Size the canvas to the space
+       actually left below the header on this device, and refit on resize or
+       orientation change. Flap has no on-screen pad, so filling that space is
+       exactly right. */
+    function fit() {
+      const vpH = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+      const top = cv.el.getBoundingClientRect().top;
+      const availH = Math.max(240, vpH - top - 10);
+      /* cap WIDTH (aspect-ratio derives height from it) so the playfield scales
+         to fit the height without ever distorting the bird */
+      cv.el.style.maxWidth = Math.min(W, Math.round(availH * W / H)) + 'px';
+    }
+    requestAnimationFrame(fit);
+    bagg.listen(window, 'resize', fit);
+    if (window.visualViewport) bagg.listen(window.visualViewport, 'resize', fit);
 
     let by, bv, pipes, score, started, over, restartT, lastScore;
 
@@ -19646,15 +19664,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'stack',
     cat: 'action',
     order: 36,
-    blurb: 'Drop the sliding slab onto the tower. Miss the edge and it gets trimmed, thinner and thinner, until there is nothing left to aim at.',
+    blurb: 'Drop each sliding slab onto the tower. Overhang is sliced off, so a sloppy drop leaves the next slab narrower until nothing is left.',
     scoreLabel: 'Height',
     tags: ['stacker', 'timing', 'tower'],
     how: [
-      'A slab slides back and forth across the top. Click, tap, or press Space to drop it onto the tower.',
-      'Whatever overhangs the slab below is sliced off and falls away, so every sloppy drop leaves the next slab narrower.',
-      'A perfect drop — edges lined up exactly — keeps the full width and rewards you with a brighter note. It is the only way to stay wide.',
-      'There are no lives and no timer. You lose the instant a drop misses the tower completely.',
-      'Each slab slides a little faster than the last, and harder settings start it moving quicker. Height is your score.'
+      'A slab slides across the top. Click, tap, or press Space to drop it onto the tower.',
+      'Any part hanging past the slab below is sliced off, so a sloppy drop leaves the next slab narrower.',
+      'Line the edges up exactly for a perfect drop that keeps the full width. That is how you stay wide.',
+      'No lives, no timer. You lose the moment a drop misses the tower completely.',
+      'Each slab slides a little faster than the last, and higher settings start it quicker. Height is your score.'
     ],
     mount
   });
@@ -20118,15 +20136,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'asteroids',
     cat: 'action',
     order: 33,
-    blurb: 'Drifting, shooting, and the slow horror of realising momentum does not stop just because you did.',
+    blurb: 'Asteroids. Rotate and thrust to fly, fire to break the rocks apart. Momentum never stops on its own, so plan every turn.',
     scoreLabel: 'Score',
     tags: ['asteroids', 'space', 'shooter', 'retro'],
     how: [
-      'Left and right rotate, up thrusts. There is no brake. Turn around and burn the other way.',
-      'Space fires. Five shots on screen at a time.',
-      'Big rocks split into two mediums, mediums into two smalls, and the smalls are worth the most.',
-      'Shift or down jumps you somewhere random. It may also drop you inside a rock. That is the deal.',
-      'Clearing a wave is worth 100 and the next one is bigger. Nightmare starts you with one ship.'
+      'Left and right turn, up thrusts. No brake, so turn around and thrust back to slow down.',
+      'Space fires. Five shots on screen at once.',
+      'Big rocks split into two mediums, mediums into two smalls. Smalls score the most.',
+      'Shift or down teleports you to a random spot. It can drop you inside a rock.',
+      'Clear a wave for 100 points and the next one is bigger. Nightmare starts you with one ship.'
     ],
     mount
   });
@@ -20631,15 +20649,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'obby',
     cat: 'action',
     order: 21,
-    blurb: 'A Roblox-style obstacle course: sprint and leap across a rainbow of platforms, clear the lava and the spikes, tag the green checkpoints, and reach the flag. Twenty stages that get meaner, and you can drop into any of them.',
+    blurb: 'A Roblox-style obstacle course. Jump across the platforms to the flag while dodging lava and spikes. Twenty stages, and you can start on any one.',
     scoreLabel: 'Stages cleared',
     tags: ['platformer', 'obby', 'jump', 'obstacle-course'],
     how: [
-      'Run left and right with the arrows or A/D, and jump with Space, W, or the on-screen JUMP button. There is a little coyote-time and jump-buffering so jumps feel forgiving.',
-      'Cross the gaps by jumping platform to platform. Falling into a gap, touching lava, or landing on spikes sends you back — but only to your last checkpoint.',
-      'Green flags along the way are checkpoints: run past one and it lights up, so a mistake costs a little, not the whole stage.',
-      'Reach the chequered flag at the end to clear the stage. Your time and fall count are recorded, and your best time per stage is saved.',
-      'Twenty stages get longer, higher and more hazardous. Use the Stage menu to jump straight to any of them.'
+      'Move with the arrows or A/D and jump with Space, W, or the on-screen JUMP button. Small coyote-time and jump-buffering make jumps forgiving.',
+      'Jump platform to platform across the gaps. A fall, lava, or spikes sends you back to your last checkpoint.',
+      'Green flags are checkpoints. Run past one to light it, so a slip costs a little ground instead of the stage.',
+      'Touch the chequered flag to clear the stage. Your time and fall count are recorded, and your best time per stage is saved.',
+      'The twenty stages get longer, higher, and more hazardous. Use the Stage menu to jump to any of them.'
     ],
     mount
   });
@@ -20843,15 +20861,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'hoops',
     cat: 'action',
     order: 22,
-    blurb: 'Gloriously silly two-player physics sport on one keyboard. Two wobbling players jump and boot a ball at each other\'s goal — basketball through the hoop or soccer into the net. Hotseat a coworker or humble the CPU.',
+    blurb: 'Two-player physics sport on one keyboard. Jump and boot the ball into the other player\'s target, basketball through the hoop or soccer into the net. Play a friend or the CPU.',
     scoreLabel: 'CPU wins',
     tags: ['sports', 'basketball', 'soccer', 'hotseat', 'physics'],
     how: [
-      'Two players share the keyboard. Left player moves with A and D and jumps with W; right player uses the arrow keys. On touch, each half of the screen has its own buttons.',
-      'Bump, head and boot the ball. In Basketball you score by knocking the ball down through the OTHER player\'s hoop; in Soccer you shove it into their net at the edge.',
-      'Everything is physics — the ball bounces off the floor, the walls, and both players, so it is chaos, and that is the point. Jump into the ball to launch it.',
-      'First to seven points wins the match. Pick Basketball or Soccer from the menu.',
-      'No friend nearby? Switch Players to 1 and take on the CPU. Beating it counts toward your score.'
+      'Left player moves with A and D and jumps with W. Right player uses the arrow keys. On touch, each half of the screen has its own buttons.',
+      'Jump into the ball to launch it. In Basketball, knock it down through the other player\'s hoop; in Soccer, push it into their net at the edge.',
+      'The ball bounces off the floor, walls, and both players, so shots get messy.',
+      'First to seven points wins. Pick Basketball or Soccer from the menu.',
+      'Set Players to 1 to face the CPU. Beating it adds to your score.'
     ],
     mount
   });
@@ -21187,15 +21205,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'commute',
     cat: 'action',
     order: 34,
-    blurb: 'Cross the open-plan office to an empty desk. Four lanes of rolling chairs first, then the belts, where standing on nothing is fatal.',
+    blurb: 'Cross the open-plan office to a free desk. Four lanes of rolling chairs first, then conveyor belts where standing on empty floor kills you.',
     scoreLabel: 'Score',
     tags: ['frogger', 'crossing', 'office', 'arcade'],
     how: [
       'Arrows, WASD or swipe to hop one square at a time.',
-      'The bottom four lanes are traffic. Touching anything in them ends that life.',
-      'The four dark lanes near the top are conveyor belts. You must land on a box, and the box carries you sideways.',
-      'Fill all five desks to clear the round. Everything gets faster after that.',
-      'Three lives. Each square forward is worth points, each desk is worth sixty.'
+      'The bottom four lanes are traffic. Touch anything in them and you lose a life.',
+      'The four belts near the top carry you sideways. Land on a box; empty belt is fatal.',
+      'Fill all five desks to clear the round. Everything speeds up after each one.',
+      'Three lives. Every square forward scores, and each desk is worth sixty.'
     ],
     mount
   });
@@ -21671,16 +21689,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'powder',
     cat: 'goofy',
     order: 40,
-    blurb: 'A falling-sand toy with a dozen materials and no point except the mess. Sand piles, water levels off, oil floats, lava sets fire to everything and hardens to stone when it hits water, acid eats through solids, plants creep along water, and ice melts by the flames. Draw and watch the rules collide.',
+    blurb: 'A falling-sand sandbox with a dozen materials and no score to chase. Sand piles up, water finds its level, oil floats, fire spreads, and lava hardens to stone in water. Pick a material and draw.',
     scoreLabel: 'Messes made',
     tags: ['falling-sand', 'sandbox', 'toy', 'physics'],
     how: [
-      'Pick a material and paint it into the tray by clicking and dragging. Bigger brushes pour faster; the Eraser clears cells.',
-      'The classics: sand tumbles and piles, water spreads and settles flat, oil floats on top of water, and fire chews through paper (and plants and oil) then fades to smoke. Water snuffs fire on contact.',
-      'Lava flows, sets fire to anything flammable, melts ice, and — the good bit — freezes into solid stone the instant it touches water, hissing off a puff of steam.',
-      'Acid eats through sand, stone, paper, plants and ice, using itself up as it goes, and water dilutes it back to plain water.',
-      'Plants creep into empty space wherever they touch water, so a seed by a puddle slowly overgrows — until a stray spark takes the whole vine. Ice melts to water near any heat.',
-      'No score, no winning — it is a toy. Try lava pouring onto a lake, an acid drip through a stone wall, or a garden you then set alight. Clear starts fresh; Pause freezes the frame.'
+      'Pick a material and drag to paint it into the tray. Bigger brushes pour faster, and the Eraser clears cells.',
+      'Sand tumbles and piles, water spreads and settles flat, and oil floats on water. Fire eats through paper, plants, and oil, then fades to smoke. Water puts fire out on contact.',
+      'Lava flows, ignites anything flammable, and melts ice. When it touches water it hardens into stone and gives off steam.',
+      'Acid eats through sand, stone, paper, plants, and ice, using itself up as it goes. Water dilutes it back to water.',
+      'Plants grow into empty space next to water, so a seed by a puddle spreads over time. Ice melts to water near fire or lava.',
+      'There is no score. Try lava on a lake or an acid drip through a wall. Clear starts fresh and Pause freezes the frame.'
     ],
     mount
   });
@@ -21923,16 +21941,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'busywork',
     cat: 'goofy',
     order: 41,
-    blurb: 'The numbers-go-up game, office edition. File one report by hand, then hire interns, photocopiers and whole subsidiaries to file them for you — and reorganise the department to start over with a permanent raise. It keeps working while the tab is shut.',
+    blurb: 'An office idle clicker: file reports by hand, then hire interns and machines to file them for you. Reorganise to bank permanent clout, and it keeps earning while the tab is closed.',
     scoreLabel: 'Lifetime reports',
     formatScore: (n) => (function f(x) { if (x < 1000) return '' + Math.floor(x); const u = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi']; let i = 0; while (x >= 1000 && i < u.length - 1) { x /= 1000; i++; } return (x < 100 ? x.toFixed(1) : Math.floor(x)) + u[i]; })(n),
     tags: ['idle', 'incremental', 'clicker', 'prestige'],
     how: [
-      'File a report by hand to earn your first few. Then spend reports to hire things that file reports for you — interns, photocopiers, consultants, all the way up to whole subsidiaries.',
-      'Each hire you own of a kind makes the next one pricier, so growth comes from spreading across many kinds and from upgrades that multiply their output.',
-      'Upgrades appear as you hit milestones. They multiply one kind of worker, your hand-filing, or everything at once.',
-      'When lifetime reports get big enough, Reorg the department: you lose your workers and reports but bank permanent clout, and every report afterwards is worth 5% more per clout. Prestiging is how you break through the wall.',
-      'It runs while you are gone — the machines file at half speed for up to eight hours offline, and your progress is saved automatically. Your score is lifetime reports filed.'
+      'Click File a report to earn your first reports. Spend them to hire workers that file on their own.',
+      'Every worker of a kind you buy makes the next one cost more, so buy across all the kinds.',
+      'Buy upgrades as they unlock. Each one multiplies a worker type, your hand-filing, or the whole office.',
+      'When lifetime reports are high enough, Reorg to reset your workers for permanent clout worth +5% output each.',
+      'Offline, workers file at half speed for up to eight hours, and the game saves itself. Your score is lifetime reports.'
     ],
     mount
   });
@@ -22464,15 +22482,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'cards',
     cat: 'goofy',
     order: 42,
-    blurb: 'Jacks-or-Better video poker, the machine every break room secretly wants. Deal five, keep the good ones, draw once, and get paid by the table. The credits are imaginary; the tiny decisions are not.',
+    blurb: 'Jacks-or-Better video poker for the break room. Deal five, hold the keepers, draw once, get paid by the table. The credits are fake.',
     scoreLabel: 'Best credits',
     tags: ['poker', 'cards', 'casino'],
     how: [
-      'Set your bet (1 to 5 credits) and press Deal for five cards. The bet is taken up front.',
-      'Click any cards you want to keep — they show HOLD — then press Draw. Every card you did not hold is replaced once.',
-      'Your final five are paid by the table: a pair of jacks or better pays, on up through two pair, straights, flushes, full houses, quads, and the royal flush at the top.',
-      'The royal flush pays a big bonus at the maximum bet of five, which is why Max bet exists. Everything else pays straight multiples of your bet.',
-      'Credits are pretend and saved between visits; if you bust out, Add credits tops you back up. Your score is the highest credit balance you reach.'
+      'Set your bet (1 to 5 credits) and press Deal for five cards. The bet comes out up front.',
+      'Click the cards you want to keep, marked HOLD, then press Draw. Every unheld card is replaced once.',
+      'The table pays a pair of jacks or better, up through two pair, straights, flushes, full houses, quads, straight flush and royal flush.',
+      'A royal flush pays a 4000 bonus at the max bet of five, which is what Max bet is for. Everything else pays a straight multiple of your bet.',
+      'Credits are fake and saved between visits. Bust out and Add credits tops you back up. Your score is the highest balance you reach.'
     ],
     mount
   });
@@ -22641,13 +22659,13 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   Arcade.register({
     id: 'higherlower', title: 'Higher or Lower', emoji: 'cards', cat: 'goofy', order: 47,
-    blurb: 'One card is on the table. Will the next be higher or lower? Ride the streak as far as your luck holds. A tie goes your way — small mercies.',
+    blurb: 'One card is up. Guess whether the next is higher or lower and build a streak. A tie counts as a win.',
     scoreLabel: 'Best streak', tags: ['cards', 'luck', 'quick'],
     how: [
-      'A card is shown. Guess whether the next card will be higher or lower in rank.',
-      'A correct guess extends your streak and the next card becomes the new one to beat.',
-      'Ties (same rank) count in your favour. One wrong guess ends the run.',
-      'The score kept is your longest streak in a single run.'
+      'A card is shown. Guess whether the next card ranks higher or lower.',
+      'A correct guess extends the streak, and that card becomes the one to beat.',
+      'A tie of the same rank counts in your favor. One wrong guess ends the run.',
+      'Your score is the longest streak in a single run.'
     ],
     mount
   });
@@ -22938,15 +22956,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'speaker',
     cat: 'goofy',
     order: 43,
-    blurb: 'Eighteen deeply unserious noises — air horn, sad trombone, rimshot, vine boom, the works — all synthesised live in the browser with no sound files at all. For scoring your own meetings.',
+    blurb: 'Eighteen unserious noises: air horn, sad trombone, rimshot, vine boom and more. Everything is synthesized live in the browser, with no sound files at all.',
     scoreLabel: 'Noises made',
     tags: ['soundboard', 'noise', 'toy'],
     how: [
-      'Tap any pad to play its sound, or hit the matching key shown in the corner (1-9, then Q W E R T, A S D F).',
-      'Every sound is built on the spot from oscillators and noise — there are no audio files, so nothing loads and nothing phones home.',
-      'Sound has to be on for any of this to work; opening the board flips it on for you and syncs the speaker button up top.',
-      'The air horn and sad trombone are, scientifically, the two most important buttons. Use responsibly, or do not.',
-      'Panic (sound off) mutes everything instantly if footsteps approach.'
+      'Tap any pad to play its sound, or press the key shown in its corner (1-9, then Q W E R T, A S D F).',
+      'Every sound is built from oscillators and noise at press time. No audio files, so nothing loads or phones home.',
+      'Sound has to be on. Opening the board turns it on and syncs the speaker button up top.',
+      'The air horn and sad trombone earn their keep. Use with restraint.',
+      'Panic (sound off) mutes everything at once if footsteps approach.'
     ],
     mount
   });
@@ -23176,15 +23194,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'whack',
     cat: 'goof',
     order: 61,
-    blurb: 'Meeting invites pop up. Click them to decline. But the gold ones are payroll and your own review, so leave those alone.',
+    blurb: 'Meeting invites pop onto your calendar. Click the junk ones to decline them, but leave the gold ones alone. Those are payroll and your own review.',
     scoreLabel: 'Score',
     tags: ['whack a mole', 'calendar', 'meetings', 'reflex'],
     how: [
       'Teal invites are junk. Click them to decline before they book themselves in.',
-      'Gold invites are the ones you actually want. Clicking those counts against you.',
-      'A gold invite you leave alone is worth 25 points when it expires.',
-      'Five bookings and your week is gone. Sixty seconds on the clock.',
-      'Declining without a miss builds a streak, and the streak is worth real points.'
+      'Gold invites are the ones you want. Clicking one counts against you.',
+      'Leave a gold invite alone and it is worth 25 points when it expires.',
+      'Five bookings ends your week, and you have sixty seconds on the clock.',
+      'Declining without a miss builds a streak worth bonus points.'
     ],
     mount
   });

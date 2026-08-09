@@ -184,15 +184,15 @@
     emoji: 'noughts',
     cat: 'brain',
     order: 19,
-    blurb: 'Tic-tac-toe with a difficulty dial. On chill it fumbles and hands you wins. On nightmare it is a brick wall and a draw is a moral victory.',
+    blurb: 'Tic-tac-toe against the computer. On chill it blunders often and lets you win; on nightmare it plays perfectly and the best you can force is a draw.',
     scoreLabel: 'Win streak',
     tags: ['tic-tac-toe', 'xo', 'vs-cpu'],
     how: [
-      'You are X. Click or tap a square to move; the machine replies at once.',
-      'Get three of your marks in a line — across, down, or diagonally — to win.',
-      'Your score is your current win streak. A loss resets it to zero; a draw leaves it untouched.',
-      'Harder settings make the AI blunder less often. On nightmare it never blunders, so a draw is the best you can force.',
-      'Set Players to 2 for hotseat: Player 1 is X, Player 2 is O, taking turns on one screen with a running series score.'
+      'You are X. Click a square to move and the computer replies at once.',
+      'Get three of your marks in a line, across, down, or diagonally, to win.',
+      'Your score is your win streak. A loss resets it to zero; a draw holds it.',
+      'Harder settings make the computer blunder less. On nightmare it never blunders, so a draw is your ceiling.',
+      'Set Players to 2 for hotseat, X versus O on one screen with a running series score.'
     ],
     mount
   });

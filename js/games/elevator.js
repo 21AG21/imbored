@@ -297,15 +297,15 @@
     emoji: 'elevator',
     cat: 'sim',
     order: 2,
-    blurb: 'Three lifts. Eight floors. A lobby full of people who are already late and have decided that is your fault.',
+    blurb: 'Dispatch three lifts across eight floors. Send each car where you want; riders board and pick their own floor. Five walk-offs ends the shift.',
     scoreLabel: 'Delivered',
     tags: ['lift', 'dispatch', 'tower', 'scheduling'],
     how: [
-      'Click a floor inside a lift shaft to send that lift there. Click again to cancel it.',
-      'People get in by themselves when the doors open, and press their own floor button. You only decide who goes where.',
-      'Five to a lift. The coloured dot is where somebody wants to go.',
-      'The little bar under a person is their patience. Five walk-offs and the shift is over.',
-      'Score is people delivered.'
+      'Click a floor inside a lift shaft to send that car there. Click again to cancel.',
+      'People board on their own when the doors open and press their floor. You only route the cars.',
+      'Five riders per lift. The colored dot shows where each one is headed.',
+      'The bar under a waiting person is their patience. Five walk-offs ends the shift.',
+      'Your score is people delivered.'
     ],
     mount
   });

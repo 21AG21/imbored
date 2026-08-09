@@ -66,15 +66,15 @@
     emoji: 'speaker',
     cat: 'goofy',
     order: 43,
-    blurb: 'Eighteen deeply unserious noises — air horn, sad trombone, rimshot, vine boom, the works — all synthesised live in the browser with no sound files at all. For scoring your own meetings.',
+    blurb: 'Eighteen unserious noises: air horn, sad trombone, rimshot, vine boom and more. Everything is synthesized live in the browser, with no sound files at all.',
     scoreLabel: 'Noises made',
     tags: ['soundboard', 'noise', 'toy'],
     how: [
-      'Tap any pad to play its sound, or hit the matching key shown in the corner (1-9, then Q W E R T, A S D F).',
-      'Every sound is built on the spot from oscillators and noise — there are no audio files, so nothing loads and nothing phones home.',
-      'Sound has to be on for any of this to work; opening the board flips it on for you and syncs the speaker button up top.',
-      'The air horn and sad trombone are, scientifically, the two most important buttons. Use responsibly, or do not.',
-      'Panic (sound off) mutes everything instantly if footsteps approach.'
+      'Tap any pad to play its sound, or press the key shown in its corner (1-9, then Q W E R T, A S D F).',
+      'Every sound is built from oscillators and noise at press time. No audio files, so nothing loads or phones home.',
+      'Sound has to be on. Opening the board turns it on and syncs the speaker button up top.',
+      'The air horn and sad trombone earn their keep. Use with restraint.',
+      'Panic (sound off) mutes everything at once if footsteps approach.'
     ],
     mount
   });

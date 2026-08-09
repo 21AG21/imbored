@@ -173,16 +173,16 @@
     emoji: 'wordguess',
     cat: 'brain',
     order: 21,
-    blurb: 'Five letters, six goes, as many rounds as your meeting lasts. No daily limit, no share button, no waiting until tomorrow.',
+    blurb: 'Guess the hidden five-letter word in six tries, with unlimited rounds and no daily wait.',
     scoreLabel: 'Best streak',
     usesLetters: true,
     tags: ['words', 'wordle', 'vocabulary'],
     how: [
-      'Type a five letter word and hit Enter.',
-      'Green means right letter, right spot. Yellow means right letter, wrong spot. Grey means forget it.',
-      'Win to extend your streak. Miss and it goes back to zero.',
-      'Hard gives you five guesses. Nightmare gives you four. Good luck.',
-      'Unlike the famous one you can just play again immediately.'
+      'Type a five-letter word and press Enter.',
+      'Green marks a correct letter in the right spot. Yellow marks a correct letter in the wrong spot. Grey means the letter is not in the word.',
+      'Win to extend your streak. Miss and it resets to zero.',
+      'Hard drops you to five guesses and nightmare to four.',
+      'Play as many rounds as you like with no daily wait.'
     ],
     mount
   });

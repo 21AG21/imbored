@@ -65,13 +65,13 @@
 
   Arcade.register({
     id: 'higherlower', title: 'Higher or Lower', emoji: 'cards', cat: 'goofy', order: 47,
-    blurb: 'One card is on the table. Will the next be higher or lower? Ride the streak as far as your luck holds. A tie goes your way — small mercies.',
+    blurb: 'One card is up. Guess whether the next is higher or lower and build a streak. A tie counts as a win.',
     scoreLabel: 'Best streak', tags: ['cards', 'luck', 'quick'],
     how: [
-      'A card is shown. Guess whether the next card will be higher or lower in rank.',
-      'A correct guess extends your streak and the next card becomes the new one to beat.',
-      'Ties (same rank) count in your favour. One wrong guess ends the run.',
-      'The score kept is your longest streak in a single run.'
+      'A card is shown. Guess whether the next card ranks higher or lower.',
+      'A correct guess extends the streak, and that card becomes the one to beat.',
+      'A tie of the same rank counts in your favor. One wrong guess ends the run.',
+      'Your score is the longest streak in a single run.'
     ],
     mount
   });

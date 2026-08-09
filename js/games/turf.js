@@ -132,15 +132,15 @@
     emoji: 'turf',
     cat: 'sim',
     order: 13,
-    blurb: 'Rock-paper-scissors played by a whole grid at once. Three colours chase each other in an endless cycle and, all on their own, curl into rotating spiral waves where nobody ever wins — the pattern that lets three rivals share one board forever.',
+    blurb: 'Rock-paper-scissors played across a whole grid, each colour eating the one it beats. Left running, the noise organises into rotating spiral waves where all three colours survive.',
     scoreLabel: 'Coexistence streak',
     tags: ['cyclic-dominance', 'spirals', 'emergence', 'ecology'],
     how: [
-      'Every cell is red, green, blue, or empty. Red beats green, green beats blue, blue beats red — a perfect loop with no top dog.',
-      'Neighbours interact one pair at a time: a predator turns its prey into an empty gap, a colour breeds into a touching gap, or two neighbours simply swap places.',
-      'Start it running and the random speckle reorganises itself into slowly turning spiral arms. That self-made structure is the whole trick: it keeps all three colours alive indefinitely.',
-      'The same three rules with everything well-mixed — no grid, no neighbourhoods — would collapse to a single survivor. Space is what saves the other two. That is a real result from bacterial ecology.',
-      'The mixing slider shuffles neighbours harder, smearing the spirals into coarser blobs; the panel plots the three populations forever chasing one another round the loop. Your score is the longest run you keep all three alive.'
+      'Every cell is red, green, blue, or empty. The colours run in a loop where red beats green, green beats blue, and blue beats red.',
+      'Neighbouring cells interact one pair at a time. A predator clears its prey to an empty gap, a colour breeds into a touching gap, or two neighbours swap places.',
+      'Start it running and the random speckle turns into slowly rotating spiral arms. That self-made structure is what keeps all three colours alive.',
+      'Well-mixed with no grid, the same rules collapse to one survivor. Space is what saves the other two, a real result from bacterial ecology.',
+      'The mixing slider smears the spirals into coarser blobs, and the panel plots the three populations chasing one another round the loop. Your score is the longest run with all three alive.'
     ],
     mount
   });

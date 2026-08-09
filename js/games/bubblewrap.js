@@ -211,15 +211,15 @@
     emoji: 'bubble',
     cat: 'puzzle',
     order: 19,
-    blurb: 'The bubble shooter, restyled as the most satisfying thing in the supply closet. Fire bubbles up the board, pop clusters of three or more, and drop whatever you strand — but every miss sticks, so a lazy shot brings the ceiling down on you.',
+    blurb: 'A bubble shooter. Fire bubbles up the board and pop clusters of three or more of a color. Every miss sticks and pushes the wall down toward the line.',
     scoreLabel: 'Boards cleared',
     tags: ['bubble-shooter', 'match', 'puzzle', 'aim'],
     how: [
-      'Move the mouse to aim the launcher at the bottom, and click to fire the current bubble up the board. It bounces off the side walls, so you can bank shots into tight spots.',
-      'When a fired bubble touches the pack it sticks. Land three or more of the same colour touching each other and the whole cluster pops.',
-      'Popping can strand bubbles that were only hanging on through the ones you cleared — anything no longer connected to the ceiling drops away for bonus pops.',
-      'Every bubble that does not make a match just sticks and adds to the wall. Let the pack grow down past the dashed red line and the game ends.',
-      'Clear every bubble to finish the board and move up a level, where an extra colour joins the mix. Your score is the number of boards you pop clean.'
+      'Move the mouse to aim the launcher at the bottom, click to fire. Shots bounce off the side walls, so you can bank into tight spots.',
+      'A fired bubble sticks when it touches the pack. Three or more of one color touching pops the whole cluster.',
+      'Popping a cluster can cut other bubbles off from the ceiling. Anything left unconnected drops away for bonus points.',
+      'A bubble that makes no match sticks and adds to the wall. Let the pack cross the dashed red line and the game ends.',
+      'Clear every bubble to finish the board and go up a level, which adds another color. Your score is the number of boards you clear.'
     ],
     mount
   });

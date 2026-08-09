@@ -157,17 +157,17 @@
     emoji: 'reflex',
     cat: 'brain',
     order: 23,
-    blurb: 'Twenty five targets, one number at the end. The most brutally honest game on the shelf.',
+    blurb: 'Click 25 targets as fast as they appear. You get your average reaction time at the end.',
     scoreLabel: 'Best avg',
     lowerIsBetter: true,
     formatScore: (v) => v + 'ms',
     tags: ['reaction', 'aim', 'speed', 'training'],
     how: [
-      'A circle appears somewhere at a random moment. Click it as fast as you physically can.',
-      'Twenty five targets a run. The bars along the bottom are every single reaction time.',
-      'Clicking empty space is a misclick and costs you 250ms spread across the run.',
-      'Lower is better here. The score kept is your best average.',
-      'On Hard and Nightmare the targets get bored and leave if you take too long.'
+      'A circle appears at a random moment. Click it as fast as you can.',
+      'Each run has 25 targets. The bars along the bottom are your reaction times.',
+      'Clicking empty space is a misclick and adds 250ms spread across the run.',
+      'Lower is better. Your score is your best average.',
+      'On Hard and Nightmare, a target you ignore for too long leaves and counts as a miss.'
     ],
     mount
   });

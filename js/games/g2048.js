@@ -163,15 +163,15 @@
     emoji: '2048',
     cat: 'puzzle',
     order: 11,
-    blurb: 'The famous slide-and-merge number puzzle. Shove the whole board one way; two tiles with the same number fuse into their sum. Keep combining — 2, 4, 8, 16 — and try to build a 2048 tile before the grid jams. Now with exactly one undo, because you have earned it.',
+    blurb: 'Slide the whole board one way and equal tiles merge into their sum. Keep merging up from 2, 4, 8 toward a 2048 tile before the grid fills. Includes one undo.',
     scoreLabel: 'Score',
     tags: ['tiles', 'merge', 'numbers'],
     how: [
-      'Arrow keys, WASD, or swipe. Everything slides at once.',
-      'Two tiles with the same number become one tile with their sum.',
-      'A new tile appears after any move that actually changed something.',
-      'Undo saves you once. Choose your moment.',
-      'Harder settings deal more 4s, which clog the board much faster than you expect.'
+      'Arrow keys, WASD, or swipe move every tile at once.',
+      'Two tiles of the same number merge into one worth their sum.',
+      'A new tile drops in after any move that changed the board.',
+      'Undo reverts one move. It resets after you use it.',
+      'Harder settings deal more 4-tiles, which fill the board faster.'
     ],
     mount
   });

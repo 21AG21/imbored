@@ -408,16 +408,16 @@
     emoji: 'invaders',
     cat: 'action',
     order: 30,
-    blurb: 'The unread count is descending in formation. Clear it before it lands on your desk.',
+    blurb: 'A formation of unread email marches down the screen. Shoot every one before it reaches the bottom.',
     scoreLabel: 'Score',
     tags: ['shooter', 'arcade', 'reflex'],
     how: [
-      'Goal: shoot every email invader before the formation reaches the bottom.',
-      'Move with Left/Right or A/D and fire with Space; on touch use the D-pad and the center FIRE button.',
-      'The fewer invaders left, the faster they march and drop. The Out-of-Office bunkers absorb fire but erode away.',
-      'Score by shooting invaders; the URGENT banner sweeping the top is worth a fat bonus.',
-      'You get three lives and lose one if an invader lands or a bomb hits you; a cleared wave respawns faster and lower.',
-      'Harder settings mean quicker invaders, more bombs, and fewer bunkers; nightmare starts with fewer lives.'
+      'Shoot every email invader before the formation reaches the bottom.',
+      'Move with Left/Right or A/D and fire with Space. On touch, use the D-pad and the centre FIRE button.',
+      'The fewer invaders left, the faster they march and drop. Out-of-Office bunkers soak up fire but wear away.',
+      'Score by shooting invaders. The URGENT banner sweeping the top is worth a big bonus.',
+      'You start with three lives and lose one when an invader lands or a bomb hits you. Each cleared wave returns faster and lower.',
+      'Higher settings bring faster invaders, more bombs, and fewer bunkers. Nightmare also starts you with fewer lives.'
     ],
     usesLetters: true,
     mount: mount

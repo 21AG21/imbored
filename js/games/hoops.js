@@ -194,15 +194,15 @@
     emoji: 'hoops',
     cat: 'action',
     order: 22,
-    blurb: 'Gloriously silly two-player physics sport on one keyboard. Two wobbling players jump and boot a ball at each other\'s goal — basketball through the hoop or soccer into the net. Hotseat a coworker or humble the CPU.',
+    blurb: 'Two-player physics sport on one keyboard. Jump and boot the ball into the other player\'s target, basketball through the hoop or soccer into the net. Play a friend or the CPU.',
     scoreLabel: 'CPU wins',
     tags: ['sports', 'basketball', 'soccer', 'hotseat', 'physics'],
     how: [
-      'Two players share the keyboard. Left player moves with A and D and jumps with W; right player uses the arrow keys. On touch, each half of the screen has its own buttons.',
-      'Bump, head and boot the ball. In Basketball you score by knocking the ball down through the OTHER player\'s hoop; in Soccer you shove it into their net at the edge.',
-      'Everything is physics — the ball bounces off the floor, the walls, and both players, so it is chaos, and that is the point. Jump into the ball to launch it.',
-      'First to seven points wins the match. Pick Basketball or Soccer from the menu.',
-      'No friend nearby? Switch Players to 1 and take on the CPU. Beating it counts toward your score.'
+      'Left player moves with A and D and jumps with W. Right player uses the arrow keys. On touch, each half of the screen has its own buttons.',
+      'Jump into the ball to launch it. In Basketball, knock it down through the other player\'s hoop; in Soccer, push it into their net at the edge.',
+      'The ball bounces off the floor, walls, and both players, so shots get messy.',
+      'First to seven points wins. Pick Basketball or Soccer from the menu.',
+      'Set Players to 1 to face the CPU. Beating it adds to your score.'
     ],
     mount
   });

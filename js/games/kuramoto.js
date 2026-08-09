@@ -132,15 +132,15 @@
     emoji: 'kuramoto',
     cat: 'sim',
     order: 11,
-    blurb: 'A room full of people clapping at their own pace, each nudging toward the room average. Below a critical coupling it stays a wash of noise; above it, the whole crowd falls into one synchronized slow clap. Applause really does do this.',
+    blurb: 'A room of people clapping at their own pace, each nudging toward the room average. Below a critical coupling it stays a wash of noise; above it the whole crowd locks into one slow clap. Real applause does this.',
     scoreLabel: 'Best sync',
     tags: ['kuramoto', 'synchronization', 'phase-transition', 'emergence'],
     how: [
-      'Each dot on the ring is a clapper at its own natural rhythm; its colour is that rhythm. Each step it nudges toward the crowd average.',
-      'The coupling slider is how hard everyone listens to the room. The white arrow is the order parameter r — how synchronized the crowd is.',
-      'Below the critical coupling the dots smear around the ring (r near 0). Above it they clump and travel together (r near 1).',
-      'The instrument plots sync against coupling, measured live, with the critical coupling K_c marked. The onset is sharp.',
-      'Your score is the best sync you reach. Rhythmic applause is a documented real example of this exact transition.'
+      'Each dot on the ring is a clapper at its own rhythm, shown by its color. Each step it nudges toward the crowd average.',
+      'The coupling slider sets how hard everyone listens to the room. The white arrow is the order parameter r, meaning how synchronized the crowd is.',
+      'Below the critical coupling the dots smear around the ring (r near 0). Above it they clump and move together (r near 1).',
+      'The panel plots sync against coupling, measured live, with the critical coupling K_c marked. The onset is sharp.',
+      'Your score is the best sync you reach. Rhythmic applause is a documented example of this transition.'
     ],
     mount
   });

@@ -302,15 +302,15 @@
     emoji: 'asteroids',
     cat: 'action',
     order: 33,
-    blurb: 'Drifting, shooting, and the slow horror of realising momentum does not stop just because you did.',
+    blurb: 'Asteroids. Rotate and thrust to fly, fire to break the rocks apart. Momentum never stops on its own, so plan every turn.',
     scoreLabel: 'Score',
     tags: ['asteroids', 'space', 'shooter', 'retro'],
     how: [
-      'Left and right rotate, up thrusts. There is no brake. Turn around and burn the other way.',
-      'Space fires. Five shots on screen at a time.',
-      'Big rocks split into two mediums, mediums into two smalls, and the smalls are worth the most.',
-      'Shift or down jumps you somewhere random. It may also drop you inside a rock. That is the deal.',
-      'Clearing a wave is worth 100 and the next one is bigger. Nightmare starts you with one ship.'
+      'Left and right turn, up thrusts. No brake, so turn around and thrust back to slow down.',
+      'Space fires. Five shots on screen at once.',
+      'Big rocks split into two mediums, mediums into two smalls. Smalls score the most.',
+      'Shift or down teleports you to a random spot. It can drop you inside a rock.',
+      'Clear a wave for 100 points and the next one is bigger. Nightmare starts you with one ship.'
     ],
     mount
   });

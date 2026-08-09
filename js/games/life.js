@@ -212,15 +212,15 @@
     emoji: 'life',
     cat: 'sim',
     order: 12,
-    blurb: 'Conway’s famous cellular automaton: one rule about neighbours, and out of it walk gliders, oscillators, and guns that fire forever. Draw your own colony, drop a glider gun, or throw down random noise and watch the crowd thin to its natural density.',
+    blurb: 'Conway\'s cellular automaton on a 150-cell torus. Each step, cells live or die by one rule about their neighbours, and gliders, oscillators, and glider guns emerge. Draw a colony, drop a preset, or scatter noise and watch it settle.',
     scoreLabel: 'Peak population',
     tags: ['conway', 'cellular-automaton', 'emergence', 'gliders'],
     how: [
-      'Every cell is alive or dead. Each generation, all cells update at once by one rule: a live cell survives only with two or three live neighbours; a dead cell is born with exactly three. That is the entire game.',
-      'Draw cells by clicking and dragging on the grid — click a live cell to erase it. Then press play and watch your colony evolve.',
-      'Drop a named pattern from the menu: a glider that crawls diagonally forever, a spaceship, a pulsar that beats every three generations, an R-pentomino that riots for over a thousand generations, or a glider gun that manufactures gliders without end.',
-      'Hit Random to fill the grid with noise. The population crashes, then settles to a low density of a few percent: the panel plots it live against the accepted random-soup equilibrium of about 2.9%, drawn as the dashed line (this finite grid usually settles a hair above it).',
-      'Your score is the largest population you reach — which is unbounded if you let a glider gun run, since it keeps adding cells forever.'
+      'Each step, every cell updates at once: a live cell stays alive with two or three live neighbours, and a dead cell comes alive with exactly three.',
+      'Click and drag on the grid to draw cells. Click a live cell to erase it, then press play.',
+      'Drop a preset from the menu. A glider crawls diagonally, a pulsar beats every three steps, an R-pentomino churns for over a thousand steps, and a glider gun makes gliders without end.',
+      'Hit Random to fill the grid with noise. The population crashes and settles near a few percent, plotted against the marked 0.0287 equilibrium (this finite grid settles a little above it).',
+      'Your score is the highest population reached. A running glider gun keeps adding cells, so it has no ceiling.'
     ],
     mount
   });

@@ -577,16 +577,16 @@
     emoji: 'battleship',
     cat: 'brain',
     order: 24,
-    blurb: 'Classic salvo warfare relabelled as a floor-by-floor asset audit. Moor your fleet, call your shots, and out-sink a CPU that gets meaner the higher you crank it.',
+    blurb: 'Hide five ships on your grid, then call shots at the enemy grid until one fleet is sunk. Ships wear office-asset names, but it plays like Battleship.',
     scoreLabel: 'Win streak',
     tags: ['battleship', 'strategy', 'vs-cpu', 'hotseat', 'grid'],
     how: [
-      'Two 10x10 floors. Sink every asset on the enemy floor before the CPU clears yours.',
-      'Click or tap a square on the enemy grid to fire. During setup, use Re-roll fleet, or Place by hand and press R (or Rotate) to turn the ship.',
-      'A hit that fills a whole ship clears it. The CPU fires blind until it lands a hit, then works along the line it has uncovered.',
-      'Each win extends your streak; a loss resets it to zero. Your best streak is the score to beat.',
-      'Chill fires purely at random. Hard adds a checkerboard search; nightmare runs a probability map that hunts your fleet without mercy.',
-      'Set Players to 2 for hotseat on one device: each of you secretly places a fleet, and between every turn a cover screen slides up so the person passing the phone never sees the other floor. Take turns firing until one fleet is gone.'
+      'Sink every ship on the enemy grid before the CPU sinks all of yours. Both grids are 10x10.',
+      'Click a square on the enemy grid to fire. During setup, use Re-roll fleet, or Place by hand and press R to rotate.',
+      'Fill every cell of a ship to sink it. The CPU fires blind until it lands a hit, then works along the ship.',
+      'Win to extend your streak. A loss resets it to zero, and your best streak is the score to beat.',
+      'Raise the difficulty for a smarter CPU. Chill fires at random; nightmare runs a probability map that tracks down your ships.',
+      'Set Players to 2 for hotseat on one device. Each of you places a fleet, a cover screen hides it between turns, and you fire until one fleet is gone.'
     ],
     usesLetters: true,
     mount: mount

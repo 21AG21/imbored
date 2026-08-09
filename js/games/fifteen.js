@@ -124,16 +124,16 @@
     emoji: 'fifteen',
     cat: 'puzzle',
     order: 14,
-    blurb: 'The little sliding-tile puzzle from the back of a cereal box. Getting it solved is easy. Getting it solved in few moves is the whole game.',
+    blurb: 'The 15-tile sliding puzzle. Slide tiles into the gap until they read 1 to 15, and your score is how few moves that takes.',
     scoreLabel: 'Fewest moves',
     lowerIsBetter: true,
     tags: ['sliding', 'tiles', '15-puzzle'],
     how: [
-      'Click or tap any tile next to the empty gap and it slides in, leaving the gap where it sat.',
-      'Arrow keys, WASD, or a swipe slide tiles too, on desktop or phone.',
-      'Put them in order, 1 through 15, gap in the bottom-right. A tile turns green once it is home, so you can watch your progress.',
-      'Every scramble is built by shuffling a solved board, so a solution always exists — you can never jam it.',
-      'Your score is the fewest moves you have ever solved it in, and harder settings scramble it further from solved.'
+      'Click a tile next to the gap and it slides in.',
+      'Arrow keys, WASD, or a swipe also slide tiles, on desktop or phone.',
+      'Order the tiles 1 to 15 with the gap bottom-right. A tile turns green when it is home.',
+      'Each scramble comes from shuffling a solved board, so it always has a solution.',
+      'Your score is the fewest moves you have used to solve it. Harder settings scramble further from solved.'
     ],
     mount
   });

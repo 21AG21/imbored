@@ -269,16 +269,16 @@
     emoji: 'copycat',
     cat: 'brain',
     order: 24,
-    blurb: 'It plays a little tune. You play it back. Then it adds one more note, forever, until your brain gives out.',
+    blurb: 'The game lights a sequence of pads, adding one each round. Watch it, then tap the whole sequence back from memory.',
     scoreLabel: 'Longest',
     tags: ['simon', 'memory', 'sequence', 'sounds'],
     how: [
-      'Watch which pads light up, then click them back in the same order.',
-      'Every round adds one more note to the end.',
-      'Keys 1 2 3 4 work too, or Q W A S if your hand is already there.',
-      'Turn the speaker on. Each pad has its own note and the tune is genuinely easier to remember than the colours.',
-      'Harder difficulties play faster and give you less time to answer.',
-      'Two players (hotseat): no computer tune. You take turns building one shared chain. On your turn, click the whole chain back in order, then add one new pad and pass the device. Miss a note and the other player wins.'
+      'Watch which pads light, then click them back in the same order.',
+      'Each round adds one more note to the end of the sequence.',
+      'Use the mouse, keys 1 2 3 4, or Q W A S.',
+      'Turn the speaker on. Each pad has its own note, which is easier to track than the colours.',
+      'Higher difficulty plays the notes faster and shortens your window to answer.',
+      'Set Players to 2 for hotseat with no computer tune. Take turns on one shared chain: replay the whole thing, then add one pad and pass the device. Miss a note and the other player wins.'
     ],
     mount
   });

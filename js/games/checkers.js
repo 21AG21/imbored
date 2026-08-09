@@ -352,16 +352,16 @@
     emoji: 'checkers',
     cat: 'brain',
     order: 28,
-    blurb: 'English draughts on company time. Jumps are compulsory, so is that 4pm sync. Chain your captures and crown a king before the CPU does.',
+    blurb: 'English draughts against the CPU or a coworker on company time. Jumps are forced, and reaching the far back rank crowns a king.',
     scoreLabel: 'Wins',
     tags: ['checkers', 'draughts', 'board', 'vs-cpu', 'correspondence'],
     how: [
-      'You are red at the bottom; the CPU is black at the top. Reduce the other side to no pieces or no legal move.',
-      'Click or tap one of your pieces, then click a glowing square to move it there. Men step diagonally forward, kings step either way.',
-      'Captures are forced: if any jump exists you must take one, and a piece that can keep jumping keeps jumping in the same turn.',
-      'Reach the far back rank and the piece is crowned a king. Career wins are your score.',
-      'Difficulty sets how deep the CPU thinks: chill barely plans ahead, nightmare reads eight plies. Set Players to 2 for hotseat and the CPU steps aside.',
-      'Play a coworker with no network: make your move, hit Share code, and send the short code over any chat. They paste it, press Load, play their reply, and Share back. It is full correspondence draughts that travels as a dull reference number.'
+      'Play red at the bottom against black at the top. Win by leaving the other side with no piece or no legal move.',
+      'Click one of your pieces, then click a glowing square to move it. Men move diagonally forward, kings move either way.',
+      'Captures are forced. If a jump exists you must take it, and a piece that can keep jumping must keep going that turn.',
+      'Reach the far back rank to crown a king. Career wins are your score.',
+      'Difficulty sets how far ahead the CPU looks, from two plies on chill to eight on nightmare. Set Players to 2 for hotseat.',
+      'To play a coworker with no network, make your move, hit Share code, and send the code over any chat. They paste it, press Load, reply, and Share back.'
     ],
     usesLetters: false,
     mount: mount

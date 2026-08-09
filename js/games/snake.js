@@ -228,15 +228,15 @@
     emoji: 'snake',
     cat: 'action',
     order: 30,
-    blurb: 'The one everybody already knows, plus a golden apple worth five ordinary ones and a wall toggle for cowards.',
+    blurb: 'The snake you already know, with a golden apple worth five ordinary ones and a toggle for solid or open walls.',
     scoreLabel: 'Score',
     tags: ['classic', 'arcade', 'retro'],
     how: [
-      'Arrows, WASD, swipe, or the on-screen pad. You cannot turn back on yourself, so stop trying.',
-      'Normal apples are 10. The golden one is 50 and vanishes after seven seconds.',
-      'Every apple makes you faster. That is the entire problem with this game.',
-      'Flip Walls to open and you wrap around the edges instead of dying at them. No judgement.',
-      'Harder settings start you faster and speed you up quicker.'
+      'Steer with the arrows, WASD, swipe, or the on-screen pad. You cannot turn straight back on yourself.',
+      'Normal apples score 10. The golden apple scores 50 and vanishes after seven seconds.',
+      'Every apple you eat speeds the snake up, which is the trouble.',
+      'Set Walls to open to wrap around the edges instead of dying at them.',
+      'Higher settings start you faster and speed you up quicker.'
     ],
     mount
   });

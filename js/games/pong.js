@@ -183,16 +183,16 @@
     emoji: 'pong',
     cat: 'action',
     order: 29,
-    blurb: 'The original video game, more or less. You, a CPU, and a square that will not stop. Your longest rally is the score worth chasing.',
+    blurb: 'Pong. Your bat against a CPU, first to seven points. Your longest rally is the score that counts.',
     scoreLabel: 'Longest rally',
     tags: ['pong', 'paddle', 'ball', 'vs-cpu'],
     how: [
       'Move your bat with the mouse, a drag, or Up/Down and W/S.',
-      'Where the ball strikes your bat bends its angle — hit near the edge to fire it back sharp.',
-      'First side to seven points wins the match.',
-      'Your recorded score is the longest single rally you keep alive.',
-      'Harder settings give the CPU a faster, steadier bat.',
-      'Set Players to 2 for hotseat on one keyboard: left bat is W/S, right bat is the Up/Down arrows.'
+      'Where the ball hits your bat bends its angle. Hit near an edge to send it back sharp.',
+      'First side to seven points takes the match.',
+      'Your recorded score is the longest single rally you keep going.',
+      'Harder tiers give the CPU a faster, steadier bat.',
+      'Set Players to 2 for hotseat on one keyboard: left bat is W/S, right bat is Up/Down.'
     ],
     mount
   });

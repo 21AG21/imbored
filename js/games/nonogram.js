@@ -278,17 +278,17 @@
     emoji: 'nonogram',
     cat: 'puzzle',
     order: 13,
-    blurb: 'Someone left conditional formatting on and lost the legend. Fill the cells the row and column numbers demand.',
+    blurb: 'A nonogram dressed as a spreadsheet with the legend lost. Fill the cells the row and column numbers describe to rebuild the hidden picture.',
     scoreLabel: 'solve time (s)',
     lowerIsBetter: true,
     tags: ['puzzle', 'logic', 'picross', 'grid'],
     how: [
-      'Goal: rebuild the hidden picture. Each number is a run of filled cells in that row or column, in order, with a gap between runs.',
-      'Left-click or tap a cell to fill it; right-click to mark a definite blank with an X. Drag to paint a whole streak.',
+      'Rebuild the hidden picture. Each number is a run of filled cells in that row or column, in order, with a gap between runs.',
+      'Left-click or tap to fill a cell; right-click to mark a blank with an X. Drag to paint a whole streak.',
       'On a touchscreen, flip the Mark button to place X marks instead of fills.',
-      'Check flags any filled cell that cannot belong to the answer (turns it red). New deals a fresh sheet.',
-      'You solve the instant your filled cells match the target exactly. Blank cells never need an X.',
-      'Harder difficulty means a bigger grid: 5, 10, 12 or 15 cells square. Your score is the time, so lower is better.'
+      'Check turns any wrong filled cell red for a moment. New deals a fresh sheet.',
+      'You solve the instant your filled cells match the target. Blank cells never need an X.',
+      'Harder tiers give a bigger grid: 5, 10, 12 or 15 cells square. Score is your solve time, so lower is better.'
     ],
     mount: mount
   });

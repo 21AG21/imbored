@@ -225,15 +225,15 @@
     emoji: 'frost',
     cat: 'sim',
     order: 10,
-    blurb: 'One speck of ice on a cold window and a fog of wandering molecules. Each one freezes the moment it touches the crystal, and out of that single rule grows a branching frost fern — a genuine fractal whose dimension the panel measures as it spreads.',
+    blurb: 'One speck of ice on a cold window, and drifting molecules that freeze the moment they touch it. That single rule grows a branching frost fern, and the panel measures its fractal dimension as it spreads.',
     scoreLabel: 'Crystal size',
     tags: ['dla', 'fractal', 'diffusion', 'emergence'],
     how: [
-      'A single frozen cell sits in the middle. Molecules wander in on random walks and freeze onto the crystal the instant they touch it — that is the only rule.',
-      'The tips grow faster than the gaps, because a wanderer almost always bumps an outer branch before it can reach the sheltered interior. That shadowing is what makes frost branch instead of filling in.',
-      'The shape is a fractal: its frozen mass within radius r grows like r to the power D. The panel fits that exponent live on log–log axes, with the known 2D DLA value D ≈ 1.71 drawn as the reference slope. A finite crystal reads a touch under it — the fit climbs into the mid 1.6s as the frost fills the window.',
-      'Fresh tips are drawn bright white, the older core pale blue, so you can read the growth history straight off the crystal.',
-      'Growth speed just changes how many molecules land per moment — it never changes the rule, so the dimension it converges to is the same. Your score is how large a crystal you grow before it reaches the frame.'
+      'A single frozen cell sits in the middle. Molecules wander in on random walks and freeze onto the crystal the instant they touch it. That is the only rule.',
+      'Tips grow faster than gaps. A wanderer usually hits an outer branch before it reaches the sheltered interior, and that shadowing is what makes frost branch.',
+      'The crystal is a fractal: its mass within radius r grows like r to the power D. The panel fits that exponent live on log-log axes against the known 2D DLA value near 1.71.',
+      'A finite crystal reads a little under 1.71, climbing into the mid 1.6s as the frost fills the window. Fresh tips draw white, the older core pale blue.',
+      'Growth speed only changes how many molecules land per frame; it never changes the rule, so the dimension is the same. Your score is the crystal size before it reaches the frame.'
     ],
     mount
   });

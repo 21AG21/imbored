@@ -197,15 +197,15 @@
     emoji: 'obby',
     cat: 'action',
     order: 21,
-    blurb: 'A Roblox-style obstacle course: sprint and leap across a rainbow of platforms, clear the lava and the spikes, tag the green checkpoints, and reach the flag. Twenty stages that get meaner, and you can drop into any of them.',
+    blurb: 'A Roblox-style obstacle course. Jump across the platforms to the flag while dodging lava and spikes. Twenty stages, and you can start on any one.',
     scoreLabel: 'Stages cleared',
     tags: ['platformer', 'obby', 'jump', 'obstacle-course'],
     how: [
-      'Run left and right with the arrows or A/D, and jump with Space, W, or the on-screen JUMP button. There is a little coyote-time and jump-buffering so jumps feel forgiving.',
-      'Cross the gaps by jumping platform to platform. Falling into a gap, touching lava, or landing on spikes sends you back — but only to your last checkpoint.',
-      'Green flags along the way are checkpoints: run past one and it lights up, so a mistake costs a little, not the whole stage.',
-      'Reach the chequered flag at the end to clear the stage. Your time and fall count are recorded, and your best time per stage is saved.',
-      'Twenty stages get longer, higher and more hazardous. Use the Stage menu to jump straight to any of them.'
+      'Move with the arrows or A/D and jump with Space, W, or the on-screen JUMP button. Small coyote-time and jump-buffering make jumps forgiving.',
+      'Jump platform to platform across the gaps. A fall, lava, or spikes sends you back to your last checkpoint.',
+      'Green flags are checkpoints. Run past one to light it, so a slip costs a little ground instead of the stage.',
+      'Touch the chequered flag to clear the stage. Your time and fall count are recorded, and your best time per stage is saved.',
+      'The twenty stages get longer, higher, and more hazardous. Use the Stage menu to jump to any of them.'
     ],
     mount
   });

@@ -95,15 +95,15 @@
     emoji: 'lightsout',
     cat: 'brain',
     order: 22,
-    blurb: 'Every light you poke flips its neighbours too. Looks trivial. Is not. Extremely quiet to play.',
+    blurb: 'Click a light and it toggles itself and its four neighbours. Clear the whole grid to dark.',
     scoreLabel: 'Level',
     tags: ['grid', 'toggle', 'logic'],
     how: [
-      'Click or tap any light. It flips itself and its four orthogonal neighbours — a cross of five.',
-      'The goal is to turn every light off. It looks like it should be easy. It is not.',
-      'Flips cancel out, so the order never matters and pressing the same light twice undoes it — that is the whole key to planning.',
-      'Boards are made by scrambling a solved one, so there is always a route back to all-dark.',
-      'Par is how many presses did the scrambling. Beating it means you found a shorter route than the machine used.'
+      'Click any light to flip it and its four orthogonal neighbours, a cross of five.',
+      'Turn every light off to clear the board.',
+      'Flips cancel, so order never matters and pressing the same light twice undoes it. Plan around that.',
+      'Every board is made by scrambling a solved one, so a route back to all-dark always exists.',
+      'Par is the number of presses used to scramble. Beat it by finding a shorter route than the machine took.'
     ],
     mount
   });

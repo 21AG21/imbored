@@ -307,16 +307,16 @@
     emoji: 'match3',
     cat: 'puzzle',
     order: 12,
-    blurb: 'The supply closet is overflowing. Swap staplers and sticky notes into rows of three and clear the shelves before the buzzer.',
+    blurb: 'Swap office supplies to line up three or more of a kind and clear the shelves before the buzzer runs out.',
     scoreLabel: 'Points',
     tags: ['match-3', 'bejeweled', 'gems', 'timed'],
     how: [
-      'Goal: clear as many office supplies as you can in one 60-second round.',
-      'Controls: click or tap a supply, then a neighbour, to swap the two.',
-      'A swap only sticks if it makes a line of three or more of one kind, otherwise it snaps back.',
-      'Cleared supplies fall, fresh stock drops from the top, and chain reactions stack a rising multiplier.',
-      'Longer lines and deeper chains pay more; run out of legal moves and the closet auto-restocks.',
-      'Harder settings shorten the clock, and nightmare adds a seventh kind of supply.'
+      'Clear as many supplies as you can before time runs out. A normal round is 60 seconds.',
+      'Click or tap a supply, then an adjacent one, to swap them.',
+      'A swap only holds if it makes a line of three or more; otherwise it snaps back.',
+      'Cleared supplies fall and fresh stock drops in from the top. Chain reactions raise a multiplier.',
+      'Longer lines and deeper chains score more. Run out of legal moves and the closet restocks itself.',
+      'Harder tiers shorten the clock; nightmare adds a seventh kind of supply.'
     ],
     mount
   });

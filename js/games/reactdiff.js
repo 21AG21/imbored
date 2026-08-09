@@ -209,15 +209,15 @@
     emoji: 'reactdiff',
     cat: 'sim',
     order: 5,
-    blurb: 'Two make-believe chemicals following one three-line rule from the Gray-Scott model. No code decides where a spot goes — the spots, stripes and dividing blobs are what the equations do on their own. Drag to add reagent.',
+    blurb: 'Two make-believe chemicals under one Gray-Scott rule applied to every cell. No code places the patterns; the spots, stripes, mazes and dividing cells are what the equations produce. Drag to add reagent.',
     scoreLabel: 'Peak coverage',
     tags: ['gray-scott', 'turing', 'chemistry', 'emergence'],
     how: [
-      'Chemical A is fed in everywhere; the reaction turns A into B where B already is; B decays. A spreads faster than B.',
-      'That is the whole rulebook, applied identically to every cell. The patterns are emergent, not scripted.',
-      'The Pattern menu jumps to (f, k) values measured to settle into spots, coral, mazes or self-dividing cells.',
-      'Slide feed and kill to explore the map yourself — the band that makes patterns is thin, and just outside it everything goes uniform.',
-      'Drag on the field to paint in reagent and watch the front invade.'
+      'Chemical A is fed in everywhere. The reaction turns A into B where B already sits, and B decays. A spreads faster than B.',
+      'That is the whole rulebook, applied the same to every cell. The patterns are emergent; nothing scripts them.',
+      'The Pattern menu jumps to (f, k) values measured to settle into spots, coral, mazes or dividing cells.',
+      'Slide feed and kill to roam the map yourself. The band that makes patterns is thin, and outside it the field goes uniform.',
+      'Drag on the field to paint in reagent and watch the front spread.'
     ],
     mount
   });

@@ -236,15 +236,15 @@
     emoji: 'maze',
     cat: 'puzzle',
     order: 16,
-    blurb: 'Find your way to the flag. Every maze is a perfect maze, so there is always exactly one path and you can never get truly stuck.',
+    blurb: 'Get from the top-left corner to the flag. Every maze is perfect, so exactly one path connects any two cells and there is always a way out.',
     scoreLabel: 'Level',
     tags: ['maze', 'labyrinth', 'navigation'],
     how: [
-      'Arrows, WASD, swipe or the on-screen pad to move one cell at a time.',
-      'Your yellow breadcrumb shows where you have been, so you never retread by accident.',
-      'Reach the green flag in the far corner. Each maze you solve makes the next one bigger.',
-      'Truly stuck? "Show path" draws the way out. There is no shame and no penalty.',
-      'Mazes are carved so exactly one route connects any two cells, meaning a solution always exists.'
+      'Move one cell at a time with the arrows, WASD, a swipe, or the on-screen pad.',
+      'Your yellow breadcrumb marks where you have been so you do not retread.',
+      'Reach the green flag in the far corner. Each maze you clear makes the next one larger.',
+      'Press Show path to draw the route out. It costs you nothing.',
+      'Every maze is carved with one path between any two cells, so a solution always exists.'
     ],
     mount
   });

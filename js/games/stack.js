@@ -123,15 +123,15 @@
     emoji: 'stack',
     cat: 'action',
     order: 36,
-    blurb: 'Drop the sliding slab onto the tower. Miss the edge and it gets trimmed, thinner and thinner, until there is nothing left to aim at.',
+    blurb: 'Drop each sliding slab onto the tower. Overhang is sliced off, so a sloppy drop leaves the next slab narrower until nothing is left.',
     scoreLabel: 'Height',
     tags: ['stacker', 'timing', 'tower'],
     how: [
-      'A slab slides back and forth across the top. Click, tap, or press Space to drop it onto the tower.',
-      'Whatever overhangs the slab below is sliced off and falls away, so every sloppy drop leaves the next slab narrower.',
-      'A perfect drop — edges lined up exactly — keeps the full width and rewards you with a brighter note. It is the only way to stay wide.',
-      'There are no lives and no timer. You lose the instant a drop misses the tower completely.',
-      'Each slab slides a little faster than the last, and harder settings start it moving quicker. Height is your score.'
+      'A slab slides across the top. Click, tap, or press Space to drop it onto the tower.',
+      'Any part hanging past the slab below is sliced off, so a sloppy drop leaves the next slab narrower.',
+      'Line the edges up exactly for a perfect drop that keeps the full width. That is how you stay wide.',
+      'No lives, no timer. You lose the moment a drop misses the tower completely.',
+      'Each slab slides a little faster than the last, and higher settings start it quicker. Height is your score.'
     ],
     mount
   });

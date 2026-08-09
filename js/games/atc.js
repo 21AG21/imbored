@@ -303,15 +303,15 @@
     emoji: 'atc',
     cat: 'sim',
     order: 4,
-    blurb: 'Draw the flight paths with your finger. Keep everyone apart. Land the pink ones on the pink runway. It gets busy fast.',
+    blurb: 'Drag a route from each plane and it flies the line you draw. Land each one on the matching-colour runway without letting two get too close.',
     scoreLabel: 'Landings',
     tags: ['air traffic', 'planes', 'radar', 'routing'],
     how: [
-      'Drag from an aircraft to draw the route you want it to fly. Let go and it follows the line.',
-      'Each aircraft is coloured for its runway and has to arrive from the correct end. The dashed centreline shows which way.',
-      'Land on the wrong runway and it gets sent around again, which costs you time you do not have.',
-      'If two aircraft get closer than the white ring, that is the end of your shift. So is letting one wander off the screen.',
-      'Score is landings before the incident.'
+      'Drag from a plane to draw its route. Release and it follows the line.',
+      'Match each plane to the runway of its colour, and land it heading along the dashed centreline.',
+      'Touch down on the wrong runway and the plane goes around again, costing you time.',
+      'Let two planes cross inside the white ring and the shift ends. Same if one flies off the screen.',
+      'Your score is the number of planes landed before that happens.'
     ],
     mount
   });

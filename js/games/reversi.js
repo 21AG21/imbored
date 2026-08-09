@@ -214,15 +214,15 @@
     emoji: 'reversi',
     cat: 'brain',
     order: 27,
-    blurb: 'Othello, the boardroom classic. Trap a straight line of light discs between two dark ones and the whole line switches sides. Corners decide everything.',
+    blurb: 'Othello on an 8x8 board. Trap a straight line of light discs between two of your dark ones and the whole line flips to dark. Corners decide most games.',
     scoreLabel: 'Most discs',
     tags: ['othello', 'reversi', 'vs-cpu'],
     how: [
-      'You are the dark discs. Every square you are allowed to play glows — click or tap one.',
-      'Your disc flips every straight run of light discs pinned between it and another of your dark discs, in all directions at once.',
-      'No legal move means your turn passes automatically. Corners can never be flipped back, so they are worth everything.',
+      'You play the dark discs. Legal squares glow, so click one.',
+      'Your disc flips every straight run of light discs pinned between it and another dark disc, in all directions at once.',
+      'With no legal move your turn passes automatically. Corners can never be flipped back, so they are worth the most.',
       'When neither side can move, whoever has more discs wins.',
-      'Set Players to 2 for hotseat: Player 1 is dark, Player 2 is light, sharing one screen. The difficulty dial only tunes the CPU, so it is ignored in two-player.'
+      'Set Players to 2 for hotseat, Player 1 dark and Player 2 light on one screen. The difficulty dial only tunes the CPU, so it does nothing in two-player.'
     ],
     mount
   });

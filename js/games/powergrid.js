@@ -380,15 +380,15 @@
     emoji: 'powergrid',
     cat: 'sim',
     order: 3,
-    blurb: 'Generation has to equal demand every single second or the lights go out. Solar and wind will not be helping.',
+    blurb: 'Match power generation to demand every second or the grid frequency drifts and the lights go out. Solar and wind do their own thing.',
     scoreLabel: 'Hours online',
     tags: ['power', 'grid', 'energy', 'frequency'],
     how: [
-      'Keep the cyan generation line sitting on top of the pink demand line.',
-      'Coal is cheap and slow. Gas is instant and costs a fortune. Hydro drains a reservoir that only refills overnight.',
-      'Solar and wind do whatever they want. Plan around them, not with them.',
-      'The battery pushes 34 MW either way but it is tiny. Fill it overnight, spend it at the evening peak.',
-      'Frequency drifts off 50 Hz the moment supply and demand disagree. Stability drains while it is off band. At zero, blackout.'
+      'Keep the cyan generation line sitting on the pink demand line.',
+      'Coal is cheap but slow to ramp; gas is instant but expensive. Hydro drains a reservoir that only refills overnight.',
+      'Solar and wind you do not control, so plan around them.',
+      'The battery moves 34 MW either way but holds little. Charge it overnight and spend it at the evening peak.',
+      'Frequency leaves 50 Hz the moment supply and demand disagree. Stability drains while it is off band, and hitting zero is a blackout.'
     ],
     mount
   });

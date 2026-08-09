@@ -326,15 +326,15 @@
     emoji: 'commute',
     cat: 'action',
     order: 34,
-    blurb: 'Cross the open-plan office to an empty desk. Four lanes of rolling chairs first, then the belts, where standing on nothing is fatal.',
+    blurb: 'Cross the open-plan office to a free desk. Four lanes of rolling chairs first, then conveyor belts where standing on empty floor kills you.',
     scoreLabel: 'Score',
     tags: ['frogger', 'crossing', 'office', 'arcade'],
     how: [
       'Arrows, WASD or swipe to hop one square at a time.',
-      'The bottom four lanes are traffic. Touching anything in them ends that life.',
-      'The four dark lanes near the top are conveyor belts. You must land on a box, and the box carries you sideways.',
-      'Fill all five desks to clear the round. Everything gets faster after that.',
-      'Three lives. Each square forward is worth points, each desk is worth sixty.'
+      'The bottom four lanes are traffic. Touch anything in them and you lose a life.',
+      'The four belts near the top carry you sideways. Land on a box; empty belt is fatal.',
+      'Fill all five desks to clear the round. Everything speeds up after each one.',
+      'Three lives. Every square forward scores, and each desk is worth sixty.'
     ],
     mount
   });

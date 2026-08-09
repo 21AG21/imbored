@@ -259,16 +259,16 @@
     emoji: 'powder',
     cat: 'goofy',
     order: 40,
-    blurb: 'A falling-sand toy with a dozen materials and no point except the mess. Sand piles, water levels off, oil floats, lava sets fire to everything and hardens to stone when it hits water, acid eats through solids, plants creep along water, and ice melts by the flames. Draw and watch the rules collide.',
+    blurb: 'A falling-sand sandbox with a dozen materials and no score to chase. Sand piles up, water finds its level, oil floats, fire spreads, and lava hardens to stone in water. Pick a material and draw.',
     scoreLabel: 'Messes made',
     tags: ['falling-sand', 'sandbox', 'toy', 'physics'],
     how: [
-      'Pick a material and paint it into the tray by clicking and dragging. Bigger brushes pour faster; the Eraser clears cells.',
-      'The classics: sand tumbles and piles, water spreads and settles flat, oil floats on top of water, and fire chews through paper (and plants and oil) then fades to smoke. Water snuffs fire on contact.',
-      'Lava flows, sets fire to anything flammable, melts ice, and — the good bit — freezes into solid stone the instant it touches water, hissing off a puff of steam.',
-      'Acid eats through sand, stone, paper, plants and ice, using itself up as it goes, and water dilutes it back to plain water.',
-      'Plants creep into empty space wherever they touch water, so a seed by a puddle slowly overgrows — until a stray spark takes the whole vine. Ice melts to water near any heat.',
-      'No score, no winning — it is a toy. Try lava pouring onto a lake, an acid drip through a stone wall, or a garden you then set alight. Clear starts fresh; Pause freezes the frame.'
+      'Pick a material and drag to paint it into the tray. Bigger brushes pour faster, and the Eraser clears cells.',
+      'Sand tumbles and piles, water spreads and settles flat, and oil floats on water. Fire eats through paper, plants, and oil, then fades to smoke. Water puts fire out on contact.',
+      'Lava flows, ignites anything flammable, and melts ice. When it touches water it hardens into stone and gives off steam.',
+      'Acid eats through sand, stone, paper, plants, and ice, using itself up as it goes. Water dilutes it back to water.',
+      'Plants grow into empty space next to water, so a seed by a puddle spreads over time. Ice melts to water near fire or lava.',
+      'There is no score. Try lava on a lake or an acid drip through a wall. Clear starts fresh and Pause freezes the frame.'
     ],
     mount
   });

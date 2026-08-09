@@ -195,15 +195,15 @@
     emoji: 'firedrill',
     cat: 'sim',
     order: 6,
-    blurb: 'Scatter flammable paper across the desks at a density you choose, light one edge, and find the knife-edge where a corner fire turns into a floor fire. It is a real percolation threshold, not a vibe.',
+    blurb: 'Pick a paper density with the slider, then ignite the top row. There is a sharp threshold where a small corner fire turns into one that crosses the whole floor.',
     scoreLabel: 'Biggest burn',
     tags: ['percolation', 'phase-transition', 'emergence'],
     how: [
-      'Each desk gets flammable paper with probability p (the density slider). Ignite lights every papered desk in the top row.',
-      'Fire spreads to orthogonally touching papered desks — one rule, applied everywhere, no scripting.',
-      'Below the critical density the fire dies in a corner; above it, it spans the whole floor. The change is astonishingly sharp.',
-      'The panel plots burned-fraction against density, measured live from the model, with the known threshold p_c = 0.5927 marked. Your ignitions drop as yellow dots.',
-      'Your score is the biggest burn fraction you manage to trigger. The interesting play is right at the edge.'
+      'Set the density slider, then press Ignite to light every papered desk in the top row.',
+      'Fire spreads to any papered desk sharing an edge with a burning one. One rule, applied everywhere.',
+      'Below the critical density the fire dies in a corner. Above it, the fire crosses the whole floor, and the switch is sharp.',
+      'The panel plots burned fraction against density and marks the threshold p_c at 0.5927. Each run you ignite drops a yellow dot.',
+      'Your score is the largest burn fraction you set off. Play near the threshold to push it.'
     ],
     mount
   });

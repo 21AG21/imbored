@@ -179,15 +179,15 @@
     emoji: 'sir',
     cat: 'sim',
     order: 8,
-    blurb: 'Someone coughs at the coffee machine. Whether it fizzles at three desks or empties the floor comes down to one number crossing one line — the real epidemic threshold, not a scare.',
+    blurb: 'A spreading-illness sim on a grid of desks. Set the spread rate, recovery rate, and how packed the desks are, then watch whether the outbreak fizzles or sweeps the floor. It turns on one number, R0, crossing 1.',
     scoreLabel: 'Worst attack rate',
     tags: ['sir', 'epidemic', 'threshold', 'emergence'],
     how: [
-      'Every desk is susceptible (paper), infected (red), or recovered (grey). Each step an infected desk infects susceptible neighbours with probability beta and recovers with probability gamma.',
-      'R0, shown live, is beta times an effective contact number over gamma, calibrated so it crosses 1 at this lattice\'s measured threshold. Under 1 the outbreak dies out; over 1 it takes off. That crossing is the whole ballgame.',
-      'Your levers are the spread rate, the recovery rate, and occupancy — thinning the desks is literally social distancing.',
-      'The instrument is the classic curve: susceptible falling, the infected hump, recovered rising to the final attack rate.',
-      'Try to keep the attack rate low by dragging R0 back under 1. Your score is the worst attack rate you trigger.'
+      'Each desk is susceptible (paper), infected (red), or recovered (grey). Each step, an infected desk infects susceptible neighbours at rate beta and recovers at rate gamma.',
+      'The live R0 readout is beta times an effective contact number over gamma. Under 1 the outbreak dies out; over 1 it takes off.',
+      'Your levers are the spread rate, the recovery rate, and occupancy. Thinning the desks is social distancing.',
+      'The side plot draws the standard curves: susceptible falling, infected rising to a hump, recovered climbing to the final attack rate.',
+      'Keep the attack rate down by pulling R0 back under 1. Your score is the worst attack rate you set off.'
     ],
     mount
   });

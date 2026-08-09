@@ -233,16 +233,16 @@
     emoji: 'busywork',
     cat: 'goofy',
     order: 41,
-    blurb: 'The numbers-go-up game, office edition. File one report by hand, then hire interns, photocopiers and whole subsidiaries to file them for you — and reorganise the department to start over with a permanent raise. It keeps working while the tab is shut.',
+    blurb: 'An office idle clicker: file reports by hand, then hire interns and machines to file them for you. Reorganise to bank permanent clout, and it keeps earning while the tab is closed.',
     scoreLabel: 'Lifetime reports',
     formatScore: (n) => (function f(x) { if (x < 1000) return '' + Math.floor(x); const u = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi']; let i = 0; while (x >= 1000 && i < u.length - 1) { x /= 1000; i++; } return (x < 100 ? x.toFixed(1) : Math.floor(x)) + u[i]; })(n),
     tags: ['idle', 'incremental', 'clicker', 'prestige'],
     how: [
-      'File a report by hand to earn your first few. Then spend reports to hire things that file reports for you — interns, photocopiers, consultants, all the way up to whole subsidiaries.',
-      'Each hire you own of a kind makes the next one pricier, so growth comes from spreading across many kinds and from upgrades that multiply their output.',
-      'Upgrades appear as you hit milestones. They multiply one kind of worker, your hand-filing, or everything at once.',
-      'When lifetime reports get big enough, Reorg the department: you lose your workers and reports but bank permanent clout, and every report afterwards is worth 5% more per clout. Prestiging is how you break through the wall.',
-      'It runs while you are gone — the machines file at half speed for up to eight hours offline, and your progress is saved automatically. Your score is lifetime reports filed.'
+      'Click File a report to earn your first reports. Spend them to hire workers that file on their own.',
+      'Every worker of a kind you buy makes the next one cost more, so buy across all the kinds.',
+      'Buy upgrades as they unlock. Each one multiplies a worker type, your hand-filing, or the whole office.',
+      'When lifetime reports are high enough, Reorg to reset your workers for permanent clout worth +5% output each.',
+      'Offline, workers file at half speed for up to eight hours, and the game saves itself. Your score is lifetime reports.'
     ],
     mount
   });

@@ -229,15 +229,15 @@
     emoji: 'spam',
     cat: 'brain',
     order: 32,
-    blurb: 'Tower defense for your inbox. Junk mail crawls along the wire; drop keyword filters, shredders and quarantine nodes to delete it before it lands. Earn productivity per block, spend it on more filters, and hold the line for twelve waves.',
+    blurb: 'Tower defense for your inbox. Junk mail crawls the wire toward your inbox; drop filters beside it to shred each message before it lands. Earn productivity per block and hold out for twelve waves.',
     scoreLabel: 'Messages blocked',
     tags: ['tower-defense', 'strategy', 'waves'],
     how: [
-      'Junk mail enters top-left and follows the wire to your inbox. Every message that reaches the inbox costs you one of twenty slots; hit zero and it is game over.',
-      'Click an empty tile beside the wire to drop the selected filter (you cannot build on the wire itself). Keyword filters are cheap and rapid-fire, Shredders hit everything in a small blast, and Quarantine nodes slow the junk to a crawl so your other filters get more shots.',
-      'You earn productivity ($) for every message blocked, plus a bonus at the end of each wave. Spend it on more or better filters between waves.',
-      'Press Send wave when your defences are ready. Each wave brings more messages with more resilience; the Speed button fast-forwards the action.',
-      'Survive all twelve waves to defend the inbox. Your score is the total messages you block.'
+      'Junk mail enters top-left and follows the wire to your inbox. Each message that reaches the inbox costs one of your twenty slots, and hitting zero ends the run.',
+      'Click an empty tile beside the wire to place the selected filter (you cannot build on the wire). Keyword filters are cheap and fast, Shredders hit a small blast, and Quarantine slows the junk so your other filters land more shots.',
+      'You earn productivity for every message blocked, plus a bonus after each wave. Spend it on more filters between waves.',
+      'Press Send wave when you are ready. Each wave brings more messages with more health, and the Speed button fast-forwards.',
+      'Clear all twelve waves to win. Your score is the total messages blocked.'
     ],
     mount
   });

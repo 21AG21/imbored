@@ -224,16 +224,16 @@
     emoji: 'traffic',
     cat: 'sim',
     order: 9,
-    blurb: 'A one-lane ring road where every driver follows the same four rules and jams still appear out of nowhere. Push the density up and watch a phantom traffic wave crawl backwards through the pack — then read the exact point where the road carries the most cars.',
+    blurb: 'A one-lane ring road where every driver follows the same four rules, and jams form anyway. Raise the density and watch a phantom jam crawl backward through the pack, then find the point where the road carries the most cars.',
     scoreLabel: 'Peak flow',
     tags: ['nagel-schreckenberg', 'phase-transition', 'traffic', 'emergence'],
     how: [
-      'Cars sit on a single-lane loop. Each has a speed from 0 to v_max, and the whole road updates together every tick.',
-      'The four rules, applied to every car at once: speed up by one; slow down so you never hit the car ahead; then with probability p tap the brakes for no reason; then move. That one random tap is the only noise in the system.',
-      'At low density everyone reaches v_max and the road is empty stripes of fast traffic. Raise the density slider past the critical point and a single dawdle triggers a jam that spreads backward — a wave of stopped cars moving the wrong way while every driver keeps obeying the rules.',
-      'The main view is a space-time diagram: the top line is the road right now, and each row below is one tick into the past. Jams show up as dark bands leaning backward through time.',
-      'The side panel is the fundamental diagram — flow against density — measured live from the model. Flow climbs, peaks at the critical density (the dashed line), then collapses into gridlock. Your current state is the yellow dot.',
-      'Your score is the highest flow you can sustain, which means parking the density right at that peak. More dawdling (higher p) makes the jams worse and the peak lower.'
+      'Cars sit on a single-lane loop. Each has a speed from 0 to v_max, and the whole road updates every tick.',
+      'Every car follows four rules each tick: speed up by one, brake so you never hit the car ahead, then with probability p tap the brakes at random, then move. That random tap is the only noise.',
+      'At low density every car reaches v_max. Raise the density past the critical point and one random brake seeds a jam that spreads backward while every car keeps following the rules.',
+      'The main view is a space-time diagram. The top row is the road now, and each row below is one tick earlier, so jams show as dark bands leaning backward.',
+      'The side panel plots flow against density, measured live. Flow climbs, peaks at the critical density (the dashed line), then drops into gridlock. The yellow dot is your current state.',
+      'Your score is the highest flow you sustain, so park the density at that peak. Higher dawdle p makes jams worse and the peak lower.'
     ],
     mount
   });

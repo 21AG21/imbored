@@ -374,15 +374,15 @@
     emoji: 'tetris',
     cat: 'action',
     order: 32,
-    blurb: 'Falling blocks with hold, ghost piece, hard drop and a proper 7-bag. You already know exactly what to do here.',
+    blurb: 'Tetris with hold, ghost piece, hard drop and a proper 7-bag. Clear lines and do not top out.',
     scoreLabel: 'Score',
     tags: ['tetris', 'blocks', 'stacking'],
     how: [
       'Left and right move. Up or X spins clockwise, Z spins the other way.',
-      'Down soft drops for a point a row. Space hard drops for two.',
-      'C parks a piece in hold. One swap per piece.',
-      'Four lines at once is 800 times the level. Back to back clears build a combo bonus on top.',
-      'P pauses. Hard starts you at level 4 and Nightmare at level 7, which is not a gentle place to begin.'
+      'Down soft drops for one point a row. Space hard drops for two.',
+      'C holds a piece. One swap per piece.',
+      'Four lines at once scores 800 times the level. Back-to-back clears add a combo bonus on top.',
+      'P pauses. Hard starts you at level 4, Nightmare at level 7.'
     ],
     mount
   });

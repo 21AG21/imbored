@@ -152,16 +152,16 @@
     emoji: 'memory',
     cat: 'brain',
     order: 26,
-    blurb: 'Flip two cards, keep the pairs that match. Calm, quick, and impossible to lose. Just try to do it in fewer moves.',
+    blurb: 'Flip two cards at a time and keep the pairs that match. You cannot lose, so the score is how few moves it takes.',
     scoreLabel: 'Games won',
     tags: ['memory', 'pairs', 'concentration', 'cards'],
     how: [
-      'Tap a card to flip it, then tap a second one.',
+      'Tap a card to flip it, then tap a second card.',
       'A matching pair stays face up. A mismatch flips both back down.',
-      'Find every pair to win. You cannot lose, so the goal is to do it in as few moves as possible.',
-      'Your fewest-moves record is kept for each board size.',
-      'The difficulty dial only changes the board size: 6 pairs on Chill up to 18 on Nightmare.',
-      'Set Players to 2 for hotseat: take turns, a matched pair lets you go again, and the most pairs wins.'
+      'Find every pair to win. You cannot lose, so aim for the fewest moves.',
+      'Your fewest-moves record is saved for each board size.',
+      'The difficulty dial only sets board size, from 6 pairs on chill to 18 on nightmare.',
+      'Set Players to 2 for hotseat. Take turns flipping; a match lets you go again, and the most pairs wins.'
     ],
     mount
   });
