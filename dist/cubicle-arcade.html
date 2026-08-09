@@ -4781,7 +4781,10 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       const typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
       /* the panic key works from ANYWHERE — even mid-typing in a text box — so you
          are never one stuck keystroke away from hiding (or unhiding) the games */
-      if (e.key === '`' || (e.ctrlKey && !e.altKey && e.key.toLowerCase() === 'b')) {
+      /* match the physical key (e.code) too: inside a text field, backtick is a
+         dead key on many layouts (UK, US-International, German, French...) so
+         e.key comes through as 'Dead' and the character check alone would miss */
+      if (e.key === '`' || e.code === 'Backquote' || (e.ctrlKey && !e.altKey && e.key.toLowerCase() === 'b')) {
         e.preventDefault();
         if (typing && t.blur) t.blur();
         toggleBoss();
