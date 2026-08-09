@@ -235,7 +235,12 @@
     mancala:
       r(3, 8, 18, 8, P.brown, ' rx="4"') +
       c(7, 12, 2, P.yellow) + c(12, 12, 2, P.lime) + c(17, 12, 2, P.teal) +
-      c(7, 12, 0.8, INK) + c(12, 12, 0.8, INK) + c(17, 12, 0.8, INK)
+      c(7, 12, 0.8, INK) + c(12, 12, 0.8, INK) + c(17, 12, 0.8, INK),
+    missile:
+      r(3, 20, 18, 2, P.dark) +
+      r(5, 15, 3, 5, P.teal) + r(10.5, 14, 3, 6, P.teal) + r(16, 15, 3, 5, P.teal) +
+      line(12, 3, 6, 14, 1.6, P.tomato) + c(6, 15, 2.2, P.yellow) +
+      line(12, 3, 12, 3, 1, P.tomato) + c(12, 4, 1.4, P.paper)
   };
 
   const Icons = {
