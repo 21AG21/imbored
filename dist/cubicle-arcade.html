@@ -5083,7 +5083,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       stage,
       toolbar,
       status(txt) { statusEl.textContent = txt || ''; },
-      submit(v) { const r = Arcade.submit(g.id, v); syncBest(); if (r.isRecord && global.Gags) global.Gags.confetti(); return r; },
+      submit(v) { const r = Arcade.submit(g.id, v); syncBest(); return r; },
       best() { return Arcade.best(g.id); },
       sfx: Engine.audio,
       /* difficulty: multiply your knobs by this. 0.7 chill ... 2.3 nightmare */
@@ -5314,48 +5314,12 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   const bossOn = () => !!(global.Boss && global.Boss.isOn && global.Boss.isOn());
   const inGame = () => /^#(g|daily)\//.test(location.hash || '');
   const DPR = () => Math.min(2, global.devicePixelRatio || 1);
-  const CONF_COLORS = ['#ff2d87', '#ffcb1f', '#00a6b4', '#6fcf2f', '#6f3fa8', '#e8402a', '#3a9d3a', '#ff8a3a'];
 
-  /* ---------------- confetti ---------------- */
-  function confetti(opts) {
-    opts = opts || {};
-    if (reduce()) return;
-    const cv = h('canvas', { class: 'gag-fx gag-confetti' });
-    document.body.appendChild(cv);
-    const ctx = cv.getContext('2d');
-    const dpr = DPR();
-    const size = () => { cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; };
-    size();
-    const onR = () => size();
-    addEventListener('resize', onR);
-    const n = opts.count || 150;
-    const spread = opts.x != null ? 80 * dpr : cv.width;
-    const ox = (opts.x != null ? opts.x * dpr : cv.width / 2);
-    const oy = (opts.y != null ? opts.y * dpr : -12);
-    const parts = [];
-    for (let i = 0; i < n; i++) parts.push({
-      x: ox + (Math.random() - 0.5) * spread, y: oy + Math.random() * 40,
-      vx: (Math.random() - 0.5) * 11 * dpr, vy: (Math.random() * 6 + 3) * dpr,
-      g: (0.16 + Math.random() * 0.12) * dpr, s: (4 + Math.random() * 6) * dpr,
-      rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.4,
-      c: CONF_COLORS[(Math.random() * CONF_COLORS.length) | 0]
-    });
-    let t = 0, raf = 0;
-    function frame() {
-      t++;
-      ctx.clearRect(0, 0, cv.width, cv.height);
-      let alive = 0;
-      for (const p of parts) {
-        p.vy += p.g; p.x += p.vx; p.y += p.vy; p.vx *= 0.99; p.rot += p.vr;
-        if (p.y < cv.height + 24) alive++;
-        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
-        ctx.fillStyle = p.c; ctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s * 0.62); ctx.restore();
-      }
-      if (alive > 0 && t < 320) raf = requestAnimationFrame(frame);
-      else { cancelAnimationFrame(raf); removeEventListener('resize', onR); cv.remove(); }
-    }
-    raf = requestAnimationFrame(frame);
-  }
+  /* Confetti removed: the old per-call version spawned a fresh full-screen
+     canvas + resize listener + rAF loop every time, so firing it on every new
+     record stacked overlays until the tab died. Celebrations use toasts and a
+     sound now; the engine's shared singleton (Engine.fx) stays for the safe,
+     bounded level-complete burst. */
 
   /* ---------------- toasts ---------------- */
   function toastHost() {
@@ -5495,14 +5459,13 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   let konI = 0, wordBuf = '';
   const WORDS = {
     matrix: () => matrix(),
-    party: () => { confetti({ count: 220 }); if (A && A.great) A.great(); },
+    party: () => { if (A && A.great) A.great(); toast({ icon: '🎉', title: 'Party mode', body: 'You found the party. Keep it down.' }); },
     rave: () => { if (global.Arcade && global.Arcade.go) global.Arcade.go('rave'); },
     raise: () => { toast({ icon: '💸', title: 'Compensation review', body: 'Your request has been declined.' }); if (A && A.bad) A.bad(); },
     coffee: () => toast({ icon: '☕', title: 'Break room', body: 'A fresh pot is brewing. Allegedly.' }),
     update: () => itPopup()
   };
   function konami() {
-    confetti({ count: 240 });
     if (A && A.great) A.great();
     toast({ icon: '🎮', title: 'Cheat activated', body: '↑↑↓↓←→←→ B A — 30 extra lives you don’t need.' });
     document.body.classList.add('gag-konami');
@@ -5529,7 +5492,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     mark.title = 'Company logo';
     mark.addEventListener('click', () => {
       n++; clearTimeout(timer); timer = setTimeout(() => { n = 0; }, 1200);
-      if (n >= 7) { n = 0; confetti({ count: 170 }); toast({ icon: '🎉', title: 'You found it', body: 'Seven clicks on the logo. Impeccable procrastination.' }); }
+      if (n >= 7) { n = 0; if (A && A.great) A.great(); toast({ icon: '🎉', title: 'You found it', body: 'Seven clicks on the logo. Impeccable procrastination.' }); }
     });
   }
 
@@ -5549,7 +5512,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   }
 
   global.Gags = {
-    confetti, toast, itPopup, matrix, init,
+    toast, itPopup, matrix, init,
     screensaver: { enabled: saverOn, set(on) { store().set('saver', !!on); if (!on && saverEl) hideSaver(); armIdle(); } },
     officeAlerts: { enabled: officeOn, set(on) { store().set('office', !!on); armOffice(); } }
   };

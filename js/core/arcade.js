@@ -901,7 +901,7 @@
       stage,
       toolbar,
       status(txt) { statusEl.textContent = txt || ''; },
-      submit(v) { const r = Arcade.submit(g.id, v); syncBest(); if (r.isRecord && global.Gags) global.Gags.confetti(); return r; },
+      submit(v) { const r = Arcade.submit(g.id, v); syncBest(); return r; },
       best() { return Arcade.best(g.id); },
       sfx: Engine.audio,
       /* difficulty: multiply your knobs by this. 0.7 chill ... 2.3 nightmare */
