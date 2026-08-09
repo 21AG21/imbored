@@ -660,6 +660,7 @@
         h('a', { class: 'back', href: '#' }, '◀ shelf'),
         h('h2', { class: 'gtitle' }, h('span', { class: 'ge', html: Icons.svg(g.emoji, 24) }), g.title),
         g.link ? h('a', { class: 'back rel-link', href: g.link.url, target: '_blank', rel: 'noopener' }, g.link.label + ' \u2197') : null,
+        DAILY_POOL.indexOf(g.id) >= 0 ? h('a', { class: 'back share-board', href: '#', title: 'Copy a link that opens this exact board for a coworker', onclick: (e) => { e.preventDefault(); shareBoard(g.id); } }, 'share a board \u2197') : null,
         h('div', { class: 'gmeta' },
           h('span', { class: 'pill diff-tag d-' + Arcade.diff().id }, Arcade.diff().label),
           daily ? h('span', { class: 'pill daily-tag', title: 'Everyone gets this exact board today' }, 'DAILY ' + daily) : null,
@@ -699,6 +700,15 @@
   function todayStamp() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
   function dailyPick(ds) { const pool = DAILY_POOL.filter((id) => byId.has(id)); const r = Engine.rng('pick:' + ds); return pool[Math.floor(r() * pool.length)] || pool[0]; }
   Arcade.daily = function () { const ds = todayStamp(); location.hash = '#daily/' + dailyPick(ds) + '/' + encodeURIComponent(ds); };
+  /* share ANY seedable game's board: mints a fresh seed, copies a link, and
+     loads it so you play exactly what you shared. Date.now, not Math.random, so
+     it still works while a seeded Daily has Math.random overridden. */
+  function shareBoard(id) {
+    const seed = Date.now().toString(36);
+    const url = location.origin + location.pathname + location.search + '#daily/' + id + '/' + seed;
+    try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).catch(function () { }); } catch (e) { /* ignore */ }
+    location.hash = '#daily/' + id + '/' + seed;
+  }
 
   function route() {
     /* restore real Math.random if we're leaving a seeded Daily */
