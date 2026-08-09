@@ -21193,7 +21193,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     const dm = api.dm;
 
     let ball, bin, wind, windTarget, score, streak, misses, over, aim, shots, bits, msg, msgT;
-    const MAXMISS = 3;
+    const MAXMISS = 5;
 
     const pScore = api.pill('Score: 0');
     const pStreak = api.pill('Streak: 0');
@@ -21206,7 +21206,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     function reset() {
       score = 0; streak = 0; misses = 0; over = false; shots = 0;
       bits = []; msg = ''; msgT = 0;
-      wind = 0; windTarget = rand(-1, 1) * 60 * dm;
+      wind = 0; windTarget = rand(-1, 1) * 30 * dm;
       placeBin(true);
       resetBall();
       banner.style.display = 'none';
@@ -21215,12 +21215,12 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     }
 
     function placeBin(first) {
-      const minX = first ? 470 : 400;
+      const minX = first ? 420 : 360;
       const maxX = W - 90;
-      const spread = clamp(0.45 + score / 400, 0, 1);
+      const spread = clamp(0.22 + score / 700, 0, 0.85);
       const x = rand(minX + (maxX - minX) * (1 - spread) * 0.4, maxX);
-      const w = clamp(78 - score / 34 - (dm - 1) * 10, 52, 78);
-      const onDesk = Math.random() < clamp(0.2 + score / 260, 0, 0.65);
+      const w = clamp(98 - score / 70 - (dm - 1) * 8, 68, 98);
+      const onDesk = Math.random() < clamp(0.05 + score / 400, 0, 0.5);
       bin = { x, w, h: 62, y: onDesk ? FLOOR - 96 : FLOOR, desk: onDesk };
     }
 
@@ -21267,7 +21267,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       sync();
       if (misses >= MAXMISS) return end();
       placeBin();
-      windTarget = rand(-1, 1) * 60 * dm;
+      windTarget = rand(-1, 1) * 30 * dm;
       setTimeout(() => { if (!over) resetBall(); }, 520);
     }
 
@@ -21276,7 +21276,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       const res = api.submit(score);
       banner.style.display = '';
       banner.replaceChildren(
-        h('h3', null, 'Three on the floor.'),
+        h('h3', null, 'Paper everywhere.'),
         h('p', null, score + ' points from ' + shots + ' throws. Someone is going to have to pick those up.' +
           (res.isRecord ? ' New record!' : res.isFirst ? '' : ' Best: ' + res.best + '.')),
         h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Crumple another'));
@@ -21333,8 +21333,8 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       const lipY = bin.y - bin.h;
       const lips = [bin.x - bin.w / 2, bin.x + bin.w / 2];
       for (const lx of lips) {
-        if (Math.hypot(ball.x - lx, ball.y - lipY) < 13 && ball.vy > 0) {
-          ball.vy = -Math.abs(ball.vy) * 0.45;
+        if (Math.hypot(ball.x - lx, ball.y - lipY) < 8 && ball.vy > 0) {
+          ball.vy = -Math.abs(ball.vy) * 0.3;
           ball.vx += (ball.x - lx) * 6;
           api.sfx.click();
         }
@@ -21342,8 +21342,8 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
       /* through the mouth going down = in */
       if (!ball.scored && ball.vy > 0 &&
-        ball.y > lipY + 4 && ball.y < lipY + 22 &&
-        Math.abs(ball.x - bin.x) < bin.w / 2 - 8) {
+        ball.y > lipY - 4 && ball.y < lipY + 30 &&
+        Math.abs(ball.x - bin.x) < bin.w / 2 - 2) {
         ball.scored = true;
         ball.live = false;
         return land(true);
@@ -21522,7 +21522,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       'The dotted arc is where it would go right now. The flag shows which way the air con is blowing.',
       'Rims bounce. Use them if you must, but it is embarrassing.',
       'Every basket moves the bin further away and shrinks it. Bins up on a desk are worth double.',
-      'Three misses and you are done picking paper off the carpet.'
+      'Five misses and you are done picking paper off the carpet. The bin only creeps away slowly, and the air con is milder than it used to be.'
     ],
     mount
   });
