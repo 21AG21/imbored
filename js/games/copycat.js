@@ -18,6 +18,7 @@
     const dm = api.dm;
 
     let seq, step, mode, litIdx, litT, waitT, over, best, flashAll;
+    let twoP = false, turn2 = 1, inp = 0, winner2 = 0;
 
     const pRound = api.pill('Round 0');
     const pMode = api.pill('watch');
@@ -35,7 +36,43 @@
       over = false;
       flashAll = 0;
       best = 0;
+      winner2 = 0;
+      if (twoP) {
+        turn2 = 1; inp = 0; mode = 'input'; litIdx = -1; litT = 0;
+        sync();
+        api.status('Hotseat: take turns. Repeat the whole sequence so far, then add one new pad. Miss the sequence and the other player wins.');
+        return;
+      }
       nextRound();
+    }
+
+    /* two-player: replay the sequence, then append one; a wrong replay loses */
+    function press2p(i) {
+      if (over) return;
+      hit(i, true);
+      if (inp < seq.length) {
+        if (seq[inp] !== i) return fail2p();
+        inp++;
+      } else {
+        seq.push(i);
+        turn2 = turn2 === 1 ? 2 : 1;
+        inp = 0;
+        api.sfx.good();
+        sync();
+        api.status('Player ' + turn2 + ': repeat all ' + seq.length + ', then add one.');
+      }
+    }
+
+    function fail2p() {
+      over = true;
+      winner2 = turn2 === 1 ? 2 : 1;
+      api.sfx.bad();
+      banner.style.display = '';
+      banner.replaceChildren(
+        h('h3', null, 'Player ' + winner2 + ' wins.'),
+        h('p', null, 'Player ' + turn2 + ' broke the chain at ' + seq.length + ' notes.'),
+        h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Rematch'));
+      sync();
     }
 
     function nextRound() {
@@ -50,6 +87,12 @@
     }
 
     function sync() {
+      if (twoP) {
+        pRound.textContent = 'Chain ' + seq.length;
+        pMode.textContent = over ? 'Player ' + winner2 + ' wins' : 'Player ' + turn2;
+        pMode.className = 'pill ' + (over ? '' : 'good');
+        return;
+      }
       pRound.textContent = 'Round ' + seq.length;
       pMode.textContent = mode === 'play' ? 'watch' : mode === 'input' ? 'your turn' : 'done';
       pMode.className = 'pill ' + (mode === 'input' ? 'good' : '');
@@ -62,7 +105,9 @@
     }
 
     function press(i) {
-      if (mode !== 'input' || over) return;
+      if (over) return;
+      if (twoP) return press2p(i);
+      if (mode !== 'input') return;
       hit(i, true);
       if (seq[step] !== i) return fail('Wrong pad.');
       step++;
@@ -97,6 +142,7 @@
       if (litT > 0) litT -= dt;
       else litIdx = -1;
       if (flashAll > 0) flashAll -= dt;
+      if (twoP) return;
 
       if (mode === 'play') {
         waitT -= dt;
@@ -166,10 +212,12 @@
       ctx.fillText(String(seq.length), cx, cy - 8);
       ctx.font = 'bold 11px Verdana, sans-serif';
       ctx.fillStyle = '#ffcb1f';
-      ctx.fillText(mode === 'play' ? 'WATCH' : mode === 'input' ? 'REPEAT' : mode === 'over' ? 'OVER' : 'NICE', cx, cy + 24);
+      ctx.fillText(twoP ? (over ? 'OVER' : 'PLAYER ' + turn2)
+        : mode === 'play' ? 'WATCH' : mode === 'input' ? 'REPEAT' : mode === 'over' ? 'OVER' : 'NICE',
+        cx, cy + 24);
 
       /* how many of the sequence you have entered */
-      if (mode === 'input') {
+      if (mode === 'input' && !twoP) {
         for (let i = 0; i < seq.length; i++) {
           ctx.fillStyle = i < step ? '#6fcf2f' : '#3a3446';
           ctx.fillRect(cx - seq.length * 6 + i * 12, H - 26, 9, 9);
@@ -177,6 +225,12 @@
         const f = clamp(waitT / patience(), 0, 1);
         ctx.fillStyle = f > 0.4 ? '#ded6c2' : '#e8402a';
         ctx.fillRect(cx - 90, 16, 180 * f, 6);
+      } else if (twoP && !over) {
+        /* progress through the replay before you get to add a note */
+        for (let i = 0; i < seq.length; i++) {
+          ctx.fillStyle = i < inp ? '#6fcf2f' : '#3a3446';
+          ctx.fillRect(cx - seq.length * 6 + i * 12, H - 26, 9, 9);
+        }
       }
       ctx.textAlign = 'left';
       ctx.textBaseline = 'alphabetic';
@@ -199,6 +253,10 @@
     }));
 
     api.button('Start over', reset);
+    api.select('Players', [
+      { value: '1p', label: '1 player (vs game)' },
+      { value: '2p', label: '2 players (hotseat)' }
+    ], '1p', (v) => { twoP = (v === '2p'); reset(); });
     reset();
     bagg.add(Engine.loop((dt) => { update(dt); draw(); }));
     return () => bagg.dispose();
@@ -218,7 +276,8 @@
       'Every round adds one more note to the end.',
       'Keys 1 2 3 4 work too, or Q W A S if your hand is already there.',
       'Turn the speaker on. Each pad has its own note and the tune is genuinely easier to remember than the colours.',
-      'Harder difficulties play faster and give you less time to answer.'
+      'Harder difficulties play faster and give you less time to answer.',
+      'Two players (hotseat): no computer tune. You take turns building one shared chain. On your turn, click the whole chain back in order, then add one new pad and pass the device. Miss a note and the other player wins.'
     ],
     mount
   });
