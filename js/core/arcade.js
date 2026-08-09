@@ -478,6 +478,7 @@
         h('kbd', null, '1'), ' jump to Docs   ',
         h('kbd', null, 'Shift'), '+', h('kbd', null, '`'), ' rave   ',
         h('kbd', null, '['), h('kbd', null, ']'), ' switch game   ',
+        h('kbd', null, '−'), h('kbd', null, '='), ' difficulty   ',
         h('kbd', null, 'R'), ' restart   ',
         h('kbd', null, '\\'), ' big screen   ',
         h('kbd', null, '/'), ' search   ',
@@ -1033,6 +1034,18 @@
       /* big screen is a non-letter key (backslash) so it never competes with a
          game's own controls — every letter belongs to the games */
       if (e.key === '\\') { e.preventDefault(); Arcade.toggleBig(); return; }
+      /* difficulty on the keyboard: - eases it, = (or +) cranks it. Non-letter,
+         non-digit keys, so they never collide with any game's own controls. */
+      if (e.key === '-' || e.key === '_' || e.code === 'Minus') {
+        e.preventDefault();
+        if (diffIdx > 0) { Engine.audio.blip(280 + (diffIdx - 1) * 150); Arcade.setDiff(diffIdx - 1); }
+        return;
+      }
+      if (e.key === '=' || e.key === '+' || e.code === 'Equal') {
+        e.preventDefault();
+        if (diffIdx < DIFFS.length - 1) { Engine.audio.blip(280 + (diffIdx + 1) * 150); Arcade.setDiff(diffIdx + 1); }
+        return;
+      }
       /* the anti-panic key: Shift+backtick (~) detonates Rave Mode from anywhere
          — the loud opposite of the quiet panic key right next to it. Match the
          physical key too, for dead-key layouts where the tilde never arrives. */
