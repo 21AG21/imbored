@@ -211,7 +211,31 @@
     speaker: r(4, 9, 5, 6, P.dark) + p('M9 9l6-4v14l-6-4z', P.paper) + p('M17 8a5 5 0 0 1 0 8', 'none').replace('fill="none"', 'fill="none" stroke="' + P.tomato + '" stroke-width="2" stroke-linecap="round"') + p('M19 6a8 8 0 0 1 0 12', 'none').replace('fill="none"', 'fill="none" stroke="' + P.banana + '" stroke-width="1.6" stroke-linecap="round"'),
     car: p('M3 15l1.5-5A3 3 0 0 1 7.4 8h9.2a3 3 0 0 1 2.9 2l1.5 5v3a1 1 0 0 1-1 1h-2v-2H6v2H4a1 1 0 0 1-1-1z', P.tomato) + p('M6.5 10h11l1 3.5H5.5z', P.teal) + c(7, 16, 1.6, P.dark) + c(17, 16, 1.6, P.dark),
     obby: r(3, 18, 5, 3, P.lime) + r(10, 14, 5, 3, P.banana) + r(17, 9, 5, 3, P.teal) + c(6, 14, 2.4, P.tomato) + line(6, 14, 6, 18, 1.4, INK),
-    hoops: c(12, 12, 8, '#e8621f') + line(12, 4, 12, 20, 1.4, INK) + line(4, 12, 20, 12, 1.4, INK) + p('M6 6q6 6 12 0', 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="1.4"') + p('M6 18q6-6 12 0', 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="1.4"')
+    hoops: c(12, 12, 8, '#e8621f') + line(12, 4, 12, 20, 1.4, INK) + line(4, 12, 20, 12, 1.4, INK) + p('M6 6q6 6 12 0', 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="1.4"') + p('M6 18q6-6 12 0', 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="1.4"'),
+    /* ---------- newer additions ---------- */
+    uttt:
+      r(3, 3, 18, 18, P.paper) +
+      line(9, 3.5, 9, 20.5, 1, INK) + line(15, 3.5, 15, 20.5, 1, INK) +
+      line(3.5, 9, 20.5, 9, 1, INK) + line(3.5, 15, 20.5, 15, 1, INK) +
+      line(4.8, 4.8, 7.2, 7.2, 1.8, P.tomato) + line(7.2, 4.8, 4.8, 7.2, 1.8, P.tomato) +
+      c(12, 12, 2, P.grape) + c(12, 12, 0.9, P.paper) +
+      line(16.6, 16.6, 19.2, 19.2, 1.8, P.blue) + line(19.2, 16.6, 16.6, 19.2, 1.8, P.blue),
+    ladder:
+      r(6, 3, 2.4, 18, P.brown) + r(15.6, 3, 2.4, 18, P.brown) +
+      r(6, 6, 12, 1.8, P.yellow) + r(6, 10, 12, 1.8, P.lime) + r(6, 14, 12, 1.8, P.teal) + r(6, 18, 12, 1.8, P.tomato),
+    lander:
+      p('M9 6h6l2 5H7z', P.grey) + c(12, 8, 1.7, P.teal) +
+      line(8, 11, 6, 17, 1.8, INK) + line(16, 11, 18, 17, 1.8, INK) +
+      p('M10.5 11h3l-1.5 4z', P.tomato),
+    plinko:
+      c(12, 4, 2, P.tomato) +
+      c(7, 8, 1.3, P.dark) + c(12, 8, 1.3, P.dark) + c(17, 8, 1.3, P.dark) +
+      c(9.5, 12, 1.3, P.dark) + c(14.5, 12, 1.3, P.dark) +
+      r(4, 17, 4.6, 4, P.grape) + r(9.7, 17, 4.6, 4, P.lime) + r(15.4, 17, 4.6, 4, P.grape),
+    mancala:
+      r(3, 8, 18, 8, P.brown, ' rx="4"') +
+      c(7, 12, 2, P.yellow) + c(12, 12, 2, P.lime) + c(17, 12, 2, P.teal) +
+      c(7, 12, 0.8, INK) + c(12, 12, 0.8, INK) + c(17, 12, 0.8, INK)
   };
 
   const Icons = {

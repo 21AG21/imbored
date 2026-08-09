@@ -2416,6 +2416,78 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 .yz-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
 .yz-msg.win { color: var(--lime); }
 
+/* ================= Ultimate Noughts (uttt) ================= */
+.uttt { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px; width: 100%; }
+.uttt-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
+.uttt-msg.win { color: var(--lime); } .uttt-msg.lose { color: var(--tomato); }
+.uttt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: min(94vw, 420px); aspect-ratio: 1; background: var(--ink); padding: 6px; border: 3px solid var(--ink); box-shadow: var(--hard); }
+.uttt-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--paper2); padding: 3px; position: relative; }
+.uttt-board.active { background: var(--banana); box-shadow: inset 0 0 0 2px var(--grape); }
+.uttt-board.won-you, .uttt-board.won-cpu, .uttt-board.drawn { display: grid; }
+.uttt-board.won-you::after, .uttt-board.won-cpu::after, .uttt-board.drawn::after {
+  content: attr(data-mark); position: absolute; inset: 0; display: grid; place-items: center;
+  font: 900 clamp(30px, 9vw, 52px) Impact, "Arial Black", sans-serif; pointer-events: none; }
+.uttt-board.won-you { background: color-mix(in srgb, var(--teal) 40%, var(--paper2)); }
+.uttt-board.won-cpu { background: color-mix(in srgb, var(--tomato) 40%, var(--paper2)); }
+.uttt-board.won-you::after { content: '✕'; color: var(--teal); }
+.uttt-board.won-cpu::after { content: '◯'; color: var(--tomato); }
+.uttt-cell { aspect-ratio: 1; border: 1px solid var(--shade); background: var(--label); font: 800 clamp(11px, 3vw, 18px) system-ui; line-height: 1; padding: 0; cursor: pointer; color: var(--ink); display: grid; place-items: center; }
+.uttt-cell:hover:not(:disabled) { background: var(--banana); }
+.uttt-cell.x { color: var(--teal); } .uttt-cell.o { color: var(--tomato); }
+.uttt-cell:disabled { cursor: default; }
+.uttt-board.won-you .uttt-cell, .uttt-board.won-cpu .uttt-cell, .uttt-board.drawn .uttt-cell { opacity: .28; }
+
+/* ================= Desk Mancala ================= */
+.mancala { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 12px; width: 100%; }
+.mc-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
+.mc-msg.win { color: var(--lime); } .mc-msg.lose { color: var(--tomato); }
+.mc-board { display: flex; align-items: stretch; gap: 8px; width: min(96vw, 500px); background: var(--brand-brown, #7a5a34); background: var(--grape); padding: 10px; border: 3px solid var(--ink); border-radius: 16px; box-shadow: var(--hard); }
+.mc-mid { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.mc-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.mc-pit { position: relative; aspect-ratio: 1; border: 3px solid var(--ink); border-radius: 50%; background: var(--paper2); padding: 0; display: grid; place-items: center; cursor: default; box-shadow: inset 0 3px 8px rgba(0,0,0,.28); }
+.mc-pit.mine { cursor: pointer; }
+.mc-pit.mine:hover:not(:disabled) { background: var(--banana); }
+.mc-pit:disabled { cursor: default; }
+.mc-pit.empty { opacity: .82; }
+.mc-num { position: relative; z-index: 2; font: 800 15px Impact, "Arial Black", sans-serif; color: var(--ink); background: rgba(255,255,255,.75); border-radius: 8px; padding: 0 5px; }
+.mc-stones { position: absolute; inset: 5px; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 2px; z-index: 1; }
+.mc-stones i { width: 6px; height: 6px; border-radius: 50%; background: var(--tomato); box-shadow: 0 1px 0 rgba(0,0,0,.4); }
+.mc-store { width: 58px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 3px solid var(--ink); border-radius: 30px; background: var(--paper2); box-shadow: inset 0 3px 10px rgba(0,0,0,.3); }
+.mc-store b { font: 900 24px Impact, "Arial Black", sans-serif; color: var(--ink); }
+.mc-slab { font: 700 9px Verdana, sans-serif; text-transform: uppercase; color: var(--ink3); }
+
+/* ================= Word Ladder ================= */
+.ladder { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px; width: 100%; max-width: 420px; margin: 0 auto; }
+.lad-goal { display: flex; align-items: center; gap: 10px; }
+.lad-arrow { font: 900 20px Impact, sans-serif; color: var(--grape); }
+.lad-word { display: flex; gap: 3px; }
+.lad-word b { width: 22px; height: 26px; display: grid; place-items: center; font: 800 15px system-ui; background: var(--label); border: 2px solid var(--ink); color: var(--ink); border-radius: 4px; }
+.lad-word.from b { background: var(--banana); }
+.lad-word.to b { background: var(--teal); color: var(--paper); }
+.lad-chain { display: flex; flex-direction: column; gap: 4px; align-items: center; max-height: 34vh; overflow-y: auto; width: 100%; }
+.lad-rung { opacity: .95; }
+.lad-rung.start .lad-word b { background: var(--banana); }
+.lad-rung.hit .lad-word b { background: var(--lime); }
+.lad-slots { display: flex; gap: 5px; margin: 2px 0; }
+.lad-slot { width: 30px; height: 36px; display: grid; place-items: center; font: 800 20px system-ui; background: var(--paper2); border: 3px dashed var(--shade); border-radius: 6px; color: var(--ink); }
+.lad-slot.on { border-style: solid; border-color: var(--ink); background: var(--label); }
+.lad-msg { font: 700 13px Verdana, sans-serif; min-height: 18px; text-align: center; }
+.lad-msg.win { color: var(--lime); } .lad-msg.warn { color: var(--tomato); }
+.lad-keys { display: flex; flex-direction: column; gap: 5px; width: 100%; }
+.lad-keyrow { display: flex; gap: 4px; justify-content: center; }
+.lad-key { min-width: 26px; height: 40px; flex: 1 1 auto; max-width: 34px; border: 2px solid var(--ink); background: var(--label); box-shadow: var(--bevel-out); font: 800 13px system-ui; color: var(--ink); cursor: pointer; padding: 0; border-radius: 5px; }
+.lad-key:active { box-shadow: var(--bevel-in); }
+.lad-key.wide { max-width: 48px; flex-basis: 44px; }
+.lad-key.go { background: var(--lime); }
+
+/* ================= Desk Lander pad ================= */
+.lander-pad { display: none; gap: 8px; justify-content: center; margin-top: 10px; }
+.lander-btn { flex: 1; max-width: 120px; height: 56px; border: 3px solid var(--ink); box-shadow: var(--bevel-out);
+  background: var(--label); font: 800 13px Verdana, sans-serif; color: var(--ink); cursor: pointer; border-radius: 8px; }
+.lander-btn.thrust { background: var(--banana); max-width: 150px; }
+.lander-btn:active { box-shadow: var(--bevel-in); }
+@media (pointer: coarse) { .lander-pad { display: flex; } }
+
 </style>
 </head>
 <body>
@@ -3332,7 +3404,31 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     speaker: r(4, 9, 5, 6, P.dark) + p('M9 9l6-4v14l-6-4z', P.paper) + p('M17 8a5 5 0 0 1 0 8', 'none').replace('fill="none"', 'fill="none" stroke="' + P.tomato + '" stroke-width="2" stroke-linecap="round"') + p('M19 6a8 8 0 0 1 0 12', 'none').replace('fill="none"', 'fill="none" stroke="' + P.banana + '" stroke-width="1.6" stroke-linecap="round"'),
     car: p('M3 15l1.5-5A3 3 0 0 1 7.4 8h9.2a3 3 0 0 1 2.9 2l1.5 5v3a1 1 0 0 1-1 1h-2v-2H6v2H4a1 1 0 0 1-1-1z', P.tomato) + p('M6.5 10h11l1 3.5H5.5z', P.teal) + c(7, 16, 1.6, P.dark) + c(17, 16, 1.6, P.dark),
     obby: r(3, 18, 5, 3, P.lime) + r(10, 14, 5, 3, P.banana) + r(17, 9, 5, 3, P.teal) + c(6, 14, 2.4, P.tomato) + line(6, 14, 6, 18, 1.4, INK),
-    hoops: c(12, 12, 8, '#e8621f') + line(12, 4, 12, 20, 1.4, INK) + line(4, 12, 20, 12, 1.4, INK) + p('M6 6q6 6 12 0', 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="1.4"') + p('M6 18q6-6 12 0', 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="1.4"')
+    hoops: c(12, 12, 8, '#e8621f') + line(12, 4, 12, 20, 1.4, INK) + line(4, 12, 20, 12, 1.4, INK) + p('M6 6q6 6 12 0', 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="1.4"') + p('M6 18q6-6 12 0', 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="1.4"'),
+    /* ---------- newer additions ---------- */
+    uttt:
+      r(3, 3, 18, 18, P.paper) +
+      line(9, 3.5, 9, 20.5, 1, INK) + line(15, 3.5, 15, 20.5, 1, INK) +
+      line(3.5, 9, 20.5, 9, 1, INK) + line(3.5, 15, 20.5, 15, 1, INK) +
+      line(4.8, 4.8, 7.2, 7.2, 1.8, P.tomato) + line(7.2, 4.8, 4.8, 7.2, 1.8, P.tomato) +
+      c(12, 12, 2, P.grape) + c(12, 12, 0.9, P.paper) +
+      line(16.6, 16.6, 19.2, 19.2, 1.8, P.blue) + line(19.2, 16.6, 16.6, 19.2, 1.8, P.blue),
+    ladder:
+      r(6, 3, 2.4, 18, P.brown) + r(15.6, 3, 2.4, 18, P.brown) +
+      r(6, 6, 12, 1.8, P.yellow) + r(6, 10, 12, 1.8, P.lime) + r(6, 14, 12, 1.8, P.teal) + r(6, 18, 12, 1.8, P.tomato),
+    lander:
+      p('M9 6h6l2 5H7z', P.grey) + c(12, 8, 1.7, P.teal) +
+      line(8, 11, 6, 17, 1.8, INK) + line(16, 11, 18, 17, 1.8, INK) +
+      p('M10.5 11h3l-1.5 4z', P.tomato),
+    plinko:
+      c(12, 4, 2, P.tomato) +
+      c(7, 8, 1.3, P.dark) + c(12, 8, 1.3, P.dark) + c(17, 8, 1.3, P.dark) +
+      c(9.5, 12, 1.3, P.dark) + c(14.5, 12, 1.3, P.dark) +
+      r(4, 17, 4.6, 4, P.grape) + r(9.7, 17, 4.6, 4, P.lime) + r(15.4, 17, 4.6, 4, P.grape),
+    mancala:
+      r(3, 8, 18, 8, P.brown, ' rx="4"') +
+      c(7, 12, 2, P.yellow) + c(12, 12, 2, P.lime) + c(17, 12, 2, P.teal) +
+      c(7, 12, 0.8, INK) + c(12, 12, 0.8, INK) + c(17, 12, 0.8, INK)
   };
 
   const Icons = {
@@ -15922,6 +16018,574 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
 </script>
 <script>
+/* Ultimate Tic-Tac-Toe — nine boards inside one. Where you play sends the
+   deskmate where they must play next. Win three small boards in a row. */
+(function () {
+  'use strict';
+  const { h, randInt, pick } = Engine;
+  const LINES = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+
+  function winner(cells) {
+    for (const [a, b, c] of LINES) if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) return cells[a];
+    return 0;
+  }
+  function full(cells) { return cells.every((v) => v); }
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let micro, macro, forced, turn, over, disposed = false;
+
+    const pTurn = api.pill('your move');
+    const pScore = api.pill('');
+    const msg = h('div', { class: 'uttt-msg' }, '');
+    const grid = h('div', { class: 'uttt-grid' });
+    const cellEls = [];    // cellEls[b][c]
+    const boardEls = [];   // boardEls[b]
+    root.appendChild(h('div', { class: 'uttt' }, msg, grid));
+    api.button('New game', reset);
+
+    function build() {
+      grid.replaceChildren();
+      for (let b = 0; b < 9; b++) {
+        const bd = h('div', { class: 'uttt-board' });
+        cellEls[b] = [];
+        for (let c = 0; c < 9; c++) {
+          const cell = h('button', { class: 'uttt-cell', type: 'button', onclick: () => play(b, c, 1) });
+          cellEls[b][c] = cell; bd.appendChild(cell);
+        }
+        boardEls[b] = bd; grid.appendChild(bd);
+      }
+    }
+
+    function reset() {
+      micro = Array.from({ length: 9 }, () => new Array(9).fill(0));
+      macro = new Array(9).fill(0);
+      forced = -1; turn = 1; over = false;
+      msg.textContent = 'You are X. Win three small boards in a row.'; msg.className = 'uttt-msg';
+      paint(); syncTurn();
+      api.status('Your move sends the deskmate to the matching small board. If that board is already decided, they play anywhere. Take three small boards in a line to win.');
+    }
+
+    function legalBoards() {
+      if (forced >= 0 && !macro[forced] && !full(micro[forced])) return [forced];
+      const out = [];
+      for (let b = 0; b < 9; b++) if (!macro[b] && !full(micro[b])) out.push(b);
+      return out;
+    }
+
+    function place(b, c, p) {
+      micro[b][c] = p;
+      const w = winner(micro[b]);
+      if (w) macro[b] = w;
+      else if (full(micro[b])) macro[b] = 3;   // drawn board, owned by nobody
+      forced = (macro[c] || full(micro[c])) ? -1 : c;
+    }
+
+    function play(b, c, p) {
+      if (over || disposed) return;
+      if (p === 1 && turn !== 1) return;
+      const ok = legalBoards();
+      if (!ok.includes(b) || micro[b][c]) { api.sfx.bad(); return; }
+      place(b, c, p);
+      api.sfx.click();
+      paint();
+      const gw = winner(macro.map((v) => (v === 3 ? 0 : v)));
+      if (gw || legalBoards().length === 0) return finish(gw);
+      turn = p === 1 ? 2 : 1; syncTurn();
+      if (turn === 2) setTimeout(cpu, 380);
+    }
+
+    /* CPU: win the game if it can, else win/deny a small board, else take
+       center-ish, with a difficulty-scaled chance to just play at random. */
+    function cpu() {
+      if (over || disposed || turn !== 2) return;
+      const boards = legalBoards();
+      if (!boards.length) return finish(0);
+      const moves = [];
+      for (const b of boards) for (let c = 0; c < 9; c++) if (!micro[b][c]) moves.push([b, c]);
+
+      const sloppy = Math.max(0, 0.5 - api.dm * 0.22);   // chill blunders often, nightmare almost never
+      let choice = null;
+      if (Math.random() > sloppy) {
+        choice = scoreMove(moves);
+      }
+      if (!choice) choice = pick(moves);
+      place(choice[0], choice[1], 2);
+      api.sfx.blip(320);
+      paint();
+      const gw = winner(macro.map((v) => (v === 3 ? 0 : v)));
+      if (gw || legalBoards().length === 0) return finish(gw);
+      turn = 1; syncTurn();
+    }
+
+    function scoreMove(moves) {
+      let best = null, bestScore = -1e9;
+      for (const [b, c] of moves) {
+        let sc = 0;
+        const cells = micro[b].slice(); cells[c] = 2;
+        const wonHere = winner(cells) === 2;
+        if (wonHere) {
+          sc += 30;
+          // would winning this board complete a macro line?
+          const test = macro.slice(); test[b] = 2;
+          if (winner(test.map((v) => (v === 3 ? 0 : v))) === 2) sc += 1000;
+        }
+        // block: does the human threaten to win board b next?
+        if (threatens(micro[b], 1) && !wonHere) sc -= 5;
+        if (wonHere && threatens(micro[b], 1)) sc += 8;   // taking a board they wanted
+        // avoid sending them to a board where they can win a macro-critical board
+        const sendTo = (macro[c] || full(micro[c])) ? -1 : c;
+        if (sendTo >= 0 && threatens(micro[sendTo], 1)) sc -= 12;
+        if (sendTo === -1) sc -= 3;                        // free move is good for them
+        sc += [3, 1, 3, 1, 4, 1, 3, 1, 3][c];              // center/corner bias inside a board
+        sc += [3, 1, 3, 1, 4, 1, 3, 1, 3][b] * 0.4;        // and which board
+        sc += Math.random() * 0.5;
+        if (sc > bestScore) { bestScore = sc; best = [b, c]; }
+      }
+      return best;
+    }
+    function threatens(cells, p) {
+      for (const [a, b, c] of LINES) {
+        const line = [cells[a], cells[b], cells[c]];
+        if (line.filter((v) => v === p).length === 2 && line.includes(0)) return true;
+      }
+      return false;
+    }
+
+    function paint() {
+      const ok = legalBoards();
+      for (let b = 0; b < 9; b++) {
+        const owned = macro[b];
+        boardEls[b].className = 'uttt-board' + (owned === 1 ? ' won-you' : owned === 2 ? ' won-cpu' : owned === 3 ? ' drawn' : '') + (ok.includes(b) && !over ? ' active' : '');
+        for (let c = 0; c < 9; c++) {
+          const v = micro[b][c];
+          const el = cellEls[b][c];
+          el.textContent = v === 1 ? '✕' : v === 2 ? '◯' : '';
+          el.className = 'uttt-cell' + (v === 1 ? ' x' : v === 2 ? ' o' : '');
+          el.disabled = over || v !== 0 || turn !== 1 || !ok.includes(b);
+        }
+      }
+    }
+    function syncTurn() {
+      pTurn.textContent = over ? '' : turn === 1 ? 'your move' : 'deskmate…';
+      const you = macro.filter((v) => v === 1).length, cpuB = macro.filter((v) => v === 2).length;
+      pScore.textContent = 'boards ' + you + ' · ' + cpuB;
+    }
+    function finish(gw) {
+      over = true; syncTurn(); paint();
+      if (gw === 1) {
+        api.sfx.great();
+        const w = api.load('wins', 0) + 1; api.save('wins', w); api.submit(w);
+        msg.textContent = 'You took the meta-board. Nicely done.'; msg.className = 'uttt-msg win';
+        try { const r = msg.getBoundingClientRect(); Engine.fx.burst(r.left + r.width / 2, r.top + 20, 46); } catch (e) { /* ignore */ }
+      } else if (gw === 2) {
+        api.sfx.bad();
+        msg.textContent = 'The deskmate lined up three boards. Rematch?'; msg.className = 'uttt-msg lose';
+      } else {
+        api.sfx.thud();
+        const you = macro.filter((v) => v === 1).length, cpuB = macro.filter((v) => v === 2).length;
+        msg.textContent = you === cpuB ? 'Board full — dead even.' : you > cpuB ? 'Board full — you led on boards.' : 'Board full — deskmate led on boards.';
+        msg.className = 'uttt-msg';
+      }
+    }
+
+    build(); reset();
+    return () => { disposed = true; bagg.dispose(); };
+  }
+
+  Arcade.register({
+    id: 'uttt', title: 'Ultimate Noughts', emoji: 'uttt', cat: 'brain', order: 24,
+    blurb: 'Tic-tac-toe with a board inside every square. The cell you take decides which small board the deskmate must play next. Win three small boards in a row.',
+    scoreLabel: 'Wins', tags: ['strategy', 'board', 'vs cpu'],
+    how: [
+      'Each of the nine squares holds its own noughts-and-crosses board. Win a small board to claim that square.',
+      'The cell you play in tells the deskmate which small board they must play in next.',
+      'If they are sent to a board that is already won or full, they may play in any open board.',
+      'Win three small boards in a row — across, down, or diagonally — to win the whole thing.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Mancala (Kalah) — sow the stones, land in your own store to go again,
+   finish in an empty pit on your side to capture across. Beat the deskmate. */
+(function () {
+  'use strict';
+  const { h, clamp, pick } = Engine;
+  /* board: 0..5 your pits, 6 your store, 7..12 cpu pits, 13 cpu store.
+     Sowing runs 0->1->...->13->0, each side skipping the other's store. */
+  const YOU_STORE = 6, CPU_STORE = 13;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let board, turn, over, busy, disposed = false;
+
+    const pScore = api.pill('you 0 · 0 cpu');
+    const pTurn = api.pill('your move');
+    const msg = h('div', { class: 'mc-msg' }, '');
+    const cpuRow = h('div', { class: 'mc-row mc-cpu' });
+    const youRow = h('div', { class: 'mc-row mc-you' });
+    const youStore = h('div', { class: 'mc-store', title: 'your store' });
+    const cpuStore = h('div', { class: 'mc-store', title: 'deskmate store' });
+    const pitEls = new Array(14);
+    root.appendChild(h('div', { class: 'mancala' },
+      msg,
+      h('div', { class: 'mc-board' },
+        cpuStore,
+        h('div', { class: 'mc-mid' }, cpuRow, youRow),
+        youStore)));
+    api.button('New game', reset);
+
+    function reset() {
+      board = [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0];
+      turn = 1; over = false; busy = false;
+      msg.textContent = 'Pick one of your pits (the bottom row).'; msg.className = 'mc-msg';
+      build(); paint(); sync();
+      api.status('Tap one of your pits along the bottom. Stones drop one per pit going right and around. Land your last stone in your store (right side) to move again; land in one of your own empty pits to capture the stones across from it. Most stones when a side empties out wins.');
+    }
+
+    function build() {
+      cpuRow.replaceChildren(); youRow.replaceChildren();
+      // cpu row shown left-to-right as pits 12..7 (mirrors the sowing direction)
+      for (let i = 12; i >= 7; i--) pitEls[i] = mkPit(i, false);
+      for (let i = 12; i >= 7; i--) cpuRow.appendChild(pitEls[i]);
+      for (let i = 0; i <= 5; i++) { pitEls[i] = mkPit(i, true); youRow.appendChild(pitEls[i]); }
+    }
+    function mkPit(i, mine) {
+      const b = h('button', { class: 'mc-pit' + (mine ? ' mine' : ''), type: 'button' });
+      if (mine) bagg.listen(b, 'click', () => humanMove(i));
+      else b.disabled = true;
+      return b;
+    }
+
+    function sideEmpty(who) {
+      if (who === 1) { for (let i = 0; i <= 5; i++) if (board[i]) return false; return true; }
+      for (let i = 7; i <= 12; i++) if (board[i]) return false; return true;
+    }
+    function legal(who) {
+      const out = [];
+      if (who === 1) { for (let i = 0; i <= 5; i++) if (board[i]) out.push(i); }
+      else { for (let i = 7; i <= 12; i++) if (board[i]) out.push(i); }
+      return out;
+    }
+
+    /* sow from pit `start` for player `who` on array `bd`; returns {last, again} */
+    function sow(bd, start, who) {
+      let n = bd[start]; bd[start] = 0; let i = start;
+      const skip = who === 1 ? CPU_STORE : YOU_STORE;
+      while (n > 0) { i = (i + 1) % 14; if (i === skip) continue; bd[i]++; n--; }
+      const myStore = who === 1 ? YOU_STORE : CPU_STORE;
+      let again = i === myStore;
+      // capture: last stone in own previously-empty pit, opposite has stones
+      const ownPit = who === 1 ? (i >= 0 && i <= 5) : (i >= 7 && i <= 12);
+      if (!again && ownPit && bd[i] === 1) {
+        const opp = 12 - i;
+        if (bd[opp] > 0) { bd[myStore] += bd[opp] + 1; bd[opp] = 0; bd[i] = 0; return { last: i, again, capture: true }; }
+      }
+      return { last: i, again, capture: false };
+    }
+
+    function sweepIfDone(bd) {
+      const yE = [0, 1, 2, 3, 4, 5].every((i) => !bd[i]);
+      const cE = [7, 8, 9, 10, 11, 12].every((i) => !bd[i]);
+      if (yE || cE) {
+        for (let i = 0; i <= 5; i++) { bd[YOU_STORE] += bd[i]; bd[i] = 0; }
+        for (let i = 7; i <= 12; i++) { bd[CPU_STORE] += bd[i]; bd[i] = 0; }
+        return true;
+      }
+      return false;
+    }
+
+    function humanMove(i) {
+      if (over || busy || turn !== 1 || !board[i]) { if (!over) api.sfx.bad(); return; }
+      const res = sow(board, i, 1);
+      api.sfx[res.capture ? 'good' : 'click']();
+      paint(); sync();
+      if (sweepIfDone(board)) { paint(); return finish(); }
+      if (res.again) { pTurn.textContent = 'go again'; return; }
+      turn = 2; sync(); busy = true; setTimeout(cpuTurn, 480);
+    }
+
+    function cpuTurn() {
+      if (over || disposed) return;
+      if (turn !== 2) { busy = false; return; }
+      const moves = legal(2);
+      if (!moves.length) { sweepIfDone(board); paint(); return finish(); }
+      const move = chooseCpu(moves);
+      const res = sow(board, move, 2);
+      api.sfx[res.capture ? 'great' : 'blip'](res.capture ? undefined : 300);
+      paint(); sync();
+      if (sweepIfDone(board)) { paint(); busy = false; return finish(); }
+      if (res.again && !sideEmpty(2)) { setTimeout(cpuTurn, 480); return; }
+      turn = 1; busy = false; sync();
+      pTurn.textContent = 'your move';
+    }
+
+    /* look one move ahead, valuing store gain, extra turns and captures; a
+       difficulty-scaled slice of the time it just plays a random legal pit */
+    function chooseCpu(moves) {
+      const sloppy = clamp(0.55 - api.dm * 0.24, 0, 0.5);
+      if (Math.random() < sloppy) return pick(moves);
+      let best = moves[0], bestScore = -1e9;
+      for (const m of moves) {
+        const bd = board.slice();
+        const res = sow(bd, m, 2);
+        let sc = bd[CPU_STORE] - board[CPU_STORE];       // stones banked
+        if (res.again) sc += 2.2;                        // free move
+        if (res.capture) sc += 1.5;
+        // discourage leaving a fat capture for the human next turn
+        let humanBest = 0;
+        for (let hi = 0; hi <= 5; hi++) {
+          if (!bd[hi]) continue;
+          const t = bd.slice(); const hr = sow(t, hi, 1);
+          humanBest = Math.max(humanBest, t[YOU_STORE] - bd[YOU_STORE] + (hr.again ? 1 : 0));
+        }
+        sc -= humanBest * 0.8;
+        sc += Math.random() * 0.4;
+        if (sc > bestScore) { bestScore = sc; best = m; }
+      }
+      return best;
+    }
+
+    function dots(n) {
+      // a compact stone cluster; cap the drawn dots, always show the number
+      const wrap = h('span', { class: 'mc-stones' });
+      const shown = Math.min(n, 12);
+      for (let k = 0; k < shown; k++) wrap.appendChild(h('i'));
+      return wrap;
+    }
+    function paint() {
+      for (let i = 0; i < 14; i++) {
+        if (i === YOU_STORE || i === CPU_STORE) continue;
+        const el = pitEls[i]; if (!el) continue;
+        el.replaceChildren(dots(board[i]), h('b', { class: 'mc-num' }, String(board[i])));
+        el.classList.toggle('empty', board[i] === 0);
+        if (el.classList.contains('mine')) el.disabled = over || turn !== 1 || board[i] === 0;
+      }
+      youStore.replaceChildren(h('b', null, String(board[YOU_STORE])), h('span', { class: 'mc-slab' }, 'you'));
+      cpuStore.replaceChildren(h('b', null, String(board[CPU_STORE])), h('span', { class: 'mc-slab' }, 'them'));
+    }
+    function sync() {
+      pScore.textContent = 'you ' + board[YOU_STORE] + ' · ' + board[CPU_STORE] + ' cpu';
+      pTurn.textContent = over ? '' : turn === 1 ? 'your move' : 'deskmate…';
+    }
+    function finish() {
+      over = true; sync();
+      const you = board[YOU_STORE], them = board[CPU_STORE];
+      if (you > them) {
+        api.sfx.great();
+        const w = api.load('wins', 0) + 1; api.save('wins', w); api.submit(w);
+        msg.textContent = 'You win ' + you + '–' + them + '.'; msg.className = 'mc-msg win';
+        try { const r = msg.getBoundingClientRect(); Engine.fx.burst(r.left + r.width / 2, r.top + 20, 44); } catch (e) { /* ignore */ }
+      } else if (you < them) {
+        api.sfx.bad();
+        msg.textContent = 'Deskmate wins ' + them + '–' + you + '. Rematch?'; msg.className = 'mc-msg lose';
+      } else {
+        api.sfx.thud();
+        msg.textContent = 'Dead even, ' + you + '–' + them + '.'; msg.className = 'mc-msg';
+      }
+    }
+
+    reset();
+    return () => { disposed = true; bagg.dispose(); };
+  }
+
+  Arcade.register({
+    id: 'mancala', title: 'Desk Mancala', emoji: 'mancala', cat: 'brain', order: 25,
+    blurb: 'The count-and-capture board game, versus a deskmate. Sow your pits, chain extra turns by landing in your store, and capture across an empty pit. Most stones wins.',
+    scoreLabel: 'Wins', tags: ['strategy', 'board', 'vs cpu', 'classic'],
+    how: [
+      'Tap one of your six pits along the bottom. Its stones drop one at a time into the pits to the right, going around the board.',
+      'Land your last stone in your store (the big pit on your right) and you take another turn.',
+      'Land your last stone in one of your own empty pits and you capture it plus every stone in the pit directly across.',
+      'When either side runs out of pits, each player banks the stones on their own side. Most stones in your store wins.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Word Ladder — change one letter at a time, every rung a real word, until you
+   reach the target. Puzzles are generated by walking the dictionary, so every
+   one has a solution and a known par. */
+(function () {
+  'use strict';
+  const { h, clamp, randInt } = Engine;
+
+  /* a compact, office-safe set of common four-letter words, chosen to be well
+     connected (lots of one-letter neighbours) so ladders always exist */
+  const DICT = ('able acid aged also arch area army atom aunt back bake ball band bane bang bank bare barn base bath bead beak beam bean bear beat beed been beer bell belt bend bent best bike bile bill bind bird bite blot blow blue blur boar boat body bold bolt bond bone book boot bore born boss both bout bowl brag bran brat bred brew brow buck bulk bull bump bunk burn bush bust busy cake calf call calm came camp cane cape card care cart case cash cast cave cell cent chap chat chef chin chip chop city clad clam clan clap claw clay clip clop club clue coal coat code coil coin cold cole colt come cone cook cool cope copy cord core cork corn cost cove crab crew crib crop crow cube cuff curb cure curl curt dale dame damp dark darn dart dash date dawn daze dead deaf deal dean dear debt deck deed deem deep deer dell demo dent desk dial dice diet dime dine ding dirt dish disk dive dock does dole doll dome done doom door dork dose dote dove down doze drag draw drew drip drop drug drum dual duck duct dude duel duke dull dumb dune dunk dusk dust duty each earl earn ease east easy echo edge fable face fact fade fail fair fake fall fame fang fare farm fast fate fawn fear feat feed feel fell felt fend fern fest feud file fill film find fine fire firm fish fist five flag flap flat flaw flea fled flee flew flip flit flog flop flow foam foil fold folk fond font food fool foot ford fore fork form fort foul four fowl free fret frog from fuel full fume fund fung fury fuse gain gait gala gale gall game gang gaol gape gash gate gave gaze gear geek gene gift gild gill gilt girl give glad glee glob glow glue goal goat goes gold golf gone good gore gown grab gram gray grew grey grid grim grin grip grit grow gulf gull gulp gush gust guts hail hair half hall halt hand hang hard hare hark harm harp hash hate haul have hawk haze head heal heap hear heat heed heel heir held hell helm help hemp hera herd here hero hers hide high hike hill hilt hind hint hire hiss hive hoax hold hole holy home hone hood hoof hook hoop hoot hope horn hose host hour howl huge hulk hull hump hung hunt hurl hurt hush hymn icon idea idle inch iron isle item jade jail jamb jazz jeep jest jibe join joke jolt jump june junk jury just kale keel keen keep kelp kept kick kill kiln kind king kiss kite knee knew knit knot know lace lack lady laid lair lake lamb lame lamp land lane lard lark lash last late lawn lazy lead leaf leak lean leap left lend lens lent less lest liar lice lick lied life lift like lily limb lime limp line link lint lion list live load loaf loan lobe lock lode loft loge logo lone long look loom loop loot lord lore lose loss lost loud love luck lull lump lung lure lurk lush lust lute made maid mail main make male mall malt mane mare mark mars mash mask mass mast mate math maze mead meal mean meat meek meet meld melt mend menu mere mesh mess mice mild mile milk mill mind mine mint mire miss mist mite moan moat mock mode mold mole monk mood moon moor moot more moss most moth move much muck mule mull muse mush must mute myth nail name nape near neat neck need nest news next nice nick nine node nook noon nope norm nose note noun nova nude numb oath oboe odor okay omen once only onto onyx ooze open oral ouch oust oval oven over pace pack pact page paid pail pain pair pale palm pane pang pant pare park part pass past pate path pave pawn peak peal pear peat peck peek peel peer pelt pend pent perk pest pick pier pike pile pill pine pink pint pipe pith plan play plea plod plot plow plug plum plus poem poet poke pole poll pond pony pool poor pope pore pork port pose posh post pour pout pray prep prey prim prod prom prop puff pull pulp pump punk pure push putt quad quay quit quiz race rack raft rage raid rail rain rake ramp rang rank rant rare rash rasp rate rave read real ream reap rear reed reef reek reel rein rely rend rent rest rice rich ride rife rift ring rink riot ripe rise risk road roam roar robe rock rode role roll roof rook room root rope rose rosy rote rout ruby rude ruff rule rump rune rung runt rush rust sack safe saga sage said sail sake sale salt same sand sane sang sank sash save saw scab scan scar seal seam sear seat sect seed seek seem seen self sell send sent sept sew shed shin ship shod shoe shop shot show shun shut sick side sift sigh sign silk sill silo sing sink site sire size skew skid skim skin skip skit slab slam slap slat sled slew slid slim slip slit slob slog slot slow slug slum smog smug snag snap snip snob snot snow snub snug soak soap soar sock soda sofa soft soil sold sole solo song soon soot sore sort soul soup sour sown span spar spat sped spin spit spot spry spud spun spur stab stag star stay stem step stew stir stop stow stub stud stun such suck suit sulk sung sunk sure surf swab swam swan swap swat sway swig swim tab tack tact tail take tale talk tall tame tang tank tape task taut teak teal team tear teem tell temp tend tent term tern test text than that thaw thee them then thew thin this thud thus tick tide tidy tied tier tile till tilt time tine tint tiny tire toad toe tofu toga togs toil told toll tomb tone tong took tool toot tore torn toss tote tour town toys trap tray tree trek trim trio trip trod trot troy true tsar tuba tube tuck tuft tuna tune turf turn tusk twig twin type ugly undo unit unto upon urge used user vain vale vane vary vase vast veal veer veil vein vend vent verb vest veto vial vice view vile vine visa vise void volt vote wade wady waft wage wail wait wake wale walk wall wand wane want ward ware warm warn warp wart wary wash wasp wave wavy waxy weak wean wear webs weed week weep weld well went wept were west what when whet whim whip whir whit whiz whom wick wide wife wild will wilt wind wine wing wink wipe wire wise wish wisp with woes woke wolf womb wont wood wool word wore work worm worn wrap wren writ yard yarn yawn yeah year yell yoga yoke yolk your zeal zero zest zinc zone zoom').split(' ');
+
+  const SET = new Set(DICT);
+  const neighbours = (w) => {
+    const out = [];
+    for (let i = 0; i < 4; i++) for (let ch = 97; ch <= 122; ch++) {
+      const cand = w.slice(0, i) + String.fromCharCode(ch) + w.slice(i + 1);
+      if (cand !== w && SET.has(cand)) out.push(cand);
+    }
+    return out;
+  };
+
+  /* BFS from a random start, keep going until we find a word at the target
+     distance; returns {start,target,par} guaranteed solvable */
+  function makePuzzle(minD, maxD) {
+    for (let tries = 0; tries < 60; tries++) {
+      const start = DICT[randInt(0, DICT.length - 1)];
+      const dist = { [start]: 0 };
+      const q = [start]; const atDist = {};
+      while (q.length) {
+        const w = q.shift(); const d = dist[w];
+        (atDist[d] = atDist[d] || []).push(w);
+        if (d >= maxD) continue;
+        for (const n of neighbours(w)) if (dist[n] === undefined) { dist[n] = d + 1; q.push(n); }
+      }
+      for (let d = maxD; d >= minD; d--) {
+        const pool = (atDist[d] || []).filter((w) => w !== start);
+        if (pool.length) return { start, target: pool[randInt(0, pool.length - 1)], par: d };
+      }
+    }
+    return { start: 'cold', target: 'warm', par: 4 };   // last-ditch classic
+  }
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    let puzzle, path, draft, over, disposed = false;
+
+    const pPar = api.pill('par —');
+    const pSteps = api.pill('steps 0');
+    const goalRow = h('div', { class: 'lad-goal' });
+    const chain = h('div', { class: 'lad-chain' });
+    const slots = h('div', { class: 'lad-slots' });
+    const keyRows = h('div', { class: 'lad-keys' });
+    const msg = h('div', { class: 'lad-msg' }, '');
+    root.appendChild(h('div', { class: 'ladder' }, goalRow, chain, slots, msg, keyRows));
+    api.button('New ladder', fresh);
+    api.button('Hint', hint);
+
+    function fresh() {
+      const lo = api.dm <= 0.8 ? 3 : api.dm >= 2 ? 6 : 4;
+      const hi = clamp(Math.round(lo + api.dm * 1.4), lo + 1, 8);
+      puzzle = makePuzzle(lo, hi);
+      path = [puzzle.start]; draft = ''; over = false;
+      pPar.textContent = 'par ' + puzzle.par;
+      msg.textContent = ''; msg.className = 'lad-msg';
+      renderGoal(); paint();
+      api.status('Turn ' + puzzle.start.toUpperCase() + ' into ' + puzzle.target.toUpperCase() + ', one letter at a time. Every rung has to be a real word. Par is ' + puzzle.par + ' rungs.');
+    }
+
+    function renderGoal() {
+      goalRow.replaceChildren(
+        word(puzzle.start, 'from'),
+        h('span', { class: 'lad-arrow' }, '→'),
+        word(puzzle.target, 'to'));
+    }
+    function word(w, cls) {
+      return h('span', { class: 'lad-word ' + (cls || '') }, ...w.toUpperCase().split('').map((c) => h('b', null, c)));
+    }
+
+    function push(letter) {
+      if (over || draft.length >= 4) return;
+      draft += letter.toLowerCase(); api.sfx.blip(520); paint();
+    }
+    function back() { if (over || !draft.length) return; draft = draft.slice(0, -1); paint(); }
+    function submit() {
+      if (over) return;
+      if (draft.length !== 4) { flash('Four letters.'); api.sfx.bad(); return; }
+      const prev = path[path.length - 1];
+      let diff = 0; for (let i = 0; i < 4; i++) if (draft[i] !== prev[i]) diff++;
+      if (diff !== 1) { flash('Change exactly one letter from ' + prev.toUpperCase() + '.'); api.sfx.bad(); return; }
+      if (!SET.has(draft)) { flash('“' + draft.toUpperCase() + '” isn’t in the word list.'); api.sfx.bad(); return; }
+      if (path.includes(draft)) { flash('Already used that rung.'); api.sfx.bad(); return; }
+      path.push(draft); const done = draft === puzzle.target; draft = '';
+      api.sfx.good(); paint();
+      if (done) win();
+    }
+    function hint() {
+      if (over) return;
+      const prev = path[path.length - 1];
+      // BFS from prev to target, suggest the first step
+      const dist = { [prev]: 0 }, from = {}; const q = [prev];
+      while (q.length) {
+        const w = q.shift(); if (w === puzzle.target) break;
+        for (const n of neighbours(w)) if (dist[n] === undefined) { dist[n] = dist[w] + 1; from[n] = w; q.push(n); }
+      }
+      if (dist[puzzle.target] === undefined) { flash('No hint from here — try a New ladder.'); return; }
+      let step = puzzle.target; while (from[step] && from[step] !== prev) step = from[step];
+      draft = step; paint(); flash('Try ' + step.toUpperCase() + '.'); api.sfx.tone ? api.sfx.tone(660) : api.sfx.blip(660);
+    }
+    function flash(t) { msg.textContent = t; msg.className = 'lad-msg warn'; }
+
+    function win() {
+      over = true;
+      const rungs = path.length - 1;
+      const underPar = rungs <= puzzle.par;
+      msg.textContent = 'Solved in ' + rungs + ' rung' + (rungs === 1 ? '' : 's') + (underPar ? ' — par or better!' : ' (par ' + puzzle.par + ')') + '.';
+      msg.className = 'lad-msg win';
+      api.sfx.great();
+      const solved = api.load('solved', 0) + 1; api.save('solved', solved); api.submit(solved);
+      try { const r = msg.getBoundingClientRect(); Engine.fx.burst(r.left + r.width / 2, r.top + 16, 42); } catch (e) { /* ignore */ }
+      paint();
+    }
+
+    function paint() {
+      pSteps.textContent = 'steps ' + (path.length - 1);
+      chain.replaceChildren(...path.map((w, i) => {
+        const isTarget = w === puzzle.target;
+        return h('div', { class: 'lad-rung' + (i === 0 ? ' start' : '') + (isTarget ? ' hit' : '') }, word(w));
+      }));
+      const cells = [];
+      for (let i = 0; i < 4; i++) cells.push(h('span', { class: 'lad-slot' + (draft[i] ? ' on' : '') }, draft[i] ? draft[i].toUpperCase() : ''));
+      slots.replaceChildren(...cells);
+      if (!keyRows.childElementCount) buildKeys();
+      [...keyRows.querySelectorAll('.lad-key')].forEach((k) => { if (k.dataset.k && k.dataset.k.length === 1) k.disabled = over; });
+    }
+    function buildKeys() {
+      const rows = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
+      keyRows.replaceChildren();
+      rows.forEach((r, ri) => {
+        const rowEl = h('div', { class: 'lad-keyrow' });
+        if (ri === 2) rowEl.appendChild(mkKey('⌫', back, 'wide'));
+        r.split('').forEach((c) => rowEl.appendChild(mkKey(c.toUpperCase(), () => push(c), '', c)));
+        if (ri === 2) rowEl.appendChild(mkKey('✓', submit, 'wide go'));
+        keyRows.appendChild(rowEl);
+      });
+    }
+    function mkKey(label, fn, cls, dataK) {
+      const b = h('button', { class: 'lad-key ' + (cls || ''), type: 'button', 'data-k': dataK || label }, label);
+      bagg.listen(b, 'click', fn);
+      return b;
+    }
+
+    bagg.add(Engine.onKey((e) => {
+      if (Engine.isEditable(e.target)) return;
+      if (/^[a-z]$/i.test(e.key)) { push(e.key); return true; }
+      if (e.key === 'Backspace') { back(); return true; }
+      if (e.key === 'Enter') { submit(); return true; }
+    }));
+
+    fresh();
+    return () => { disposed = true; bagg.dispose(); };
+  }
+
+  Arcade.register({
+    id: 'ladder', title: 'Word Ladder', emoji: 'ladder', cat: 'brain', order: 26,
+    blurb: 'Turn one word into another by changing a single letter at a time — and every step in between has to be a real word. Each puzzle is built to have a solution and a par.',
+    scoreLabel: 'Solved', tags: ['word', 'puzzle', 'vocabulary'],
+    how: [
+      'You start on one four-letter word and have to reach the target shown at the top.',
+      'Each rung changes exactly one letter, and must itself be a real word from the list.',
+      'Type on your keyboard or tap the on-screen keys; ✓ or Enter submits the rung, ⌫ deletes.',
+      'Par is the shortest possible ladder. Beat it if you can — and use Hint if you get stuck.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
 /* Reflex Grid. How fast are you, really? */
 (function () {
   'use strict';
@@ -21935,6 +22599,206 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 })();
 
 </script>
+<script>
+/* Desk Lander — a little lunar-lander. Fight gravity with a thin fuel tank,
+   come down slow and upright on a pad. Touch the ground too fast and it's a
+   crater. */
+(function () {
+  'use strict';
+  const { h, clamp, randInt } = Engine;
+  const W = 460, H = 400;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    const cv = Engine.canvas(root, W, H);
+    const ctx = cv.ctx;
+    const keys = Engine.keys(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'a', 'd', 'w', 'A', 'D', 'W', ' ']);
+    bagg.add(() => keys.dispose());
+
+    let ship, terrain, pads, state, landings, msgT;
+    // difficulty: stronger pull, thinner fuel, narrower pads as it climbs
+    const GRAV = 26 + api.dm * 10;
+    const THRUST = 78;
+    const ROT = 2.6;
+    const FUEL0 = clamp(Math.round(150 - api.dm * 30), 70, 200);
+    const SAFE_V = clamp(46 - api.dm * 8, 24, 60);      // max safe descent speed
+    const SAFE_A = 0.30;                                 // max tilt off vertical (rad)
+
+    const pFuel = api.pill('fuel 100');
+    const pVel = api.pill('v 0');
+    const pLand = api.pill('landings 0');
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+    root.appendChild(banner);
+    api.button('New flight', () => reset(true));
+
+    /* on-screen controls */
+    const pad = h('div', { class: 'lander-pad' });
+    const mk = (label, code, cls) => {
+      const b = h('button', { class: 'lander-btn ' + (cls || ''), type: 'button' }, label);
+      const set = (v) => { keys.state[code] = v; };
+      bagg.listen(b, 'pointerdown', (e) => { e.preventDefault(); set(true); });
+      ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => bagg.listen(b, ev, () => set(false)));
+      return b;
+    };
+    pad.append(mk('◀', 'ArrowLeft'), mk('THRUST', 'ArrowUp', 'thrust'), mk('▶', 'ArrowRight'));
+    root.appendChild(pad);
+
+    function buildTerrain() {
+      terrain = []; pads = [];
+      const nPads = api.dm >= 1.8 ? 1 : api.dm >= 1 ? 2 : 2;
+      const padW = clamp(78 - api.dm * 16, 40, 90);
+      let x = 0, y = H - randInt(40, 90);
+      terrain.push({ x: 0, y });
+      // decide pad x-positions
+      const padXs = [];
+      for (let i = 0; i < nPads; i++) padXs.push(60 + randInt(0, W - 120));
+      while (x < W) {
+        const onPad = padXs.find((px) => x >= px && x < px + padW);
+        if (onPad !== undefined) {
+          const py = y;
+          terrain.push({ x: onPad, y: py });
+          terrain.push({ x: onPad + padW, y: py, pad: true });
+          pads.push({ x1: onPad, x2: onPad + padW, y: py });
+          x = onPad + padW; y = clamp(py + randInt(-40, 40), H - 150, H - 30);
+          padXs.splice(padXs.indexOf(onPad), 1);
+        } else {
+          x += randInt(24, 52); y = clamp(y + randInt(-34, 34), H - 170, H - 24);
+          terrain.push({ x: Math.min(x, W), y });
+        }
+      }
+      terrain.push({ x: W, y });
+    }
+
+    function groundYAt(px) {
+      for (let i = 0; i < terrain.length - 1; i++) {
+        const a = terrain[i], b = terrain[i + 1];
+        if (px >= a.x && px <= b.x) {
+          if (b.x === a.x) return Math.min(a.y, b.y);
+          const t = (px - a.x) / (b.x - a.x);
+          return a.y + (b.y - a.y) * t;
+        }
+      }
+      return H;
+    }
+    function padAt(px) { return pads.find((p) => px >= p.x1 && px <= p.x2); }
+
+    function reset(newTerrain) {
+      if (newTerrain || !terrain) buildTerrain();
+      ship = { x: W / 2 + randInt(-60, 60), y: 40, vx: randInt(-10, 10), vy: 8, a: 0, fuel: FUEL0, thrust: false };
+      state = 'fly'; msgT = 0;
+      banner.style.display = 'none';
+      api.status('Rotate with ◀ ▶ (or arrows), hold THRUST to fire the engine. Set down on a flat pad going slower than ' + Math.round(SAFE_V) + ', roughly upright. Fuel is limited.');
+    }
+
+    function update(dt) {
+      if (state !== 'fly') { msgT -= dt; if (msgT <= 0 && state === 'crash') reset(false); if (msgT <= 0 && state === 'land') reset(true); return; }
+      const left = keys.get('ArrowLeft') || keys.get('a') || keys.get('A');
+      const right = keys.get('ArrowRight') || keys.get('d') || keys.get('D');
+      const up = keys.get('ArrowUp') || keys.get('w') || keys.get('W') || keys.get(' ');
+      if (left) ship.a -= ROT * dt;
+      if (right) ship.a += ROT * dt;
+      ship.a = clamp(ship.a, -Math.PI / 2, Math.PI / 2);
+      ship.thrust = up && ship.fuel > 0;
+      if (ship.thrust) {
+        ship.vx += Math.sin(ship.a) * THRUST * dt;
+        ship.vy -= Math.cos(ship.a) * THRUST * dt;
+        ship.fuel = Math.max(0, ship.fuel - 30 * dt);
+        if (Math.random() < 0.5) api.sfx.blip(140 + Math.random() * 60);
+      }
+      ship.vy += GRAV * dt;
+      ship.x += ship.vx * dt; ship.y += ship.vy * dt;
+      if (ship.x < 6) { ship.x = 6; ship.vx = Math.abs(ship.vx) * 0.4; }
+      if (ship.x > W - 6) { ship.x = W - 6; ship.vx = -Math.abs(ship.vx) * 0.4; }
+
+      const gy = groundYAt(ship.x);
+      if (ship.y + 12 >= gy) {
+        ship.y = gy - 12;
+        const speed = Math.hypot(ship.vx, ship.vy);
+        const onPad = padAt(ship.x);
+        const upright = Math.abs(ship.a) <= SAFE_A;
+        if (onPad && speed <= SAFE_V && upright) land(speed);
+        else crash(speed, onPad, upright);
+      }
+      pFuel.textContent = 'fuel ' + Math.round(ship.fuel);
+      pVel.textContent = 'v ' + Math.round(Math.hypot(ship.vx, ship.vy));
+    }
+
+    function land(speed) {
+      state = 'land'; msgT = 1.6; api.sfx.great();
+      landings = api.load('landings', 0) + 1; api.save('landings', landings);
+      pLand.textContent = 'landings ' + landings;
+      api.submit(landings);
+      const fuelPct = Math.round(ship.fuel / FUEL0 * 100);
+      show('Touchdown', 'Clean landing at ' + Math.round(speed) + '. Fuel left: ' + fuelPct + '%.', true);
+      try { const r = banner.getBoundingClientRect(); Engine.fx.burst(r.left + r.width / 2, r.top + 30, 44); } catch (e) { /* ignore */ }
+    }
+    function crash(speed, onPad, upright) {
+      state = 'crash'; msgT = 1.4; api.sfx.boom ? api.sfx.boom() : api.sfx.bad();
+      const why = !onPad ? 'Missed the pad.' : !upright ? 'Came in crooked.' : 'Too fast at ' + Math.round(speed) + '.';
+      show('Crater', why + ' Try again.', false);
+    }
+    function show(t, sub, good) {
+      banner.style.display = '';
+      banner.className = 'banner' + (good ? ' win' : '');
+      banner.replaceChildren(h('h3', null, t), h('p', null, sub));
+    }
+
+    function draw() {
+      ctx.fillStyle = '#0b1026'; ctx.fillRect(0, 0, W, H);
+      // stars
+      ctx.fillStyle = 'rgba(255,255,255,.5)';
+      for (let i = 0; i < 40; i++) { const sx = (i * 97) % W, sy = (i * 53) % (H - 120); ctx.fillRect(sx, sy, 1.5, 1.5); }
+      // terrain
+      ctx.beginPath(); ctx.moveTo(0, H);
+      for (const pt of terrain) ctx.lineTo(pt.x, pt.y);
+      ctx.lineTo(W, H); ctx.closePath();
+      ctx.fillStyle = '#2b2440'; ctx.fill();
+      ctx.strokeStyle = '#b7a7e0'; ctx.lineWidth = 2; ctx.stroke();
+      // pads
+      for (const p of pads) {
+        ctx.fillStyle = '#6fcf2f'; ctx.fillRect(p.x1, p.y - 3, p.x2 - p.x1, 5);
+        ctx.fillStyle = '#eafff0'; ctx.font = 'bold 10px system-ui'; ctx.textAlign = 'center';
+        ctx.fillText('▲', (p.x1 + p.x2) / 2, p.y - 6); ctx.textAlign = 'left';
+      }
+      // ship
+      ctx.save(); ctx.translate(ship.x, ship.y); ctx.rotate(ship.a);
+      if (ship.thrust) {
+        ctx.fillStyle = '#ffcb1f';
+        ctx.beginPath(); ctx.moveTo(-4, 10); ctx.lineTo(4, 10); ctx.lineTo(0, 18 + Math.random() * 8); ctx.closePath(); ctx.fill();
+      }
+      ctx.fillStyle = '#dfe6ff';
+      ctx.beginPath(); ctx.moveTo(0, -12); ctx.lineTo(9, 8); ctx.lineTo(-9, 8); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#00a6b4'; ctx.beginPath(); ctx.arc(0, -2, 3.4, 0, 7); ctx.fill();
+      ctx.strokeStyle = '#dfe6ff'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(-6, 8); ctx.lineTo(-10, 14); ctx.moveTo(6, 8); ctx.lineTo(10, 14); ctx.stroke();
+      ctx.restore();
+      // safe-speed tint on the HUD velocity
+      const spd = Math.hypot(ship.vx, ship.vy);
+      ctx.fillStyle = spd <= SAFE_V ? '#6fcf2f' : '#e8402a';
+      ctx.fillRect(W - 60, 10, 50, 6);
+      ctx.fillStyle = 'rgba(0,0,0,.5)'; ctx.fillRect(W - 60, 10, 50 * clamp(spd / (SAFE_V * 2), 0, 1), 6);
+    }
+
+    reset(true);
+    bagg.add(Engine.loop((dt) => { update(Math.min(0.05, dt)); draw(); }));
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'lander', title: 'Desk Lander', emoji: 'lander', cat: 'action', order: 30,
+    blurb: 'A lunar lander with a nearly empty fuel tank. Rotate, feather the thrust, and set down on a flat pad slowly and upright — or leave a crater.',
+    scoreLabel: 'Landings', tags: ['physics', 'space', 'skill'],
+    how: [
+      'Rotate the craft with ◀ ▶ or the arrow keys, and hold THRUST (up / W / space) to fire the engine.',
+      'Gravity is always pulling you down and your fuel runs out, so short taps beat holding it down.',
+      'Land on a green pad, coming down slowly and roughly upright. The speed bar turns green when you are slow enough.',
+      'Miss the pad, come in crooked, or hit too fast and it is a crash. Each clean landing adds to your streak.'
+    ],
+    mount
+  });
+})();
+
+</script>
 
 <!-- goofy -->
 <script>
@@ -23708,6 +24572,167 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       'Bank the dice in a scoring box. The board shows what each box would score.',
       'Fill all thirteen boxes. Reaching 63 in the top half earns a 35-point bonus.',
       'Your score is your best full-sheet total.'
+    ],
+    mount
+  });
+})();
+
+</script>
+<script>
+/* Quarter Plinko — drop a chip, watch it clatter down the pegs, take whatever
+   slot it lands in. Fifteen chips a round; the edges pay big and hurt big. */
+(function () {
+  'use strict';
+  const { h, clamp, randInt } = Engine;
+  const W = 380, H = 470;
+  const ROWS = 9, PEG_R = 4.5, CHIP_R = 7;
+  const TOP = 60, BOT = H - 70;
+
+  function mount(root, api) {
+    const bagg = Engine.bag();
+    const cv = Engine.canvas(root, W, H);
+    const ctx = cv.ctx;
+
+    let pegs, slots, chips, banked, left, over;
+    const CHIPS = 15;
+    // difficulty widens the spread — nightmare edges pay (and punish) harder
+    const edge = Math.round(6 + api.dm * 6);
+    const SLOTVALS = buildSlots(edge);
+
+    const pBank = api.pill('banked 0');
+    const pLeft = api.pill('chips ' + CHIPS);
+    const banner = h('div', { class: 'banner', style: { display: 'none' } });
+    root.appendChild(banner);
+    api.button('New round', reset);
+
+    function buildSlots(e) {
+      // 9 slots, symmetric: big at the edges, dead zero just inside them, safe middle
+      const t = Math.round(e / 3);
+      return [e, t, 3, 1, 0, 1, 3, t, e];
+    }
+
+    function build() {
+      pegs = [];
+      const gapY = (BOT - TOP) / ROWS;
+      for (let r = 0; r < ROWS; r++) {
+        const count = r + 3;
+        const span = W - 60;
+        const step = span / (count - 1);
+        const x0 = (W - span) / 2;
+        const y = TOP + r * gapY;
+        for (let i = 0; i < count; i++) pegs.push({ x: x0 + i * step, y });
+      }
+      slots = [];
+      const S = SLOTVALS.length, sw = W / S;
+      for (let i = 0; i < S; i++) slots.push({ x1: i * sw, x2: (i + 1) * sw, v: SLOTVALS[i] });
+    }
+
+    function reset() {
+      build();
+      chips = []; banked = 0; left = CHIPS; over = false;
+      banner.style.display = 'none';
+      pBank.textContent = 'banked 0'; pLeft.textContent = 'chips ' + CHIPS;
+      api.status('Tap along the top to drop a chip. It bounces down through the pegs into a slot — the edges pay the most and cost the most. You get ' + CHIPS + ' chips.');
+    }
+
+    function drop(x) {
+      if (over || left <= 0) return;
+      x = clamp(x, 12, W - 12);
+      chips.push({ x, y: 24, vx: randInt(-20, 20) / 10, vy: 0, done: false });
+      left--; pLeft.textContent = 'chips ' + left;
+      api.sfx.blip(500);
+    }
+    bagg.listen(cv.el, 'pointerdown', (e) => { e.preventDefault(); const p = cv.pos(e); drop(p.x); });
+
+    function step(dt) {
+      const G = 620;
+      for (const c of chips) {
+        if (c.done) continue;
+        c.vy += G * dt;
+        c.x += c.vx * dt; c.y += c.vy * dt;
+        // walls
+        if (c.x < CHIP_R) { c.x = CHIP_R; c.vx = Math.abs(c.vx) * 0.6; }
+        if (c.x > W - CHIP_R) { c.x = W - CHIP_R; c.vx = -Math.abs(c.vx) * 0.6; }
+        // pegs
+        for (const p of pegs) {
+          const dx = c.x - p.x, dy = c.y - p.y, d = Math.hypot(dx, dy), min = PEG_R + CHIP_R;
+          if (d < min && d > 0) {
+            const nx = dx / d, ny = dy / d;
+            c.x = p.x + nx * min; c.y = p.y + ny * min;
+            const dot = c.vx * nx + c.vy * ny;
+            c.vx = (c.vx - 2 * dot * nx) * 0.55 + (Math.random() - 0.5) * 40;
+            c.vy = (c.vy - 2 * dot * ny) * 0.55;
+            if (Math.random() < 0.3) api.sfx.blip(720 + Math.random() * 120);
+          }
+        }
+        if (c.y >= BOT) { c.y = BOT; landChip(c); }
+      }
+      if (over) return;
+      if (left === 0 && chips.every((c) => c.done)) finish();
+    }
+
+    function landChip(c) {
+      c.done = true;
+      const s = slots.find((sl) => c.x >= sl.x1 && c.x < sl.x2) || slots[slots.length - 1];
+      banked += s.v;
+      pBank.textContent = 'banked ' + banked;
+      c.slot = s;
+      if (s.v >= SLOTVALS[0]) { api.sfx.great(); }
+      else if (s.v === 0) { api.sfx.thud(); }
+      else api.sfx.good();
+    }
+
+    function finish() {
+      over = true;
+      const best = api.best();
+      const rec = api.submit(banked);
+      banner.style.display = '';
+      banner.className = 'banner' + (rec && rec.isRecord ? ' win' : '');
+      banner.replaceChildren(
+        h('h3', null, banked + ' banked'),
+        h('p', null, rec && rec.isRecord ? 'New best round!' : (best != null ? 'Best round: ' + Math.max(best, banked) : '')),
+        h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Another round'));
+      if (rec && rec.isRecord) { try { const r = banner.getBoundingClientRect(); Engine.fx.burst(r.left + r.width / 2, r.top + 24, 46); } catch (e) { /* ignore */ } }
+    }
+
+    function draw() {
+      ctx.fillStyle = '#1b1630'; ctx.fillRect(0, 0, W, H);
+      // slots
+      for (const s of slots) {
+        const big = s.v >= SLOTVALS[0], zero = s.v === 0;
+        ctx.fillStyle = big ? '#e8402a' : zero ? '#3a3450' : s.v >= 3 ? '#6f3fa8' : '#00838d';
+        ctx.fillRect(s.x1 + 1, BOT + 4, s.x2 - s.x1 - 2, H - BOT - 8);
+        ctx.fillStyle = '#fff'; ctx.font = 'bold 13px system-ui'; ctx.textAlign = 'center';
+        ctx.fillText((s.v > 0 ? '+' : '') + s.v, (s.x1 + s.x2) / 2, BOT + 26);
+      }
+      ctx.textAlign = 'left';
+      // pegs
+      ctx.fillStyle = '#cdbef2';
+      for (const p of pegs) { ctx.beginPath(); ctx.arc(p.x, p.y, PEG_R, 0, 7); ctx.fill(); }
+      // chips
+      for (const c of chips) {
+        ctx.fillStyle = c.done ? '#8a7fb0' : '#ffcb1f';
+        ctx.beginPath(); ctx.arc(c.x, c.y, CHIP_R, 0, 7); ctx.fill();
+        ctx.strokeStyle = '#1d1722'; ctx.lineWidth = 1.5; ctx.stroke();
+      }
+      // drop hint line
+      if (!over) { ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.fillRect(0, 22, W, 1); }
+    }
+
+    reset();
+    bagg.add(Engine.loop((dt) => { step(Math.min(0.04, dt)); draw(); }));
+    return () => bagg.dispose();
+  }
+
+  Arcade.register({
+    id: 'plinko', title: 'Quarter Plinko', emoji: 'plinko', cat: 'goofy', order: 44,
+    blurb: 'Drop a chip and watch it rattle down through the pegs into a payout slot. The edges pay the most and sting the most. Fifteen chips to a round.',
+    scoreLabel: 'Best round', tags: ['luck', 'physics', 'satisfying'],
+    how: [
+      'Tap anywhere along the top to drop a chip from that spot.',
+      'It clatters down through the pegs — where it ends up is mostly up to the bounces.',
+      'Each slot at the bottom adds its number to your bank. The outer slots pay big; the ones just inside them are worth nothing.',
+      'You get fifteen chips a round. Bank as much as you can.'
     ],
     mount
   });
