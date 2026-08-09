@@ -505,6 +505,39 @@
     add(Arcade.plays('coffee') > 0, 'Caffeinated', 'You clicked the mug. It began.');
     add(Arcade.best('reflex') != null, 'Quick Draw', 'Logged a reaction time.');
 
+    /* draw a mock dot-matrix certificate to a canvas and download it — no upload */
+    function printCertificate() {
+      const c = document.createElement('canvas'); c.width = 900; c.height = 640;
+      const x = c.getContext('2d');
+      x.fillStyle = '#f4efe0'; x.fillRect(0, 0, 900, 640);
+      x.strokeStyle = '#1d1722'; x.lineWidth = 6; x.strokeRect(24, 24, 852, 592);
+      x.lineWidth = 2; x.strokeRect(38, 38, 824, 564);
+      x.fillStyle = '#1d1722'; x.textAlign = 'center';
+      x.font = 'bold 20px "Courier New", monospace'; x.fillText('* * *   CUBICLE ARCADE   * * *', 450, 92);
+      x.font = 'bold 34px Impact, "Arial Black", sans-serif'; x.fillText('CERTIFICATE OF ACHIEVEMENT', 450, 142);
+      x.font = '15px "Courier New", monospace'; x.fillText('This certifies that the bearer has attained the rank of', 450, 202);
+      x.fillStyle = '#6f3fa8'; x.font = 'bold 46px Impact, "Arial Black", sans-serif'; x.fillText(tier[1].toUpperCase(), 450, 262);
+      x.fillStyle = '#1d1722'; x.font = '15px "Courier New", monospace';
+      x.fillText(played + ' games played    ' + records + ' personal bests    ' + totalPlays + ' sessions logged', 450, 322);
+      x.fillText('Issued ' + new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), 450, 356);
+      x.save(); x.translate(706, 470); x.rotate(-0.12);
+      x.strokeStyle = '#e8402a'; x.lineWidth = 4; x.beginPath(); x.arc(0, 0, 72, 0, 7); x.stroke();
+      x.lineWidth = 2; x.beginPath(); x.arc(0, 0, 60, 0, 7); x.stroke();
+      x.fillStyle = '#e8402a'; x.font = 'bold 15px Impact, sans-serif';
+      x.fillText('EMPLOYEE', 0, -12); x.fillText('OF THE', 0, 8); x.fillText('MONTH', 0, 28);
+      x.restore();
+      x.strokeStyle = '#1d1722'; x.lineWidth = 1; x.beginPath(); x.moveTo(150, 500); x.lineTo(370, 500); x.stroke();
+      x.textAlign = 'left'; x.font = '12px "Courier New", monospace';
+      x.fillText('Authorised by CHOMPS, Office Assistant', 150, 520);
+      c.toBlob((blob) => {
+        if (!blob) return;
+        const u = URL.createObjectURL(blob);
+        const a = h('a', { href: u, download: 'certificate-of-achievement.png' });
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(u), 1500);
+      });
+    }
+
     const table = h('table', { class: 'ts-table' },
       h('thead', null, h('tr', null,
         h('th', null, 'Code'), h('th', null, 'Activity'), h('th', null, 'Dept'),
@@ -531,7 +564,8 @@
           h('h4', null, 'Overall performance rating'),
           h('div', { class: 'ts-tier' }, tier[1]),
           h('div', { class: 'meter' }, h('i', { style: { width: pct + '%' } })),
-          h('p', null, next ? (pct + '% of the way to ' + next[1] + '.') : 'Top of the ladder. Nowhere left to be promoted.')),
+          h('p', null, next ? (pct + '% of the way to ' + next[1] + '.') : 'Top of the ladder. Nowhere left to be promoted.'),
+          h('button', { class: 'btn tiny', type: 'button', onclick: printCertificate, style: { marginTop: '8px' } }, 'Print certificate')),
         badges.length ? h('div', { class: 'ts-badges' }, badges.map((b) => h('span', { class: 'ts-badge', title: b.desc }, b.name))) : null,
         rows.length ? table
           : h('p', { class: 'empty' }, 'No sessions logged yet. Go play something — this page fills itself in, and doubles as a convincing timesheet.')));
