@@ -6,6 +6,9 @@
   const { h, clamp } = Engine;
   const W = 720, H = 440, GROUND = H - 26;
   const PR = 26, BR = 14, GRAV = 1900, JUMP = 720, MOVE = 320, WIN = 7;
+  /* the ball floats more than the players fall, so you can actually loft it up
+     to the rim and it hangs long enough to aim — basketball, not a hot potato */
+  const BALL_GRAV = 1180;
 
   function mount(root, api) {
     const bagg = Engine.bag();
@@ -52,7 +55,7 @@
 
     /* goals/hoops: p1 (left) attacks the RIGHT target; p2 attacks the LEFT target */
     function targets() {
-      if (sport === 'bball') return { left: { hx: 62, hy: 150, rw: 34 }, right: { hx: W - 62, hy: 150, rw: 34 } };
+      if (sport === 'bball') return { left: { hx: 98, hy: GROUND - 206, rw: 40 }, right: { hx: W - 98, hy: GROUND - 206, rw: 40 } };
       return { left: { gx: 0, gy: GROUND - 96, gw: 20, gh: 96 }, right: { gx: W - 20, gy: GROUND - 96, gw: 20, gh: 96 } };
     }
 
@@ -76,9 +79,9 @@
       if (d < PR + BR) {
         const nx = dx / d, ny = dy / d;
         ball.x = pl.x + nx * (PR + BR); ball.y = pl.y + ny * (PR + BR);
-        const power = 430;
+        const power = 540;
         ball.vx = nx * power + pl.vx * 0.7;
-        ball.vy = ny * power + pl.vy * 0.6 - 80;
+        ball.vy = ny * power + pl.vy * 0.6 - 220;   // strong upward bias so a jump-and-bump lofts it rimward
         api.sfx.blip(300);
       }
     }
@@ -92,7 +95,7 @@
 
       /* ball physics */
       if (serveT > 0) serveT -= dt;
-      ball.vy += GRAV * dt;
+      ball.vy += BALL_GRAV * dt;
       ball.x += ball.vx * dt; ball.y += ball.vy * dt;
       if (ball.x < BR) { ball.x = BR; ball.vx = Math.abs(ball.vx) * 0.75; }
       if (ball.x > W - BR) { ball.x = W - BR; ball.vx = -Math.abs(ball.vx) * 0.75; }
@@ -104,7 +107,7 @@
       if (sport === 'bball') {
         /* score when the ball drops through a rim from above */
         for (const [t, who] of [[T.right, 1], [T.left, 2]]) {
-          if (ball.vy > 0 && Math.abs(ball.x - t.hx) < t.rw && ball.y > t.hy && ball.y < t.hy + 26) { return goal(who); }
+          if (ball.vy > 0 && Math.abs(ball.x - t.hx) < t.rw && ball.y > t.hy && ball.y < t.hy + 32) { return goal(who); }
         }
       } else {
         if (ball.x < T.left.gx + T.left.gw + BR && ball.y > T.left.gy) return goal(2);

@@ -15,7 +15,7 @@
   /* ink, biased violet so it never reads as flat grey */
   --ink:     #1d1722;
   --ink2:    #4a4155;
-  --ink3:    #7a6f88;
+  --ink3:    #60566b;
 
   /* the loud ones */
   --teal:    #00a6b4;
@@ -77,7 +77,9 @@ kbd {
   display: inline-block;
 }
 
-::selection { background: var(--banana); color: var(--ink); }
+/* inverted so the highlight always tracks the guaranteed ink/paper contrast,
+   whatever the theme's accent does */
+::selection { background: var(--ink); color: var(--paper); }
 
 :focus-visible { outline: 3px dashed var(--grape); outline-offset: 2px; }
 

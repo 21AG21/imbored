@@ -20,7 +20,7 @@
       vars: {
         '--paper': '#efece4', '--paper2': '#e1ddd1', '--label': '#ffffff',
         '--chrome': '#c9c3b4', '--shade': '#9a9280', '--hilite': '#ffffff',
-        '--ink': '#191713', '--ink2': '#46423a', '--ink3': '#726d61',
+        '--ink': '#191713', '--ink2': '#46423a', '--ink3': '#6d685c',
         '--teal': '#2f7c86', '--hotpink': '#b25574', '--banana': '#d7a13c',
         '--grape': '#33506c', '--lime': '#4e8a52', '--tomato': '#bf4a34'
       }
@@ -30,7 +30,7 @@
       vars: {
         '--paper': '#f3f3f5', '--paper2': '#e7e7ea', '--label': '#ffffff',
         '--chrome': '#d3d3d8', '--shade': '#9f9fa6', '--hilite': '#ffffff',
-        '--ink': '#151518', '--ink2': '#45454b', '--ink3': '#74747b',
+        '--ink': '#151518', '--ink2': '#45454b', '--ink3': '#6e6e75',
         '--teal': '#2b8a97', '--hotpink': '#5f6b7a', '--banana': '#d3ddec',
         '--grape': '#1f242e', '--lime': '#cdd8cf', '--tomato': '#d6493a'
       }
@@ -63,7 +63,7 @@
       vars: {
         '--paper': '#c3ccd8', '--paper2': '#b0bccb', '--label': '#f4f7fb',
         '--chrome': '#8b98a9', '--shade': '#5f6b7c', '--hilite': '#ffffff',
-        '--ink': '#161d29', '--ink2': '#3b475a', '--ink3': '#6d7b90'
+        '--ink': '#161d29', '--ink2': '#3b475a', '--ink3': '#475263'
       }
     },
     mint: {
@@ -71,7 +71,7 @@
       vars: {
         '--paper': '#c4e4d4', '--paper2': '#b0d8c3', '--label': '#f2fbf6',
         '--chrome': '#88b39d', '--shade': '#5b8571', '--hilite': '#ffffff',
-        '--ink': '#132218', '--ink2': '#345043', '--ink3': '#5f8271'
+        '--ink': '#132218', '--ink2': '#345043', '--ink3': '#486556'
       }
     },
     rose: {
@@ -79,7 +79,7 @@
       vars: {
         '--paper': '#f0cdd6', '--paper2': '#e8b9c6', '--label': '#fdf1f5',
         '--chrome': '#c894a4', '--shade': '#9c6675', '--hilite': '#ffffff',
-        '--ink': '#2a141c', '--ink2': '#5a3644', '--ink3': '#8a6472'
+        '--ink': '#2a141c', '--ink2': '#5a3644', '--ink3': '#714f5c'
       }
     },
     ice: {
@@ -87,7 +87,7 @@
       vars: {
         '--paper': '#d6e6f0', '--paper2': '#c2d8e8', '--label': '#f2f9ff',
         '--chrome': '#92aec8', '--shade': '#5a7690', '--hilite': '#ffffff',
-        '--ink': '#12283a', '--ink2': '#34506a', '--ink3': '#6088a8',
+        '--ink': '#12283a', '--ink2': '#34506a', '--ink3': '#456783', '--brandink': '#14110b',
         '--teal': '#1aa6c0', '--hotpink': '#e05a9a', '--banana': '#e0c84a',
         '--grape': '#7a7ad0', '--lime': '#5ac09a', '--tomato': '#e06a5a'
       }
@@ -97,9 +97,9 @@
       vars: {
         '--paper': '#f0d9b8', '--paper2': '#e6c99e', '--label': '#fbf1df',
         '--chrome': '#c79a68', '--shade': '#9a6a3a', '--hilite': '#fffbf0',
-        '--ink': '#3a1e0e', '--ink2': '#6a3e22', '--ink3': '#9a6a44',
+        '--ink': '#3a1e0e', '--ink2': '#6a3e22', '--ink3': '#7f5535', '--brandink': '#fbf1df',
         '--teal': '#2a9a8a', '--hotpink': '#e0567a', '--banana': '#f0a828',
-        '--grape': '#9a5aa8', '--lime': '#8aa82a', '--tomato': '#e0492a'
+        '--grape': '#8f549c', '--lime': '#8aa82a', '--tomato': '#e0492a'
       }
     },
     bubblegum: {
@@ -107,7 +107,7 @@
       vars: {
         '--paper': '#f6cfe0', '--paper2': '#efb9d2', '--label': '#fdf0f6',
         '--chrome': '#d896b8', '--shade': '#a85f88', '--hilite': '#ffffff',
-        '--ink': '#3a0f28', '--ink2': '#6a2450', '--ink3': '#9a5080',
+        '--ink': '#3a0f28', '--ink2': '#6a2450', '--ink3': '#894470', '--brandink': '#14110b',
         '--teal': '#2ac0d0', '--hotpink': '#ff3d97', '--banana': '#ffd23a',
         '--grape': '#a05fd8', '--lime': '#6fdf6a', '--tomato': '#ff6a5a'
       }
@@ -117,7 +117,7 @@
       vars: {
         '--paper': '#e7dfca', '--paper2': '#dbd1b6', '--label': '#f6f1e2',
         '--chrome': '#b0a480', '--shade': '#7a6e50', '--hilite': '#fffef8',
-        '--ink': '#201a12', '--ink2': '#4a4030', '--ink3': '#7a6e58',
+        '--ink': '#201a12', '--ink2': '#4a4030', '--ink3': '#6a5f4b',
         '--teal': '#4a7a6a', '--hotpink': '#b05a6a', '--banana': '#c89a3a',
         '--grape': '#6a5a8a', '--lime': '#7a8a3a', '--tomato': '#b0503a'
       }
@@ -127,7 +127,7 @@
       vars: {
         '--paper': '#cfcfcf', '--paper2': '#bebebe', '--label': '#f2f2f2',
         '--chrome': '#949494', '--shade': '#626262', '--hilite': '#ffffff',
-        '--ink': '#161616', '--ink2': '#444444', '--ink3': '#767676',
+        '--ink': '#161616', '--ink2': '#444444', '--ink3': '#555555',
         '--teal': '#8a8a8a', '--hotpink': '#d83a3a', '--banana': '#b0b0b0',
         '--grape': '#5a5a5a', '--lime': '#9a9a9a', '--tomato': '#b02020'
       }
@@ -137,7 +137,7 @@
       vars: {
         '--paper': '#242a3d', '--paper2': '#2e3650', '--label': '#333c58',
         '--chrome': '#454f6e', '--shade': '#151a28', '--hilite': '#4a5578',
-        '--ink': '#eef1fb', '--ink2': '#b9c2dd', '--ink3': '#8590b0'
+        '--ink': '#eef1fb', '--ink2': '#b9c2dd', '--ink3': '#8b96b5', '--brandink': '#f4f6ff'
       }
     },
     carbon: {
@@ -145,7 +145,7 @@
       vars: {
         '--paper': '#1c1c22', '--paper2': '#26262e', '--label': '#2c2c36',
         '--chrome': '#3a3a46', '--shade': '#0e0e12', '--hilite': '#43434f',
-        '--ink': '#f2f2f5', '--ink2': '#c2c2cc', '--ink3': '#8a8a98'
+        '--ink': '#f2f2f5', '--ink2': '#c2c2cc', '--ink3': '#8a8a98', '--brandink': '#f4f6ff'
       }
     },
     terminal: {
@@ -153,7 +153,7 @@
       vars: {
         '--paper': '#0e1a10', '--paper2': '#13251a', '--label': '#17311f',
         '--chrome': '#1f4a2b', '--shade': '#060f09', '--hilite': '#256034',
-        '--ink': '#7dff92', '--ink2': '#46b862', '--ink3': '#2f7a44',
+        '--ink': '#7dff92', '--ink2': '#46b862', '--ink3': '#3d9252',
         '--teal': '#29e0c2', '--hotpink': '#ff5f8f', '--banana': '#b6ff4a',
         '--grape': '#4dffab', '--lime': '#57ff42', '--tomato': '#ff8a3a',
         '--crt': '#04120a'
@@ -175,7 +175,7 @@
       vars: {
         '--paper': '#123a63', '--paper2': '#0f3252', '--label': '#164c7e',
         '--chrome': '#2c609a', '--shade': '#08213a', '--hilite': '#3c74ac',
-        '--ink': '#eef4ff', '--ink2': '#b8d4f0', '--ink3': '#86aad0',
+        '--ink': '#eef4ff', '--ink2': '#b8d4f0', '--ink3': '#86aad0', '--brandink': '#14110b',
         '--teal': '#5fe0ff', '--hotpink': '#ff8ac0', '--banana': '#ffe15a',
         '--grape': '#b08aff', '--lime': '#7affc0', '--tomato': '#ff9a6a',
         '--crt': '#06172a'
@@ -186,7 +186,7 @@
       vars: {
         '--paper': '#241234', '--paper2': '#2f1644', '--label': '#3c1c54',
         '--chrome': '#52306e', '--shade': '#140a1e', '--hilite': '#603c82',
-        '--ink': '#ffe6ff', '--ink2': '#e0a0e8', '--ink3': '#b070c0',
+        '--ink': '#ffe6ff', '--ink2': '#e0a0e8', '--ink3': '#b070c0', '--brandink': '#14110b',
         '--teal': '#21e6d4', '--hotpink': '#ff4fb0', '--banana': '#ffe15a',
         '--grape': '#a05fff', '--lime': '#5affc0', '--tomato': '#ff6a8a',
         '--crt': '#120820'
@@ -197,7 +197,7 @@
       vars: {
         '--paper': '#2b3f2a', '--paper2': '#223421', '--label': '#35492e',
         '--chrome': '#48603f', '--shade': '#16220f', '--hilite': '#55704a',
-        '--ink': '#f0f4e2', '--ink2': '#c4d0a8', '--ink3': '#93a678',
+        '--ink': '#f0f4e2', '--ink2': '#c4d0a8', '--ink3': '#99ab7e', '--brandink': '#14110b',
         '--teal': '#35b58a', '--hotpink': '#e86a9a', '--banana': '#e8c34a',
         '--grape': '#a07acc', '--lime': '#8fcf3a', '--tomato': '#e0632f',
         '--crt': '#0e1a0c'
@@ -208,7 +208,7 @@
       vars: {
         '--paper': '#4a2a6a', '--paper2': '#3f2258', '--label': '#5a3a7e',
         '--chrome': '#6e4e92', '--shade': '#2a1640', '--hilite': '#7e5aa2',
-        '--ink': '#f4ecff', '--ink2': '#d0b8ee', '--ink3': '#a888c8',
+        '--ink': '#f4ecff', '--ink2': '#d0b8ee', '--ink3': '#b498d1', '--brandink': '#14110b',
         '--teal': '#3ad0d0', '--hotpink': '#ff6ac0', '--banana': '#ffd84a',
         '--grape': '#c89aff', '--lime': '#9aef5a', '--tomato': '#ff7a5a',
         '--crt': '#1c0f2c'
@@ -219,7 +219,7 @@
       vars: {
         '--paper': '#1c1c14', '--paper2': '#26261a', '--label': '#33301c',
         '--chrome': '#4a4620', '--shade': '#0c0c08', '--hilite': '#5c5620',
-        '--ink': '#ffe14a', '--ink2': '#c8a82a', '--ink3': '#8a7420',
+        '--ink': '#ffe14a', '--ink2': '#c8a82a', '--ink3': '#9a8326',
         '--teal': '#2ac0a0', '--hotpink': '#ff7a3a', '--banana': '#ffd21f',
         '--grape': '#c89aff', '--lime': '#b6e02a', '--tomato': '#ff5a1f',
         '--crt': '#0d0d06'

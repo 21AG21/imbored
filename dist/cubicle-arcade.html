@@ -30,7 +30,7 @@
   /* ink, biased violet so it never reads as flat grey */
   --ink:     #1d1722;
   --ink2:    #4a4155;
-  --ink3:    #7a6f88;
+  --ink3:    #60566b;
 
   /* the loud ones */
   --teal:    #00a6b4;
@@ -92,7 +92,9 @@ kbd {
   display: inline-block;
 }
 
-::selection { background: var(--banana); color: var(--ink); }
+/* inverted so the highlight always tracks the guaranteed ink/paper contrast,
+   whatever the theme's accent does */
+::selection { background: var(--ink); color: var(--paper); }
 
 :focus-visible { outline: 3px dashed var(--grape); outline-offset: 2px; }
 
@@ -2989,7 +2991,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       vars: {
         '--paper': '#efece4', '--paper2': '#e1ddd1', '--label': '#ffffff',
         '--chrome': '#c9c3b4', '--shade': '#9a9280', '--hilite': '#ffffff',
-        '--ink': '#191713', '--ink2': '#46423a', '--ink3': '#726d61',
+        '--ink': '#191713', '--ink2': '#46423a', '--ink3': '#6d685c',
         '--teal': '#2f7c86', '--hotpink': '#b25574', '--banana': '#d7a13c',
         '--grape': '#33506c', '--lime': '#4e8a52', '--tomato': '#bf4a34'
       }
@@ -2999,7 +3001,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       vars: {
         '--paper': '#f3f3f5', '--paper2': '#e7e7ea', '--label': '#ffffff',
         '--chrome': '#d3d3d8', '--shade': '#9f9fa6', '--hilite': '#ffffff',
-        '--ink': '#151518', '--ink2': '#45454b', '--ink3': '#74747b',
+        '--ink': '#151518', '--ink2': '#45454b', '--ink3': '#6e6e75',
         '--teal': '#2b8a97', '--hotpink': '#5f6b7a', '--banana': '#d3ddec',
         '--grape': '#1f242e', '--lime': '#cdd8cf', '--tomato': '#d6493a'
       }
@@ -3032,7 +3034,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       vars: {
         '--paper': '#c3ccd8', '--paper2': '#b0bccb', '--label': '#f4f7fb',
         '--chrome': '#8b98a9', '--shade': '#5f6b7c', '--hilite': '#ffffff',
-        '--ink': '#161d29', '--ink2': '#3b475a', '--ink3': '#6d7b90'
+        '--ink': '#161d29', '--ink2': '#3b475a', '--ink3': '#475263'
       }
     },
     mint: {
@@ -3040,7 +3042,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       vars: {
         '--paper': '#c4e4d4', '--paper2': '#b0d8c3', '--label': '#f2fbf6',
         '--chrome': '#88b39d', '--shade': '#5b8571', '--hilite': '#ffffff',
-        '--ink': '#132218', '--ink2': '#345043', '--ink3': '#5f8271'
+        '--ink': '#132218', '--ink2': '#345043', '--ink3': '#486556'
       }
     },
     rose: {
@@ -3048,7 +3050,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       vars: {
         '--paper': '#f0cdd6', '--paper2': '#e8b9c6', '--label': '#fdf1f5',
         '--chrome': '#c894a4', '--shade': '#9c6675', '--hilite': '#ffffff',
-        '--ink': '#2a141c', '--ink2': '#5a3644', '--ink3': '#8a6472'
+        '--ink': '#2a141c', '--ink2': '#5a3644', '--ink3': '#714f5c'
       }
     },
     ice: {
@@ -3056,7 +3058,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       vars: {
         '--paper': '#d6e6f0', '--paper2': '#c2d8e8', '--label': '#f2f9ff',
         '--chrome': '#92aec8', '--shade': '#5a7690', '--hilite': '#ffffff',
-        '--ink': '#12283a', '--ink2': '#34506a', '--ink3': '#6088a8',
+        '--ink': '#12283a', '--ink2': '#34506a', '--ink3': '#456783', '--brandink': '#14110b',
         '--teal': '#1aa6c0', '--hotpink': '#e05a9a', '--banana': '#e0c84a',
         '--grape': '#7a7ad0', '--lime': '#5ac09a', '--tomato': '#e06a5a'
       }
@@ -3066,9 +3068,9 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       vars: {
         '--paper': '#f0d9b8', '--paper2': '#e6c99e', '--label': '#fbf1df',
         '--chrome': '#c79a68', '--shade': '#9a6a3a', '--hilite': '#fffbf0',
-        '--ink': '#3a1e0e', '--ink2': '#6a3e22', '--ink3': '#9a6a44',
+        '--ink': '#3a1e0e', '--ink2': '#6a3e22', '--ink3': '#7f5535', '--brandink': '#fbf1df',
         '--teal': '#2a9a8a', '--hotpink': '#e0567a', '--banana': '#f0a828',
-        '--grape': '#9a5aa8', '--lime': '#8aa82a', '--tomato': '#e0492a'
+        '--grape': '#8f549c', '--lime': '#8aa82a', '--tomato': '#e0492a'
       }
     },
     bubblegum: {
@@ -3076,7 +3078,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       vars: {
         '--paper': '#f6cfe0', '--paper2': '#efb9d2', '--label': '#fdf0f6',
         '--chrome': '#d896b8', '--shade': '#a85f88', '--hilite': '#ffffff',
-        '--ink': '#3a0f28', '--ink2': '#6a2450', '--ink3': '#9a5080',
+        '--ink': '#3a0f28', '--ink2': '#6a2450', '--ink3': '#894470', '--brandink': '#14110b',
         '--teal': '#2ac0d0', '--hotpink': '#ff3d97', '--banana': '#ffd23a',
         '--grape': '#a05fd8', '--lime': '#6fdf6a', '--tomato': '#ff6a5a'
       }
@@ -3086,7 +3088,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       vars: {
         '--paper': '#e7dfca', '--paper2': '#dbd1b6', '--label': '#f6f1e2',
         '--chrome': '#b0a480', '--shade': '#7a6e50', '--hilite': '#fffef8',
-        '--ink': '#201a12', '--ink2': '#4a4030', '--ink3': '#7a6e58',
+        '--ink': '#201a12', '--ink2': '#4a4030', '--ink3': '#6a5f4b',
         '--teal': '#4a7a6a', '--hotpink': '#b05a6a', '--banana': '#c89a3a',
         '--grape': '#6a5a8a', '--lime': '#7a8a3a', '--tomato': '#b0503a'
       }
@@ -3096,7 +3098,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       vars: {
         '--paper': '#cfcfcf', '--paper2': '#bebebe', '--label': '#f2f2f2',
         '--chrome': '#949494', '--shade': '#626262', '--hilite': '#ffffff',
-        '--ink': '#161616', '--ink2': '#444444', '--ink3': '#767676',
+        '--ink': '#161616', '--ink2': '#444444', '--ink3': '#555555',
         '--teal': '#8a8a8a', '--hotpink': '#d83a3a', '--banana': '#b0b0b0',
         '--grape': '#5a5a5a', '--lime': '#9a9a9a', '--tomato': '#b02020'
       }
@@ -3106,7 +3108,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       vars: {
         '--paper': '#242a3d', '--paper2': '#2e3650', '--label': '#333c58',
         '--chrome': '#454f6e', '--shade': '#151a28', '--hilite': '#4a5578',
-        '--ink': '#eef1fb', '--ink2': '#b9c2dd', '--ink3': '#8590b0'
+        '--ink': '#eef1fb', '--ink2': '#b9c2dd', '--ink3': '#8b96b5', '--brandink': '#f4f6ff'
       }
     },
     carbon: {
@@ -3114,7 +3116,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       vars: {
         '--paper': '#1c1c22', '--paper2': '#26262e', '--label': '#2c2c36',
         '--chrome': '#3a3a46', '--shade': '#0e0e12', '--hilite': '#43434f',
-        '--ink': '#f2f2f5', '--ink2': '#c2c2cc', '--ink3': '#8a8a98'
+        '--ink': '#f2f2f5', '--ink2': '#c2c2cc', '--ink3': '#8a8a98', '--brandink': '#f4f6ff'
       }
     },
     terminal: {
@@ -3122,7 +3124,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       vars: {
         '--paper': '#0e1a10', '--paper2': '#13251a', '--label': '#17311f',
         '--chrome': '#1f4a2b', '--shade': '#060f09', '--hilite': '#256034',
-        '--ink': '#7dff92', '--ink2': '#46b862', '--ink3': '#2f7a44',
+        '--ink': '#7dff92', '--ink2': '#46b862', '--ink3': '#3d9252',
         '--teal': '#29e0c2', '--hotpink': '#ff5f8f', '--banana': '#b6ff4a',
         '--grape': '#4dffab', '--lime': '#57ff42', '--tomato': '#ff8a3a',
         '--crt': '#04120a'
@@ -3144,7 +3146,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       vars: {
         '--paper': '#123a63', '--paper2': '#0f3252', '--label': '#164c7e',
         '--chrome': '#2c609a', '--shade': '#08213a', '--hilite': '#3c74ac',
-        '--ink': '#eef4ff', '--ink2': '#b8d4f0', '--ink3': '#86aad0',
+        '--ink': '#eef4ff', '--ink2': '#b8d4f0', '--ink3': '#86aad0', '--brandink': '#14110b',
         '--teal': '#5fe0ff', '--hotpink': '#ff8ac0', '--banana': '#ffe15a',
         '--grape': '#b08aff', '--lime': '#7affc0', '--tomato': '#ff9a6a',
         '--crt': '#06172a'
@@ -3155,7 +3157,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       vars: {
         '--paper': '#241234', '--paper2': '#2f1644', '--label': '#3c1c54',
         '--chrome': '#52306e', '--shade': '#140a1e', '--hilite': '#603c82',
-        '--ink': '#ffe6ff', '--ink2': '#e0a0e8', '--ink3': '#b070c0',
+        '--ink': '#ffe6ff', '--ink2': '#e0a0e8', '--ink3': '#b070c0', '--brandink': '#14110b',
         '--teal': '#21e6d4', '--hotpink': '#ff4fb0', '--banana': '#ffe15a',
         '--grape': '#a05fff', '--lime': '#5affc0', '--tomato': '#ff6a8a',
         '--crt': '#120820'
@@ -3166,7 +3168,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       vars: {
         '--paper': '#2b3f2a', '--paper2': '#223421', '--label': '#35492e',
         '--chrome': '#48603f', '--shade': '#16220f', '--hilite': '#55704a',
-        '--ink': '#f0f4e2', '--ink2': '#c4d0a8', '--ink3': '#93a678',
+        '--ink': '#f0f4e2', '--ink2': '#c4d0a8', '--ink3': '#99ab7e', '--brandink': '#14110b',
         '--teal': '#35b58a', '--hotpink': '#e86a9a', '--banana': '#e8c34a',
         '--grape': '#a07acc', '--lime': '#8fcf3a', '--tomato': '#e0632f',
         '--crt': '#0e1a0c'
@@ -3177,7 +3179,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       vars: {
         '--paper': '#4a2a6a', '--paper2': '#3f2258', '--label': '#5a3a7e',
         '--chrome': '#6e4e92', '--shade': '#2a1640', '--hilite': '#7e5aa2',
-        '--ink': '#f4ecff', '--ink2': '#d0b8ee', '--ink3': '#a888c8',
+        '--ink': '#f4ecff', '--ink2': '#d0b8ee', '--ink3': '#b498d1', '--brandink': '#14110b',
         '--teal': '#3ad0d0', '--hotpink': '#ff6ac0', '--banana': '#ffd84a',
         '--grape': '#c89aff', '--lime': '#9aef5a', '--tomato': '#ff7a5a',
         '--crt': '#1c0f2c'
@@ -3188,7 +3190,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       vars: {
         '--paper': '#1c1c14', '--paper2': '#26261a', '--label': '#33301c',
         '--chrome': '#4a4620', '--shade': '#0c0c08', '--hilite': '#5c5620',
-        '--ink': '#ffe14a', '--ink2': '#c8a82a', '--ink3': '#8a7420',
+        '--ink': '#ffe14a', '--ink2': '#c8a82a', '--ink3': '#9a8326',
         '--teal': '#2ac0a0', '--hotpink': '#ff7a3a', '--banana': '#ffd21f',
         '--grape': '#c89aff', '--lime': '#b6e02a', '--tomato': '#ff5a1f',
         '--crt': '#0d0d06'
@@ -4265,32 +4267,76 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
     /* Save the whole arcade as one self-contained file you can drop in Drive, on
        a USB stick, anywhere — and open offline any time. We clone the live page,
-       strip the runtime-injected UI back to the pristine skeleton (scripts and
-       styles only), and hand back a copy that boots exactly like a fresh load.
-       In the single-file build every script and the stylesheet are inlined, so
-       the copy needs nothing else to run. */
-    function downloadSelf() {
-      let html;
+       strip the runtime-injected UI back to the pristine skeleton, then pull in
+       every external asset the skeleton still points at (the stylesheet and each
+       <script src>) and inline it, so the saved copy needs nothing else to run.
+
+       This matters because the live site serves the MULTI-FILE build — the page
+       still references js/core/*.js and css/arcade.css. Just cloning the DOM
+       would hand back a file whose <script src> paths resolve to nothing once
+       it is opened offline. Fetching each one (same origin, so it is allowed)
+       and inlining it is what makes the download genuinely portable. On the
+       single-file build there is nothing external left to fetch, so this same
+       code path simply serialises the clone unchanged. */
+    const escClose = (s) => s.replace(/<\/(script|style)/gi, '<\\/$1');   // don't let content close its own tag
+    async function downloadSelf(btn) {
+      const label = btn && btn.textContent;
+      const setLabel = (t) => { if (btn) btn.textContent = t; };
+      setLabel('Preparing…');
       try {
         const clone = document.documentElement.cloneNode(true);
         clone.removeAttribute('style');      // drop the theme vars stamped on <html>
         clone.removeAttribute('data-ui');
         clone.removeAttribute('data-dark');
+        const titleEl = clone.querySelector('title'); if (titleEl) titleEl.textContent = 'Docs';
+        clone.querySelectorAll('link[rel="manifest"]').forEach((n) => n.remove());   // external, useless offline
         const b = clone.querySelector('body');
         if (b) Array.prototype.slice.call(b.children).forEach((n) => {
           const tag = n.tagName ? n.tagName.toLowerCase() : '';
           if (tag !== 'script' && tag !== 'noscript') n.remove();   // everything else is rebuilt on load
         });
-        html = '<!doctype html>\n' + clone.outerHTML;
-      } catch (e) { html = '<!doctype html>\n' + document.documentElement.outerHTML; }
-      if (/<script[^>]+\bsrc=/.test(html)) {
-        alert('Heads up: this looks like the multi-file version, so the saved copy will still expect its script files nearby. The single-file build saves as one standalone file.');
+
+        /* Inline every external asset. We fetch via the LIVE document's nodes
+           (their .href/.src are already resolved to absolute URLs) and swap the
+           matching node in the clone for an inline <style>/<script>. */
+        const jobs = [];
+        const liveCss = Array.prototype.slice.call(document.querySelectorAll('link[rel="stylesheet"][href]'));
+        const cloneCss = Array.prototype.slice.call(clone.querySelectorAll('link[rel="stylesheet"][href]'));
+        liveCss.forEach((live, i) => {
+          const target = cloneCss[i]; if (!target) return;
+          jobs.push(fetch(live.href).then((r) => r.text()).then((css) => {
+            const style = document.createElement('style');
+            style.textContent = escClose(css);
+            target.replaceWith(style);
+          }));
+        });
+        const liveJs = Array.prototype.slice.call(document.querySelectorAll('script[src]'));
+        const cloneJs = Array.prototype.slice.call(clone.querySelectorAll('script[src]'));
+        liveJs.forEach((live, i) => {
+          const target = cloneJs[i]; if (!target) return;
+          jobs.push(fetch(live.src).then((r) => r.text()).then((js) => {
+            const s = document.createElement('script');
+            s.textContent = escClose(js);
+            target.replaceWith(s);
+          }));
+        });
+        if (jobs.length) { setLabel('Bundling ' + jobs.length + ' files…'); await Promise.all(jobs); }
+
+        if (clone.querySelector('script[src], link[rel="stylesheet"][href]')) {
+          throw new Error('external reference survived inlining');
+        }
+        const html = '<!doctype html>\n' + clone.outerHTML;
+        const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = h('a', { href: url, download: 'docs.html' });   // a discreet filename
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+        setLabel('Saved ✓');
+        setTimeout(() => setLabel(label || 'Download this page'), 2200);
+      } catch (e) {
+        setLabel(label || 'Download this page');
+        alert('Could not build the offline copy — a file failed to load (' + (e && e.message ? e.message : e) + '). If you opened this straight from a file on disk rather than a web address, grab the ready-made single-file build (dist/cubicle-arcade.html) from the project instead.');
       }
-      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = h('a', { href: url, download: 'docs.html' });   // a discreet filename
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1500);
     }
 
     const foot = h('footer', { class: 'foot' },
@@ -4312,7 +4358,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
         importInput),
       h('span', { class: 'foot-skin' },
         h('strong', null, 'OFFLINE COPY:'),
-        h('button', { class: 'btn tiny', type: 'button', title: 'Save this whole page as one file you can open with no internet', onclick: downloadSelf }, 'Download this page'),
+        h('button', { class: 'btn tiny', type: 'button', title: 'Save this whole page as one file you can open with no internet', onclick: (e) => downloadSelf(e.currentTarget) }, 'Download this page'),
         h('span', { class: 'foot-privacy' }, 'one self-contained file — keep it in Drive or a USB stick and open it offline any time')),
       webRow,
       h('span', null,
@@ -19569,6 +19615,9 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   const { h, clamp } = Engine;
   const W = 720, H = 440, GROUND = H - 26;
   const PR = 26, BR = 14, GRAV = 1900, JUMP = 720, MOVE = 320, WIN = 7;
+  /* the ball floats more than the players fall, so you can actually loft it up
+     to the rim and it hangs long enough to aim — basketball, not a hot potato */
+  const BALL_GRAV = 1180;
 
   function mount(root, api) {
     const bagg = Engine.bag();
@@ -19615,7 +19664,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
     /* goals/hoops: p1 (left) attacks the RIGHT target; p2 attacks the LEFT target */
     function targets() {
-      if (sport === 'bball') return { left: { hx: 62, hy: 150, rw: 34 }, right: { hx: W - 62, hy: 150, rw: 34 } };
+      if (sport === 'bball') return { left: { hx: 98, hy: GROUND - 206, rw: 40 }, right: { hx: W - 98, hy: GROUND - 206, rw: 40 } };
       return { left: { gx: 0, gy: GROUND - 96, gw: 20, gh: 96 }, right: { gx: W - 20, gy: GROUND - 96, gw: 20, gh: 96 } };
     }
 
@@ -19639,9 +19688,9 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       if (d < PR + BR) {
         const nx = dx / d, ny = dy / d;
         ball.x = pl.x + nx * (PR + BR); ball.y = pl.y + ny * (PR + BR);
-        const power = 430;
+        const power = 540;
         ball.vx = nx * power + pl.vx * 0.7;
-        ball.vy = ny * power + pl.vy * 0.6 - 80;
+        ball.vy = ny * power + pl.vy * 0.6 - 220;   // strong upward bias so a jump-and-bump lofts it rimward
         api.sfx.blip(300);
       }
     }
@@ -19655,7 +19704,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
       /* ball physics */
       if (serveT > 0) serveT -= dt;
-      ball.vy += GRAV * dt;
+      ball.vy += BALL_GRAV * dt;
       ball.x += ball.vx * dt; ball.y += ball.vy * dt;
       if (ball.x < BR) { ball.x = BR; ball.vx = Math.abs(ball.vx) * 0.75; }
       if (ball.x > W - BR) { ball.x = W - BR; ball.vx = -Math.abs(ball.vx) * 0.75; }
@@ -19667,7 +19716,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       if (sport === 'bball') {
         /* score when the ball drops through a rim from above */
         for (const [t, who] of [[T.right, 1], [T.left, 2]]) {
-          if (ball.vy > 0 && Math.abs(ball.x - t.hx) < t.rw && ball.y > t.hy && ball.y < t.hy + 26) { return goal(who); }
+          if (ball.vy > 0 && Math.abs(ball.x - t.hx) < t.rw && ball.y > t.hy && ball.y < t.hy + 32) { return goal(who); }
         }
       } else {
         if (ball.x < T.left.gx + T.left.gw + BR && ball.y > T.left.gy) return goal(2);

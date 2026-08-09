@@ -325,32 +325,76 @@
 
     /* Save the whole arcade as one self-contained file you can drop in Drive, on
        a USB stick, anywhere — and open offline any time. We clone the live page,
-       strip the runtime-injected UI back to the pristine skeleton (scripts and
-       styles only), and hand back a copy that boots exactly like a fresh load.
-       In the single-file build every script and the stylesheet are inlined, so
-       the copy needs nothing else to run. */
-    function downloadSelf() {
-      let html;
+       strip the runtime-injected UI back to the pristine skeleton, then pull in
+       every external asset the skeleton still points at (the stylesheet and each
+       <script src>) and inline it, so the saved copy needs nothing else to run.
+
+       This matters because the live site serves the MULTI-FILE build — the page
+       still references js/core/*.js and css/arcade.css. Just cloning the DOM
+       would hand back a file whose <script src> paths resolve to nothing once
+       it is opened offline. Fetching each one (same origin, so it is allowed)
+       and inlining it is what makes the download genuinely portable. On the
+       single-file build there is nothing external left to fetch, so this same
+       code path simply serialises the clone unchanged. */
+    const escClose = (s) => s.replace(/<\/(script|style)/gi, '<\\/$1');   // don't let content close its own tag
+    async function downloadSelf(btn) {
+      const label = btn && btn.textContent;
+      const setLabel = (t) => { if (btn) btn.textContent = t; };
+      setLabel('Preparing…');
       try {
         const clone = document.documentElement.cloneNode(true);
         clone.removeAttribute('style');      // drop the theme vars stamped on <html>
         clone.removeAttribute('data-ui');
         clone.removeAttribute('data-dark');
+        const titleEl = clone.querySelector('title'); if (titleEl) titleEl.textContent = 'Docs';
+        clone.querySelectorAll('link[rel="manifest"]').forEach((n) => n.remove());   // external, useless offline
         const b = clone.querySelector('body');
         if (b) Array.prototype.slice.call(b.children).forEach((n) => {
           const tag = n.tagName ? n.tagName.toLowerCase() : '';
           if (tag !== 'script' && tag !== 'noscript') n.remove();   // everything else is rebuilt on load
         });
-        html = '<!doctype html>\n' + clone.outerHTML;
-      } catch (e) { html = '<!doctype html>\n' + document.documentElement.outerHTML; }
-      if (/<script[^>]+\bsrc=/.test(html)) {
-        alert('Heads up: this looks like the multi-file version, so the saved copy will still expect its script files nearby. The single-file build saves as one standalone file.');
+
+        /* Inline every external asset. We fetch via the LIVE document's nodes
+           (their .href/.src are already resolved to absolute URLs) and swap the
+           matching node in the clone for an inline <style>/<script>. */
+        const jobs = [];
+        const liveCss = Array.prototype.slice.call(document.querySelectorAll('link[rel="stylesheet"][href]'));
+        const cloneCss = Array.prototype.slice.call(clone.querySelectorAll('link[rel="stylesheet"][href]'));
+        liveCss.forEach((live, i) => {
+          const target = cloneCss[i]; if (!target) return;
+          jobs.push(fetch(live.href).then((r) => r.text()).then((css) => {
+            const style = document.createElement('style');
+            style.textContent = escClose(css);
+            target.replaceWith(style);
+          }));
+        });
+        const liveJs = Array.prototype.slice.call(document.querySelectorAll('script[src]'));
+        const cloneJs = Array.prototype.slice.call(clone.querySelectorAll('script[src]'));
+        liveJs.forEach((live, i) => {
+          const target = cloneJs[i]; if (!target) return;
+          jobs.push(fetch(live.src).then((r) => r.text()).then((js) => {
+            const s = document.createElement('script');
+            s.textContent = escClose(js);
+            target.replaceWith(s);
+          }));
+        });
+        if (jobs.length) { setLabel('Bundling ' + jobs.length + ' files…'); await Promise.all(jobs); }
+
+        if (clone.querySelector('script[src], link[rel="stylesheet"][href]')) {
+          throw new Error('external reference survived inlining');
+        }
+        const html = '<!doctype html>\n' + clone.outerHTML;
+        const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = h('a', { href: url, download: 'docs.html' });   // a discreet filename
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+        setLabel('Saved ✓');
+        setTimeout(() => setLabel(label || 'Download this page'), 2200);
+      } catch (e) {
+        setLabel(label || 'Download this page');
+        alert('Could not build the offline copy — a file failed to load (' + (e && e.message ? e.message : e) + '). If you opened this straight from a file on disk rather than a web address, grab the ready-made single-file build (dist/cubicle-arcade.html) from the project instead.');
       }
-      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = h('a', { href: url, download: 'docs.html' });   // a discreet filename
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1500);
     }
 
     const foot = h('footer', { class: 'foot' },
@@ -372,7 +416,7 @@
         importInput),
       h('span', { class: 'foot-skin' },
         h('strong', null, 'OFFLINE COPY:'),
-        h('button', { class: 'btn tiny', type: 'button', title: 'Save this whole page as one file you can open with no internet', onclick: downloadSelf }, 'Download this page'),
+        h('button', { class: 'btn tiny', type: 'button', title: 'Save this whole page as one file you can open with no internet', onclick: (e) => downloadSelf(e.currentTarget) }, 'Download this page'),
         h('span', { class: 'foot-privacy' }, 'one self-contained file — keep it in Drive or a USB stick and open it offline any time')),
       webRow,
       h('span', null,
