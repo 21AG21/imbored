@@ -19736,16 +19736,19 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   const W = 560, H = 560;
   const CELL = W / N;
 
-  const EMPTY = 0, WALL = 1, SAND = 2, WATER = 3, OIL = 4, FIRE = 5, PAPER = 6, SMOKE = 7;
+  const EMPTY = 0, WALL = 1, SAND = 2, WATER = 3, OIL = 4, FIRE = 5, PAPER = 6, SMOKE = 7,
+    STONE = 8, PLANT = 9, ACID = 10, LAVA = 11, ICE = 12;
   const MATS = [
     { id: SAND, label: 'Sand' }, { id: WATER, label: 'Water' }, { id: OIL, label: 'Oil' },
-    { id: FIRE, label: 'Fire' }, { id: PAPER, label: 'Paper' }, { id: WALL, label: 'Wall' },
-    { id: EMPTY, label: 'Eraser' }
+    { id: LAVA, label: 'Lava' }, { id: ACID, label: 'Acid' }, { id: FIRE, label: 'Fire' },
+    { id: PLANT, label: 'Plant' }, { id: ICE, label: 'Ice' }, { id: PAPER, label: 'Paper' },
+    { id: STONE, label: 'Stone' }, { id: WALL, label: 'Wall' }, { id: EMPTY, label: 'Eraser' }
   ];
-  /* density decides who sinks through whom; only these three actually fall */
-  const DEN = { [SAND]: 3, [WATER]: 2, [OIL]: 1 };
-  const isLiquid = (e) => e === WATER || e === OIL;
+  /* density decides who sinks through whom */
+  const DEN = { [SAND]: 5, [LAVA]: 4, [WATER]: 3, [ACID]: 2.6, [OIL]: 1 };
+  const isLiquid = (e) => e === WATER || e === OIL || e === ACID || e === LAVA;
   const den = (e) => DEN[e] || 0;
+  const SOLID = new Set([WALL, PAPER, STONE, PLANT, ICE]);   /* placeable, overwrites, does not fall */
 
   function mount(root, api) {
     const bagg = Engine.bag();
@@ -19814,7 +19817,9 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       for (const j of nb) {
         if (j < 0) continue;
         if (grid[j] === PAPER && Math.random() < 0.28) set(j, FIRE, randInt(26, 50));
+        else if (grid[j] === PLANT && Math.random() < 0.32) set(j, FIRE, randInt(22, 44));
         else if (grid[j] === OIL && Math.random() < 0.16) set(j, FIRE, randInt(30, 60));
+        else if (grid[j] === ICE && Math.random() < 0.25) set(j, WATER, 0);
       }
       if (life[i] <= 1) { set(i, Math.random() < 0.5 ? SMOKE : EMPTY, 22); return; }
       life[i]--;
@@ -19831,6 +19836,42 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       if (x + dx >= 0 && x + dx < N && y > 0 && grid[idx(x + dx, y - 1)] === EMPTY) swap(i, idx(x + dx, y - 1));
     }
 
+    /* four-neighbour helper */
+    function nb4(x, y) { return [x > 0 ? idx(x - 1, y) : -1, x < N - 1 ? idx(x + 1, y) : -1, y > 0 ? idx(x, y - 1) : -1, y < N - 1 ? idx(x, y + 1) : -1]; }
+
+    function reactLava(i, x, y) {
+      for (const j of nb4(x, y)) {
+        if (j < 0) continue;
+        const g = grid[j];
+        if (g === WATER) { set(i, STONE, 0); set(j, SMOKE, 20); return; }   // quenched into stone + steam
+        if ((g === PAPER || g === OIL || g === PLANT) && Math.random() < 0.5) set(j, FIRE, randInt(30, 60));
+        if (g === ICE) set(j, WATER, 0);
+      }
+      if (Math.random() < 0.12 && y > 0 && grid[idx(x, y - 1)] === EMPTY) set(idx(x, y - 1), SMOKE, 14);  // heat shimmer
+    }
+    function reactAcid(i, x, y) {
+      for (const j of nb4(x, y)) {
+        if (j < 0) continue;
+        const g = grid[j];
+        if (g === WATER && Math.random() < 0.2) { set(i, WATER, 0); return; }   // diluted
+        if ((g === SAND || g === PLANT || g === PAPER || g === STONE || g === ICE) && Math.random() < 0.3) {
+          set(j, EMPTY, 0);
+          if (Math.random() < 0.5) { set(i, EMPTY, 0); return; }   // acid used up
+        }
+      }
+    }
+    function reactPlant(i, x, y) {
+      let water = false;
+      for (const j of nb4(x, y)) if (j >= 0 && grid[j] === WATER) water = true;
+      if (water && Math.random() < 0.06) {
+        const empties = nb4(x, y).filter((j) => j >= 0 && grid[j] === EMPTY);
+        if (empties.length) set(empties[(Math.random() * empties.length) | 0], PLANT, 0);
+      }
+    }
+    function reactIce(i, x, y) {
+      for (const j of nb4(x, y)) if (j >= 0 && (grid[j] === FIRE || grid[j] === LAVA)) { set(i, WATER, 0); return; }
+    }
+
     function step() {
       moved.fill(0);
       /* falling materials: bottom-up so a grain settles in one pass */
@@ -19842,8 +19883,17 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
           if (moved[i]) continue;
           const e = grid[i];
           if (e === SAND) fall(i, x, y, false);
-          else if (e === WATER || e === OIL) fall(i, x, y, true);
+          else if (isLiquid(e)) fall(i, x, y, true);
         }
+      }
+      /* chemistry pass — runs before fire moves so heat-driven reactions
+       * (ice melting, lava quenching) see the flame that's next to them */
+      for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+        const i = idx(x, y), e = grid[i];
+        if (e === LAVA) reactLava(i, x, y);
+        else if (e === ACID) reactAcid(i, x, y);
+        else if (e === PLANT) reactPlant(i, x, y);
+        else if (e === ICE) reactIce(i, x, y);
       }
       /* fire + smoke: top-down so a rising cell isn't stepped twice */
       for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
@@ -19865,6 +19915,11 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
         case PAPER: return 0xffd0e2e8 >>> 0;
         case FIRE: { const f = (frame + i) & 3; return f === 0 ? 0xff2a8fff >>> 0 : f === 1 ? 0xff3affff >>> 0 : 0xff2a4aff >>> 0; }
         case SMOKE: return (0xff4a4a4a + (t << 16)) >>> 0;
+        case STONE: return (0xff6e7478 + t) >>> 0;                       // grey
+        case PLANT: return (0xff2aa03a - (t << 8)) >>> 0;                // green
+        case ACID: return (0xff3cf096 - (t << 8)) >>> 0;                 // acid green
+        case LAVA: { const f = (frame * 3 + i) & 7; return f < 3 ? 0xff1e5aff >>> 0 : f < 6 ? 0xff2a7aff >>> 0 : 0xff3a9aff >>> 0; }  // glowing orange
+        case ICE: return (0xfff0dcb4 - t) >>> 0;                         // pale blue
         default: return 0xff14100a >>> 0;
       }
     }
@@ -19890,10 +19945,11 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
         if (x < 0 || y < 0 || x >= N || y >= N) continue;
         const i = idx(x, y);
         if (mat === EMPTY) { set(i, EMPTY, 0); continue; }
-        /* liquids/gas paint sparsely so you pour rather than dump a solid block */
-        if ((mat === WATER || mat === OIL || mat === FIRE) && Math.random() < 0.4) continue;
-        if (grid[i] === EMPTY || mat === WALL || mat === PAPER) set(i, mat, mat === FIRE ? randInt(26, 50) : 0);
-        else if (mat === FIRE || mat === WATER || mat === OIL || mat === SAND) set(i, mat, mat === FIRE ? randInt(26, 50) : 0);
+        /* liquids/gas/fire paint sparsely so you pour rather than dump a block */
+        if ((isLiquid(mat) || mat === FIRE) && Math.random() < 0.4) continue;
+        const lf = mat === FIRE ? randInt(26, 50) : mat === LAVA ? randInt(60, 120) : 0;
+        if (grid[i] === EMPTY || SOLID.has(mat)) set(i, mat, lf);
+        else if (isLiquid(mat) || mat === FIRE || mat === SAND) set(i, mat, lf);
       }
     }
     bagg.listen(cv.el, 'pointerdown', (e) => { painting = true; paintAt(e); try { if (cv.el.setPointerCapture) cv.el.setPointerCapture(e.pointerId); } catch (err) { /* */ } });
@@ -19907,7 +19963,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       get(x, y) { return grid[idx(x, y)]; },
       step(n) { for (let k = 0; k < (n || 1); k++) step(); },
       count(e) { let c = 0; for (let i = 0; i < grid.length; i++) if (grid[i] === e) c++; return c; },
-      consts() { return { EMPTY, WALL, SAND, WATER, OIL, FIRE, PAPER, SMOKE, N }; },
+      consts() { return { EMPTY, WALL, SAND, WATER, OIL, FIRE, PAPER, SMOKE, STONE, PLANT, ACID, LAVA, ICE, N }; },
       setRunning(v) { running = !!v; }
     };
     bagg.add(() => { if (window.__powder) delete window.__powder; });
@@ -19928,15 +19984,16 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     emoji: 'powder',
     cat: 'goofy',
     order: 40,
-    blurb: 'A falling-sand toy with no point except the mess. Sand piles up, water finds its level, oil floats, and fire chews through paper until someone throws water on it. Draw materials and watch the tiny rules take over.',
+    blurb: 'A falling-sand toy with a dozen materials and no point except the mess. Sand piles, water levels off, oil floats, lava sets fire to everything and hardens to stone when it hits water, acid eats through solids, plants creep along water, and ice melts by the flames. Draw and watch the rules collide.',
     scoreLabel: 'Messes made',
     tags: ['falling-sand', 'sandbox', 'toy', 'physics'],
     how: [
       'Pick a material and paint it into the tray by clicking and dragging. Bigger brushes pour faster; the Eraser clears cells.',
-      'Sand tumbles down and piles at a slope. Water pours, spreads, and settles flat. Oil is lighter than water, so it floats up to sit on top of it.',
-      'Fire spreads through paper and oil and gutters out on its own, leaving a little smoke that drifts up and fades. Paint water next to a fire and it goes out instantly.',
-      'There is no score and nothing to win — it is a toy. Try a pool of water, a slick of oil on top, a paper wall beside it, then a single spark.',
-      'Walls and the tray border hold everything in. Hit Clear to start a fresh mess, or Pause to freeze the frame.'
+      'The classics: sand tumbles and piles, water spreads and settles flat, oil floats on top of water, and fire chews through paper (and plants and oil) then fades to smoke. Water snuffs fire on contact.',
+      'Lava flows, sets fire to anything flammable, melts ice, and — the good bit — freezes into solid stone the instant it touches water, hissing off a puff of steam.',
+      'Acid eats through sand, stone, paper, plants and ice, using itself up as it goes, and water dilutes it back to plain water.',
+      'Plants creep into empty space wherever they touch water, so a seed by a puddle slowly overgrows — until a stray spark takes the whole vine. Ice melts to water near any heat.',
+      'No score, no winning — it is a toy. Try lava pouring onto a lake, an acid drip through a stone wall, or a garden you then set alight. Clear starts fresh; Pause freezes the frame.'
     ],
     mount
   });
