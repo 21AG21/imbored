@@ -418,6 +418,27 @@
     ' *** CHOMPS THE STAPLER IS NOT A REAL EMPLOYEE ***'
   ];
 
+  /* arrow-key navigation across the card grid (Tab already works linearly) */
+  function wireGridKeys(grid) {
+    grid.addEventListener('keydown', (e) => {
+      if (e.key.slice(0, 5) !== 'Arrow' && e.key !== 'Home' && e.key !== 'End') return;
+      const cards = Array.prototype.slice.call(grid.querySelectorAll('.card'));
+      if (!cards.length) return;
+      const i = cards.indexOf(document.activeElement);
+      if (i < 0) { cards[0].focus(); e.preventDefault(); return; }
+      const top0 = cards[0].offsetTop;
+      const cols = cards.filter((c) => c.offsetTop === top0).length || 1;
+      let j = i;
+      if (e.key === 'ArrowRight') j = i + 1;
+      else if (e.key === 'ArrowLeft') j = i - 1;
+      else if (e.key === 'ArrowDown') j = i + cols;
+      else if (e.key === 'ArrowUp') j = i - cols;
+      else if (e.key === 'Home') j = 0;
+      else if (e.key === 'End') j = cards.length - 1;
+      if (j >= 0 && j < cards.length) { cards[j].focus(); e.preventDefault(); }
+    });
+  }
+
   function renderHub() {
     const view = document.getElementById('view');
     if (!view) return;
@@ -471,6 +492,8 @@
           h('span', { class: 'card-best' }, 'opens in a new tab \u2197')) : null),
       h('div', { class: 'ticker' }, h('span', null,
         '*** NOW WITH ' + games.length + ' GAMES ***' + TICKER.slice(2).join(''))));
+    const gridEl = view.querySelector('.grid');
+    if (gridEl) wireGridKeys(gridEl);
     applyDocTitle();
   }
 
