@@ -1948,3 +1948,66 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 .hoops-side { display: flex; gap: 6px; flex: 1; }
 .hoops-side.r { justify-content: flex-end; }
 @media (pointer: coarse) { .hoops-pad { display: flex; } }
+
+/* ============================================================
+   Per-theme UI personalities (data-ui) — themes change the whole
+   layout feel (fonts, corners, shadows, texture), not just colour.
+   "chunky" is the default look defined above; these restyle it.
+   ============================================================ */
+
+/* ---------- SOFT: rounded, gentle drop-shadows, friendly sans ---------- */
+[data-ui="soft"] body { background-image: radial-gradient(circle at 15% 0%, rgba(255,255,255,.10), transparent 55%), radial-gradient(circle at 100% 100%, rgba(0,0,0,.05), transparent 45%); }
+[data-ui="soft"] .card, [data-ui="soft"] .btn, [data-ui="soft"] .pill, [data-ui="soft"] .grid, [data-ui="soft"] .hero,
+[data-ui="soft"] .banner, [data-ui="soft"] .theme-pop, [data-ui="soft"] input, [data-ui="soft"] select, [data-ui="soft"] textarea,
+[data-ui="soft"] .sb-pad, [data-ui="soft"] .pick, [data-ui="soft"] .theme-swatch, [data-ui="soft"] .bw-gen, [data-ui="soft"] .wb,
+[data-ui="soft"] .chip { border-radius: 16px; border-width: 2px; }
+[data-ui="soft"] .card, [data-ui="soft"] .hero, [data-ui="soft"] .grid, [data-ui="soft"] .banner { box-shadow: 0 8px 22px rgba(0,0,0,.16); }
+[data-ui="soft"] .btn, [data-ui="soft"] .pill, [data-ui="soft"] .icon-btn, [data-ui="soft"] .sb-pad, [data-ui="soft"] .pick { box-shadow: 0 3px 8px rgba(0,0,0,.16); }
+[data-ui="soft"] .btn:active { box-shadow: 0 1px 3px rgba(0,0,0,.2); transform: translateY(1px); }
+[data-ui="soft"] h1, [data-ui="soft"] h2, [data-ui="soft"] h3, [data-ui="soft"] .card-title, [data-ui="soft"] .gtitle,
+[data-ui="soft"] .featured-h, [data-ui="soft"] .hero h1, [data-ui="soft"] .brand-text { font-family: "Trebuchet MS", "Segoe UI", Verdana, sans-serif; letter-spacing: 0; text-shadow: none; }
+[data-ui="soft"] .icon-btn { border-radius: 12px; }
+
+/* ---------- NEON: rounded, glowing edges, punchy ---------- */
+[data-ui="neon"] body { background-image: repeating-linear-gradient(115deg, rgba(255,255,255,.05) 0 14px, transparent 14px 30px); }
+[data-ui="neon"] .card, [data-ui="neon"] .btn, [data-ui="neon"] .pill, [data-ui="neon"] .grid, [data-ui="neon"] .hero,
+[data-ui="neon"] .banner, [data-ui="neon"] .theme-pop, [data-ui="neon"] input, [data-ui="neon"] select,
+[data-ui="neon"] .sb-pad, [data-ui="neon"] .pick, [data-ui="neon"] .theme-swatch, [data-ui="neon"] .chip { border-radius: 12px; }
+[data-ui="neon"] .card, [data-ui="neon"] .btn, [data-ui="neon"] .pill, [data-ui="neon"] .sb-pad, [data-ui="neon"] .pick,
+[data-ui="neon"] .icon-btn { box-shadow: 0 0 0 2px var(--ink), 0 0 14px rgba(255,255,255,.22); }
+[data-ui="neon"] .hero, [data-ui="neon"] .grid, [data-ui="neon"] .banner { box-shadow: 0 0 0 3px var(--ink), 0 0 26px rgba(255,255,255,.16); }
+[data-ui="neon"] h1, [data-ui="neon"] .hero h1, [data-ui="neon"] .card-title, [data-ui="neon"] .gtitle, [data-ui="neon"] .brand-text {
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif; font-weight: 800; text-shadow: 0 0 10px rgba(255,255,255,.45); letter-spacing: .5px; }
+[data-ui="neon"] .btn:active { box-shadow: 0 0 0 2px var(--ink); }
+
+/* ---------- PRINT: serif, flat, thin rules, newspaper ---------- */
+[data-ui="print"] body { background-image: repeating-linear-gradient(0deg, rgba(0,0,0,.035) 0 1px, transparent 1px 28px); }
+[data-ui="print"] .card, [data-ui="print"] .btn, [data-ui="print"] .pill, [data-ui="print"] .grid, [data-ui="print"] .hero,
+[data-ui="print"] .banner, [data-ui="print"] .theme-pop, [data-ui="print"] input, [data-ui="print"] select,
+[data-ui="print"] .sb-pad, [data-ui="print"] .pick, [data-ui="print"] .theme-swatch, [data-ui="print"] .chip,
+[data-ui="print"] .icon-btn, [data-ui="print"] .wb { border-radius: 0; box-shadow: none; border-width: 1px; }
+[data-ui="print"] .card { border-width: 1px; }
+[data-ui="print"] .card:hover { box-shadow: none; transform: none; text-decoration: none; }
+[data-ui="print"] .btn { box-shadow: none; border-width: 2px; }
+[data-ui="print"] .btn:active { box-shadow: none; transform: translateY(1px); }
+[data-ui="print"] .hero { border-width: 2px; box-shadow: none; }
+[data-ui="print"] .grid { box-shadow: none; border-width: 2px; }
+[data-ui="print"] body, [data-ui="print"] .card-blurb, [data-ui="print"] .hero p, [data-ui="print"] p, [data-ui="print"] .status { font-family: Georgia, "Times New Roman", serif; }
+[data-ui="print"] h1, [data-ui="print"] h2, [data-ui="print"] h3, [data-ui="print"] .card-title, [data-ui="print"] .gtitle,
+[data-ui="print"] .featured-h, [data-ui="print"] .hero h1, [data-ui="print"] .brand-text {
+  font-family: Georgia, "Times New Roman", serif; font-weight: 700; letter-spacing: 0; text-shadow: none; }
+
+/* ---------- TERMINAL: monospace, sharp, scanlines, glow ---------- */
+[data-ui="terminal"] body { background-image: repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0 1px, transparent 1px 3px), repeating-linear-gradient(90deg, rgba(255,255,255,.03) 0 1px, transparent 1px 3px); }
+[data-ui="terminal"] .card, [data-ui="terminal"] .btn, [data-ui="terminal"] .pill, [data-ui="terminal"] .grid, [data-ui="terminal"] .hero,
+[data-ui="terminal"] .banner, [data-ui="terminal"] .theme-pop, [data-ui="terminal"] input, [data-ui="terminal"] select,
+[data-ui="terminal"] .sb-pad, [data-ui="terminal"] .pick, [data-ui="terminal"] .theme-swatch, [data-ui="terminal"] .chip,
+[data-ui="terminal"] .icon-btn, [data-ui="terminal"] .wb { border-radius: 0; }
+[data-ui="terminal"] .card, [data-ui="terminal"] .btn, [data-ui="terminal"] .pill, [data-ui="terminal"] .hero,
+[data-ui="terminal"] .grid, [data-ui="terminal"] .banner, [data-ui="terminal"] .sb-pad, [data-ui="terminal"] .pick,
+[data-ui="terminal"] .icon-btn { box-shadow: 0 0 0 1px var(--ink), 0 0 10px rgba(0,255,120,.10); border-width: 1px; }
+[data-ui="terminal"] .btn:active { box-shadow: inset 0 0 0 1px var(--ink); }
+[data-ui="terminal"] *, [data-ui="terminal"] body { font-family: "Courier New", "Lucida Console", monospace !important; }
+[data-ui="terminal"] h1, [data-ui="terminal"] .hero h1, [data-ui="terminal"] .card-title, [data-ui="terminal"] .gtitle,
+[data-ui="terminal"] .brand-text { letter-spacing: 1px; text-shadow: 0 0 8px currentColor; text-transform: uppercase; }
+[data-ui="terminal"] .card-title, [data-ui="terminal"] .gtitle { font-weight: 700; }

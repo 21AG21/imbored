@@ -215,6 +215,17 @@
     return '#' + [r, g, b].map((v) => clampByte(v).toString(16).padStart(2, '0')).join('');
   }
 
+  /* each theme also picks one of five UI "personalities" — different fonts,
+     corner radius, shadow style and background texture — so themes restyle the
+     whole layout, not just the colours */
+  const UI = {
+    beige: 'chunky', slate: 'chunky', pumpkin: 'chunky', dusk: 'chunky', carbon: 'chunky',
+    mint: 'soft', rose: 'soft', forest: 'soft', ice: 'soft',
+    bubblegum: 'neon', miami: 'neon', grapesoda: 'neon',
+    newsprint: 'print', noir: 'print', blueprint: 'print',
+    terminal: 'terminal', amber: 'terminal', hazard: 'terminal'
+  };
+
   function apply() {
     const root = document.documentElement;
     /* clear anything a previous theme set */
@@ -225,6 +236,7 @@
 
     const vars = themeId === 'custom' ? customVars(custom) : (THEMES[themeId] || THEMES.beige).vars;
     for (const k in vars) root.style.setProperty(k, vars[k]);
+    root.setAttribute('data-ui', UI[themeId] || 'chunky');
 
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.setAttribute('content', getComputedStyle(root).getPropertyValue('--grape').trim() || '#6f3fa8');
