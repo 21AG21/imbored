@@ -210,7 +210,8 @@
     rave: c(12, 12, 6, P.hotpink) + c(8, 8, 2.2, P.banana) + c(16, 9, 2.2, P.teal) + c(9, 16, 2.2, P.lime) + c(15, 15, 2.2, P.tomato) + c(12, 6, 1.8, P.grape) + line(12, 12, 4, 4, 1.4, P.banana) + line(12, 12, 20, 5, 1.4, P.teal),
     speaker: r(4, 9, 5, 6, P.dark) + p('M9 9l6-4v14l-6-4z', P.paper) + p('M17 8a5 5 0 0 1 0 8', 'none').replace('fill="none"', 'fill="none" stroke="' + P.tomato + '" stroke-width="2" stroke-linecap="round"') + p('M19 6a8 8 0 0 1 0 12', 'none').replace('fill="none"', 'fill="none" stroke="' + P.banana + '" stroke-width="1.6" stroke-linecap="round"'),
     car: p('M3 15l1.5-5A3 3 0 0 1 7.4 8h9.2a3 3 0 0 1 2.9 2l1.5 5v3a1 1 0 0 1-1 1h-2v-2H6v2H4a1 1 0 0 1-1-1z', P.tomato) + p('M6.5 10h11l1 3.5H5.5z', P.teal) + c(7, 16, 1.6, P.dark) + c(17, 16, 1.6, P.dark),
-    obby: r(3, 18, 5, 3, P.lime) + r(10, 14, 5, 3, P.banana) + r(17, 9, 5, 3, P.teal) + c(6, 14, 2.4, P.tomato) + line(6, 14, 6, 18, 1.4, INK)
+    obby: r(3, 18, 5, 3, P.lime) + r(10, 14, 5, 3, P.banana) + r(17, 9, 5, 3, P.teal) + c(6, 14, 2.4, P.tomato) + line(6, 14, 6, 18, 1.4, INK),
+    hoops: c(12, 12, 8, '#e8621f') + line(12, 4, 12, 20, 1.4, INK) + line(4, 12, 20, 12, 1.4, INK) + p('M6 6q6 6 12 0', 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="1.4"') + p('M6 18q6-6 12 0', 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="1.4"')
   };
 
   const Icons = {

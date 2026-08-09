@@ -1942,3 +1942,9 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 .racer-btn:active { box-shadow: var(--bevel-in); }
 .racer-endbtns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; align-items: center; }
 @media (pointer: coarse) { .racer-pad { display: flex; } }
+
+/* Court (hoops) touch pad */
+.hoops-pad { display: none; justify-content: space-between; gap: 20px; margin-top: 10px; }
+.hoops-side { display: flex; gap: 6px; flex: 1; }
+.hoops-side.r { justify-content: flex-end; }
+@media (pointer: coarse) { .hoops-pad { display: flex; } }
