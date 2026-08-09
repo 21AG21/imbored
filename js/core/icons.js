@@ -193,7 +193,8 @@
     road: p('M7 2h4l-1 20H5zM17 2h-4l1 20h5z', P.grey) + line(12, 3, 12, 7, 2.5, P.yellow) + line(12, 11, 12, 15, 2.5, P.yellow) + line(12, 19, 12, 22, 2.5, P.yellow),
     mine: c(12, 12, 6.5, INK) + line(12, 2, 12, 5.5, 2) + line(12, 18.5, 12, 22, 2) + line(2, 12, 5.5, 12, 2) + line(18.5, 12, 22, 12, 2) + c(9.5, 9.5, 1.5, P.paper),
     flag: line(7, 3, 7, 21, 2) + p('M7 4l11 4-11 4z', P.tomato),
-    boom: p('M12 1l3 6 6-3-3 6 6 3-6 3 3 6-6-3-3 6-3-6-6 3 3-6-6-3 6-3-3-6 6 3z', P.tomato) + c(12, 12, 3, P.yellow)
+    boom: p('M12 1l3 6 6-3-3 6 6 3-6 3 3 6-6-3-3 6-3-6-6 3 3-6-6-3 6-3-3-6 6 3z', P.tomato) + c(12, 12, 3, P.yellow),
+    ising: r(3, 3, 18, 18, P.dark) + r(3, 3, 6, 6, P.tomato) + r(15, 3, 6, 6, P.tomato) + r(9, 9, 6, 6, P.tomato) + r(3, 15, 6, 6, P.tomato) + r(15, 15, 6, 6, P.tomato)
   };
 
   const Icons = {
