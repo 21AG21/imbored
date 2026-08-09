@@ -17610,7 +17610,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     const cv = Engine.canvas(root, W, H, { maxHeight: '78vh' });
     const ctx = cv.ctx;
 
-    let by, bv, pipes, score, started, over;
+    let by, bv, pipes, score, started, over, restartT, lastScore;
 
     const pScore = api.pill('Score: 0');
     const banner = h('div', { class: 'banner', style: { display: 'none' } });
@@ -17618,10 +17618,10 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     api.button('Restart', reset);
 
     const gap = () => Math.max(120, 190 - api.dm * 24);
-    const speed = () => 168 + api.dm * 42;
+    const speed = () => 196 + api.dm * 48;
 
     function reset() {
-      by = H / 2; bv = 0; pipes = []; score = 0; started = false; over = false;
+      by = H / 2; bv = 0; pipes = []; score = 0; started = false; over = false; restartT = 0;
       spawn(W + 120);
       spawn(W + 120 + SPACING);
       spawn(W + 120 + SPACING * 2);
@@ -17635,7 +17635,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     }
 
     function flap() {
-      if (over) return;
+      if (over) { reset(); }        /* a tap right after you crash is an instant new run */
       started = true;
       bv = FLAP_V;
       api.sfx.blip(680);
@@ -17647,18 +17647,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
     function die() {
       over = true;
+      lastScore = score;
+      restartT = 0.65;              /* snappy auto-restart — no menu, no waiting */
       api.sfx.bad();
-      const res = api.submit(score);
-      banner.style.display = '';
-      banner.replaceChildren(
-        h('h3', null, 'Down it goes.'),
-        h('p', null, score + ' pipe' + (score === 1 ? '' : 's') + ' cleared.' +
-          (res.isRecord ? ' New best!' : res.isFirst ? '' : ' Best: ' + res.best + '.')),
-        h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Try again'));
+      api.submit(score);
     }
 
     function update(dt) {
-      if (over || !started) return;
+      if (over) { restartT -= dt; if (restartT <= 0) reset(); return; }
+      if (!started) return;
       bv += GRAV * dt;
       by += bv * dt;
 
@@ -17719,6 +17716,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
         ctx.font = 'bold 22px system-ui';
         ctx.textAlign = 'center';
         ctx.fillText('tap / space to flap', W / 2, H / 2 - 70);
+        ctx.textAlign = 'left';
+      }
+      if (over) {
+        ctx.fillStyle = 'rgba(232,64,42,.30)'; ctx.fillRect(0, 0, W, H);
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#fff'; ctx.font = 'bold 34px system-ui';
+        ctx.fillText(lastScore + (lastScore === 1 ? ' pipe' : ' pipes'), W / 2, H / 2 - 12);
+        ctx.font = 'bold 17px system-ui';
+        ctx.fillText('tap to go again', W / 2, H / 2 + 22);
         ctx.textAlign = 'left';
       }
     }
