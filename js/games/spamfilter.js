@@ -219,6 +219,10 @@
     bagg.add(() => { if (window.__spam) delete window.__spam; });
 
     reset();
+    /* nudge a first-time player: auto-fire the opening wave if nobody has
+       pressed Send wave yet, so the defense actually starts moving. */
+    const autoWaveId = setTimeout(() => { if (phase === 'build' && !over) sendWave(); }, 2500);
+    bagg.add(() => clearTimeout(autoWaveId));
     bagg.add(Engine.loop((dt) => { for (let i = 0; i < speed; i++) update(dt); draw(); }));
     return () => bagg.dispose();
   }

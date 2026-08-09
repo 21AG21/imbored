@@ -91,7 +91,7 @@
       spawn(queue.shift());
       queue.push(nextPiece());
       banner.style.display = 'none';
-      api.status('← → move · ↑ or X rotate · Z rotate back · ↓ soft drop · Space hard drop · C hold · P pause');
+      api.status('← → move · ↑ rotate · ↓ soft drop · Space hard drop');
       sync();
     }
 

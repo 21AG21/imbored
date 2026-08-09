@@ -20,7 +20,7 @@
 
   function mount(root, api) {
     const bagg = Engine.bag();
-    let staples = 0, made = 0, clickPow = 1, acc = 0, since = 0, disposed = false;
+    let staples = 0, made = 0, clickPow = 1, acc = 0, since = 0, disposed = false, firstBuy = true;
     const owned = {}; BUILDINGS.forEach((b) => { owned[b.id] = 0; });
 
     const pRate = api.pill('0 /s');
@@ -34,7 +34,7 @@
     const rows = BUILDINGS.map((b) => {
       const costEl = h('span', { class: 'stp-cost' }, '');
       const nameEl = h('b', null, b.name);
-      const btn = h('button', { class: 'btn stp-buy', type: 'button', onclick: () => buy(b) },
+      const btn = h('button', { class: 'btn stp-buy', type: 'button', onclick: () => buy(b, btn) },
         h('span', { class: 'stp-emoji' }, b.emoji),
         h('span', { class: 'stp-info' }, nameEl, costEl));
       shop.appendChild(btn);
@@ -44,10 +44,15 @@
     const rateOf = () => BUILDINGS.reduce((s, b) => s + owned[b.id] * b.rate, 0);
     const costOf = (b) => Math.floor(b.base * Math.pow(1.15, owned[b.id]));
 
-    function buy(b) {
+    function buy(b, btn) {
       const c = costOf(b);
       if (staples < c) return;
       staples -= c; owned[b.id]++; api.sfx.good();
+      if (firstBuy) {
+        firstBuy = false;
+        try { const r = btn.getBoundingClientRect(); Engine.fx.burst(r.left + r.width / 2, r.top + r.height / 2, 40); }
+        catch (e) { api.sfx.great(); }
+      }
       api.submit(Math.floor(made)); sync();
     }
     stapler.addEventListener('click', () => {

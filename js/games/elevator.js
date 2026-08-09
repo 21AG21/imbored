@@ -39,7 +39,7 @@
       for (let f = 0; f < FLOORS; f++) waiting.push([]);
       delivered = 0; fury = 0; spawnT = 1; elapsed = 0; wave = 1; over = false;
       banner.style.display = 'none';
-      api.status('Click a floor inside a lift shaft to send that lift there. Passengers press their own buttons once aboard.');
+      api.status('Click a floor button inside a lift shaft to send that lift there. Clear the waiting people before their patience runs out.');
       for (let i = 0; i < 3; i++) addPerson();
     }
 

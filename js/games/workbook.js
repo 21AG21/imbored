@@ -78,7 +78,7 @@
       formulaIn.textContent = '';
       build();
       syncPills();
-      api.status('Left-click a cell to fill it in. Right-click (or long-press) flags a suspected mine. Click a completed figure to auto-fill its neighbours. It is just Minesweeper, but it looks like you are working.');
+      api.status('Left-click a cell to fill it in. Each number counts the mines touching that cell. Right-click (or long-press) flags a suspected mine. Click a completed figure to auto-fill its neighbours. It is just Minesweeper, but it looks like you are working.');
     }
 
     function layMines(sx, sy) {

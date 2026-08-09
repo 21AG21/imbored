@@ -6,10 +6,11 @@
   function mount(root, api) {
     const bagg = Engine.bag();
     const SECS = Math.round(60 * (api.dm > 1 ? 1 : 1));   // fixed 60s window
-    let a, b, op, answer, score, timeLeft, running, disposed = false, acc = 0;
+    let a, b, op, answer, score, timeLeft, running, disposed = false, acc = 0, streak = 0;
 
     const pScore = api.pill('solved: 0');
     const pTime = api.pill('time: 60s');
+    const pStreak = api.pill('streak: 0');
     const q = h('div', { class: 'mr-q' }, '');
     const input = h('input', { class: 'mr-input', type: 'text', inputmode: 'numeric', spellcheck: 'false', autocomplete: 'off', placeholder: '?' });
     const form = h('form', { class: 'mr-form' }, input, h('button', { class: 'btn primary', type: 'submit' }, 'Enter'));
@@ -34,23 +35,33 @@
       input.value = ''; if (running) try { input.focus(); } catch (e) { /* */ }
     }
     function start() {
-      score = 0; timeLeft = SECS; running = true; acc = 0;
+      score = 0; timeLeft = SECS; running = true; acc = 0; streak = 0;
       msg.textContent = ''; msg.className = 'mr-msg'; input.disabled = false;
       nextQ(); sync(); try { input.focus(); } catch (e) { /* */ }
       api.status('Answer as many as you can in ' + SECS + ' seconds. Type the number and press Enter. Wrong answers cost you three seconds.');
     }
-    function sync() { pScore.textContent = 'solved: ' + score; pTime.textContent = 'time: ' + Math.max(0, Math.ceil(timeLeft)) + 's'; }
+    function sync() {
+      pScore.textContent = 'solved: ' + score;
+      pTime.textContent = 'time: ' + Math.max(0, Math.ceil(timeLeft)) + 's';
+      pStreak.textContent = 'streak: ' + streak;
+      pStreak.className = 'pill' + (streak >= 3 ? ' good' : '');
+    }
     function check() {
       if (!running) return;
       if (input.value.trim() === '') return;
-      if (parseInt(input.value, 10) === answer) { score++; api.sfx.good(); api.submit(score); nextQ(); sync(); }
-      else { api.sfx.bad(); timeLeft -= 3; q.classList.remove('shake'); void q.offsetWidth; q.classList.add('shake'); input.value = ''; sync(); }
+      if (parseInt(input.value, 10) === answer) {
+        score++; streak++;
+        api.sfx.tone({ freq: 500 + streak * 40, dur: 0.08, type: 'triangle', vol: 0.12 });
+        api.submit(score); nextQ(); sync();
+      }
+      else { streak = 0; api.sfx.bad(); timeLeft -= 3; q.classList.remove('shake'); void q.offsetWidth; q.classList.add('shake'); input.value = ''; sync(); }
     }
     function end() {
-      running = false; input.disabled = true; api.sfx.great();
+      running = false; input.disabled = true; streak = 0; api.sfx.great();
       const r = api.submit(score);
       msg.textContent = 'Time! ' + score + ' solved.' + (r.isRecord ? ' New best!' : '');
       msg.className = 'mr-msg win';
+      sync();
     }
 
     bagg.add(Engine.loop((dt) => {

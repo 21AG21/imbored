@@ -302,10 +302,10 @@ kbd {
 @media (min-width: 880px) { .pick-row { flex-wrap: wrap; overflow-x: visible; } .pick { flex: 1 1 200px; max-width: 260px; } }
 .pick { scroll-snap-align: start; flex: 0 0 200px; display: grid; grid-template-columns: auto 1fr;
   grid-template-rows: auto auto; column-gap: 8px; align-items: center; text-decoration: none;
-  padding: 12px 14px; border: 3px solid var(--ink); box-shadow: var(--bevel-out);
-  background: var(--paper); color: var(--ink); transition: transform .08s; }
-.pick:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--ink); }
-.pick:active { box-shadow: var(--bevel-in); transform: translate(1px, 1px); }
+  padding: 12px 14px; border: 3px solid var(--ink); box-shadow: 4px 4px 0 0 var(--ink);
+  background: var(--paper); color: var(--ink); transition: transform .09s steps(2), box-shadow .09s steps(2); }
+.pick:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 0 var(--ink); }
+.pick:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 0 var(--ink); }
 .pick-emoji { grid-row: 1 / span 2; width: 34px; height: 34px; display: grid; place-items: center;
   border: 2px solid var(--ink); background: var(--label); }
 .pick-title { font: 700 14px/1.1 Verdana, sans-serif; align-self: end; }
@@ -646,7 +646,14 @@ body.in-game .status { margin: 2px 0; font-size: 12px; }
 }
 .dpad-btn:active { box-shadow: var(--bevel-in); }
 .dpad-btn.ghost { background: transparent; border-color: transparent; box-shadow: none; }
-@media (hover: hover) and (pointer: fine) { .dpad.touch-only { display: none; } }
+/* Keep the on-screen pad visible on desktop too — just smaller and calmer than
+   on a phone — so mouse-only players always have obvious controls to click
+   (the keyboard still works). Without this a mouse user faced with, say, 2048
+   sees a board, clicks it, nothing happens, and assumes it's broken. */
+@media (hover: hover) and (pointer: fine) {
+  .dpad.touch-only { grid-template-columns: repeat(3, 42px); grid-template-rows: repeat(3, 36px); gap: 4px; opacity: .95; }
+  .dpad.touch-only .dpad-btn { font-size: 13px; }
+}
 
 /* ---------------- grid games ---------------- */
 .board { display: grid; gap: 3px; user-select: none; touch-action: manipulation; }
@@ -4898,9 +4905,9 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
         document.body.appendChild(a); a.click(); a.remove();
         setTimeout(() => URL.revokeObjectURL(url), 1500);
         setLabel('Saved ✓');
-        setTimeout(() => setLabel(label || 'Download this page'), 2200);
+        setTimeout(() => setLabel(label || 'Download the whole arcade'), 2200);
       } catch (e) {
-        setLabel(label || 'Download this page');
+        setLabel(label || 'Download the whole arcade');
         alert('Could not build the offline copy — a file failed to load (' + (e && e.message ? e.message : e) + '). If you opened this straight from a file on disk rather than a web address, grab the ready-made single-file build (dist/cubicle-arcade.html) from the project instead.');
       }
     }
@@ -4918,14 +4925,14 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       docRow,
       h('span', { class: 'foot-skin' },
         h('strong', null, 'SCORES:'),
-        h('button', { class: 'btn tiny', type: 'button', onclick: exportSaves }, 'Back up'),
-        h('button', { class: 'btn tiny', type: 'button', onclick: () => importInput.click() }, 'Restore'),
+        h('button', { class: 'btn tiny', type: 'button', title: 'Save your scores and settings to a file on your computer — nothing is stored in the browser, so this is the only way to keep them', onclick: exportSaves }, 'Save to file'),
+        h('button', { class: 'btn tiny', type: 'button', title: 'Load scores back from a file you saved earlier', onclick: () => importInput.click() }, 'Load from file'),
         h('a', { class: 'foot-link', href: '#stats' }, 'Your timesheet'),
         importInput),
       h('span', { class: 'foot-skin' },
-        h('strong', null, 'OFFLINE COPY:'),
-        h('button', { class: 'btn tiny', type: 'button', title: 'Save this whole page as one file you can open with no internet', onclick: (e) => downloadSelf(e.currentTarget) }, 'Download this page'),
-        h('span', { class: 'foot-privacy' }, 'one self-contained file — keep it in Drive or a USB stick and open it offline any time')),
+        h('strong', null, 'PLAY OFFLINE:'),
+        h('button', { class: 'btn tiny primary', type: 'button', title: 'Save the entire arcade as a single file you can reopen with no internet — drop it on a USB stick or in Drive and play anywhere', onclick: (e) => downloadSelf(e.currentTarget) }, 'Download the whole arcade'),
+        h('span', { class: 'foot-privacy' }, 'one self-contained file — no internet needed to reopen it')),
       webRow,
       h('span', null,
         h('a', { class: 'foot-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener' }, 'PHANTOM: why traffic jams happen for no reason')),
@@ -5954,7 +5961,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
         A[idx] = 0.4; B[idx] = 0.9;
       }
     }
-    bagg.listen(cv.el, 'pointerdown', (e) => { painting = true; paint(e); });
+    bagg.listen(cv.el, 'pointerdown', (e) => { painting = true; paint(e); api.sfx.click(); });
     bagg.listen(cv.el, 'pointermove', (e) => { if (painting) paint(e); });
     bagg.listen(cv.el, 'pointerup', () => { painting = false; });
     bagg.listen(cv.el, 'pointerleave', () => { painting = false; });
@@ -5970,7 +5977,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     bagg.add(() => { if (window.__rd) delete window.__rd; });
 
     seed({ f: PRESETS[0].f, k: PRESETS[0].k });
-    api.status('Two chemicals, one reaction rule. Drag on the field to add reagent. Slide f and k to roam the map — the interesting band is narrow.');
+    api.status('Drag on the dish to add chemical and watch spots and stripes spread.');
 
     bagg.add(Engine.loop(() => {
       if (running) for (let i = 0; i < 8; i++) step();
@@ -6081,7 +6088,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       }
       win.length = 0; chi = 0; peakChi = 0;
       syncPills();
-      api.status('Drag the temperature. Below T_c ≈ 2.27 the lattice magnetises into one colour; above it, it dissolves into noise. Right at the edge, domains churn on every scale.');
+      api.status('Drag the temperature: cool it and the pixels snap into big matching patches, heat it and they boil. Find the flip point.');
     }
 
     /* one Metropolis sweep = N*N attempted flips, periodic boundaries */
@@ -6128,6 +6135,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       if (win.length >= 120 && chi > peakChi) {
         peakChi = chi;
         api.submit(Math.round(peakChi));
+        api.sfx.blip(620 + Math.min(600, peakChi));
       }
     }
 
@@ -6514,7 +6522,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       for (let i = 0; i < grid.length; i++) grid[i] = Math.random() < emptyFrac ? EMPTY : (Math.random() < 0.5 ? A : B);
       rounds = 0;
       running = false; runBtn.textContent = 'Run';
-      api.status('Set how strongly people prefer same-team neighbours, then Run. A mild preference is enough to segregate a mixed floor completely.');
+      api.status('Set how picky everyone is, hit Run, and watch the neighbourhood sort itself into blocks.');
       syncPills();
     }
 
@@ -6658,6 +6666,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
           const s = stats();
           samples.push({ T: T, seg: s.seg });
           api.submit(Math.round(s.seg * 100));
+          api.sfx.good();
           api.status('Settled after ' + rounds + ' rounds at ' + Math.round(s.seg * 100) + '% same-team neighbours. Slide the preference and Run again to trace the curve.');
         }
       }
@@ -6754,7 +6763,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       for (const j of [c, c + 1, c - 1, c + L, c - L]) if (grid[j] === S) grid[j] = I;
       running = false; runBtn.textContent = 'Run'; tstep = 0; peakI = 0;
       series.length = 0;
-      api.status('Set the spread rate, recovery rate and how packed the desks are, then Run. The epidemic takes off or fizzles depending on whether R0 clears 1.');
+      api.status('Set how catchy the bug is and how fast people recover, then watch it sweep the office — will it burn out or get everyone?');
       recordAndSync();
     }
 
@@ -6856,7 +6865,13 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     bagg.add(Engine.loop(() => {
       if (running) {
         const c = counts();
-        if (c.i === 0) { running = false; runBtn.textContent = 'Run'; api.submit(Math.round((c.r / (occCount || 1)) * 100)); api.status('Burned out after ' + tstep + ' steps. Final attack rate ' + Math.round(c.r / (occCount || 1) * 100) + '%. Lower beta or thin the desks to push R0 under 1.'); }
+        if (c.i === 0) {
+          running = false; runBtn.textContent = 'Run';
+          const attackRate = c.r / (occCount || 1);
+          api.submit(Math.round(attackRate * 100));
+          api.sfx[attackRate > 0.5 ? 'bad' : 'good']();
+          api.status('Burned out after ' + tstep + ' steps. Final attack rate ' + Math.round(attackRate * 100) + '%. Lower beta or thin the desks to push R0 under 1.');
+        }
         else { step(); recordAndSync(); }
       }
       draw();
@@ -6928,7 +6943,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       height.fill(0); flash.fill(0);
       grains = 0; avalanches = 0; biggest = 0;
       for (const k in hist) delete hist[k];
-      api.status('Memos drop on random desks. A desk with four topples onto its neighbours, which can set off a chain. Click to drop one yourself.');
+      api.status('Click to drop grains on the pile — stack it too steep and it avalanches.');
       syncPills();
     }
 
@@ -6953,7 +6968,11 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
         if (y < L - 1) { height[i + L] += times; if (height[i + L] >= 4) stack.push(i + L); }
         /* grains off the edge are lost — the dissipation that makes SOC work */
       }
-      if (size > 0) { avalanches++; hist[size] = (hist[size] || 0) + 1; if (size > biggest) { biggest = size; api.submit(biggest); } }
+      if (size > 0) {
+        avalanches++; hist[size] = (hist[size] || 0) + 1;
+        if (size > biggest) { biggest = size; api.submit(biggest); }
+        if (size >= 50) api.sfx.noise({ dur: 0.22, vol: 0.14 });
+      }
       return size;
     }
 
@@ -7067,7 +7086,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   function mount(root, api) {
     const bagg = Engine.bag();
     const x = new Float32Array(N), y = new Float32Array(N), th = new Float32Array(N), nth = new Float32Array(N);
-    let eta = 1.2, running = true;
+    let eta = 1.2, running = true, aligned = false;
     const samples = [];
     let ref = [];
 
@@ -7088,7 +7107,8 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
     function reset() {
       for (let i = 0; i < N; i++) { x[i] = Math.random() * LB; y[i] = Math.random() * LB; th[i] = rand(-Math.PI, Math.PI); }
-      api.status('Lower the noise and watch a milling crowd snap into one shared heading with nobody in charge. Raise it and the flock dissolves.');
+      aligned = false;
+      api.status('Turn the noise slider down and watch the swarm snap into one direction.');
       syncPills();
     }
 
@@ -7114,7 +7134,14 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       return Math.hypot(sc, ss) / N;
     }
 
-    function syncPills() { pEta.textContent = 'Noise: ' + eta.toFixed(2); const ph = phi(); pPhi.textContent = 'Alignment: ' + ph.toFixed(2); pPhi.className = 'pill ' + (ph > 0.5 ? 'good' : 'warn'); }
+    function syncPills() {
+      pEta.textContent = 'Noise: ' + eta.toFixed(2);
+      const ph = phi();
+      pPhi.textContent = 'Alignment: ' + ph.toFixed(2);
+      pPhi.className = 'pill ' + (ph > 0.5 ? 'good' : 'warn');
+      if (ph > 0.8 && !aligned) { aligned = true; api.sfx.good(); }
+      else if (ph < 0.75 && aligned) { aligned = false; }
+    }
 
     /* measured reference: settle at each noise, record alignment (smaller flock) */
     function measureReference() {
@@ -7235,7 +7262,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   function mount(root, api) {
     const bagg = Engine.bag();
     const th = new Float32Array(N), om = new Float32Array(N);
-    let K = 2.2, running = true;
+    let K = 2.2, running = true, locked = false;
     const samples = [];
     let ref = [];
 
@@ -7256,7 +7283,8 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
     function reset() {
       for (let i = 0; i < N; i++) { th[i] = Math.random() * 2 * Math.PI; om[i] = gauss() * SIGMA; }
-      api.status('Everyone claps at their own pace. Raise the coupling — how hard they listen to the room — past the critical point and the whole crowd snaps into one rhythm.');
+      locked = false;
+      api.status('Raise the coupling slider until every dot blinks in sync.');
       syncPills();
     }
 
@@ -7268,7 +7296,14 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       return o.r;
     }
 
-    function syncPills() { pK.textContent = 'Coupling K: ' + K.toFixed(2); const r = order().r; pR.textContent = 'Sync r: ' + r.toFixed(2); pR.className = 'pill ' + (r > 0.5 ? 'good' : 'warn'); }
+    function syncPills() {
+      pK.textContent = 'Coupling K: ' + K.toFixed(2);
+      const r = order().r;
+      pR.textContent = 'Sync r: ' + r.toFixed(2);
+      pR.className = 'pill ' + (r > 0.5 ? 'good' : 'warn');
+      if (r > 0.9 && !locked) { locked = true; api.sfx.great(); }
+      else if (r < 0.85 && locked) { locked = false; }
+    }
 
     function measureReference() {
       const n = 160, tr = new Float32Array(n), or = new Float32Array(n), out = [];
@@ -7430,7 +7465,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       peakFlow = 0;
       stBuf.fill(0xff100c08 >>> 0);
       syncPills();
-      api.status('Set the density and watch. Below the critical density the road flows; above it, a single random tap of the brakes blossoms into a jam that crawls backwards through the pack.');
+      api.status('Set how many cars with the slider and watch a jam appear out of nowhere — push the Flow as high as you can.');
     }
 
     /* one synchronous Nagel–Schreckenberg update of the whole road */
@@ -7457,7 +7492,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       meanV = sv / n;
       flow = sv / L;                     // flux = (1/L) Σ v  (cars per cell per tick)
       jam = stopped / n;
-      if (flow > peakFlow) { peakFlow = flow; api.submit(Math.round(peakFlow * 1000)); }
+      if (flow > peakFlow) { peakFlow = flow; api.submit(Math.round(peakFlow * 1000)); api.sfx.blip(500); }
     }
 
     function syncPills() {
@@ -7677,7 +7712,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       stick(CX | 0, CY | 0);             // the seed
       launch();
       buf.fill(0xff1a1208 >>> 0);
-      api.status('Cold glass, one speck of ice in the middle. Wandering molecules freeze the instant they touch it and branch into frost. The panel tracks its fractal dimension as it grows — it climbs into the mid 1.6s, near the textbook 1.71.');
+      api.status('Pick a growth speed and watch the frost crystal branch across the window.');
     }
 
     function stick(ix, iy) {
@@ -7688,7 +7723,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       rhist[Math.min(rhist.length - 1, Math.round(rr))] += 1;
       if (rr > R) R = rr;
       if (count > peak) { peak = count; api.submit(peak); }
-      if (R >= RMAX) { done = true; api.status('The frost reached the window frame. Fractal dimension measured at ' + dim.toFixed(2) + ' (Witten–Sander: ' + DREF + ').'); }
+      if (R >= RMAX) { done = true; api.sfx.blip(760); api.status('The frost reached the window frame. Fractal dimension measured at ' + dim.toFixed(2) + ' (Witten–Sander: ' + DREF + ').'); }
     }
 
     function launch() {
@@ -7933,7 +7968,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       xcur = 0.4; orbit.length = 0;
       curP = periodOf(r, 16);
       curL = lyapunov(r, 1500, 6000);
-      if (curP > bestP) { bestP = curP; api.submit(bestP); }
+      if (curP > bestP) { bestP = curP; api.submit(bestP); api.sfx.blip(440 + bestP * 20); }
       syncPills();
     }
 
@@ -8060,7 +8095,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     const t1 = setTimeout(buildBif, 40);
     const t2 = setTimeout(buildLyap, 60);
     bagg.add(() => { clearTimeout(t1); clearTimeout(t2); });
-    api.status('Drag the growth rate. Low and steady, then a boom–bust cycle, then it doubles and doubles until it never repeats. The panel’s Lyapunov exponent goes positive exactly where chaos starts.');
+    api.status('Drag the growth-rate slider up and watch calm tip into chaos.');
 
     bagg.add(Engine.loop(() => {
       /* advance the live orbit a few years per frame */
@@ -8173,7 +8208,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
     function clearGrid() {
       grid.fill(0); gen = 0; hist.length = 0; countPop(); peak = 0;
-      api.status('Blank grid. Draw cells with the mouse, drop a pattern, or hit Random. Press play to run the rule.');
+      api.status('Click and drag to draw living cells, then press Play and watch them breed and die. Try the pattern buttons.');
       syncPills(); draw();
     }
     function randomize(p) {
@@ -8192,6 +8227,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       grid.fill(0);
       for (const [x, y] of pat) grid[((oy + y) % N) * N + ((ox + x) % N)] = 1;
       gen = 0; hist.length = 0; countPop(); peak = pop; api.submit(peak);
+      api.sfx.blip(700);
       api.status('Dropped a ' + name + '. Press play and watch what one rule does with it.');
       syncPills(); draw();
     }
@@ -8272,6 +8308,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     }
     bagg.listen(cv.el, 'pointerdown', (e) => {
       const i = cellAt(e); paintVal = grid[i] ? 0 : 1; grid[i] = paintVal; painting = true;
+      api.sfx.click();
       countPop(); syncPills(); draw();
       try { if (cv.el.setPointerCapture) cv.el.setPointerCapture(e.pointerId); } catch (err) { /* no active pointer; harmless */ }
     });
@@ -8293,7 +8330,8 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     };
     bagg.add(() => { if (window.__life) delete window.__life; });
 
-    randomize(0.32);
+    clearGrid();
+    running = false; btnRun.textContent = 'Play';
     bagg.add(Engine.loop(() => {
       if (running) for (let s = 0; s < speed; s++) stepOnce();
       syncPills(); draw();
@@ -8376,7 +8414,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     function reset() {
       for (let i = 0; i < grid.length; i++) grid[i] = 1 + ((Math.random() * 3) | 0);
       gen = 0; coStreak = 0; hist.length = 0;
-      api.status('Random noise, three species. Press play and watch it curdle into rotating spirals — and notice all three hang on. Slide mixing up to smear the pattern coarser.');
+      api.status('Three colours fight for the field — watch them curl into living spirals. Reseed to shuffle.');
     }
 
     const idx = (x, y) => ((y + N) % N) * N + ((x + N) % N);
@@ -8574,7 +8612,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       prefill = false;
       delivered = 0; rage = 0; money = 0; dayT = 0; tripSum = 0; tripN = 0;
 
-      api.status('Click a junction to flip it. Drag along a row or column for a green wave. Survive the day, then spend the takings.');
+      api.status('Tap a junction to flip its lights and keep traffic moving — every jam fills the rage bar.');
       sync(0);
     }
 
@@ -9327,7 +9365,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       for (let f = 0; f < FLOORS; f++) waiting.push([]);
       delivered = 0; fury = 0; spawnT = 1; elapsed = 0; wave = 1; over = false;
       banner.style.display = 'none';
-      api.status('Click a floor inside a lift shaft to send that lift there. Passengers press their own buttons once aboard.');
+      api.status('Click a floor button inside a lift shaft to send that lift there. Clear the waiting people before their patience runs out.');
       for (let i = 0; i < 3; i++) addPerson();
     }
 
@@ -9657,7 +9695,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       over = false;
       banner.style.display = 'none';
       syncControls();
-      api.status('Match generation to demand. Frequency drifts the moment they disagree.');
+      api.status('Keep your power output matching demand: if the demand line sits above your output, raise a generator; if it\'s below, ease one down.');
     }
 
     /* ---------------- demand model ---------------- */
@@ -10034,8 +10072,9 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       planes = [];
       landed = 0; spawnT = 1.2; over = false; drawing = null; t = 0; warn = 0;
       banner.style.display = 'none';
-      api.status('Drag from an aircraft to draw its route. Land each one on the runway that matches its colour, from the correct end.');
+      api.status('Drag each plane to the runway with the matching colour.');
       for (let i = 0; i < 2; i++) spawn();
+      if (planes.length === 2) spawn();
       sync();
     }
 
@@ -10371,7 +10410,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       banner.style.display = 'none';
       buildBoard();
       syncPills();
-      api.status('Left click to dig. Right click to flag. Right click a number with enough flags around it to sweep its neighbours.');
+      api.status('Left click to dig. Right click to flag. A number is how many mines touch that square. Right click a number with enough flags around it to sweep its neighbours.');
     }
 
     function layMines(sx, sy) {
@@ -11090,7 +11129,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       formulaIn.textContent = '';
       build();
       syncPills();
-      api.status('Left-click a cell to fill it in. Right-click (or long-press) flags a suspected mine. Click a completed figure to auto-fill its neighbours. It is just Minesweeper, but it looks like you are working.');
+      api.status('Left-click a cell to fill it in. Each number counts the mines touching that cell. Right-click (or long-press) flags a suspected mine. Click a completed figure to auto-fill its neighbours. It is just Minesweeper, but it looks like you are working.');
     }
 
     function layMines(sx, sy) {
@@ -11695,7 +11734,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     let dragSet = 0;
     let lastIdx = -1;
 
-    const defaultHint = 'Fill the runs the numbers describe. Left-click fills a cell, right-click marks a blank with an X.';
+    const defaultHint = 'The numbers on each row and column are the lengths of the filled blocks, in order. Left-click fills a cell, right-click marks a blank with an X.';
 
     /* ---------- shell ---------- */
     const wrapEl = h('div', { class: 'nono-wrap' });
@@ -12188,6 +12227,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     const bagg = Engine.bag();
     let grid, place, words, found, setIdx = 0, done, t0, timerId;
     let dragging = false, startCell = null, path = [];
+    let idleTimer = null, pulseTimer = null, pulseEl = null;
 
     const pTheme = api.pill('');
     const pFound = api.pill('0/0');
@@ -12231,7 +12271,9 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
           if (g && g !== w[i]) { good = false; break; }
         }
         if (!good) continue;
-        for (let i = 0; i < w.length; i++) grid[(r0 + dir[0] * i) * SIZE + (c0 + dir[1] * i)] = w[i];
+        const cells = [];
+        for (let i = 0; i < w.length; i++) { const ci = (r0 + dir[0] * i) * SIZE + (c0 + dir[1] * i); grid[ci] = w[i]; cells.push(ci); }
+        place[w] = cells;
         return true;
       }
       return false;
@@ -12262,6 +12304,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       clearInterval(timerId); timerId = 0; t0 = 0;
       banner.style.display = 'none';
       render();
+      clearPulse(); armIdle();
       pTheme.textContent = SETS[setIdx].theme;
       pFound.textContent = '0/' + words.length;
       pTime.textContent = '⏱ 0';
@@ -12280,6 +12323,27 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
     function startTimer() { if (timerId) return; t0 = Date.now(); timerId = setInterval(() => { pTime.textContent = '⏱ ' + Math.floor((Date.now() - t0) / 1000); }, 250); bagg.add(() => clearInterval(timerId)); }
 
+    /* idle nudge: after ~8s with no word found, briefly pulse one letter of an
+       unfound word so the board never sits completely dead. */
+    function clearIdle() { if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; } }
+    function clearPulse() { if (pulseTimer) { clearTimeout(pulseTimer); pulseTimer = null; } if (pulseEl) { pulseEl.classList.remove('sel'); pulseEl = null; } }
+    function armIdle() {
+      clearIdle();
+      idleTimer = setTimeout(() => { idleTimer = null; pulseHint(); armIdle(); }, 8000);
+    }
+    function pulseHint() {
+      if (done) return;
+      clearPulse();
+      const open = words.filter((it) => !it.done && place[it.w] && place[it.w].length);
+      if (!open.length) return;
+      const cells = place[pick(open).w];
+      pulseEl = cellEls[pick(cells)];
+      pulseEl.classList.add('sel');
+      pulseTimer = setTimeout(clearPulse, 700);
+    }
+    bagg.add(clearIdle);
+    bagg.add(clearPulse);
+
     function evaluate() {
       if (!path || path.length < 2) return;
       const str = path.map((i) => grid[i]).join('');
@@ -12289,6 +12353,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
         hit.done = true; found++;
         for (const i of path) foundCells.add(i);
         api.sfx.good();
+        armIdle();
         pFound.textContent = found + '/' + words.length;
         listEl.replaceChildren(...words.map((it) => h('span', { class: 'ws-word' + (it.done ? ' got' : '') }, it.w)));
         if (found >= words.length) win();
@@ -12297,6 +12362,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
     function win() {
       done = true; clearInterval(timerId); timerId = 0;
+      clearIdle(); clearPulse();
       const secs = Math.floor((Date.now() - t0) / 1000);
       const wins = api.load('wins', 0) + 1; api.save('wins', wins); api.submit(wins);
       api.sfx.great();
@@ -12315,7 +12381,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     bagg.listen(boardEl, 'pointerdown', (e) => {
       if (done) return;
       const i = cellFrom(e); if (i == null) return;
-      startTimer(); dragging = true; startCell = i; path = [i]; showPath(path);
+      startTimer(); armIdle(); dragging = true; startCell = i; path = [i]; showPath(path);
       try { if (boardEl.setPointerCapture) boardEl.setPointerCapture(e.pointerId); } catch (err) { /* */ }
     });
     bagg.listen(boardEl, 'pointermove', (e) => {
@@ -14591,7 +14657,8 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       else if (notesMode) { notes[sel] ^= 1 << v; grid[sel] = 0; }
       else { grid[sel] = grid[sel] === v ? 0 : v; notes[sel] = 0; }
       cells[sel].classList.remove('wrong');
-      api.sfx.click();
+      if (v !== 0 && !notesMode && grid[sel] === v) api.sfx[v === solved[sel] ? 'blip' : 'bad']();
+      else api.sfx.click();
       render();
       checkWin();
     }
@@ -15707,12 +15774,19 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       for (let i = 0; i < bulls; i++) pegs.appendChild(h('span', { class: 'crk-peg bull' }));
       for (let i = 0; i < cows; i++) pegs.appendChild(h('span', { class: 'crk-peg cow' }));
       for (let i = 0; i < LEN - bulls - cows; i++) pegs.appendChild(h('span', { class: 'crk-peg' }));
-      list.appendChild(h('div', { class: 'crk-row' }, h('span', { class: 'crk-guess' }, g.split('').map((d) => h('span', { class: 'crk-digit' }, d))), pegs));
+      const rowEl = h('div', { class: 'crk-row' }, h('span', { class: 'crk-guess' }, g.split('').map((d) => h('span', { class: 'crk-digit' }, d))), pegs);
+      list.appendChild(rowEl);
       list.scrollTop = list.scrollHeight;
+      /* brief flash on the newest row: a stronger pop when a digit lands right */
+      rowEl.style.transition = 'background-color .6s ease, transform .2s ease';
+      rowEl.style.transform = 'scale(1.04)';
+      if (bulls > 0) rowEl.style.backgroundColor = 'var(--lime)';
+      void rowEl.offsetWidth;
+      requestAnimationFrame(() => { rowEl.style.transform = ''; rowEl.style.backgroundColor = ''; });
       input.value = ''; msg.textContent = ''; msg.className = 'crk-msg';
       pLeft.textContent = 'guesses: ' + (maxg - guesses.length);
       if (bulls === LEN) { over = true; streak++; api.save('streak', streak); api.submit(streak); api.sfx.great(); msg.textContent = 'Cracked it in ' + guesses.length + '! Streak ' + streak + '.'; msg.className = 'crk-msg win'; input.disabled = true; return; }
-      api.sfx.blip(300 + bulls * 120);
+      api.sfx[bulls > 0 ? 'good' : 'click']();
       if (guesses.length >= maxg) { over = true; streak = 0; api.save('streak', 0); api.sfx.bad(); msg.textContent = 'Out of guesses. The code was ' + secret + '.'; msg.className = 'crk-msg lose'; input.disabled = true; return; }
       try { input.focus(); } catch (e) { /* */ }
     }
@@ -15746,10 +15820,11 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   function mount(root, api) {
     const bagg = Engine.bag();
     const SECS = Math.round(60 * (api.dm > 1 ? 1 : 1));   // fixed 60s window
-    let a, b, op, answer, score, timeLeft, running, disposed = false, acc = 0;
+    let a, b, op, answer, score, timeLeft, running, disposed = false, acc = 0, streak = 0;
 
     const pScore = api.pill('solved: 0');
     const pTime = api.pill('time: 60s');
+    const pStreak = api.pill('streak: 0');
     const q = h('div', { class: 'mr-q' }, '');
     const input = h('input', { class: 'mr-input', type: 'text', inputmode: 'numeric', spellcheck: 'false', autocomplete: 'off', placeholder: '?' });
     const form = h('form', { class: 'mr-form' }, input, h('button', { class: 'btn primary', type: 'submit' }, 'Enter'));
@@ -15774,23 +15849,33 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       input.value = ''; if (running) try { input.focus(); } catch (e) { /* */ }
     }
     function start() {
-      score = 0; timeLeft = SECS; running = true; acc = 0;
+      score = 0; timeLeft = SECS; running = true; acc = 0; streak = 0;
       msg.textContent = ''; msg.className = 'mr-msg'; input.disabled = false;
       nextQ(); sync(); try { input.focus(); } catch (e) { /* */ }
       api.status('Answer as many as you can in ' + SECS + ' seconds. Type the number and press Enter. Wrong answers cost you three seconds.');
     }
-    function sync() { pScore.textContent = 'solved: ' + score; pTime.textContent = 'time: ' + Math.max(0, Math.ceil(timeLeft)) + 's'; }
+    function sync() {
+      pScore.textContent = 'solved: ' + score;
+      pTime.textContent = 'time: ' + Math.max(0, Math.ceil(timeLeft)) + 's';
+      pStreak.textContent = 'streak: ' + streak;
+      pStreak.className = 'pill' + (streak >= 3 ? ' good' : '');
+    }
     function check() {
       if (!running) return;
       if (input.value.trim() === '') return;
-      if (parseInt(input.value, 10) === answer) { score++; api.sfx.good(); api.submit(score); nextQ(); sync(); }
-      else { api.sfx.bad(); timeLeft -= 3; q.classList.remove('shake'); void q.offsetWidth; q.classList.add('shake'); input.value = ''; sync(); }
+      if (parseInt(input.value, 10) === answer) {
+        score++; streak++;
+        api.sfx.tone({ freq: 500 + streak * 40, dur: 0.08, type: 'triangle', vol: 0.12 });
+        api.submit(score); nextQ(); sync();
+      }
+      else { streak = 0; api.sfx.bad(); timeLeft -= 3; q.classList.remove('shake'); void q.offsetWidth; q.classList.add('shake'); input.value = ''; sync(); }
     }
     function end() {
-      running = false; input.disabled = true; api.sfx.great();
+      running = false; input.disabled = true; streak = 0; api.sfx.great();
       const r = api.submit(score);
       msg.textContent = 'Time! ' + score + ' solved.' + (r.isRecord ? ' New best!' : '');
       msg.className = 'mr-msg win';
+      sync();
     }
 
     bagg.add(Engine.loop((dt) => {
@@ -16212,7 +16297,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       turn = 1; over = false; busy = false;
       msg.textContent = 'Pick one of your pits (the bottom row).'; msg.className = 'mc-msg';
       build(); paint(); sync();
-      api.status('Tap one of your pits along the bottom. Stones drop one per pit going right and around. Land your last stone in your store (right side) to move again; land in one of your own empty pits to capture the stones across from it. Most stones when a side empties out wins.');
+      api.status('Tap a pit on your side (bottom row) to sow its stones toward your store on the right.');
     }
 
     function build() {
@@ -16636,7 +16721,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       });
       msg.textContent = ''; msg.className = 'cg-msg';
       buildKeys(); render();
-      api.status('Every letter was swapped for another. Tap a coded letter to select it, then tap or type the letter you think it stands for — every copy updates at once. Decode the whole memo.');
+      api.status('Every letter stands in for a different one. Tap a letter, then type the letter you think it really is.');
     }
 
     function render() {
@@ -17294,6 +17379,10 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     bagg.add(() => { if (window.__spam) delete window.__spam; });
 
     reset();
+    /* nudge a first-time player: auto-fire the opening wave if nobody has
+       pressed Send wave yet, so the defense actually starts moving. */
+    const autoWaveId = setTimeout(() => { if (phase === 'build' && !over) sendWave(); }, 2500);
+    bagg.add(() => clearTimeout(autoWaveId));
     bagg.add(Engine.loop((dt) => { for (let i = 0; i < speed; i++) update(dt); draw(); }));
     return () => bagg.dispose();
   }
@@ -20632,7 +20721,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
       spawn(queue.shift());
       queue.push(nextPiece());
       banner.style.display = 'none';
-      api.status('← → move · ↑ or X rotate · Z rotate back · ↓ soft drop · Space hard drop · C hold · P pause');
+      api.status('← → move · ↑ rotate · ↓ soft drop · Space hard drop');
       sync();
     }
 
@@ -23919,7 +24008,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   function mount(root, api) {
     const bagg = Engine.bag();
 
-    const fresh = () => ({ rep: 0, life: 0, run: 0, clout: 0, own: GENS.map(() => 0), ups: {}, last: Date.now() });
+    const fresh = () => ({ rep: 0, life: 0, run: 0, clout: 0, own: GENS.map((g, i) => i === 0 ? 1 : 0), ups: {}, last: Date.now() });
     let s = api.load(KEY, null);
     if (!s || !Array.isArray(s.own)) s = fresh();
     while (s.own.length < GENS.length) s.own.push(0);
@@ -23941,7 +24030,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     recompute();
 
     const genCost = (i) => Math.ceil(GENS[i].cost * Math.pow(1.15, s.own[i]));
-    const clickVal = () => 1 * clickMul * allMul;
+    const clickVal = () => 3 * clickMul * allMul;
     const perSec = () => GENS.reduce((a, g, i) => a + s.own[i] * g.rate * genMul[i] * allMul, 0);
     const cloutGain = () => Math.max(0, Math.floor(Math.sqrt(s.run / CLOUT_AT)) - s.clout);
 
@@ -24865,7 +24954,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 
   function mount(root, api) {
     const bagg = Engine.bag();
-    let staples = 0, made = 0, clickPow = 1, acc = 0, since = 0, disposed = false;
+    let staples = 0, made = 0, clickPow = 1, acc = 0, since = 0, disposed = false, firstBuy = true;
     const owned = {}; BUILDINGS.forEach((b) => { owned[b.id] = 0; });
 
     const pRate = api.pill('0 /s');
@@ -24879,7 +24968,7 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     const rows = BUILDINGS.map((b) => {
       const costEl = h('span', { class: 'stp-cost' }, '');
       const nameEl = h('b', null, b.name);
-      const btn = h('button', { class: 'btn stp-buy', type: 'button', onclick: () => buy(b) },
+      const btn = h('button', { class: 'btn stp-buy', type: 'button', onclick: () => buy(b, btn) },
         h('span', { class: 'stp-emoji' }, b.emoji),
         h('span', { class: 'stp-info' }, nameEl, costEl));
       shop.appendChild(btn);
@@ -24889,10 +24978,15 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
     const rateOf = () => BUILDINGS.reduce((s, b) => s + owned[b.id] * b.rate, 0);
     const costOf = (b) => Math.floor(b.base * Math.pow(1.15, owned[b.id]));
 
-    function buy(b) {
+    function buy(b, btn) {
       const c = costOf(b);
       if (staples < c) return;
       staples -= c; owned[b.id]++; api.sfx.good();
+      if (firstBuy) {
+        firstBuy = false;
+        try { const r = btn.getBoundingClientRect(); Engine.fx.burst(r.left + r.width / 2, r.top + r.height / 2, 40); }
+        catch (e) { api.sfx.great(); }
+      }
       api.submit(Math.floor(made)); sync();
     }
     stapler.addEventListener('click', () => {

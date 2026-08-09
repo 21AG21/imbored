@@ -33,8 +33,9 @@
       planes = [];
       landed = 0; spawnT = 1.2; over = false; drawing = null; t = 0; warn = 0;
       banner.style.display = 'none';
-      api.status('Drag from an aircraft to draw its route. Land each one on the runway that matches its colour, from the correct end.');
+      api.status('Drag each plane to the runway with the matching colour.');
       for (let i = 0; i < 2; i++) spawn();
+      if (planes.length === 2) spawn();
       sync();
     }
 

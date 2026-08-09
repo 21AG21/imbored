@@ -20,7 +20,7 @@
   function mount(root, api) {
     const bagg = Engine.bag();
     const th = new Float32Array(N), om = new Float32Array(N);
-    let K = 2.2, running = true;
+    let K = 2.2, running = true, locked = false;
     const samples = [];
     let ref = [];
 
@@ -41,7 +41,8 @@
 
     function reset() {
       for (let i = 0; i < N; i++) { th[i] = Math.random() * 2 * Math.PI; om[i] = gauss() * SIGMA; }
-      api.status('Everyone claps at their own pace. Raise the coupling — how hard they listen to the room — past the critical point and the whole crowd snaps into one rhythm.');
+      locked = false;
+      api.status('Raise the coupling slider until every dot blinks in sync.');
       syncPills();
     }
 
@@ -53,7 +54,14 @@
       return o.r;
     }
 
-    function syncPills() { pK.textContent = 'Coupling K: ' + K.toFixed(2); const r = order().r; pR.textContent = 'Sync r: ' + r.toFixed(2); pR.className = 'pill ' + (r > 0.5 ? 'good' : 'warn'); }
+    function syncPills() {
+      pK.textContent = 'Coupling K: ' + K.toFixed(2);
+      const r = order().r;
+      pR.textContent = 'Sync r: ' + r.toFixed(2);
+      pR.className = 'pill ' + (r > 0.5 ? 'good' : 'warn');
+      if (r > 0.9 && !locked) { locked = true; api.sfx.great(); }
+      else if (r < 0.85 && locked) { locked = false; }
+    }
 
     function measureReference() {
       const n = 160, tr = new Float32Array(n), or = new Float32Array(n), out = [];

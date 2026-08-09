@@ -39,7 +39,7 @@
       height.fill(0); flash.fill(0);
       grains = 0; avalanches = 0; biggest = 0;
       for (const k in hist) delete hist[k];
-      api.status('Memos drop on random desks. A desk with four topples onto its neighbours, which can set off a chain. Click to drop one yourself.');
+      api.status('Click to drop grains on the pile — stack it too steep and it avalanches.');
       syncPills();
     }
 
@@ -64,7 +64,11 @@
         if (y < L - 1) { height[i + L] += times; if (height[i + L] >= 4) stack.push(i + L); }
         /* grains off the edge are lost — the dissipation that makes SOC work */
       }
-      if (size > 0) { avalanches++; hist[size] = (hist[size] || 0) + 1; if (size > biggest) { biggest = size; api.submit(biggest); } }
+      if (size > 0) {
+        avalanches++; hist[size] = (hist[size] || 0) + 1;
+        if (size > biggest) { biggest = size; api.submit(biggest); }
+        if (size >= 50) api.sfx.noise({ dur: 0.22, vol: 0.14 });
+      }
       return size;
     }
 

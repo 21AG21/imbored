@@ -98,7 +98,7 @@
       prefill = false;
       delivered = 0; rage = 0; money = 0; dayT = 0; tripSum = 0; tripN = 0;
 
-      api.status('Click a junction to flip it. Drag along a row or column for a green wave. Survive the day, then spend the takings.');
+      api.status('Tap a junction to flip its lights and keep traffic moving — every jam fills the rage bar.');
       sync(0);
     }
 

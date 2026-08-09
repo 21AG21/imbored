@@ -44,7 +44,7 @@
   function mount(root, api) {
     const bagg = Engine.bag();
 
-    const fresh = () => ({ rep: 0, life: 0, run: 0, clout: 0, own: GENS.map(() => 0), ups: {}, last: Date.now() });
+    const fresh = () => ({ rep: 0, life: 0, run: 0, clout: 0, own: GENS.map((g, i) => i === 0 ? 1 : 0), ups: {}, last: Date.now() });
     let s = api.load(KEY, null);
     if (!s || !Array.isArray(s.own)) s = fresh();
     while (s.own.length < GENS.length) s.own.push(0);
@@ -66,7 +66,7 @@
     recompute();
 
     const genCost = (i) => Math.ceil(GENS[i].cost * Math.pow(1.15, s.own[i]));
-    const clickVal = () => 1 * clickMul * allMul;
+    const clickVal = () => 3 * clickMul * allMul;
     const perSec = () => GENS.reduce((a, g, i) => a + s.own[i] * g.rate * genMul[i] * allMul, 0);
     const cloutGain = () => Math.max(0, Math.floor(Math.sqrt(s.run / CLOUT_AT)) - s.clout);
 

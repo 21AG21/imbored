@@ -18,6 +18,7 @@
     const bagg = Engine.bag();
     let grid, place, words, found, setIdx = 0, done, t0, timerId;
     let dragging = false, startCell = null, path = [];
+    let idleTimer = null, pulseTimer = null, pulseEl = null;
 
     const pTheme = api.pill('');
     const pFound = api.pill('0/0');
@@ -61,7 +62,9 @@
           if (g && g !== w[i]) { good = false; break; }
         }
         if (!good) continue;
-        for (let i = 0; i < w.length; i++) grid[(r0 + dir[0] * i) * SIZE + (c0 + dir[1] * i)] = w[i];
+        const cells = [];
+        for (let i = 0; i < w.length; i++) { const ci = (r0 + dir[0] * i) * SIZE + (c0 + dir[1] * i); grid[ci] = w[i]; cells.push(ci); }
+        place[w] = cells;
         return true;
       }
       return false;
@@ -92,6 +95,7 @@
       clearInterval(timerId); timerId = 0; t0 = 0;
       banner.style.display = 'none';
       render();
+      clearPulse(); armIdle();
       pTheme.textContent = SETS[setIdx].theme;
       pFound.textContent = '0/' + words.length;
       pTime.textContent = '⏱ 0';
@@ -110,6 +114,27 @@
 
     function startTimer() { if (timerId) return; t0 = Date.now(); timerId = setInterval(() => { pTime.textContent = '⏱ ' + Math.floor((Date.now() - t0) / 1000); }, 250); bagg.add(() => clearInterval(timerId)); }
 
+    /* idle nudge: after ~8s with no word found, briefly pulse one letter of an
+       unfound word so the board never sits completely dead. */
+    function clearIdle() { if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; } }
+    function clearPulse() { if (pulseTimer) { clearTimeout(pulseTimer); pulseTimer = null; } if (pulseEl) { pulseEl.classList.remove('sel'); pulseEl = null; } }
+    function armIdle() {
+      clearIdle();
+      idleTimer = setTimeout(() => { idleTimer = null; pulseHint(); armIdle(); }, 8000);
+    }
+    function pulseHint() {
+      if (done) return;
+      clearPulse();
+      const open = words.filter((it) => !it.done && place[it.w] && place[it.w].length);
+      if (!open.length) return;
+      const cells = place[pick(open).w];
+      pulseEl = cellEls[pick(cells)];
+      pulseEl.classList.add('sel');
+      pulseTimer = setTimeout(clearPulse, 700);
+    }
+    bagg.add(clearIdle);
+    bagg.add(clearPulse);
+
     function evaluate() {
       if (!path || path.length < 2) return;
       const str = path.map((i) => grid[i]).join('');
@@ -119,6 +144,7 @@
         hit.done = true; found++;
         for (const i of path) foundCells.add(i);
         api.sfx.good();
+        armIdle();
         pFound.textContent = found + '/' + words.length;
         listEl.replaceChildren(...words.map((it) => h('span', { class: 'ws-word' + (it.done ? ' got' : '') }, it.w)));
         if (found >= words.length) win();
@@ -127,6 +153,7 @@
 
     function win() {
       done = true; clearInterval(timerId); timerId = 0;
+      clearIdle(); clearPulse();
       const secs = Math.floor((Date.now() - t0) / 1000);
       const wins = api.load('wins', 0) + 1; api.save('wins', wins); api.submit(wins);
       api.sfx.great();
@@ -145,7 +172,7 @@
     bagg.listen(boardEl, 'pointerdown', (e) => {
       if (done) return;
       const i = cellFrom(e); if (i == null) return;
-      startTimer(); dragging = true; startCell = i; path = [i]; showPath(path);
+      startTimer(); armIdle(); dragging = true; startCell = i; path = [i]; showPath(path);
       try { if (boardEl.setPointerCapture) boardEl.setPointerCapture(e.pointerId); } catch (err) { /* */ }
     });
     bagg.listen(boardEl, 'pointermove', (e) => {

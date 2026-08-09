@@ -17,7 +17,7 @@
   function mount(root, api) {
     const bagg = Engine.bag();
     const x = new Float32Array(N), y = new Float32Array(N), th = new Float32Array(N), nth = new Float32Array(N);
-    let eta = 1.2, running = true;
+    let eta = 1.2, running = true, aligned = false;
     const samples = [];
     let ref = [];
 
@@ -38,7 +38,8 @@
 
     function reset() {
       for (let i = 0; i < N; i++) { x[i] = Math.random() * LB; y[i] = Math.random() * LB; th[i] = rand(-Math.PI, Math.PI); }
-      api.status('Lower the noise and watch a milling crowd snap into one shared heading with nobody in charge. Raise it and the flock dissolves.');
+      aligned = false;
+      api.status('Turn the noise slider down and watch the swarm snap into one direction.');
       syncPills();
     }
 
@@ -64,7 +65,14 @@
       return Math.hypot(sc, ss) / N;
     }
 
-    function syncPills() { pEta.textContent = 'Noise: ' + eta.toFixed(2); const ph = phi(); pPhi.textContent = 'Alignment: ' + ph.toFixed(2); pPhi.className = 'pill ' + (ph > 0.5 ? 'good' : 'warn'); }
+    function syncPills() {
+      pEta.textContent = 'Noise: ' + eta.toFixed(2);
+      const ph = phi();
+      pPhi.textContent = 'Alignment: ' + ph.toFixed(2);
+      pPhi.className = 'pill ' + (ph > 0.5 ? 'good' : 'warn');
+      if (ph > 0.8 && !aligned) { aligned = true; api.sfx.good(); }
+      else if (ph < 0.75 && aligned) { aligned = false; }
+    }
 
     /* measured reference: settle at each noise, record alignment (smaller flock) */
     function measureReference() {

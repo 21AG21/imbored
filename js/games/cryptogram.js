@@ -66,7 +66,7 @@
       });
       msg.textContent = ''; msg.className = 'cg-msg';
       buildKeys(); render();
-      api.status('Every letter was swapped for another. Tap a coded letter to select it, then tap or type the letter you think it stands for — every copy updates at once. Decode the whole memo.');
+      api.status('Every letter stands in for a different one. Tap a letter, then type the letter you think it really is.');
     }
 
     function render() {

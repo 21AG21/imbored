@@ -77,7 +77,7 @@
 
     function clearGrid() {
       grid.fill(0); gen = 0; hist.length = 0; countPop(); peak = 0;
-      api.status('Blank grid. Draw cells with the mouse, drop a pattern, or hit Random. Press play to run the rule.');
+      api.status('Click and drag to draw living cells, then press Play and watch them breed and die. Try the pattern buttons.');
       syncPills(); draw();
     }
     function randomize(p) {
@@ -96,6 +96,7 @@
       grid.fill(0);
       for (const [x, y] of pat) grid[((oy + y) % N) * N + ((ox + x) % N)] = 1;
       gen = 0; hist.length = 0; countPop(); peak = pop; api.submit(peak);
+      api.sfx.blip(700);
       api.status('Dropped a ' + name + '. Press play and watch what one rule does with it.');
       syncPills(); draw();
     }
@@ -176,6 +177,7 @@
     }
     bagg.listen(cv.el, 'pointerdown', (e) => {
       const i = cellAt(e); paintVal = grid[i] ? 0 : 1; grid[i] = paintVal; painting = true;
+      api.sfx.click();
       countPop(); syncPills(); draw();
       try { if (cv.el.setPointerCapture) cv.el.setPointerCapture(e.pointerId); } catch (err) { /* no active pointer; harmless */ }
     });
@@ -197,7 +199,8 @@
     };
     bagg.add(() => { if (window.__life) delete window.__life; });
 
-    randomize(0.32);
+    clearGrid();
+    running = false; btnRun.textContent = 'Play';
     bagg.add(Engine.loop(() => {
       if (running) for (let s = 0; s < speed; s++) stepOnce();
       syncPills(); draw();

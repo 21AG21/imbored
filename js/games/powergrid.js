@@ -54,7 +54,7 @@
       over = false;
       banner.style.display = 'none';
       syncControls();
-      api.status('Match generation to demand. Frequency drifts the moment they disagree.');
+      api.status('Keep your power output matching demand: if the demand line sits above your output, raise a generator; if it\'s below, ease one down.');
     }
 
     /* ---------------- demand model ---------------- */

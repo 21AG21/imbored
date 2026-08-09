@@ -64,7 +64,7 @@
       peakFlow = 0;
       stBuf.fill(0xff100c08 >>> 0);
       syncPills();
-      api.status('Set the density and watch. Below the critical density the road flows; above it, a single random tap of the brakes blossoms into a jam that crawls backwards through the pack.');
+      api.status('Set how many cars with the slider and watch a jam appear out of nowhere — push the Flow as high as you can.');
     }
 
     /* one synchronous Nagel–Schreckenberg update of the whole road */
@@ -91,7 +91,7 @@
       meanV = sv / n;
       flow = sv / L;                     // flux = (1/L) Σ v  (cars per cell per tick)
       jam = stopped / n;
-      if (flow > peakFlow) { peakFlow = flow; api.submit(Math.round(peakFlow * 1000)); }
+      if (flow > peakFlow) { peakFlow = flow; api.submit(Math.round(peakFlow * 1000)); api.sfx.blip(500); }
     }
 
     function syncPills() {

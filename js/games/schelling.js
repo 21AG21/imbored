@@ -43,7 +43,7 @@
       for (let i = 0; i < grid.length; i++) grid[i] = Math.random() < emptyFrac ? EMPTY : (Math.random() < 0.5 ? A : B);
       rounds = 0;
       running = false; runBtn.textContent = 'Run';
-      api.status('Set how strongly people prefer same-team neighbours, then Run. A mild preference is enough to segregate a mixed floor completely.');
+      api.status('Set how picky everyone is, hit Run, and watch the neighbourhood sort itself into blocks.');
       syncPills();
     }
 
@@ -187,6 +187,7 @@
           const s = stats();
           samples.push({ T: T, seg: s.seg });
           api.submit(Math.round(s.seg * 100));
+          api.sfx.good();
           api.status('Settled after ' + rounds + ' rounds at ' + Math.round(s.seg * 100) + '% same-team neighbours. Slide the preference and Run again to trace the curve.');
         }
       }

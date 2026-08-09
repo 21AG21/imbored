@@ -62,7 +62,7 @@
       for (const j of [c, c + 1, c - 1, c + L, c - L]) if (grid[j] === S) grid[j] = I;
       running = false; runBtn.textContent = 'Run'; tstep = 0; peakI = 0;
       series.length = 0;
-      api.status('Set the spread rate, recovery rate and how packed the desks are, then Run. The epidemic takes off or fizzles depending on whether R0 clears 1.');
+      api.status('Set how catchy the bug is and how fast people recover, then watch it sweep the office — will it burn out or get everyone?');
       recordAndSync();
     }
 
@@ -164,7 +164,13 @@
     bagg.add(Engine.loop(() => {
       if (running) {
         const c = counts();
-        if (c.i === 0) { running = false; runBtn.textContent = 'Run'; api.submit(Math.round((c.r / (occCount || 1)) * 100)); api.status('Burned out after ' + tstep + ' steps. Final attack rate ' + Math.round(c.r / (occCount || 1) * 100) + '%. Lower beta or thin the desks to push R0 under 1.'); }
+        if (c.i === 0) {
+          running = false; runBtn.textContent = 'Run';
+          const attackRate = c.r / (occCount || 1);
+          api.submit(Math.round(attackRate * 100));
+          api.sfx[attackRate > 0.5 ? 'bad' : 'good']();
+          api.status('Burned out after ' + tstep + ' steps. Final attack rate ' + Math.round(attackRate * 100) + '%. Lower beta or thin the desks to push R0 under 1.');
+        }
         else { step(); recordAndSync(); }
       }
       draw();

@@ -76,7 +76,7 @@
       xcur = 0.4; orbit.length = 0;
       curP = periodOf(r, 16);
       curL = lyapunov(r, 1500, 6000);
-      if (curP > bestP) { bestP = curP; api.submit(bestP); }
+      if (curP > bestP) { bestP = curP; api.submit(bestP); api.sfx.blip(440 + bestP * 20); }
       syncPills();
     }
 
@@ -203,7 +203,7 @@
     const t1 = setTimeout(buildBif, 40);
     const t2 = setTimeout(buildLyap, 60);
     bagg.add(() => { clearTimeout(t1); clearTimeout(t2); });
-    api.status('Drag the growth rate. Low and steady, then a boom–bust cycle, then it doubles and doubles until it never repeats. The panel’s Lyapunov exponent goes positive exactly where chaos starts.');
+    api.status('Drag the growth-rate slider up and watch calm tip into chaos.');
 
     bagg.add(Engine.loop(() => {
       /* advance the live orbit a few years per frame */

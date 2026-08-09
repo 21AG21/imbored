@@ -170,7 +170,8 @@
       else if (notesMode) { notes[sel] ^= 1 << v; grid[sel] = 0; }
       else { grid[sel] = grid[sel] === v ? 0 : v; notes[sel] = 0; }
       cells[sel].classList.remove('wrong');
-      api.sfx.click();
+      if (v !== 0 && !notesMode && grid[sel] === v) api.sfx[v === solved[sel] ? 'blip' : 'bad']();
+      else api.sfx.click();
       render();
       checkWin();
     }

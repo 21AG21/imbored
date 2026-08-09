@@ -287,10 +287,10 @@ kbd {
 @media (min-width: 880px) { .pick-row { flex-wrap: wrap; overflow-x: visible; } .pick { flex: 1 1 200px; max-width: 260px; } }
 .pick { scroll-snap-align: start; flex: 0 0 200px; display: grid; grid-template-columns: auto 1fr;
   grid-template-rows: auto auto; column-gap: 8px; align-items: center; text-decoration: none;
-  padding: 12px 14px; border: 3px solid var(--ink); box-shadow: var(--bevel-out);
-  background: var(--paper); color: var(--ink); transition: transform .08s; }
-.pick:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--ink); }
-.pick:active { box-shadow: var(--bevel-in); transform: translate(1px, 1px); }
+  padding: 12px 14px; border: 3px solid var(--ink); box-shadow: 4px 4px 0 0 var(--ink);
+  background: var(--paper); color: var(--ink); transition: transform .09s steps(2), box-shadow .09s steps(2); }
+.pick:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 0 var(--ink); }
+.pick:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 0 var(--ink); }
 .pick-emoji { grid-row: 1 / span 2; width: 34px; height: 34px; display: grid; place-items: center;
   border: 2px solid var(--ink); background: var(--label); }
 .pick-title { font: 700 14px/1.1 Verdana, sans-serif; align-self: end; }
@@ -631,7 +631,14 @@ body.in-game .status { margin: 2px 0; font-size: 12px; }
 }
 .dpad-btn:active { box-shadow: var(--bevel-in); }
 .dpad-btn.ghost { background: transparent; border-color: transparent; box-shadow: none; }
-@media (hover: hover) and (pointer: fine) { .dpad.touch-only { display: none; } }
+/* Keep the on-screen pad visible on desktop too — just smaller and calmer than
+   on a phone — so mouse-only players always have obvious controls to click
+   (the keyboard still works). Without this a mouse user faced with, say, 2048
+   sees a board, clicks it, nothing happens, and assumes it's broken. */
+@media (hover: hover) and (pointer: fine) {
+  .dpad.touch-only { grid-template-columns: repeat(3, 42px); grid-template-rows: repeat(3, 36px); gap: 4px; opacity: .95; }
+  .dpad.touch-only .dpad-btn { font-size: 13px; }
+}
 
 /* ---------------- grid games ---------------- */
 .board { display: grid; gap: 3px; user-select: none; touch-action: manipulation; }

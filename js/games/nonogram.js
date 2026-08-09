@@ -35,7 +35,7 @@
     let dragSet = 0;
     let lastIdx = -1;
 
-    const defaultHint = 'Fill the runs the numbers describe. Left-click fills a cell, right-click marks a blank with an X.';
+    const defaultHint = 'The numbers on each row and column are the lengths of the filled blocks, in order. Left-click fills a cell, right-click marks a blank with an X.';
 
     /* ---------- shell ---------- */
     const wrapEl = h('div', { class: 'nono-wrap' });

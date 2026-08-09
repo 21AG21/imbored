@@ -176,7 +176,7 @@
         A[idx] = 0.4; B[idx] = 0.9;
       }
     }
-    bagg.listen(cv.el, 'pointerdown', (e) => { painting = true; paint(e); });
+    bagg.listen(cv.el, 'pointerdown', (e) => { painting = true; paint(e); api.sfx.click(); });
     bagg.listen(cv.el, 'pointermove', (e) => { if (painting) paint(e); });
     bagg.listen(cv.el, 'pointerup', () => { painting = false; });
     bagg.listen(cv.el, 'pointerleave', () => { painting = false; });
@@ -192,7 +192,7 @@
     bagg.add(() => { if (window.__rd) delete window.__rd; });
 
     seed({ f: PRESETS[0].f, k: PRESETS[0].k });
-    api.status('Two chemicals, one reaction rule. Drag on the field to add reagent. Slide f and k to roam the map — the interesting band is narrow.');
+    api.status('Drag on the dish to add chemical and watch spots and stripes spread.');
 
     bagg.add(Engine.loop(() => {
       if (running) for (let i = 0; i < 8; i++) step();

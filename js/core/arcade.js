@@ -442,9 +442,9 @@
         document.body.appendChild(a); a.click(); a.remove();
         setTimeout(() => URL.revokeObjectURL(url), 1500);
         setLabel('Saved ✓');
-        setTimeout(() => setLabel(label || 'Download this page'), 2200);
+        setTimeout(() => setLabel(label || 'Download the whole arcade'), 2200);
       } catch (e) {
-        setLabel(label || 'Download this page');
+        setLabel(label || 'Download the whole arcade');
         alert('Could not build the offline copy — a file failed to load (' + (e && e.message ? e.message : e) + '). If you opened this straight from a file on disk rather than a web address, grab the ready-made single-file build (dist/cubicle-arcade.html) from the project instead.');
       }
     }
@@ -462,14 +462,14 @@
       docRow,
       h('span', { class: 'foot-skin' },
         h('strong', null, 'SCORES:'),
-        h('button', { class: 'btn tiny', type: 'button', onclick: exportSaves }, 'Back up'),
-        h('button', { class: 'btn tiny', type: 'button', onclick: () => importInput.click() }, 'Restore'),
+        h('button', { class: 'btn tiny', type: 'button', title: 'Save your scores and settings to a file on your computer — nothing is stored in the browser, so this is the only way to keep them', onclick: exportSaves }, 'Save to file'),
+        h('button', { class: 'btn tiny', type: 'button', title: 'Load scores back from a file you saved earlier', onclick: () => importInput.click() }, 'Load from file'),
         h('a', { class: 'foot-link', href: '#stats' }, 'Your timesheet'),
         importInput),
       h('span', { class: 'foot-skin' },
-        h('strong', null, 'OFFLINE COPY:'),
-        h('button', { class: 'btn tiny', type: 'button', title: 'Save this whole page as one file you can open with no internet', onclick: (e) => downloadSelf(e.currentTarget) }, 'Download this page'),
-        h('span', { class: 'foot-privacy' }, 'one self-contained file — keep it in Drive or a USB stick and open it offline any time')),
+        h('strong', null, 'PLAY OFFLINE:'),
+        h('button', { class: 'btn tiny primary', type: 'button', title: 'Save the entire arcade as a single file you can reopen with no internet — drop it on a USB stick or in Drive and play anywhere', onclick: (e) => downloadSelf(e.currentTarget) }, 'Download the whole arcade'),
+        h('span', { class: 'foot-privacy' }, 'one self-contained file — no internet needed to reopen it')),
       webRow,
       h('span', null,
         h('a', { class: 'foot-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener' }, 'PHANTOM: why traffic jams happen for no reason')),

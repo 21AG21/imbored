@@ -32,7 +32,7 @@
       turn = 1; over = false; busy = false;
       msg.textContent = 'Pick one of your pits (the bottom row).'; msg.className = 'mc-msg';
       build(); paint(); sync();
-      api.status('Tap one of your pits along the bottom. Stones drop one per pit going right and around. Land your last stone in your store (right side) to move again; land in one of your own empty pits to capture the stones across from it. Most stones when a side empties out wins.');
+      api.status('Tap a pit on your side (bottom row) to sow its stones toward your store on the right.');
     }
 
     function build() {

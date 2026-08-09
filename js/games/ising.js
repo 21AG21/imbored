@@ -76,7 +76,7 @@
       }
       win.length = 0; chi = 0; peakChi = 0;
       syncPills();
-      api.status('Drag the temperature. Below T_c ≈ 2.27 the lattice magnetises into one colour; above it, it dissolves into noise. Right at the edge, domains churn on every scale.');
+      api.status('Drag the temperature: cool it and the pixels snap into big matching patches, heat it and they boil. Find the flip point.');
     }
 
     /* one Metropolis sweep = N*N attempted flips, periodic boundaries */
@@ -123,6 +123,7 @@
       if (win.length >= 120 && chi > peakChi) {
         peakChi = chi;
         api.submit(Math.round(peakChi));
+        api.sfx.blip(620 + Math.min(600, peakChi));
       }
     }
 

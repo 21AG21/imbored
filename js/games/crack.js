@@ -52,12 +52,19 @@
       for (let i = 0; i < bulls; i++) pegs.appendChild(h('span', { class: 'crk-peg bull' }));
       for (let i = 0; i < cows; i++) pegs.appendChild(h('span', { class: 'crk-peg cow' }));
       for (let i = 0; i < LEN - bulls - cows; i++) pegs.appendChild(h('span', { class: 'crk-peg' }));
-      list.appendChild(h('div', { class: 'crk-row' }, h('span', { class: 'crk-guess' }, g.split('').map((d) => h('span', { class: 'crk-digit' }, d))), pegs));
+      const rowEl = h('div', { class: 'crk-row' }, h('span', { class: 'crk-guess' }, g.split('').map((d) => h('span', { class: 'crk-digit' }, d))), pegs);
+      list.appendChild(rowEl);
       list.scrollTop = list.scrollHeight;
+      /* brief flash on the newest row: a stronger pop when a digit lands right */
+      rowEl.style.transition = 'background-color .6s ease, transform .2s ease';
+      rowEl.style.transform = 'scale(1.04)';
+      if (bulls > 0) rowEl.style.backgroundColor = 'var(--lime)';
+      void rowEl.offsetWidth;
+      requestAnimationFrame(() => { rowEl.style.transform = ''; rowEl.style.backgroundColor = ''; });
       input.value = ''; msg.textContent = ''; msg.className = 'crk-msg';
       pLeft.textContent = 'guesses: ' + (maxg - guesses.length);
       if (bulls === LEN) { over = true; streak++; api.save('streak', streak); api.submit(streak); api.sfx.great(); msg.textContent = 'Cracked it in ' + guesses.length + '! Streak ' + streak + '.'; msg.className = 'crk-msg win'; input.disabled = true; return; }
-      api.sfx.blip(300 + bulls * 120);
+      api.sfx[bulls > 0 ? 'good' : 'click']();
       if (guesses.length >= maxg) { over = true; streak = 0; api.save('streak', 0); api.sfx.bad(); msg.textContent = 'Out of guesses. The code was ' + secret + '.'; msg.className = 'crk-msg lose'; input.disabled = true; return; }
       try { input.focus(); } catch (e) { /* */ }
     }

@@ -50,7 +50,7 @@
     function reset() {
       for (let i = 0; i < grid.length; i++) grid[i] = 1 + ((Math.random() * 3) | 0);
       gen = 0; coStreak = 0; hist.length = 0;
-      api.status('Random noise, three species. Press play and watch it curdle into rotating spirals — and notice all three hang on. Slide mixing up to smear the pattern coarser.');
+      api.status('Three colours fight for the field — watch them curl into living spirals. Reseed to shuffle.');
     }
 
     const idx = (x, y) => ((y + N) % N) * N + ((x + N) % N);

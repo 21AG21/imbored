@@ -47,7 +47,7 @@
       banner.style.display = 'none';
       buildBoard();
       syncPills();
-      api.status('Left click to dig. Right click to flag. Right click a number with enough flags around it to sweep its neighbours.');
+      api.status('Left click to dig. Right click to flag. A number is how many mines touch that square. Right click a number with enough flags around it to sweep its neighbours.');
     }
 
     function layMines(sx, sy) {

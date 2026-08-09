@@ -63,7 +63,7 @@
       stick(CX | 0, CY | 0);             // the seed
       launch();
       buf.fill(0xff1a1208 >>> 0);
-      api.status('Cold glass, one speck of ice in the middle. Wandering molecules freeze the instant they touch it and branch into frost. The panel tracks its fractal dimension as it grows — it climbs into the mid 1.6s, near the textbook 1.71.');
+      api.status('Pick a growth speed and watch the frost crystal branch across the window.');
     }
 
     function stick(ix, iy) {
@@ -74,7 +74,7 @@
       rhist[Math.min(rhist.length - 1, Math.round(rr))] += 1;
       if (rr > R) R = rr;
       if (count > peak) { peak = count; api.submit(peak); }
-      if (R >= RMAX) { done = true; api.status('The frost reached the window frame. Fractal dimension measured at ' + dim.toFixed(2) + ' (Witten–Sander: ' + DREF + ').'); }
+      if (R >= RMAX) { done = true; api.sfx.blip(760); api.status('The frost reached the window frame. Fractal dimension measured at ' + dim.toFixed(2) + ' (Witten–Sander: ' + DREF + ').'); }
     }
 
     function launch() {
