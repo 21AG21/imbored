@@ -184,6 +184,9 @@
     Engine.audio.muted = store.get('muted', true);
     syncSound();
 
+    const musicBtn = h('button', { class: 'icon-btn', type: 'button', title: 'Hold Music on/off', html: Icons.svg('music', 19) });
+    musicBtn.addEventListener('click', () => { musicBtn.classList.toggle('on', Engine.music.toggle()); });
+
     diffBtn = h('button', {
       class: 'btn diffbtn', type: 'button',
       onclick: () => { Engine.audio.blip(280 + diffIdx * 170); Arcade.setDiff((diffIdx + 1) % DIFFS.length); }
@@ -223,6 +226,7 @@
       h('button', { class: 'icon-btn', id: 'fsbtn', type: 'button', title: 'Big screen (\\)', html: Icons.svg('expand', 19), onclick: () => Arcade.toggleBig() }),
       buildThemeBtn(),
       soundBtn,
+      musicBtn,
       h('button', {
         class: 'icon-btn', type: 'button',
         title: 'LOOK BUSY (backtick). Shift-click to change disguise.',

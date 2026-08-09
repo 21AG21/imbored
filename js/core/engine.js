@@ -288,6 +288,47 @@
   Engine.sfx = audio;
   Engine.haptic = function haptic(pattern) { audio.buzz(pattern); };
 
+  /* ---------- Hold Music: a tiny procedural chiptune loop ----------
+     A lookahead scheduler over a I-vi-IV-V progression in C, so it sits under
+     the existing C-major SFX instead of fighting them. Off by default. */
+  Engine.music = (function () {
+    let ac = null, on = false, timer = null, nextTime = 0, step = 0;
+    const ROOTS = [130.81, 110.0, 87.31, 98.0];                 // C3 A2 F2 G2
+    const ARPS = [
+      [261.63, 329.63, 392.0, 329.63], [220.0, 261.63, 329.63, 261.63],
+      [174.61, 220.0, 261.63, 220.0], [196.0, 246.94, 293.66, 246.94]
+    ];
+    const BPM = 92, beat = 60 / BPM, look = 0.12;
+    function ctx() {
+      if (!ac) { try { ac = new (global.AudioContext || global.webkitAudioContext)(); } catch (e) { ac = null; } }
+      if (ac && ac.state === 'suspended') ac.resume();
+      return ac;
+    }
+    function note(freq, t, dur, type, vol) {
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = type; o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(vol, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + dur + 0.02);
+    }
+    function schedule() {
+      const a = ctx(); if (!a) return;
+      while (nextTime < a.currentTime + look) {
+        const bar = Math.floor(step / 4) % 4, s = step % 4;
+        if (s === 0) note(ROOTS[bar], nextTime, beat * 1.8, 'triangle', 0.07);
+        note(ARPS[bar][s], nextTime, beat * 0.85, 'square', 0.03);
+        nextTime += beat; step++;
+      }
+    }
+    return {
+      playing: () => on,
+      start() { const a = ctx(); if (!a) return false; on = true; nextTime = a.currentTime + 0.08; step = 0; if (timer) clearInterval(timer); timer = setInterval(schedule, look * 500); return true; },
+      stop() { on = false; if (timer) { clearInterval(timer); timer = null; } return false; },
+      toggle() { return on ? this.stop() : this.start(); }
+    };
+  })();
+
   /* ---------- auto-advancing win banner ----------
      Shows the result, then moves to the next level on a short countdown so
      nobody has to reach for the mouse. The button still works if you are

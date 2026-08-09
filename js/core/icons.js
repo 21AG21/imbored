@@ -122,6 +122,9 @@
       r(2, 2, 20, 20, P.dark) +
       c(8, 8, 3.2, P.teal) + c(16, 9, 2.2, P.lime) + c(9, 16, 2.4, P.yellow) +
       c(16, 16, 3.4, P.teal) + c(12, 12, 1.6, P.lime) + c(19, 14, 1.6, P.yellow),
+    music:
+      c(7, 17, 2.6, P.lime) + c(16, 15, 2.6, P.lime) +
+      p('M9.4 17V6l9-2v11', 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="2"'),
     /* ---------- sims wave 2 ---------- */
     vicsek: "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" fill=\"#0f1420\"/><path d=\"M6 6l4 2-4 2z\" fill=\"#6fcf2f\"/><path d=\"M12 5l4 2-4 2z\" fill=\"#6fcf2f\"/><path d=\"M7 13l4 2-4 2z\" fill=\"#00a6b4\"/><path d=\"M13 12l4 2-4 2z\" fill=\"#00a6b4\"/>",
     kuramoto: "<circle cx=\"12\" cy=\"12\" r=\"9\" fill=\"none\" stroke=\"#a79e88\" stroke-width=\"1.5\"/><circle cx=\"12\" cy=\"3\" r=\"1.7\" fill=\"#e8402a\"/><circle cx=\"20\" cy=\"10\" r=\"1.7\" fill=\"#ffcb1f\"/><circle cx=\"16\" cy=\"19\" r=\"1.7\" fill=\"#6fcf2f\"/><path d=\"M12 12 L18 8\" fill=\"none\" stroke=\"#fffdf3\" stroke-width=\"1.6\"/>",
