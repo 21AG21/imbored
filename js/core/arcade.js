@@ -579,8 +579,6 @@
         h('span', { class: 'foot-privacy' }, 'one self-contained file — no internet needed to reopen it')),
       webRow,
       h('span', null,
-        h('a', { class: 'foot-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener' }, 'PHANTOM: why traffic jams happen for no reason')),
-      h('span', null,
         h('kbd', null, '`'), ' look busy   ',
         h('kbd', null, '1'), ' jump to Docs   ',
         h('kbd', null, 'Shift'), '+', h('kbd', null, '`'), ' rave   ',
@@ -868,15 +866,7 @@
           }))) : null,
       chips,
       h('div', { class: 'grid' },
-        cards.length ? cards : h('p', { class: 'empty' }, 'Nothing by that name. Try fewer letters.'),
-        (!q && (activeCat === 'all' || activeCat === 'sim')) ? h('a', {
-          class: 'card card-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener'
-        },
-          h('span', { class: 'card-emoji', html: Icons.svg('road', 28) }),
-          h('span', { class: 'card-cat' }, 'Bonus'),
-          h('h3', { class: 'card-title' }, 'Phantom'),
-          h('p', { class: 'card-blurb' }, 'A traffic jam with no cause at all. One driver taps the brakes and the pulse outlives them, travelling backwards through the traffic forever. Watch it, then go play Gridlock again.'),
-          h('span', { class: 'card-best' }, 'opens in a new tab ↗')) : null),
+        cards.length ? cards : h('p', { class: 'empty' }, 'Nothing by that name. Try fewer letters.')),
       h('div', { class: 'ticker' }, h('span', null,
         '*** NOW WITH ' + games.length + ' GAMES ***' + TICKER.slice(2).join(''))));
     const gridEl = view.querySelector('.grid');

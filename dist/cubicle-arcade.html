@@ -1187,11 +1187,6 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
 .shop-own { display: block; font-size: 11px; color: var(--ink2); }
 .shop-foot { margin: 8px 0 2px; font-size: 10.5px; text-align: center; color: var(--ink2); }
 
-/* the outbound bonus card + links */
-.card-link { background: var(--grape); }
-.card-link .card-title, .card-link .card-blurb { color: var(--label); }
-.card-link .card-cat { background: var(--banana); color: var(--ink); }
-.card-link .card-best { background: var(--banana); color: var(--ink); }
 .foot-link { text-decoration: underline; font-weight: 700; }
 .foot-link:hover { background: var(--banana); }
 .rel-link { background: var(--banana); }
@@ -5816,8 +5811,6 @@ body.docmode .doc-figcap {
         h('span', { class: 'foot-privacy' }, 'one self-contained file — no internet needed to reopen it')),
       webRow,
       h('span', null,
-        h('a', { class: 'foot-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener' }, 'PHANTOM: why traffic jams happen for no reason')),
-      h('span', null,
         h('kbd', null, '`'), ' look busy   ',
         h('kbd', null, '1'), ' jump to Docs   ',
         h('kbd', null, 'Shift'), '+', h('kbd', null, '`'), ' rave   ',
@@ -6105,15 +6098,7 @@ body.docmode .doc-figcap {
           }))) : null,
       chips,
       h('div', { class: 'grid' },
-        cards.length ? cards : h('p', { class: 'empty' }, 'Nothing by that name. Try fewer letters.'),
-        (!q && (activeCat === 'all' || activeCat === 'sim')) ? h('a', {
-          class: 'card card-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener'
-        },
-          h('span', { class: 'card-emoji', html: Icons.svg('road', 28) }),
-          h('span', { class: 'card-cat' }, 'Bonus'),
-          h('h3', { class: 'card-title' }, 'Phantom'),
-          h('p', { class: 'card-blurb' }, 'A traffic jam with no cause at all. One driver taps the brakes and the pulse outlives them, travelling backwards through the traffic forever. Watch it, then go play Gridlock again.'),
-          h('span', { class: 'card-best' }, 'opens in a new tab ↗')) : null),
+        cards.length ? cards : h('p', { class: 'empty' }, 'Nothing by that name. Try fewer letters.')),
       h('div', { class: 'ticker' }, h('span', null,
         '*** NOW WITH ' + games.length + ' GAMES ***' + TICKER.slice(2).join(''))));
     const gridEl = view.querySelector('.grid');
@@ -10438,10 +10423,6 @@ body.docmode .doc-figcap {
     order: 1,
     blurb: 'Run the lights on a twelve-junction city for a full working day. Cars, buses, trucks and ambulances all want through, and every jam fills the rage bar.',
     scoreLabel: 'Vehicles through',
-    link: {
-      url: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd',
-      label: 'See why real jams start'
-    },
     tags: ['traffic', 'jam', 'city', 'lights', 'management'],
     how: [
       'Click a junction to flip which way gets the green. Each flip runs a short all-red, and that is when waiting pedestrians cross.',

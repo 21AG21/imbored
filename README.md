@@ -107,10 +107,6 @@ included, and your choice is remembered.
 | **Load Balance** | Hold a grid at 50 Hz through a full day. Coal ramps slowly, gas costs a fortune, and the weather does not consult you. |
 | **Approach Control** | Draw flight paths on radar. Hold separation. Land each aircraft on its matching runway from the correct end. |
 
-There is a companion piece worth ten minutes if Gridlock got its hooks in:
-**[Phantom, a traffic jam with no cause at all](https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd)**.
-One driver taps the brakes and the pulse outlives them, travelling backwards through the
-traffic forever. It is linked from the shelf and from Gridlock itself.
 
 ### Puzzles
 **Minesweeper** · **2048** · **Space Allocation** · **Jam Escape** · **Crate Pusher** · **Pipe Dream** · **Solitaire** · **Maze**

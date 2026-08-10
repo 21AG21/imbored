@@ -1172,11 +1172,6 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
 .shop-own { display: block; font-size: 11px; color: var(--ink2); }
 .shop-foot { margin: 8px 0 2px; font-size: 10.5px; text-align: center; color: var(--ink2); }
 
-/* the outbound bonus card + links */
-.card-link { background: var(--grape); }
-.card-link .card-title, .card-link .card-blurb { color: var(--label); }
-.card-link .card-cat { background: var(--banana); color: var(--ink); }
-.card-link .card-best { background: var(--banana); color: var(--ink); }
 .foot-link { text-decoration: underline; font-weight: 700; }
 .foot-link:hover { background: var(--banana); }
 .rel-link { background: var(--banana); }

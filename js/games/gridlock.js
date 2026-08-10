@@ -791,10 +791,6 @@
     order: 1,
     blurb: 'Run the lights on a twelve-junction city for a full working day. Cars, buses, trucks and ambulances all want through, and every jam fills the rage bar.',
     scoreLabel: 'Vehicles through',
-    link: {
-      url: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd',
-      label: 'See why real jams start'
-    },
     tags: ['traffic', 'jam', 'city', 'lights', 'management'],
     how: [
       'Click a junction to flip which way gets the green. Each flip runs a short all-red, and that is when waiting pedestrians cross.',
