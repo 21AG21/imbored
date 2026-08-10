@@ -113,6 +113,7 @@
       return true;
     }));
     Engine.dpad(root, (d) => { if (d !== 'action') slide(d); }, { class: 'touch-only' });
+    bagg.add(Engine.swipe(board, slide));
 
     scramble();
     return () => bagg.dispose();

@@ -1343,7 +1343,15 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
 @media (orientation: portrait) and (max-width: 720px) {
   /* one tidy row of controls instead of two — the wordmark and ticker aren't
      worth 55px of playfield mid-game (the home dice still gets you back) */
-  body.in-game .topbar { flex-wrap: nowrap; padding: 5px 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  /* on some games (confirmed: Password Reset, Battleship — both build large
+     boards with many DOM nodes) this combination of nowrap + horizontal
+     scroll collapses the topbar's own height to ~14px, which then centers
+     its children around the wrong axis and crops the whole row against the
+     top of the page. Root cause not fully pinned (reproduces even though
+     every game overflows this row's content width the same amount, so it
+     isn't the overflow itself) — min-height is a hard floor that holds
+     regardless of whatever layout pass is miscalculating it. */
+  body.in-game .topbar { flex-wrap: nowrap; padding: 5px 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; min-height: 54px; }
   body.in-game .brand-text { display: none; }
   body.in-game .ticker { display: none; }
 
@@ -1395,8 +1403,36 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
   body.in-game .meter { height: 10px; }
   body.in-game .panel { padding: 6px 8px; }
   body.in-game .panel h4 { margin-bottom: 4px; font-size: 10px; }
-  body.in-game .dpad { grid-template-columns: repeat(3, 44px); grid-template-rows: repeat(3, 34px); gap: 3px; }
-  body.in-game .stage { gap: 6px; }
+  body.in-game .dpad { grid-template-columns: repeat(3, 40px); grid-template-rows: repeat(3, 28px); gap: 2px; }
+  body.in-game .stage { gap: 4px; }
+  /* 2048 and Fifteen both support swipe and tap directly on the board, so
+     their touch d-pad is a convenience, not the only way to play — on a
+     landscape phone the full board is worth more than a redundant control
+     that would otherwise still poke past the fold */
+  body[data-game="2048"].in-game .dpad.touch-only,
+  body[data-game="fifteen"].in-game .dpad.touch-only { display: none; }
+
+  /* match-3's 8x8 board is square (cells use aspect-ratio: 1), so capping
+     its width to the space actually left after the chrome above it also
+     caps its height — the whole board fits instead of losing its bottom
+     rows off the edge of a landscape phone */
+  body.in-game .board.match3 { max-width: min(460px, calc(100svh - 155px)); }
+  body.in-game .match3 .cell { font-size: 12px; }
+
+  /* flood's 14x14 board is square too, and its only control (the color
+     picker) sits below it — on a landscape phone the default 430px board
+     pushed the picker off the bottom of the screen entirely, with no way
+     to see there even was a next move to make */
+  body.in-game .flood { width: min(430px, calc(100svh - 189px)); }
+  body.in-game .flood-swatch { width: 34px; height: 34px; }
+
+  /* Word Ladder and Cryptogram's QWERTY keyboards keep the real 3-row
+     layout (unlike Hangman's free-form A-Z grid, reflowing these would
+     scramble touch-typing muscle memory) — so close the gap by shrinking
+     row height instead of the column count */
+  body.in-game .lad-key, body.in-game .cg-key { height: 24px; font-size: 11px; }
+  body.in-game .lad-keys, body.in-game .cg-keys { gap: 3px; }
+  body.in-game .lad-keyrow, body.in-game .cg-keyrow { gap: 3px; }
 
   /* fixed-size DOM boards (2048, fifteen) are tall enough to run off the
      bottom of a landscape phone entirely — cap cells to the viewport's
@@ -1534,6 +1570,13 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
   cursor: pointer;
 }
 .sud-key:active { box-shadow: var(--bevel-in); }
+/* nine equal-width keys in one row cannot all clear the 44px touch-target
+   floor on any phone narrower than ~436px — the floor was winning that
+   fight against aspect-ratio and pushing the row wider than the screen,
+   clipping 8 and 9 off the edge entirely. Let the grid's own 1fr tracks
+   size the keys instead; at typical phone widths that lands around 36-40px,
+   still comfortably tappable for a single digit. */
+.sud-pad .sud-key { min-height: 0; }
 .sud-key.wide { grid-column: span 2; aspect-ratio: auto; font-size: 12px; text-transform: uppercase; }
 .sud-key.on { background: var(--lime); box-shadow: inset 0 0 0 3px var(--ink); }
 @media (max-width: 520px) {
@@ -2255,7 +2298,14 @@ body.docmode .sb-label {
 /* larger touch targets on finger-driven screens (aim for ~44px) */
 @media (pointer: coarse) {
   .btn, .kbd-key, .chip, .sud-key, .hm-key, .nim-take, .rps-btn { min-height: 44px; }
-  .kbd-key, .chip { min-width: 40px; }
+  .chip { min-width: 40px; }
+  /* a flat 40px floor on ten keys in one row (Q-P) doesn't fit any phone
+     narrower than ~436px — it was winning the cascade over the vw-capped
+     rule meant to shrink keys for narrow screens (same class of bug as the
+     landscape chrome fix: a later same-specificity rule silently wins
+     regardless of which one actually accounts for viewport width), pushing
+     the whole row wider than the screen and clipping Q and P off both edges */
+  .kbd-key { min-width: min(40px, 8.5vw); }
 }
 
 /* ================= disguise 7: slides ================= */
@@ -9209,11 +9259,11 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'life',
-    title: 'Game of Life',
+    title: 'Headcount Model',
     emoji: 'life',
     cat: 'sim',
     order: 12,
-    blurb: 'Conway\'s cellular automaton on a 150-cell torus. Each step, cells live or die by one rule about their neighbours, and gliders, oscillators, and glider guns emerge. Draw a colony, drop a preset, or scatter noise and watch it settle.',
+    blurb: 'A two-state cellular automaton on a 150-cell torus. Each step, cells live or die by one rule about their neighbours, and gliders, oscillators, and glider guns emerge. Draw a colony, drop a preset, or scatter noise and watch it settle.',
     scoreLabel: 'Peak population',
     tags: ['conway', 'cellular-automaton', 'emergence', 'gliders'],
     how: [
@@ -11251,7 +11301,7 @@ body.docmode .doc-figcap {
 
 <!-- puzzles -->
 <script>
-/* Minesweeper. The original meeting game. */
+/* Risk Assessment. The original meeting game. */
 (function () {
   'use strict';
   const { h, randInt } = Engine;
@@ -11267,7 +11317,7 @@ body.docmode .doc-figcap {
     let diff = api.load('diff', 'easy');
     let W, Hh, M, grid, opened, flags, started, dead, won, t0, timerId, firstDone;
 
-    const pMines = api.pill('Mines: 0');
+    const pMines = api.pill('Unflagged: 0');
     const pTime = api.pill('⏱ 0');
     const pBest = api.pill('');
     const boardWrap = h('div', { class: 'ms' });
@@ -11456,7 +11506,7 @@ body.docmode .doc-figcap {
     }
 
     function syncPills() {
-      pMines.textContent = 'Mines: ' + (M - flags);
+      pMines.textContent = 'Unflagged: ' + (M - flags);
       pTime.textContent = '⏱ ' + (started ? elapsed() : 0);
       const b = api.load('time:' + diff, null);
       pBest.textContent = b == null ? 'no time yet' : 'best ' + b + 's';
@@ -11488,12 +11538,12 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'minesweeper',
-    title: 'Minesweeper',
+    title: 'Risk Assessment',
     emoji: 'minesweeper',
     cat: 'puzzle',
     order: 10,
     lightBoard: true,   // already a light board — skip the disguise luminance flip
-    blurb: 'Minesweeper with three board sizes, a first click that is always safe, and chording. Good cover for looking deep in thought.',
+    blurb: 'A compliance grid with three sizes, a first click that is always safe, and chording. Good cover for looking deep in thought.',
     scoreLabel: 'Wins',
     tags: ['mines', 'classic', 'logic'],
     how: [
@@ -11509,7 +11559,7 @@ body.docmode .doc-figcap {
 
 </script>
 <script>
-/* 2048. Slide, merge, regret. */
+/* Budget Rollup. Slide, merge, regret. */
 (function () {
   'use strict';
   const { h, randInt } = Engine;
@@ -11541,7 +11591,7 @@ body.docmode .doc-figcap {
       render();
       undoBtn.disabled = true;
     });
-    api.button('New game', reset);
+    api.button('New sheet', reset);
 
     function reset() {
       grid = Array.from({ length: N }, () => Array(N).fill(0));
@@ -11607,7 +11657,7 @@ body.docmode .doc-figcap {
       if (!wonAt2048 && grid.some((r) => r.some((v) => v >= 2048))) {
         wonAt2048 = true;
         api.sfx.great();
-        api.status('2048! Keep going for a bigger tile.');
+        api.status('New high total! Keep going for a bigger one.');
       }
       render();
       if (!canMove()) end();
@@ -11633,7 +11683,7 @@ body.docmode .doc-figcap {
         h('h3', null, 'Board is full.'),
         h('p', null, score.toLocaleString() + ' points, biggest tile ' + best + '.' +
           (res.isRecord ? ' New personal best!' : res.isFirst ? '' : ' Best: ' + res.best.toLocaleString() + '.')),
-        h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'New game'));
+        h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'New sheet'));
     }
 
     function render() {
@@ -11670,13 +11720,13 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: '2048',
-    title: '2048',
+    title: 'Budget Rollup',
     emoji: '2048',
     cat: 'puzzle',
     order: 11,
     lightBoard: true,   // has its own document greyscale palette; skip the luminance flip that turned tiles black
 
-    blurb: 'Slide the whole board one way and equal tiles merge into their sum. Keep merging up from 2, 4, 8 toward a 2048 tile before the grid fills. Includes one undo.',
+    blurb: 'Slide the whole board one way and equal line items merge into their sum. Keep rolling up from 2, 4, 8 toward the highest total before the sheet fills. Includes one undo.',
     scoreLabel: 'Score',
     tags: ['tiles', 'merge', 'numbers'],
     how: [
@@ -11807,6 +11857,7 @@ body.docmode .doc-figcap {
       return true;
     }));
     Engine.dpad(root, (d) => { if (d !== 'action') slide(d); }, { class: 'touch-only' });
+    bagg.add(Engine.swipe(board, slide));
 
     scramble();
     return () => bagg.dispose();
@@ -16807,7 +16858,7 @@ body.docmode .doc-figcap {
   }
 
   Arcade.register({
-    id: 'mathrace', title: 'Timesheet Math', emoji: 'workbook', cat: 'brain', order: 32,
+    id: 'mathrace', title: 'Timesheet Math', emoji: 'sheet', cat: 'brain', order: 32,
     lightBoard: true,   // plain text on the page — the luminance flip would turn the sum white-on-white
 
     blurb: 'Sixty seconds of quick arithmetic. Answer as many as you can; wrong answers cost time. Harder settings mean bigger numbers and more multiplication.',
@@ -21883,16 +21934,16 @@ body.docmode .doc-figcap {
       /* side panel */
       const px = PANX, midx = px + PANW / 2;
       ctx.fillStyle = '#8f9ab8';
-      ctx.font = 'bold 11px system-ui';
+      ctx.font = 'bold 14px system-ui';
       ctx.textAlign = 'left';
-      ctx.fillText('HOLD', px, WY + 8);
+      ctx.fillText('HOLD', px, WY + 9);
       ctx.fillStyle = '#0d1424';
       Engine.roundRect(ctx, px, WY + 16, PANW, 70, 8);
       ctx.fill();
       if (hold) drawMini(hold, midx, WY + 51, narrow ? 0.58 : 0.72);
 
       ctx.fillStyle = '#8f9ab8';
-      ctx.fillText('NEXT', px, WY + 118);
+      ctx.fillText('NEXT', px, WY + 119);
       ctx.fillStyle = '#0d1424';
       Engine.roundRect(ctx, px, WY + 126, PANW, 300, 8);
       ctx.fill();
@@ -22753,6 +22804,7 @@ body.docmode .doc-figcap {
 (function () {
   'use strict';
   const { h, clamp } = Engine;
+  const DOC = () => !!(window.Arcade && Arcade.docMode && Arcade.docMode());
   const W = 640, H = 400;
 
   const SEG = 200;                 // segment length (world units)
@@ -23089,13 +23141,28 @@ body.docmode .doc-figcap {
 
       if (cd > 0) {
         const n = Math.ceil(cd - 0.6);
-        ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(0, 0, W, H);
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#fff'; ctx.strokeStyle = '#1d1722'; ctx.lineWidth = 6;
-        ctx.font = 'bold 120px Impact, Arial Black, sans-serif';
-        const label = n <= 0 ? 'GO!' : String(n);
-        ctx.strokeText(label, W / 2, H / 2); ctx.fillText(label, W / 2, H / 2);
-        ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+        const label = n <= 0 ? 'Starting' : 'Starting in ' + n;
+        if (DOC()) {
+          // a full-bleed dimmed overlay with a giant countdown numeral reads as
+          // an unmistakable game-start sequence at a glance; in doc mode this
+          // becomes a small, calm status line instead — same information,
+          // none of the drama
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillStyle = 'rgba(20,23,28,.55)';
+          ctx.fillRect(W / 2 - 90, H / 2 - 16, 180, 32);
+          ctx.fillStyle = '#f2ede0';
+          ctx.font = '600 15px "Courier New", monospace';
+          ctx.fillText(label, W / 2, H / 2 + 1);
+          ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+        } else {
+          ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(0, 0, W, H);
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillStyle = '#fff'; ctx.strokeStyle = '#1d1722'; ctx.lineWidth = 6;
+          ctx.font = 'bold 120px Impact, Arial Black, sans-serif';
+          const big = n <= 0 ? 'GO!' : String(n);
+          ctx.strokeText(big, W / 2, H / 2); ctx.fillText(big, W / 2, H / 2);
+          ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+        }
       }
     }
 
@@ -25157,7 +25224,7 @@ body.docmode .doc-figcap {
 
 </script>
 <script>
-/* Twenty-One. Betting your unspent PTO against a dealer who has never once blinked. */
+/* Chip Ledger. Betting your unspent PTO against a reviewer who has never once blinked. */
 (function () {
   'use strict';
   const { h, shuffle } = Engine;
@@ -25222,7 +25289,7 @@ body.docmode .doc-figcap {
     const playerHand = h('div', { class: 'bj-hand' });
     const felt = h('div', { class: 'bj-felt' },
       h('div', { class: 'bj-row' },
-        h('div', { class: 'bj-side' }, h('span', { class: 'bj-who' }, 'Dealer'), dealerScore),
+        h('div', { class: 'bj-side' }, h('span', { class: 'bj-who' }, 'Reviewer'), dealerScore),
         dealerHand),
       h('div', { class: 'bj-row' },
         h('div', { class: 'bj-side' }, h('span', { class: 'bj-who' }, 'You'), playerScore),
@@ -25328,9 +25395,9 @@ body.docmode .doc-figcap {
       const dBJ = isBlackjack(dealer);
       if (pBJ || dBJ) {
         revealHole = true;
-        if (pBJ && dBJ) finishRound(stake, 'Push.', 'push', 'You both had blackjack. Nothing changes hands.');
-        else if (pBJ) finishRound(stake + Math.round(stake * 1.5), 'Blackjack!', 'bj', 'Twenty-one off the deal. Pays three to two.');
-        else finishRound(0, 'Dealer blackjack.', 'lose', 'The hole card was exactly what you feared.');
+        if (pBJ && dBJ) finishRound(stake, 'Push.', 'push', 'You both hit it off the deal. Nothing changes hands.');
+        else if (pBJ) finishRound(stake + Math.round(stake * 1.5), 'Direct hit!', 'bj', 'Twenty-one off the deal. Pays three to two.');
+        else finishRound(0, 'Reviewer hits it.', 'lose', 'The hole card was exactly what you feared.');
       }
     }
 
@@ -25343,7 +25410,7 @@ body.docmode .doc-figcap {
       const hv = handValue(player);
       if (hv.total > 21) {
         revealHole = true;
-        finishRound(0, 'Bust.', 'lose', 'Over twenty-one. The dealer wins by doing absolutely nothing.');
+        finishRound(0, 'Bust.', 'lose', 'Over twenty-one. The reviewer wins by doing absolutely nothing.');
       } else if (hv.total === 21) {
         stand();
       } else {
@@ -25405,9 +25472,9 @@ body.docmode .doc-figcap {
     function settle() {
       const p = handValue(player).total;
       const d = handValue(dealer).total;
-      if (d > 21) return finishRound(stake * 2, 'Dealer busts.', 'win', 'The dealer overcooked it on ' + d + '. You take ' + stake + ' chips.');
+      if (d > 21) return finishRound(stake * 2, 'Reviewer busts.', 'win', 'The reviewer overcooked it on ' + d + '. You take ' + stake + ' chips.');
       if (p > d) return finishRound(stake * 2, 'You win.', 'win', 'Your ' + p + ' beats their ' + d + '. Up ' + stake + ' chips.');
-      if (p < d) return finishRound(0, 'Dealer wins.', 'lose', 'Their ' + d + ' tops your ' + p + '. The ' + stake + ' chips are gone.');
+      if (p < d) return finishRound(0, 'Reviewer wins.', 'lose', 'Their ' + d + ' tops your ' + p + '. The ' + stake + ' chips are gone.');
       return finishRound(stake, 'Push.', 'push', 'Both sitting on ' + p + '. Your chips come home untouched.');
     }
 
@@ -25458,7 +25525,7 @@ body.docmode .doc-figcap {
     updatePills();
     render();
     updateButtons();
-    api.status('Get to twenty-one without going over, and beat the dealer. Deal, then Hit or Stand. Blackjack pays three to two.');
+    api.status('Get to twenty-one without going over, and beat the reviewer. Deal, then Hit or Stand. A natural pays three to two.');
 
     return () => bagg.dispose();
   }
@@ -25468,20 +25535,20 @@ body.docmode .doc-figcap {
     // NOT lightBoard: the felt table is a genuinely dark backdrop that needs
     // the normal invert (dark -> light); only the light card faces need
     // protecting from it, handled in css/arcade.css via a .bj-card counter-invert.
-    title: 'Twenty-One',
+    title: 'Chip Ledger',
     emoji: 'blackjack',
     cat: 'goof',
     order: 6,
-    blurb: 'Single-deck blackjack against a dealer who plays a fixed policy. The chips are dressed up as unspent PTO, so at least the losses are imaginary.',
+    blurb: 'Single-deck card draw against a reviewer who plays a fixed policy. The chips are dressed up as unspent PTO, so at least the losses are imaginary.',
     scoreLabel: 'Chip high',
-    tags: ['cards', 'blackjack', 'dealer', 'chips'],
+    tags: ['cards', 'ledger', 'reviewer', 'chips'],
     usesLetters: true,
     how: [
-      'Beat the dealer\'s total without going over twenty-one. Aces count as eleven or one, whichever helps.',
+      'Beat the reviewer\'s total without going over twenty-one. Aces count as eleven or one, whichever helps.',
       'Deal a hand, then Hit or Stand. Double takes one more card for a matched bet. Keys: H hit, S stand, D double, Space deals.',
-      'The dealer hits sixteen and stands on seventeen, then turns over the hole card after you stand. Blackjack pays three to two.',
+      'The reviewer hits sixteen and stands on seventeen, then turns over the hole card after you stand. A natural pays three to two.',
       'Your chip bankroll carries between hands and is the score. Go broke and a PTO advance refills you, though a refilled run sets no record.',
-      'Chill and Normal use one deck with the dealer standing on soft seventeen. Hard and Nightmare use four decks with the dealer hitting soft seventeen.'
+      'Chill and Normal use one deck with the reviewer standing on soft seventeen. Hard and Nightmare use four decks with the reviewer hitting soft seventeen.'
     ],
     mount: mount
   });
@@ -25681,11 +25748,11 @@ body.docmode .doc-figcap {
   Arcade.register({
     id: 'videopoker',
     lightBoard: true,   // light pay table + card faces would invert to solid black under the figure flip
-    title: 'Video Poker',
+    title: 'Incentive Draw',
     emoji: 'cards',
     cat: 'goof',
     order: 42,
-    blurb: 'Jacks-or-Better video poker for the break room. Deal five, hold the keepers, draw once, get paid by the table. The credits are fake.',
+    blurb: 'Jacks-or-better card draw for the break room. Deal five, hold the keepers, draw once, get paid by the table. The credits are fake.',
     scoreLabel: 'Best credits',
     tags: ['poker', 'cards', 'casino'],
     how: [
@@ -26700,18 +26767,18 @@ body.docmode .doc-figcap {
     { label: 'Sad trombone', emoji: '🎺', key: '2', play: () => { [[311, 277], [277, 247], [247, 220], [220, 165]].forEach((n, i) => A.tone({ freq: n[0], to: n[1], dur: i === 3 ? 0.55 : 0.26, type: 'sawtooth', vol: 0.14, delay: i * 0.27 })); } },
     { label: 'Rimshot', emoji: '🥁', key: '3', play: () => { A.tone({ freq: 180, to: 80, dur: 0.12, type: 'sine', vol: 0.2 }); A.tone({ freq: 180, to: 80, dur: 0.12, type: 'sine', vol: 0.2, delay: 0.16 }); A.noise({ dur: 0.4, cutoff: 9000, vol: 0.12 }); A.noise({ dur: 0.5, cutoff: 9000, vol: 0.12 }); setTimeout(() => A.noise({ dur: 0.5, cutoff: 9000, vol: 0.14 }), 320); } },
     { label: 'Applause', emoji: '👏', key: '4', play: () => { for (let i = 0; i < 22; i++) A.noise({ dur: 0.12, cutoff: 3000, vol: 0.06, delay: i * 0.06 + Math.random() * 0.03 }); } },
-    { label: 'Boing', emoji: '🤸', key: '5', play: () => { A.tone({ freq: 620, to: 180, dur: 0.28, type: 'sine', vol: 0.16 }); A.tone({ freq: 180, to: 380, dur: 0.2, type: 'sine', vol: 0.1, delay: 0.26 }); } },
-    { label: 'Vine boom', emoji: '💥', key: '6', play: () => { A.tone({ freq: 74, to: 36, dur: 0.55, type: 'sine', vol: 0.3 }); A.noise({ dur: 0.22, cutoff: 220, vol: 0.16 }); } },
+    { label: 'Bounce', emoji: '🤸', key: '5', play: () => { A.tone({ freq: 620, to: 180, dur: 0.28, type: 'sine', vol: 0.16 }); A.tone({ freq: 180, to: 380, dur: 0.2, type: 'sine', vol: 0.1, delay: 0.26 }); } },
+    { label: 'Impact', emoji: '💥', key: '6', play: () => { A.tone({ freq: 74, to: 36, dur: 0.55, type: 'sine', vol: 0.3 }); A.noise({ dur: 0.22, cutoff: 220, vol: 0.16 }); } },
     { label: 'Coin', emoji: '🪙', key: '7', play: () => { A.tone({ freq: 988, dur: 0.08, type: 'square', vol: 0.12 }); A.tone({ freq: 1319, dur: 0.5, type: 'square', vol: 0.1, delay: 0.08 }); } },
-    { label: 'Wrong!', emoji: '❌', key: '8', play: () => { A.tone({ freq: 130, dur: 0.5, type: 'sawtooth', vol: 0.16 }); A.tone({ freq: 123, dur: 0.5, type: 'sawtooth', vol: 0.16 }); } },
+    { label: 'Error', emoji: '❌', key: '8', play: () => { A.tone({ freq: 130, dur: 0.5, type: 'sawtooth', vol: 0.16 }); A.tone({ freq: 123, dur: 0.5, type: 'sawtooth', vol: 0.16 }); } },
     { label: 'Ding!', emoji: '🛎️', key: '9', play: () => { A.tone({ freq: 1047, dur: 0.5, type: 'sine', vol: 0.14 }); A.tone({ freq: 2093, dur: 0.4, type: 'sine', vol: 0.05 }); } },
     { label: 'Fanfare', emoji: '🎉', key: 'q', play: () => { [392, 523, 659, 784].forEach((f, i) => A.tone({ freq: f, dur: i === 3 ? 0.6 : 0.14, type: 'triangle', vol: 0.12, delay: i * 0.11 })); } },
     { label: 'Toot', emoji: '💨', key: 'w', play: () => { A.tone({ freq: 116, to: 70, dur: 0.4, type: 'sawtooth', vol: 0.16 }); A.tone({ freq: 118, to: 74, dur: 0.4, type: 'square', vol: 0.06 }); } },
     { label: 'Scratch', emoji: '💿', key: 'e', play: () => { A.noise({ dur: 0.16, cutoff: 2400, vol: 0.14 }); A.tone({ freq: 800, to: 200, dur: 0.15, type: 'sawtooth', vol: 0.1 }); A.tone({ freq: 260, to: 900, dur: 0.15, type: 'sawtooth', vol: 0.1, delay: 0.16 }); A.noise({ dur: 0.16, cutoff: 2400, vol: 0.14, delay: 0.16 }); } },
     { label: 'Crickets', emoji: '🦗', key: 'r', play: () => { for (let i = 0; i < 4; i++) { A.tone({ freq: 4200, dur: 0.015, type: 'square', vol: 0.08, delay: i * 0.5 }); A.tone({ freq: 4200, dur: 0.015, type: 'square', vol: 0.08, delay: i * 0.5 + 0.08 }); } } },
-    { label: 'Bruh', emoji: '😐', key: 't', play: () => { A.tone({ freq: 164, to: 120, dur: 0.42, type: 'sawtooth', vol: 0.16 }); } },
+    { label: 'Sigh', emoji: '😐', key: 't', play: () => { A.tone({ freq: 164, to: 120, dur: 0.42, type: 'sawtooth', vol: 0.16 }); } },
     { label: 'Drumroll', emoji: '🥁', key: 'a', play: () => { for (let i = 0; i < 24; i++) A.noise({ dur: 0.05, cutoff: 2000, vol: 0.05 + i * 0.003, delay: i * 0.05 }); A.noise({ dur: 0.6, cutoff: 9000, vol: 0.16, delay: 1.25 }); A.tone({ freq: 120, to: 60, dur: 0.3, type: 'sine', vol: 0.2, delay: 1.25 }); } },
-    { label: 'Quack', emoji: '🦆', key: 's', play: () => { A.tone({ freq: 300, to: 240, dur: 0.12, type: 'sawtooth', vol: 0.16 }); A.tone({ freq: 280, to: 200, dur: 0.14, type: 'sawtooth', vol: 0.16, delay: 0.14 }); } },
+    { label: 'Honk', emoji: '🦆', key: 's', play: () => { A.tone({ freq: 300, to: 240, dur: 0.12, type: 'sawtooth', vol: 0.16 }); A.tone({ freq: 280, to: 200, dur: 0.14, type: 'sawtooth', vol: 0.16, delay: 0.14 }); } },
     { label: 'Level up', emoji: '⬆️', key: 'd', play: () => { [523, 659, 784, 1047, 1319].forEach((f, i) => A.tone({ freq: f, dur: 0.1, type: 'square', vol: 0.1, delay: i * 0.07 })); } },
     { label: 'Alarm', emoji: '🚨', key: 'f', play: () => { for (let i = 0; i < 4; i++) { A.tone({ freq: 880, dur: 0.18, type: 'square', vol: 0.12, delay: i * 0.36 }); A.tone({ freq: 660, dur: 0.18, type: 'square', vol: 0.12, delay: i * 0.36 + 0.18 }); } } }
   ];
@@ -26757,7 +26824,7 @@ body.docmode .doc-figcap {
     emoji: 'speaker',
     cat: 'goof',
     order: 43,
-    blurb: 'Eighteen unserious noises: air horn, sad trombone, rimshot, vine boom and more. Everything is synthesized live in the browser, with no sound files at all.',
+    blurb: 'Eighteen unserious noises: air horn, sad trombone, rimshot, impact hit and more. Everything is synthesized live in the browser, with no sound files at all.',
     scoreLabel: 'Noises made',
     tags: ['soundboard', 'noise', 'toy'],
     how: [

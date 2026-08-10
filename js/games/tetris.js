@@ -323,16 +323,16 @@
       /* side panel */
       const px = PANX, midx = px + PANW / 2;
       ctx.fillStyle = '#8f9ab8';
-      ctx.font = 'bold 11px system-ui';
+      ctx.font = 'bold 14px system-ui';
       ctx.textAlign = 'left';
-      ctx.fillText('HOLD', px, WY + 8);
+      ctx.fillText('HOLD', px, WY + 9);
       ctx.fillStyle = '#0d1424';
       Engine.roundRect(ctx, px, WY + 16, PANW, 70, 8);
       ctx.fill();
       if (hold) drawMini(hold, midx, WY + 51, narrow ? 0.58 : 0.72);
 
       ctx.fillStyle = '#8f9ab8';
-      ctx.fillText('NEXT', px, WY + 118);
+      ctx.fillText('NEXT', px, WY + 119);
       ctx.fillStyle = '#0d1424';
       Engine.roundRect(ctx, px, WY + 126, PANW, 300, 8);
       ctx.fill();

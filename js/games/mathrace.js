@@ -76,7 +76,7 @@
   }
 
   Arcade.register({
-    id: 'mathrace', title: 'Timesheet Math', emoji: 'workbook', cat: 'brain', order: 32,
+    id: 'mathrace', title: 'Timesheet Math', emoji: 'sheet', cat: 'brain', order: 32,
     lightBoard: true,   // plain text on the page — the luminance flip would turn the sum white-on-white
 
     blurb: 'Sixty seconds of quick arithmetic. Answer as many as you can; wrong answers cost time. Harder settings mean bigger numbers and more multiplication.',

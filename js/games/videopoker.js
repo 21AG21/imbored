@@ -190,11 +190,11 @@
   Arcade.register({
     id: 'videopoker',
     lightBoard: true,   // light pay table + card faces would invert to solid black under the figure flip
-    title: 'Video Poker',
+    title: 'Incentive Draw',
     emoji: 'cards',
     cat: 'goof',
     order: 42,
-    blurb: 'Jacks-or-Better video poker for the break room. Deal five, hold the keepers, draw once, get paid by the table. The credits are fake.',
+    blurb: 'Jacks-or-better card draw for the break room. Deal five, hold the keepers, draw once, get paid by the table. The credits are fake.',
     scoreLabel: 'Best credits',
     tags: ['poker', 'cards', 'casino'],
     how: [

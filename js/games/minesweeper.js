@@ -1,4 +1,4 @@
-/* Minesweeper. The original meeting game. */
+/* Risk Assessment. The original meeting game. */
 (function () {
   'use strict';
   const { h, randInt } = Engine;
@@ -14,7 +14,7 @@
     let diff = api.load('diff', 'easy');
     let W, Hh, M, grid, opened, flags, started, dead, won, t0, timerId, firstDone;
 
-    const pMines = api.pill('Mines: 0');
+    const pMines = api.pill('Unflagged: 0');
     const pTime = api.pill('⏱ 0');
     const pBest = api.pill('');
     const boardWrap = h('div', { class: 'ms' });
@@ -203,7 +203,7 @@
     }
 
     function syncPills() {
-      pMines.textContent = 'Mines: ' + (M - flags);
+      pMines.textContent = 'Unflagged: ' + (M - flags);
       pTime.textContent = '⏱ ' + (started ? elapsed() : 0);
       const b = api.load('time:' + diff, null);
       pBest.textContent = b == null ? 'no time yet' : 'best ' + b + 's';
@@ -235,12 +235,12 @@
 
   Arcade.register({
     id: 'minesweeper',
-    title: 'Minesweeper',
+    title: 'Risk Assessment',
     emoji: 'minesweeper',
     cat: 'puzzle',
     order: 10,
     lightBoard: true,   // already a light board — skip the disguise luminance flip
-    blurb: 'Minesweeper with three board sizes, a first click that is always safe, and chording. Good cover for looking deep in thought.',
+    blurb: 'A compliance grid with three sizes, a first click that is always safe, and chording. Good cover for looking deep in thought.',
     scoreLabel: 'Wins',
     tags: ['mines', 'classic', 'logic'],
     how: [

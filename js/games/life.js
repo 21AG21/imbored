@@ -211,11 +211,11 @@
 
   Arcade.register({
     id: 'life',
-    title: 'Game of Life',
+    title: 'Headcount Model',
     emoji: 'life',
     cat: 'sim',
     order: 12,
-    blurb: 'Conway\'s cellular automaton on a 150-cell torus. Each step, cells live or die by one rule about their neighbours, and gliders, oscillators, and glider guns emerge. Draw a colony, drop a preset, or scatter noise and watch it settle.',
+    blurb: 'A two-state cellular automaton on a 150-cell torus. Each step, cells live or die by one rule about their neighbours, and gliders, oscillators, and glider guns emerge. Draw a colony, drop a preset, or scatter noise and watch it settle.',
     scoreLabel: 'Peak population',
     tags: ['conway', 'cellular-automaton', 'emergence', 'gliders'],
     how: [

@@ -1,4 +1,4 @@
-/* 2048. Slide, merge, regret. */
+/* Budget Rollup. Slide, merge, regret. */
 (function () {
   'use strict';
   const { h, randInt } = Engine;
@@ -30,7 +30,7 @@
       render();
       undoBtn.disabled = true;
     });
-    api.button('New game', reset);
+    api.button('New sheet', reset);
 
     function reset() {
       grid = Array.from({ length: N }, () => Array(N).fill(0));
@@ -96,7 +96,7 @@
       if (!wonAt2048 && grid.some((r) => r.some((v) => v >= 2048))) {
         wonAt2048 = true;
         api.sfx.great();
-        api.status('2048! Keep going for a bigger tile.');
+        api.status('New high total! Keep going for a bigger one.');
       }
       render();
       if (!canMove()) end();
@@ -122,7 +122,7 @@
         h('h3', null, 'Board is full.'),
         h('p', null, score.toLocaleString() + ' points, biggest tile ' + best + '.' +
           (res.isRecord ? ' New personal best!' : res.isFirst ? '' : ' Best: ' + res.best.toLocaleString() + '.')),
-        h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'New game'));
+        h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'New sheet'));
     }
 
     function render() {
@@ -159,13 +159,13 @@
 
   Arcade.register({
     id: '2048',
-    title: '2048',
+    title: 'Budget Rollup',
     emoji: '2048',
     cat: 'puzzle',
     order: 11,
     lightBoard: true,   // has its own document greyscale palette; skip the luminance flip that turned tiles black
 
-    blurb: 'Slide the whole board one way and equal tiles merge into their sum. Keep merging up from 2, 4, 8 toward a 2048 tile before the grid fills. Includes one undo.',
+    blurb: 'Slide the whole board one way and equal line items merge into their sum. Keep rolling up from 2, 4, 8 toward the highest total before the sheet fills. Includes one undo.',
     scoreLabel: 'Score',
     tags: ['tiles', 'merge', 'numbers'],
     how: [

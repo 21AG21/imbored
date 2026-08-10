@@ -5,6 +5,7 @@
 (function () {
   'use strict';
   const { h, clamp } = Engine;
+  const DOC = () => !!(window.Arcade && Arcade.docMode && Arcade.docMode());
   const W = 640, H = 400;
 
   const SEG = 200;                 // segment length (world units)
@@ -341,13 +342,28 @@
 
       if (cd > 0) {
         const n = Math.ceil(cd - 0.6);
-        ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(0, 0, W, H);
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#fff'; ctx.strokeStyle = '#1d1722'; ctx.lineWidth = 6;
-        ctx.font = 'bold 120px Impact, Arial Black, sans-serif';
-        const label = n <= 0 ? 'GO!' : String(n);
-        ctx.strokeText(label, W / 2, H / 2); ctx.fillText(label, W / 2, H / 2);
-        ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+        const label = n <= 0 ? 'Starting' : 'Starting in ' + n;
+        if (DOC()) {
+          // a full-bleed dimmed overlay with a giant countdown numeral reads as
+          // an unmistakable game-start sequence at a glance; in doc mode this
+          // becomes a small, calm status line instead — same information,
+          // none of the drama
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillStyle = 'rgba(20,23,28,.55)';
+          ctx.fillRect(W / 2 - 90, H / 2 - 16, 180, 32);
+          ctx.fillStyle = '#f2ede0';
+          ctx.font = '600 15px "Courier New", monospace';
+          ctx.fillText(label, W / 2, H / 2 + 1);
+          ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+        } else {
+          ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(0, 0, W, H);
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillStyle = '#fff'; ctx.strokeStyle = '#1d1722'; ctx.lineWidth = 6;
+          ctx.font = 'bold 120px Impact, Arial Black, sans-serif';
+          const big = n <= 0 ? 'GO!' : String(n);
+          ctx.strokeText(big, W / 2, H / 2); ctx.fillText(big, W / 2, H / 2);
+          ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+        }
       }
     }
 

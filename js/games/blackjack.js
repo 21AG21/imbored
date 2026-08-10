@@ -1,4 +1,4 @@
-/* Twenty-One. Betting your unspent PTO against a dealer who has never once blinked. */
+/* Chip Ledger. Betting your unspent PTO against a reviewer who has never once blinked. */
 (function () {
   'use strict';
   const { h, shuffle } = Engine;
@@ -63,7 +63,7 @@
     const playerHand = h('div', { class: 'bj-hand' });
     const felt = h('div', { class: 'bj-felt' },
       h('div', { class: 'bj-row' },
-        h('div', { class: 'bj-side' }, h('span', { class: 'bj-who' }, 'Dealer'), dealerScore),
+        h('div', { class: 'bj-side' }, h('span', { class: 'bj-who' }, 'Reviewer'), dealerScore),
         dealerHand),
       h('div', { class: 'bj-row' },
         h('div', { class: 'bj-side' }, h('span', { class: 'bj-who' }, 'You'), playerScore),
@@ -169,9 +169,9 @@
       const dBJ = isBlackjack(dealer);
       if (pBJ || dBJ) {
         revealHole = true;
-        if (pBJ && dBJ) finishRound(stake, 'Push.', 'push', 'You both had blackjack. Nothing changes hands.');
-        else if (pBJ) finishRound(stake + Math.round(stake * 1.5), 'Blackjack!', 'bj', 'Twenty-one off the deal. Pays three to two.');
-        else finishRound(0, 'Dealer blackjack.', 'lose', 'The hole card was exactly what you feared.');
+        if (pBJ && dBJ) finishRound(stake, 'Push.', 'push', 'You both hit it off the deal. Nothing changes hands.');
+        else if (pBJ) finishRound(stake + Math.round(stake * 1.5), 'Direct hit!', 'bj', 'Twenty-one off the deal. Pays three to two.');
+        else finishRound(0, 'Reviewer hits it.', 'lose', 'The hole card was exactly what you feared.');
       }
     }
 
@@ -184,7 +184,7 @@
       const hv = handValue(player);
       if (hv.total > 21) {
         revealHole = true;
-        finishRound(0, 'Bust.', 'lose', 'Over twenty-one. The dealer wins by doing absolutely nothing.');
+        finishRound(0, 'Bust.', 'lose', 'Over twenty-one. The reviewer wins by doing absolutely nothing.');
       } else if (hv.total === 21) {
         stand();
       } else {
@@ -246,9 +246,9 @@
     function settle() {
       const p = handValue(player).total;
       const d = handValue(dealer).total;
-      if (d > 21) return finishRound(stake * 2, 'Dealer busts.', 'win', 'The dealer overcooked it on ' + d + '. You take ' + stake + ' chips.');
+      if (d > 21) return finishRound(stake * 2, 'Reviewer busts.', 'win', 'The reviewer overcooked it on ' + d + '. You take ' + stake + ' chips.');
       if (p > d) return finishRound(stake * 2, 'You win.', 'win', 'Your ' + p + ' beats their ' + d + '. Up ' + stake + ' chips.');
-      if (p < d) return finishRound(0, 'Dealer wins.', 'lose', 'Their ' + d + ' tops your ' + p + '. The ' + stake + ' chips are gone.');
+      if (p < d) return finishRound(0, 'Reviewer wins.', 'lose', 'Their ' + d + ' tops your ' + p + '. The ' + stake + ' chips are gone.');
       return finishRound(stake, 'Push.', 'push', 'Both sitting on ' + p + '. Your chips come home untouched.');
     }
 
@@ -299,7 +299,7 @@
     updatePills();
     render();
     updateButtons();
-    api.status('Get to twenty-one without going over, and beat the dealer. Deal, then Hit or Stand. Blackjack pays three to two.');
+    api.status('Get to twenty-one without going over, and beat the reviewer. Deal, then Hit or Stand. A natural pays three to two.');
 
     return () => bagg.dispose();
   }
@@ -309,20 +309,20 @@
     // NOT lightBoard: the felt table is a genuinely dark backdrop that needs
     // the normal invert (dark -> light); only the light card faces need
     // protecting from it, handled in css/arcade.css via a .bj-card counter-invert.
-    title: 'Twenty-One',
+    title: 'Chip Ledger',
     emoji: 'blackjack',
     cat: 'goof',
     order: 6,
-    blurb: 'Single-deck blackjack against a dealer who plays a fixed policy. The chips are dressed up as unspent PTO, so at least the losses are imaginary.',
+    blurb: 'Single-deck card draw against a reviewer who plays a fixed policy. The chips are dressed up as unspent PTO, so at least the losses are imaginary.',
     scoreLabel: 'Chip high',
-    tags: ['cards', 'blackjack', 'dealer', 'chips'],
+    tags: ['cards', 'ledger', 'reviewer', 'chips'],
     usesLetters: true,
     how: [
-      'Beat the dealer\'s total without going over twenty-one. Aces count as eleven or one, whichever helps.',
+      'Beat the reviewer\'s total without going over twenty-one. Aces count as eleven or one, whichever helps.',
       'Deal a hand, then Hit or Stand. Double takes one more card for a matched bet. Keys: H hit, S stand, D double, Space deals.',
-      'The dealer hits sixteen and stands on seventeen, then turns over the hole card after you stand. Blackjack pays three to two.',
+      'The reviewer hits sixteen and stands on seventeen, then turns over the hole card after you stand. A natural pays three to two.',
       'Your chip bankroll carries between hands and is the score. Go broke and a PTO advance refills you, though a refilled run sets no record.',
-      'Chill and Normal use one deck with the dealer standing on soft seventeen. Hard and Nightmare use four decks with the dealer hitting soft seventeen.'
+      'Chill and Normal use one deck with the reviewer standing on soft seventeen. Hard and Nightmare use four decks with the reviewer hitting soft seventeen.'
     ],
     mount: mount
   });
