@@ -2,7 +2,7 @@
 
 **The complete shareware collection for people whose meeting has no agenda.**
 
-Ninety-one games. Zero installers. No account, no network, no build step. It is plain
+Ninety-two games. Zero installers. No account, no network, no build step. It is plain
 HTML, CSS and JavaScript, so you can **double-click `index.html`** and it runs straight
 off the disk.
 
@@ -112,7 +112,7 @@ included, and your choice is remembered.
 **Minesweeper** · **2048** · **Space Allocation** · **Jam Escape** · **Crate Pusher** · **Pipe Dream** · **Solitaire** · **Maze**
 
 ### Brain
-**Sudoku** · **Word Guess** · **Lights Out** · **Reflex Grid** · **Copycat** · **Four In A Row** · **Memory Match**
+**Sudoku** · **Word Guess** · **Lights Out** · **Reflex Grid** · **Copycat** · **Four In A Row** · **Memory Match** · **Escalate**
 
 ### Action
 **Snake** · **Brick Break** · **Stacker** · **Rock Field** · **The Commute**

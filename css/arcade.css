@@ -812,6 +812,26 @@ body.in-game .status { margin: 2px 0; font-size: 12px; }
   .rev .cell { width: min(46px, 10.4vw); height: min(46px, 10.4vw); }
 }
 
+/* escalate */
+.esc { background: #3a3446; padding: 7px; border: 5px solid var(--ink); box-shadow: var(--hard); }
+.esc .cell {
+  width: 42px; height: 42px; background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.16); padding: 0; position: relative; cursor: default;
+  border-radius: 4px; transition: background .12s ease;
+}
+.esc .cell.hint { cursor: pointer; }
+.esc .cell.hint::before {
+  content: ''; position: absolute; inset: 3px; border-radius: 3px;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.4); pointer-events: none;
+}
+.esc-count { font: 700 14px/1 Verdana, sans-serif; color: var(--paper); position: relative; z-index: 1; }
+.esc-cell.esc-you { background: var(--teal); }
+.esc-cell.esc-ai { background: var(--tomato); }
+.esc-cell.esc-hot { box-shadow: inset 0 0 0 2px var(--banana); }
+@media (max-width: 480px) {
+  .esc .cell { width: min(44px, 11.5vw); height: min(44px, 11.5vw); }
+}
+
 /* ============================================================
    THE PANIC SCREEN
    Four disguises. All of them typeable. None of them beige.
@@ -3179,6 +3199,21 @@ body.docmode .db-box.cpu { background: #767d88; }
 :root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .bs-side h4 {
   filter: invert(1) hue-rotate(180deg);
 }
+
+/* Escalate: teal (--you) and tomato (--ai) share almost identical luminance,
+   the same "grayscale erases the distinction" failure already fixed for
+   Dots and Boxes' --teal/--hotpink pair above — counter-invert and author
+   explicit final colours instead of fighting hue. The near-explosion ring
+   is a solid saturated colour too (not a translucent overlay like the
+   ordinary legal-move hint), so it also needs protecting or it reads as a
+   stark game "about to blow" meter instead of quiet cell formatting. */
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .esc-cell.esc-you,
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .esc-cell.esc-ai,
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .esc-cell.esc-hot {
+  filter: invert(1) hue-rotate(180deg);
+}
+body.docmode .esc-cell.esc-you { background: var(--doc-ink); }
+body.docmode .esc-cell.esc-ai { background: #767d88; }
 
 /* 2048 as a document: a tidy greyscale data grid, not an inverted wall of
    black tiles. Low values sit near-white and step toward grey as they climb,

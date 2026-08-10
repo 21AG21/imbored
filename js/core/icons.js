@@ -172,6 +172,10 @@
     reversi:
       r(2, 2, 20, 20, P.green) +
       c(8, 8, 2.6, INK) + c(16, 8, 2.6, P.paper) + c(8, 16, 2.6, P.paper) + c(16, 16, 2.6, INK),
+    escalate:
+      r(2, 2, 20, 20, P.dark) +
+      c(12, 12, 3.2, P.tomato) +
+      c(12, 4.5, 2, P.grape) + c(12, 19.5, 2, P.grape) + c(4.5, 12, 2, P.grape) + c(19.5, 12, 2, P.grape),
     /* ---------- gridlock shop ---------- */
     smart: r(4, 4, 16, 16, P.teal) + p('M9 9h6v2h-4v2h4v2H9z', P.paper) + r(4, 4, 16, 16, 'none').replace('fill="none"', 'fill="none" stroke="' + INK + '" stroke-width="2"'),
     circle: '<circle cx="12" cy="12" r="8" fill="none" stroke="' + P.grey + '" stroke-width="5"/>' + c(12, 12, 4, P.green),
