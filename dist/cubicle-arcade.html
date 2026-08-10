@@ -2846,11 +2846,11 @@ body.docmode.in-game .stage { gap: 12px; }
      the field to white; the sub-1 contrast softens what would be solid black
      into grey, so ink stays sparse ("very limited black") while the playfield
      is essentially white paper */
-  filter: invert(1) grayscale(1) contrast(0.8) brightness(1.35);
+  filter: invert(1) grayscale(1) contrast(0.8) brightness(var(--doc-fig-bright, 1.35));
 }
 /* light boards keep their own light background but go grey and mostly white too */
 :root:not([data-dark="1"]) body.docmode.in-game .stage.no-doc-invert {
-  filter: grayscale(1) contrast(0.92) brightness(1.12);
+  filter: grayscale(1) contrast(0.92) brightness(var(--doc-fig-bright-lb, 1.12));
 }
 /* the d-pad is a dead giveaway at a glance (no document has one), and on desktop
    the keyboard already drives every game that uses it — so hide it in disguise
@@ -2903,6 +2903,71 @@ body.docmode .gametools .btn.active,
 body.docmode .gametools .btn:active {
   background: var(--doc-rule);
   border-color: var(--doc-ink); color: var(--doc-ink);
+}
+
+/* panels (stat read-outs, meters, the load-balance plant controls) are light
+   boxes in the document, never black slabs. Counter-invert them out of the
+   figure flip, then paint them in the quiet doc palette so a "commuter rage"
+   bar reads as a thin grey gauge, not a heavy black block. */
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .panel {
+  filter: invert(1) hue-rotate(180deg);
+}
+body.docmode .panel {
+  background: var(--doc-paper); color: var(--doc-ink);
+  border: 1px solid var(--doc-rule2); box-shadow: none;
+}
+body.docmode .panel h4 { color: var(--doc-ink); }
+body.docmode .meter {
+  background: var(--doc-rule); border: 1px solid var(--doc-rule2); box-shadow: none;
+}
+body.docmode .meter > i {
+  /* the figure wash (contrast<1, brightness>1) lightens this a lot, so it is
+     written dark to land as a clear mid-grey — visible, but well shy of black */
+  background: #3f4247;
+}
+
+/* 2048 as a document: a tidy greyscale data grid, not an inverted wall of
+   black tiles. Low values sit near-white and step toward grey as they climb,
+   so only the numerals really carry ink ("very limited black"). */
+body.docmode .g2048 { background: var(--doc-paper); border-color: var(--doc-rule2); box-shadow: none; }
+body.docmode .g2048 .cell { border: 1px solid var(--doc-rule2); color: var(--doc-ink); }
+body.docmode .g2048 .cell[data-v="0"]    { background: var(--doc-rule); border-color: var(--doc-rule); color: transparent; }
+body.docmode .g2048 .cell[data-v="2"]    { background: #ffffff; }
+body.docmode .g2048 .cell[data-v="4"]    { background: #f1f3f5; }
+body.docmode .g2048 .cell[data-v="8"]    { background: #e5e8ec; }
+body.docmode .g2048 .cell[data-v="16"]   { background: #d6dae0; }
+body.docmode .g2048 .cell[data-v="32"]   { background: #c3c8d1; }
+body.docmode .g2048 .cell[data-v="64"]   { background: #adb3bd; }
+body.docmode .g2048 .cell[data-v="128"]  { background: #949ba6; color: #fff; }
+body.docmode .g2048 .cell[data-v="256"]  { background: #7c828d; color: #fff; }
+body.docmode .g2048 .cell[data-v="512"]  { background: #646a74; color: #fff; }
+body.docmode .g2048 .cell[data-v="1024"] { background: #4c515a; color: #fff; }
+body.docmode .g2048 .cell[data-v="2048"] { background: #2f333a; color: #fff; }
+body.docmode .g2048 .cell.big { background: #2f333a; color: #fff; }
+
+/* document-mode figure-exposure slider: a quiet caption-row control that only
+   appears while a game is dressed as a figure. Monochrome to match the page. */
+.figbar { display: none; }
+body.docmode.in-game .figbar {
+  display: flex; align-items: center; gap: 10px;
+  max-width: 840px; margin: 10px auto 0; padding: 0 2px;
+}
+.figbar-cap {
+  font: 12px Verdana, Geneva, sans-serif; letter-spacing: .02em;
+  color: var(--doc-mut); white-space: nowrap;
+}
+.figbar .fig-bright {
+  -webkit-appearance: none; appearance: none; flex: 1; height: 2px;
+  background: var(--doc-rule2); border-radius: 2px; cursor: pointer;
+}
+.figbar .fig-bright::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 13px; height: 13px; border-radius: 50%;
+  background: var(--doc-paper); border: 1.5px solid var(--doc-ink2);
+}
+.figbar .fig-bright::-moz-range-thumb {
+  width: 13px; height: 13px; border-radius: 50%;
+  background: var(--doc-paper); border: 1.5px solid var(--doc-ink2);
 }
 
 /* disguise-only report prose that wraps the game like a figure in a document:
@@ -4881,6 +4946,17 @@ body.docmode .doc-figcap {
      from across the room it reads as paperwork. Default on; the normal arcade
      game UI is one toggle away. */
   let docModeOn = true;
+  /* disguise figure brightness: how far the luminance flip floods a game's
+     playfield toward white. 50% is the tuned default (brightness 1.35 on the
+     inverted stages); the in-figure slider only shows in document mode. */
+  let figBrightPct = store.get('figbright', 50);
+  function applyFigBright() {
+    const pct = Engine.clamp(figBrightPct, 0, 100);
+    const b = 1.0 + (pct / 100) * 0.7;            // 0% -> 1.0, 50% -> 1.35, 100% -> 1.70
+    const el = document.documentElement;
+    el.style.setProperty('--doc-fig-bright', b.toFixed(3));
+    el.style.setProperty('--doc-fig-bright-lb', Math.max(1, b - 0.23).toFixed(3));  // light boards run a touch dimmer
+  }
   /* The site's display name. Editable straight from the top bar (click it and
      type); defaults to a forgettable "Docs" so a glance at the header or the
      browser tab gives nothing away. Drives both the brand and the tab title. */
@@ -4936,6 +5012,12 @@ body.docmode .doc-figcap {
       docModeOn = on == null ? !docModeOn : !!on;
       store.set('docmode', docModeOn);
       applyDocMode();
+    },
+    figBright() { return figBrightPct; },
+    setFigBright(pct) {
+      figBrightPct = Engine.clamp(Math.round(pct), 0, 100);
+      store.set('figbright', figBrightPct);
+      applyFigBright();
     }
   };
   global.Arcade = Arcade;
@@ -5944,6 +6026,17 @@ body.docmode .doc-figcap {
       }
     };
 
+    /* document-mode only: a slider to tune how far the figure is washed toward
+       white. Sits under the "figure" like a quiet caption control. */
+    const figSlider = h('input', {
+      class: 'fig-bright', type: 'range', min: '0', max: '100', step: '1',
+      value: String(Arcade.figBright()), 'aria-label': 'Figure brightness',
+      oninput: () => Arcade.setFigBright(+figSlider.value)
+    });
+    const figBar = h('div', { class: 'figbar' },
+      h('span', { class: 'figbar-cap' }, 'Figure exposure'),
+      figSlider);
+
     /* how-to panel: the game's written instructions. */
     const howList = h('ul', null, g.how.map((s) => h('li', null, s)));
     const howBody = h('div', { class: 'how-body' }, howList);
@@ -5963,7 +6056,7 @@ body.docmode .doc-figcap {
         h('p', { class: 'game-cap' }, g.blurb),   // reads as a document caption in disguise mode; hidden otherwise
         howto),
       docProse(g).intro,                          // disguise-only report prose around the "figure"
-      toolbar, statusEl, stage,
+      toolbar, statusEl, stage, figBar,
       docProse(g).after);
 
     stage.appendChild(h('div', { class: 'rotate-nudge' },
@@ -6067,6 +6160,7 @@ body.docmode .doc-figcap {
     if (store.get('crt', false)) document.body.classList.add('crt');
     if (store.get('colorsafe', false)) document.body.classList.add('colorsafe');
     docModeOn = store.get('docmode', true);
+    applyFigBright();
     buildChrome();
     applyDocMode();
     document.body.appendChild(Boss.build());
@@ -11387,6 +11481,8 @@ body.docmode .doc-figcap {
     emoji: '2048',
     cat: 'puzzle',
     order: 11,
+    lightBoard: true,   // has its own document greyscale palette; skip the luminance flip that turned tiles black
+
     blurb: 'Slide the whole board one way and equal tiles merge into their sum. Keep merging up from 2, 4, 8 toward a 2048 tile before the grid fills. Includes one undo.',
     scoreLabel: 'Score',
     tags: ['tiles', 'merge', 'numbers'],
@@ -16495,6 +16591,8 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'mathrace', title: 'Timesheet Math', emoji: 'workbook', cat: 'brain', order: 32,
+    lightBoard: true,   // plain text on the page — the luminance flip would turn the sum white-on-white
+
     blurb: 'Sixty seconds of quick arithmetic. Answer as many as you can; wrong answers cost time. Harder settings mean bigger numbers and more multiplication.',
     scoreLabel: 'Best (60s)', tags: ['maths', 'speed', 'mental'],
     how: [

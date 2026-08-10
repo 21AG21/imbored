@@ -163,6 +163,8 @@
     emoji: '2048',
     cat: 'puzzle',
     order: 11,
+    lightBoard: true,   // has its own document greyscale palette; skip the luminance flip that turned tiles black
+
     blurb: 'Slide the whole board one way and equal tiles merge into their sum. Keep merging up from 2, 4, 8 toward a 2048 tile before the grid fills. Includes one undo.',
     scoreLabel: 'Score',
     tags: ['tiles', 'merge', 'numbers'],

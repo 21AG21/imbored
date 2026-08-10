@@ -44,6 +44,17 @@
      from across the room it reads as paperwork. Default on; the normal arcade
      game UI is one toggle away. */
   let docModeOn = true;
+  /* disguise figure brightness: how far the luminance flip floods a game's
+     playfield toward white. 50% is the tuned default (brightness 1.35 on the
+     inverted stages); the in-figure slider only shows in document mode. */
+  let figBrightPct = store.get('figbright', 50);
+  function applyFigBright() {
+    const pct = Engine.clamp(figBrightPct, 0, 100);
+    const b = 1.0 + (pct / 100) * 0.7;            // 0% -> 1.0, 50% -> 1.35, 100% -> 1.70
+    const el = document.documentElement;
+    el.style.setProperty('--doc-fig-bright', b.toFixed(3));
+    el.style.setProperty('--doc-fig-bright-lb', Math.max(1, b - 0.23).toFixed(3));  // light boards run a touch dimmer
+  }
   /* The site's display name. Editable straight from the top bar (click it and
      type); defaults to a forgettable "Docs" so a glance at the header or the
      browser tab gives nothing away. Drives both the brand and the tab title. */
@@ -99,6 +110,12 @@
       docModeOn = on == null ? !docModeOn : !!on;
       store.set('docmode', docModeOn);
       applyDocMode();
+    },
+    figBright() { return figBrightPct; },
+    setFigBright(pct) {
+      figBrightPct = Engine.clamp(Math.round(pct), 0, 100);
+      store.set('figbright', figBrightPct);
+      applyFigBright();
     }
   };
   global.Arcade = Arcade;
@@ -1107,6 +1124,17 @@
       }
     };
 
+    /* document-mode only: a slider to tune how far the figure is washed toward
+       white. Sits under the "figure" like a quiet caption control. */
+    const figSlider = h('input', {
+      class: 'fig-bright', type: 'range', min: '0', max: '100', step: '1',
+      value: String(Arcade.figBright()), 'aria-label': 'Figure brightness',
+      oninput: () => Arcade.setFigBright(+figSlider.value)
+    });
+    const figBar = h('div', { class: 'figbar' },
+      h('span', { class: 'figbar-cap' }, 'Figure exposure'),
+      figSlider);
+
     /* how-to panel: the game's written instructions. */
     const howList = h('ul', null, g.how.map((s) => h('li', null, s)));
     const howBody = h('div', { class: 'how-body' }, howList);
@@ -1126,7 +1154,7 @@
         h('p', { class: 'game-cap' }, g.blurb),   // reads as a document caption in disguise mode; hidden otherwise
         howto),
       docProse(g).intro,                          // disguise-only report prose around the "figure"
-      toolbar, statusEl, stage,
+      toolbar, statusEl, stage, figBar,
       docProse(g).after);
 
     stage.appendChild(h('div', { class: 'rotate-nudge' },
@@ -1230,6 +1258,7 @@
     if (store.get('crt', false)) document.body.classList.add('crt');
     if (store.get('colorsafe', false)) document.body.classList.add('colorsafe');
     docModeOn = store.get('docmode', true);
+    applyFigBright();
     buildChrome();
     applyDocMode();
     document.body.appendChild(Boss.build());
