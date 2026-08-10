@@ -59,6 +59,7 @@
     function boxOf(r, c) { return Math.floor(r / 3) * 3 + Math.floor(c / 3); }
 
     function fitsAt(shape, anchorR, anchorC) {
+      if (!Number.isInteger(anchorR) || !Number.isInteger(anchorC)) return false;
       for (const [dx, dy] of shape.cells) {
         const r = anchorR + dy, c = anchorC + dx;
         if (r < 0 || c < 0 || r >= N || c >= N) return false;
@@ -199,21 +200,19 @@
       }
       ghost.style.display = 'grid';
       moveDrag(e);
-      bagg.listen(window, 'pointermove', moveDrag);
-      bagg.listen(window, 'pointerup', endDrag);
     }
 
     function moveDrag(e) {
       if (dragIdx == null) return;
       const cellPx = boardEl.getBoundingClientRect().width / N;
-      const liftY = cellPx * 1.6;   // lift the piece above the finger so it isn't hidden on touch
+      const liftY = e.pointerType === 'touch' ? cellPx * 1.6 : 0;   // lift the ghost above the finger so it isn't hidden on touch; hit-testing always uses the real pointer position so every row (including the bottom one) stays reachable
       ghost.style.width = cellPx + 'px';
       ghost.style.height = cellPx + 'px';
       ghost.style.left = (e.clientX - cellPx / 2) + 'px';
       ghost.style.top = (e.clientY - cellPx / 2 - liftY) + 'px';
 
       const p = tray[dragIdx];
-      const { row, c } = boardCellFromPoint(e.clientX, e.clientY - liftY);
+      const { row, c } = boardCellFromPoint(e.clientX, e.clientY);
       const ok = fitsAt(p.shape, row, c);
       hoverAnchor = { shape: p.shape, r: row, c, ok };
       render();
@@ -235,6 +234,18 @@
       hoverAnchor = null;
       render();
     }
+
+    function cancelDrag() {
+      if (dragIdx == null) return;
+      dragIdx = null;
+      hoverAnchor = null;
+      ghost.style.display = 'none';
+      render();
+    }
+
+    bagg.listen(window, 'pointermove', moveDrag);
+    bagg.listen(window, 'pointerup', endDrag);
+    bagg.listen(window, 'pointercancel', cancelDrag);
 
     function finish() {
       over = true;

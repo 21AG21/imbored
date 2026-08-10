@@ -47,15 +47,19 @@
      release it the instant neither is. Feature-detected — silently a no-op
      everywhere the API doesn't exist, and any denial (permissions, an
      unsupported context) is swallowed the same way. */
-  let wakeLock = null;
+  let wakeLock = null, wakeLockPending = false;
   async function syncWakeLock() {
     const want = (!!currentGame || bossOn) && !document.hidden;
     if (!('wakeLock' in navigator)) return;
-    if (want && !wakeLock) {
+    if (want && !wakeLock && !wakeLockPending) {
+      wakeLockPending = true;
       try {
-        wakeLock = await navigator.wakeLock.request('screen');
-        wakeLock.addEventListener('release', () => { wakeLock = null; });
+        const lock = await navigator.wakeLock.request('screen');
+        wakeLock = lock;
+        wakeLock.addEventListener('release', () => { if (wakeLock === lock) wakeLock = null; });
       } catch (e) { /* denied, or called from a context that can't hold one — leave it be */ }
+      wakeLockPending = false;
+      syncWakeLock();   // desired state may have flipped while the request was in flight — reconcile
     } else if (!want && wakeLock) {
       try { wakeLock.release(); } catch (e) { /* already gone */ }
       wakeLock = null;
@@ -187,9 +191,15 @@
     if (docm) {
       /* document-embed: grow the board to fill the text column like a full-width
          table/figure, using zoom (not transform) so the page REFLOWS and the
-         report prose flows below it instead of being overlapped. Height-capped. */
+         report prose flows below it instead of being overlapped. Height-capped
+         to whichever is smaller: the usual portrait figure-height budget, or
+         the real remaining room below the stage — on a cramped landscape phone
+         .view's flex layout already leaves .stage far less than 72% of the
+         screen, and zooming past that pushed the board off-screen with no way
+         to reach it. */
       const availW = stage.clientWidth - 8;
-      const capH = global.innerHeight * 0.72;
+      const vBottom = view.getBoundingClientRect().bottom - 6;
+      const capH = Math.min(global.innerHeight * 0.72, vBottom - rect.top);
       let z = Math.min(availW / natW, capH / natH);
       z = Math.max(1, Math.min(z, 2.2));
       if (z > 1.02) stage.style.zoom = z.toFixed(3);

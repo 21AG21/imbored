@@ -1495,6 +1495,13 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
   }
   body.in-game .gcanvas { max-height: 100%; }
   body.in-game .foot { display: none; }
+  /* doc-mode's fake report prose + figure-exposure slider are unshrinkable
+     flex siblings of .stage (their content-based automatic min size ignores
+     flex-shrink), so on a short landscape screen they can squeeze the actual
+     game to 0 height with no scrollbar to reach it. Landscape play is already
+     an unambiguous "holding the phone sideways to play something" pose, so
+     drop them here the same way .foot is dropped above. */
+  body.in-game .doc-prose, body.in-game .figbar { display: none !important; }
 }
 
 /* DOM-built boards must answer to the short side of the screen, not just the
@@ -3159,6 +3166,16 @@ body.docmode .db-edge:hover::after { background: var(--doc-mut); }
 body.docmode .db-edge.on::after { background: var(--doc-ink); }
 body.docmode .db-box.you { background: var(--doc-ink); }
 body.docmode .db-box.cpu { background: #767d88; }
+
+/* Space Allocation: the board's dark tray backdrop wants the normal invert
+   (same "genuinely dark backdrop" case as blackjack's felt) but the light
+   .df-slot tray cards would otherwise flip to solid near-black squares —
+   the single most game-revealing shape on the page. Counter-invert just
+   the cards, same fix pattern as .bj-card/.mem-front/.db-box above. */
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .df-slot,
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .df-slot-empty {
+  filter: invert(1) hue-rotate(180deg);
+}
 
 /* 2048 as a document: a tidy greyscale data grid, not an inverted wall of
    black tiles. Low values sit near-white and step toward grey as they climb,
