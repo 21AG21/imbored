@@ -5321,6 +5321,16 @@ body.docmode .doc-figcap {
 
   let currentDispose = null;
   let currentGame = null;
+  /* [/] recomputing its target from currentGame every keydown looks safe but
+     isn't: currentGame only updates once route() runs on the async
+     'hashchange' event, so a burst of presses faster than that round trip
+     (OS key-repeat easily manages it) all read the same stale currentGame,
+     all compute the same target, and the browser no-ops every repeat
+     location.hash assignment after the first — silently dropping the rest
+     of the burst. Track the in-flight target here instead, so consecutive
+     presses accumulate even before routing has caught up; route() resyncs
+     it to ground truth once it actually runs. */
+  let pendingGameIdx = null;
   let bossOn = false;
 
   /* ---------------- stay-awake guard ----------------
@@ -6630,6 +6640,7 @@ body.docmode .doc-figcap {
     if (currentDispose) { try { currentDispose(); } catch (e) { console.error(e); } }
     currentDispose = null;
     currentGame = null;
+    pendingGameIdx = null;
     Engine.paused = bossOn || document.hidden;
     const dmatch = /^#daily\/([\w-]+)\/(.+)$/.exec(location.hash || '');
     const m = /^#g\/([\w-]+)/.exec(location.hash || '');
@@ -6701,6 +6712,22 @@ body.docmode .doc-figcap {
         return;
       }
       if (bossOn) return;
+      /* [ and ] never appear in any game's answer text (number guesses, word
+         guesses, math answers, or the fixed typing-test passages), so unlike
+         every other shortcut here they don't need the typing guard below —
+         landing on one of the handful of games that autofocus a text input
+         shouldn't silently swallow a shelf-switch shortcut with no visible
+         sign why. Checked ahead of the typing guard, same as the panic key. */
+      if (currentGame && (e.key === '[' || e.key === ']')) {
+        e.preventDefault();
+        const i = pendingGameIdx != null ? pendingGameIdx : games.indexOf(currentGame);
+        if (i >= 0) {
+          const j = (i + (e.key === ']' ? 1 : -1) + games.length) % games.length;
+          pendingGameIdx = j;
+          Arcade.go(games[j].id);
+        }
+        return;
+      }
       if (typing) {
         if (e.key === 'Escape') { t.value = ''; t.blur(); if (!location.hash) renderHub(); }
         return;
@@ -6734,15 +6761,9 @@ body.docmode .doc-figcap {
         if (!bossOn) toggleBoss(true);
         return;
       }
-      /* in a game: [ and ] flick to the previous/next game on the shelf,
-         R restarts the current one (skipped where letters are the controls) */
+      /* in a game: R restarts it (skipped where letters are the controls) —
+         [ and ] are handled above, ahead of the typing guard */
       if (currentGame) {
-        if (e.key === '[' || e.key === ']') {
-          e.preventDefault();
-          const i = games.indexOf(currentGame);
-          if (i >= 0) { const j = (i + (e.key === ']' ? 1 : -1) + games.length) % games.length; Arcade.go(games[j].id); }
-          return;
-        }
         if ((e.key === 'r' || e.key === 'R') && !e.ctrlKey && !e.metaKey && !currentGame.usesLetters) {
           e.preventDefault(); route(); return;
         }
