@@ -8162,7 +8162,7 @@ body.docmode .doc-figcap {
       peakFlow = 0;
       stBuf.fill(0xff100c08 >>> 0);
       syncPills();
-      api.status('Set how many cars with the slider and watch a jam appear out of nowhere — push the Flow as high as you can.');
+      api.status('This is one lane of traffic driving around a loop. Drag the "density" slider to add cars, and get the Flow number as high as you can. Add too many and a jam forms on its own and crawls backward — no crash needed.');
     }
 
     /* one synchronous Nagel–Schreckenberg update of the whole road */
@@ -8331,6 +8331,8 @@ body.docmode .doc-figcap {
     scoreLabel: 'Peak flow',
     tags: ['nagel-schreckenberg', 'phase-transition', 'traffic', 'emergence'],
     how: [
+      'In one line: drag the density slider to add cars and find the amount where the road carries the most traffic. That highest Flow is your score.',
+      'You are not driving — you are setting the conditions and watching what the traffic does on its own. There is no crashing and nothing to steer.',
       'Cars sit on a single-lane loop. Each has a speed from 0 to v_max, and the whole road updates every tick.',
       'Every car follows four rules each tick: speed up by one, brake so you never hit the car ahead, then with probability p tap the brakes at random, then move. That random tap is the only noise.',
       'At low density every car reaches v_max. Raise the density past the critical point and one random brake seeds a jam that spreads backward while every car keeps following the rules.',
@@ -8792,7 +8794,7 @@ body.docmode .doc-figcap {
     const t1 = setTimeout(buildBif, 40);
     const t2 = setTimeout(buildLyap, 60);
     bagg.add(() => { clearTimeout(t1); clearTimeout(t2); });
-    api.status('Drag the growth-rate slider up and watch calm tip into chaos.');
+    api.status('One slider runs a whole population year by year. Drag "growth rate r" up: the numbers first hold steady, then bounce between a few values, then never settle. Your score is the longest repeating cycle you can land on.');
 
     bagg.add(Engine.loop(() => {
       /* advance the live orbit a few years per frame */
@@ -8813,6 +8815,8 @@ body.docmode .doc-figcap {
     scoreLabel: 'Deepest cycle',
     tags: ['logistic-map', 'chaos', 'bifurcation', 'dynamical-systems'],
     how: [
+      'In one line: drag the "growth rate r" slider and watch the population go from steady, to a boom-bust cycle, to chaos. Landing on a longer exact cycle scores more.',
+      'Nothing to steer here — you turn one knob (r) and read what the population does. The bottom strip is the population year by year; the big diagram maps every r at once.',
       'The rule is next = r × x × (1 − x): a population that grows when small and crashes when it overshoots. x is the stock from 0 to 1, and r is the growth rate you set.',
       'The main view is the bifurcation diagram: for each growth rate it marks the values the population settles into. One dot is a steady level, two dots mean it alternates high and low each year, and more dots mean a longer cycle.',
       'Raise r and the cycle length keeps doubling, 1, 2, 4, 8, 16, in ever-smaller steps that pile up at r ≈ 3.5699. Past there the population never repeats, which is deterministic chaos from a one-liner.',
@@ -10392,7 +10396,7 @@ body.docmode .doc-figcap {
       over = false;
       banner.style.display = 'none';
       syncControls();
-      api.status('Keep your power output matching demand: if the demand line sits above your output, raise a generator; if it\'s below, ease one down.');
+      api.status('Each generator has a slider — drag it up for more power. Keep your total generation matching demand (the line at the top of the chart tells you which way to nudge). Drift too far for too long and the grid blacks out. Survive as many hours as you can.');
     }
 
     /* ---------------- demand model ---------------- */
@@ -10547,6 +10551,7 @@ body.docmode .doc-figcap {
 
       const supply = S.out.coal + S.out.gas + S.out.hydro + solar() + windOut() + Math.max(0, batPower);
       const demand = demandAt(S.hour, S.day) + S.surge + Math.max(0, -batPower);
+      S.supply = supply; S.demand = demand;   // stash for the live on-screen coach
 
       const imbalance = (supply - demand) / Math.max(20, demand);
       const targetFreq = 50 + clamp(imbalance, -0.35, 0.35) * 7.5;
@@ -10638,6 +10643,18 @@ body.docmode .doc-figcap {
       ctx.fillStyle = '#ff5c8f'; ctx.fillText('demand', gx + 6, gy + 16);
       ctx.fillStyle = '#38e1ff'; ctx.fillText('generation', gx + 74, gy + 16);
 
+      /* live coach — the one thing that tells you what to actually do right now */
+      const gap = (S.supply || 0) - (S.demand || 0);
+      let coach, cc;
+      if (gap < -3) { coach = '▲  generation is BELOW demand — raise a generator'; cc = '#ffd98a'; }
+      else if (gap > 3) { coach = '▼  generation is ABOVE demand — ease one down'; cc = '#ffd98a'; }
+      else { coach = '✓  balanced — hold it here'; cc = '#8fe6a0'; }
+      ctx.fillStyle = cc;
+      ctx.font = 'bold 13px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText(coach, gx + gw / 2, 15);
+      ctx.textAlign = 'left';
+
       /* frequency dial */
       const cx = W - 100, cy = 118, R = 62;
       ctx.strokeStyle = '#1e2740';
@@ -10722,6 +10739,8 @@ body.docmode .doc-figcap {
     scoreLabel: 'Hours online',
     tags: ['power', 'grid', 'energy', 'frequency'],
     how: [
+      'In one line: drag the generator sliders so your total output keeps up with demand. The prompt across the top of the chart always says whether to raise power or ease off.',
+      'Each panel is one generator. Drag its slider up for more megawatts, down for less. Watch the "output" number climb toward the setpoint.',
       'Keep the cyan generation line sitting on the pink demand line.',
       'Coal is cheap but slow to ramp; gas is instant but expensive. Hydro drains a reservoir that only refills overnight.',
       'Solar and wind you do not control, so plan around them.',
@@ -10741,7 +10760,7 @@ body.docmode .doc-figcap {
 
   const W = 920, H = 600;
   const SEP = 30;             // separation minimum, px
-  const TURN = 1.5;           // rad/s
+  const TURN = 3.4;           // rad/s — snappy enough to actually trace a hand-drawn line (~18px radius)
   const SPEED = 62;           // px/s
 
   /* two runways: a touchdown point and the heading you must arrive on */
@@ -10817,7 +10836,7 @@ body.docmode .doc-figcap {
       if (!drawing) return;
       const pt = cv.pos(e);
       const last = drawing.path[drawing.path.length - 1] || { x: drawing.x, y: drawing.y };
-      if (Math.hypot(pt.x - last.x, pt.y - last.y) > 13) drawing.path.push({ x: pt.x, y: pt.y });
+      if (Math.hypot(pt.x - last.x, pt.y - last.y) > 8) drawing.path.push({ x: pt.x, y: pt.y });
     });
 
     function endDraw() {
@@ -10853,7 +10872,7 @@ body.docmode .doc-figcap {
           const wp = p.path[0];
           const want = Math.atan2(wp.y - p.y, wp.x - p.x);
           p.a += clamp(angDiff(p.a, want), -TURN * dt, TURN * dt);
-          if (Math.hypot(wp.x - p.x, wp.y - p.y) < 11) p.path.shift();
+          if (Math.hypot(wp.x - p.x, wp.y - p.y) < 9) p.path.shift();
         }
         p.x += Math.cos(p.a) * sp * dt;
         p.y += Math.sin(p.a) * sp * dt;
@@ -11025,6 +11044,14 @@ body.docmode .doc-figcap {
       }
       ctx.textAlign = 'left';
     }
+
+    /* ---- test seam: lets a headless check confirm a plane traces a drawn route ---- */
+    window.__atc = {
+      planes: () => planes.map((p) => ({ x: p.x, y: p.y, a: p.a, pathLen: p.path.length })),
+      route(i, pts) { const p = planes[i]; if (!p) return false; p.path = pts.slice(); planes.forEach((q) => { q.sel = q === p; }); return true; },
+      step(dt, n) { for (let k = 0; k < (n || 1); k++) update(dt || 0.016); }
+    };
+    bagg.add(() => { if (window.__atc) delete window.__atc; });
 
     reset();
     bagg.add(Engine.loop((dt) => { update(dt); draw(); }));

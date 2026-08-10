@@ -54,7 +54,7 @@
       over = false;
       banner.style.display = 'none';
       syncControls();
-      api.status('Keep your power output matching demand: if the demand line sits above your output, raise a generator; if it\'s below, ease one down.');
+      api.status('Each generator has a slider — drag it up for more power. Keep your total generation matching demand (the line at the top of the chart tells you which way to nudge). Drift too far for too long and the grid blacks out. Survive as many hours as you can.');
     }
 
     /* ---------------- demand model ---------------- */
@@ -209,6 +209,7 @@
 
       const supply = S.out.coal + S.out.gas + S.out.hydro + solar() + windOut() + Math.max(0, batPower);
       const demand = demandAt(S.hour, S.day) + S.surge + Math.max(0, -batPower);
+      S.supply = supply; S.demand = demand;   // stash for the live on-screen coach
 
       const imbalance = (supply - demand) / Math.max(20, demand);
       const targetFreq = 50 + clamp(imbalance, -0.35, 0.35) * 7.5;
@@ -300,6 +301,18 @@
       ctx.fillStyle = '#ff5c8f'; ctx.fillText('demand', gx + 6, gy + 16);
       ctx.fillStyle = '#38e1ff'; ctx.fillText('generation', gx + 74, gy + 16);
 
+      /* live coach — the one thing that tells you what to actually do right now */
+      const gap = (S.supply || 0) - (S.demand || 0);
+      let coach, cc;
+      if (gap < -3) { coach = '▲  generation is BELOW demand — raise a generator'; cc = '#ffd98a'; }
+      else if (gap > 3) { coach = '▼  generation is ABOVE demand — ease one down'; cc = '#ffd98a'; }
+      else { coach = '✓  balanced — hold it here'; cc = '#8fe6a0'; }
+      ctx.fillStyle = cc;
+      ctx.font = 'bold 13px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText(coach, gx + gw / 2, 15);
+      ctx.textAlign = 'left';
+
       /* frequency dial */
       const cx = W - 100, cy = 118, R = 62;
       ctx.strokeStyle = '#1e2740';
@@ -384,6 +397,8 @@
     scoreLabel: 'Hours online',
     tags: ['power', 'grid', 'energy', 'frequency'],
     how: [
+      'In one line: drag the generator sliders so your total output keeps up with demand. The prompt across the top of the chart always says whether to raise power or ease off.',
+      'Each panel is one generator. Drag its slider up for more megawatts, down for less. Watch the "output" number climb toward the setpoint.',
       'Keep the cyan generation line sitting on the pink demand line.',
       'Coal is cheap but slow to ramp; gas is instant but expensive. Hydro drains a reservoir that only refills overnight.',
       'Solar and wind you do not control, so plan around them.',

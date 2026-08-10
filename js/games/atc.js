@@ -5,7 +5,7 @@
 
   const W = 920, H = 600;
   const SEP = 30;             // separation minimum, px
-  const TURN = 1.5;           // rad/s
+  const TURN = 3.4;           // rad/s — snappy enough to actually trace a hand-drawn line (~18px radius)
   const SPEED = 62;           // px/s
 
   /* two runways: a touchdown point and the heading you must arrive on */
@@ -81,7 +81,7 @@
       if (!drawing) return;
       const pt = cv.pos(e);
       const last = drawing.path[drawing.path.length - 1] || { x: drawing.x, y: drawing.y };
-      if (Math.hypot(pt.x - last.x, pt.y - last.y) > 13) drawing.path.push({ x: pt.x, y: pt.y });
+      if (Math.hypot(pt.x - last.x, pt.y - last.y) > 8) drawing.path.push({ x: pt.x, y: pt.y });
     });
 
     function endDraw() {
@@ -117,7 +117,7 @@
           const wp = p.path[0];
           const want = Math.atan2(wp.y - p.y, wp.x - p.x);
           p.a += clamp(angDiff(p.a, want), -TURN * dt, TURN * dt);
-          if (Math.hypot(wp.x - p.x, wp.y - p.y) < 11) p.path.shift();
+          if (Math.hypot(wp.x - p.x, wp.y - p.y) < 9) p.path.shift();
         }
         p.x += Math.cos(p.a) * sp * dt;
         p.y += Math.sin(p.a) * sp * dt;
@@ -289,6 +289,14 @@
       }
       ctx.textAlign = 'left';
     }
+
+    /* ---- test seam: lets a headless check confirm a plane traces a drawn route ---- */
+    window.__atc = {
+      planes: () => planes.map((p) => ({ x: p.x, y: p.y, a: p.a, pathLen: p.path.length })),
+      route(i, pts) { const p = planes[i]; if (!p) return false; p.path = pts.slice(); planes.forEach((q) => { q.sel = q === p; }); return true; },
+      step(dt, n) { for (let k = 0; k < (n || 1); k++) update(dt || 0.016); }
+    };
+    bagg.add(() => { if (window.__atc) delete window.__atc; });
 
     reset();
     bagg.add(Engine.loop((dt) => { update(dt); draw(); }));

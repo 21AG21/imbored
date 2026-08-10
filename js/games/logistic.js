@@ -203,7 +203,7 @@
     const t1 = setTimeout(buildBif, 40);
     const t2 = setTimeout(buildLyap, 60);
     bagg.add(() => { clearTimeout(t1); clearTimeout(t2); });
-    api.status('Drag the growth-rate slider up and watch calm tip into chaos.');
+    api.status('One slider runs a whole population year by year. Drag "growth rate r" up: the numbers first hold steady, then bounce between a few values, then never settle. Your score is the longest repeating cycle you can land on.');
 
     bagg.add(Engine.loop(() => {
       /* advance the live orbit a few years per frame */
@@ -224,6 +224,8 @@
     scoreLabel: 'Deepest cycle',
     tags: ['logistic-map', 'chaos', 'bifurcation', 'dynamical-systems'],
     how: [
+      'In one line: drag the "growth rate r" slider and watch the population go from steady, to a boom-bust cycle, to chaos. Landing on a longer exact cycle scores more.',
+      'Nothing to steer here — you turn one knob (r) and read what the population does. The bottom strip is the population year by year; the big diagram maps every r at once.',
       'The rule is next = r × x × (1 − x): a population that grows when small and crashes when it overshoots. x is the stock from 0 to 1, and r is the growth rate you set.',
       'The main view is the bifurcation diagram: for each growth rate it marks the values the population settles into. One dot is a steady level, two dots mean it alternates high and low each year, and more dots mean a longer cycle.',
       'Raise r and the cycle length keeps doubling, 1, 2, 4, 8, 16, in ever-smaller steps that pile up at r ≈ 3.5699. Past there the population never repeats, which is deterministic chaos from a one-liner.',

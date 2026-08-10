@@ -64,7 +64,7 @@
       peakFlow = 0;
       stBuf.fill(0xff100c08 >>> 0);
       syncPills();
-      api.status('Set how many cars with the slider and watch a jam appear out of nowhere — push the Flow as high as you can.');
+      api.status('This is one lane of traffic driving around a loop. Drag the "density" slider to add cars, and get the Flow number as high as you can. Add too many and a jam forms on its own and crawls backward — no crash needed.');
     }
 
     /* one synchronous Nagel–Schreckenberg update of the whole road */
@@ -233,6 +233,8 @@
     scoreLabel: 'Peak flow',
     tags: ['nagel-schreckenberg', 'phase-transition', 'traffic', 'emergence'],
     how: [
+      'In one line: drag the density slider to add cars and find the amount where the road carries the most traffic. That highest Flow is your score.',
+      'You are not driving — you are setting the conditions and watching what the traffic does on its own. There is no crashing and nothing to steer.',
       'Cars sit on a single-lane loop. Each has a speed from 0 to v_max, and the whole road updates every tick.',
       'Every car follows four rules each tick: speed up by one, brake so you never hit the car ahead, then with probability p tap the brakes at random, then move. That random tap is the only noise.',
       'At low density every car reaches v_max. Raise the density past the critical point and one random brake seeds a jam that spreads backward while every car keeps following the rules.',
