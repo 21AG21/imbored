@@ -7,7 +7,7 @@
 
   function mount(root, api) {
     const bagg = Engine.bag();
-    let you = 0, cpu = 0, turn = 0, whose = 'you', over = false, streak = 0, disposed = false, gen = 0;
+    let you = 0, cpu = 0, turn = 0, whose = 'you', over = false, streak = api.load('streak', 0), disposed = false, gen = 0;
 
     const pStreak = api.pill('win streak: 0');
     const youScore = h('div', { class: 'pig-score' }, '0');
@@ -70,6 +70,7 @@
       over = true; busy(true);
       if (youWon) { streak++; api.sfx.great(); const r = api.submit(streak); msg.textContent = 'You hit ' + GOAL + '! Win streak ' + streak + '.' + (r.isRecord ? ' Best yet!' : ''); msg.className = 'pig-msg win'; }
       else { streak = 0; api.sfx.bad(); msg.textContent = 'Deskmate reached ' + GOAL + ' first. Streak reset.'; msg.className = 'pig-msg lose'; }
+      api.save('streak', streak);
       sync();
     }
 

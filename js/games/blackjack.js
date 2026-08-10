@@ -155,6 +155,7 @@
       player = []; dealer = [];
       stake = curBet;
       bankroll -= stake;             /* the bet goes onto the felt */
+      api.save('chips', bankroll);   // persist the wager immediately — leaving mid-hand must not refund it
       player.push(drawCard()); dealer.push(drawCard());
       player.push(drawCard()); dealer.push(drawCard());
       revealHole = false;
@@ -195,6 +196,7 @@
     function double() {
       if (phase !== 'player' || player.length !== 2 || bankroll < stake) return;
       bankroll -= stake;             /* match the original bet */
+      api.save('chips', bankroll);   // persist the double-down debit immediately too
       stake *= 2;
       player.push(drawCard());
       api.sfx.blip(600);

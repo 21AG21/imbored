@@ -30,11 +30,12 @@
       betLabel.textContent = 'bet: ' + bet;
       spinBtn.textContent = 'Spin (' + bet + ')';
     }
+    function save() { api.save('credits', credits); api.save('bestCredits', best); }
     function reset() {
       credits = 20; best = 20; bet = 1; spinning = false;
       reelEls.forEach((r) => { r.textContent = '❓'; });
       msg.textContent = 'Spin costs your bet. A pair returns it; three of a kind pays.'; msg.className = 'slot-msg';
-      setBet(1); sync();
+      setBet(1); sync(); save();
       api.status('Each spin costs your bet. A pair just returns your stake — three of a kind is where the money is, and three 7s is the jackpot. The house keeps a thin edge, so a good run has to be pressed. Bet bigger for bigger swings.');
     }
     function sync() {
@@ -90,12 +91,19 @@
           }
           sync();   // sync() is what actually raises `best` to the new credits total
           api.submit(best);
+          save();
         }
       }, 70);
       bagg.add(() => clearInterval(iv));
     }
 
-    reset();
+    credits = api.load('credits', 20);
+    best = api.load('bestCredits', 20);
+    setBet(Math.min(bet, Math.min(3, Math.max(1, credits))));
+    reelEls.forEach((r) => { r.textContent = '❓'; });
+    msg.textContent = 'Spin costs your bet. A pair returns it; three of a kind pays.'; msg.className = 'slot-msg';
+    sync();
+    api.status('Each spin costs your bet. A pair just returns your stake — three of a kind is where the money is, and three 7s is the jackpot. The house keeps a thin edge, so a good run has to be pressed. Bet bigger for bigger swings.');
     return () => { disposed = true; bagg.dispose(); };
   }
 

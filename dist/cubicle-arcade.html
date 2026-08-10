@@ -3293,11 +3293,7 @@ body.docmode .doc-figcap {
        Grows past the intrinsic size on roomy screens and shrinks on cramped
        ones. Self-removes when detached. */
     function fitCanvas() {
-      if (!c.isConnected) {
-        global.removeEventListener('resize', fitCanvas);
-        if (global.visualViewport) global.visualViewport.removeEventListener('resize', fitCanvas);
-        return;
-      }
+      if (!c.isConnected) { cleanup(); return; }
       if (document.body.classList.contains('bigscreen')) { c.style.maxWidth = 'var(--gw)'; return; }
       /* disguise mode: the canvas is an embedded FIGURE in a document, not the
          whole show. Size it to the text column, capped to a portion of the
@@ -3327,13 +3323,35 @@ body.docmode .doc-figcap {
          the free width — no intrinsic-size ceiling, so it upscales to fill */
       c.style.maxWidth = Math.round(Math.min(availW, availH * w / hh)) + 'px';
     }
+    let cleaned = false;
+    function cleanup() {
+      if (cleaned) return;
+      cleaned = true;
+      global.removeEventListener('resize', fitCanvas);
+      if (global.visualViewport) global.visualViewport.removeEventListener('resize', fitCanvas);
+      if (mo) mo.disconnect();
+    }
     global.addEventListener('resize', fitCanvas);
     if (global.visualViewport) global.visualViewport.addEventListener('resize', fitCanvas);
     requestAnimationFrame(fitCanvas);
     setTimeout(fitCanvas, 80);   // second pass once pads/panels have laid out
+    /* the fitCanvas() call above only self-removes the NEXT time a resize
+       event happens to fire after the canvas is already detached — on a
+       desktop session where the window is never resized, that never
+       happens, so the listener (and everything it closes over: this canvas,
+       its parent chain) leaked for the rest of the page's life. A game
+       switch replaces #view's children synchronously, so watch for that and
+       clean up the instant it happens instead of waiting on a maybe-never
+       event. */
+    const viewEl = document.getElementById('view');
+    const mo = viewEl && global.MutationObserver
+      ? new MutationObserver(() => { if (!c.isConnected) cleanup(); })
+      : null;
+    if (mo) mo.observe(viewEl, { childList: true, subtree: true });
 
     return {
       fit: fitCanvas,
+      dispose: cleanup,
       el: c, ctx, w, h: hh,
       pos(ev) {
         const r = c.getBoundingClientRect();
@@ -5233,14 +5251,20 @@ body.docmode .doc-figcap {
     get: (id) => byId.get(id),
 
     best(id) { return store.get('best:' + id, null); },
+    /* "plays" is a SESSION count ("N sessions on the clock" per the stats
+       page), incremented once per mount in renderGame() — deliberately
+       independent of submit(), which some open-ended sims (frost, life,
+       kuramoto...) call many times a second to track a live-updating peak.
+       Coupling the two used to credit one sitting of an idle sim as
+       thousands of "plays". */
     submit(id, value) {
       const g = byId.get(id);
       const prev = store.get('best:' + id, null);
       const better = prev == null || (g && g.lowerIsBetter ? value < prev : value > prev);
       if (better) store.set('best:' + id, value);
-      store.set('plays:' + id, store.get('plays:' + id, 0) + 1);
       return { best: better ? value : prev, isRecord: better && prev != null, isFirst: prev == null };
     },
+    countPlay(id) { store.set('plays:' + id, store.get('plays:' + id, 0) + 1); },
     plays(id) { return store.get('plays:' + id, 0); },
     store,
     muted() { return Engine.audio.muted; },
@@ -6314,6 +6338,7 @@ body.docmode .doc-figcap {
     let dispose = null;
     try {
       dispose = g.mount(stage, api);
+      Arcade.countPlay(g.id);
     } catch (e) {
       console.error('[' + g.id + '] failed to start', e);
       stage.replaceChildren(h('p', { class: 'empty' }, 'This one fell over on startup. Sorry. Try another.'));
@@ -15010,9 +15035,81 @@ body.docmode .doc-figcap {
     api.button('Undo', undo);
     api.button('Send home', autoFinish, 'primary');
 
+    /* ---------------- keyboard play ----------------
+       Every real move was reachable only by dragging a card with a mouse or
+       finger — a keyboard-only player following the "Z undoes, Space draws"
+       how-to text could undo and draw, but could never actually move a
+       card. Left/Right cycle a cursor through all 13 piles (stock, waste,
+       4 foundations, 7 tableau columns); Enter picks up the pile under the
+       cursor (or flips a face-down top card, or draws the stock) and, with
+       a run already held, Enter on a different pile attempts to place it
+       there using the exact same legality checks the mouse path uses.
+       Enter again on the pile you picked up from cancels the hold. */
+    let kbCursor = 0, kbHeld = null;
+    function findGrabStart(pile) {
+      let firstUp = pile.length;
+      for (let i = pile.length - 1; i >= 0; i--) { if (pile[i].up) firstUp = i; else break; }
+      if (firstUp >= pile.length) return -1;
+      for (let i = firstUp; i < pile.length; i++) if (grabbable(pile, i)) return i;
+      return -1;
+    }
+    function kbPileAt(idx) { return pileRects()[Engine.clamp(idx, 0, 12)]; }
+    function kbSamePile(a, b) { return a.kind === b.kind && a.i === b.i; }
+    function kbPickUp(r) {
+      if (r.kind === 'stock') { drawFromStock(); return; }
+      if (r.kind === 'waste') {
+        const c = waste[waste.length - 1];
+        if (c) kbHeld = { cards: [c], from: 'waste', fromI: 0 };
+        return;
+      }
+      if (r.kind === 'found') {
+        const c = found[r.i][found[r.i].length - 1];
+        if (c) kbHeld = { cards: [c], from: 'found', fromI: r.i };
+        return;
+      }
+      const pile = tab[r.i];
+      if (!pile.length) return;
+      const top = pile[pile.length - 1];
+      if (!top.up) { pushUndo(); top.up = true; moves++; api.sfx.click(); sync(); return; }
+      const start = findGrabStart(pile);
+      if (start >= 0) kbHeld = { cards: pile.slice(start), from: 'tab', fromI: r.i, fromK: start };
+    }
+    function kbRemoveHeld() {
+      if (kbHeld.from === 'waste') waste.pop();
+      else if (kbHeld.from === 'found') found[kbHeld.fromI].pop();
+      else tab[kbHeld.fromI].splice(kbHeld.fromK);
+    }
+    function kbPlace(r) {
+      const d = kbHeld, lead = d.cards[0];
+      if (r.kind === 'found' && d.cards.length === 1 && canFound(lead, r.i)) {
+        pushUndo(); kbRemoveHeld(); found[r.i].push(lead);
+        moves++; flipExposed(); api.sfx.good(); sync(); checkWin(); kbHeld = null; return;
+      }
+      if (r.kind === 'tab' && canTab(lead, r.i)) {
+        pushUndo(); kbRemoveHeld();
+        for (const c of d.cards) tab[r.i].push(c);
+        moves++; flipExposed(); api.sfx.tone({ freq: 300, to: 200, dur: 0.07, type: 'triangle', vol: 0.07 }); sync(); checkWin(); kbHeld = null; return;
+      }
+      api.sfx.thud();   // an illegal target — nothing moves, hold stays selected
+    }
+    function kbActivate() {
+      if (won) return;
+      const r = kbPileAt(kbCursor);
+      if (!kbHeld) { kbPickUp(r); return; }
+      if (kbSamePile(r, { kind: kbHeld.from === 'tab' ? 'tab' : kbHeld.from, i: kbHeld.fromI })) { kbHeld = null; api.sfx.click(); return; }
+      kbPlace(r);
+    }
+
     bagg.add(Engine.onKey((e) => {
       if ((e.key === 'z' || e.key === 'Z') && !e.ctrlKey && !e.metaKey) { undo(); return true; }
       if (e.key === ' ') { drawFromStock(); return true; }
+      if (e.key === 'ArrowLeft') { kbCursor = (kbCursor + 12) % 13; return true; }
+      if (e.key === 'ArrowRight') { kbCursor = (kbCursor + 1) % 13; return true; }
+      if (e.key === 'Enter') { kbActivate(); return true; }
+      /* Escape is deliberately left alone here — it's already the site-wide
+         "back to shelf" shortcut (js/core/arcade.js), and Engine.onKey
+         handlers can't stop that from also firing, so claiming Escape here
+         too would silently exit the game instead of just cancelling a hold */
     }));
 
     /* ---------------- drawing ---------------- */
@@ -15135,6 +15232,31 @@ body.docmode .doc-figcap {
         for (let k = 0; k < cut; k++) card(colX(t), cardY(t, k), pile[k]);
       }
 
+      /* keyboard cursor + held-run highlight */
+      const kbRect = pileRects()[kbCursor];
+      ctx.save();
+      ctx.strokeStyle = '#ffcb1f';
+      ctx.lineWidth = 4;
+      Engine.roundRect(ctx, kbRect.x - 4, kbRect.y - 4, kbRect.w + 8, kbRect.h + 8, 10);
+      ctx.stroke();
+      ctx.restore();
+      if (kbHeld) {
+        ctx.save();
+        ctx.strokeStyle = '#33c0d0';
+        ctx.lineWidth = 4;
+        if (kbHeld.from === 'tab') {
+          const y0 = cardY(kbHeld.fromI, kbHeld.fromK);
+          const yEnd = cardY(kbHeld.fromI, tab[kbHeld.fromI].length - 1) + CH;
+          Engine.roundRect(ctx, colX(kbHeld.fromI) - 4, y0 - 4, CW + 8, yEnd - y0 + 8, 10);
+        } else if (kbHeld.from === 'waste') {
+          Engine.roundRect(ctx, colX(1) - 4, TOPY - 4, CW + 8, CH + 8, 10);
+        } else if (kbHeld.from === 'found') {
+          Engine.roundRect(ctx, colX(3 + kbHeld.fromI) - 4, TOPY - 4, CW + 8, CH + 8, 10);
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+
       /* the card(s) in hand */
       if (drag) {
         drag.cards.forEach((c, i) => {
@@ -15173,7 +15295,8 @@ body.docmode .doc-figcap {
       'In the columns, stack down in alternating colours. Only a King fills an empty column.',
       'Drag a card and any proper run on top of it moves too.',
       'Click a card without dragging to send it home. Send home clears everything that can go.',
-      'Z undoes, Space draws. Chill and normal draw one card with unlimited redeals. Hard draws three with two redeals, nightmare with one.'
+      'Z undoes, Space draws. Keyboard only: Left/Right move a cursor between piles, Enter picks up or places a run, Enter again on the same pile cancels the hold.',
+      'Chill and normal draw one card with unlimited redeals. Hard draws three with two redeals, nightmare with one.'
     ],
     mount
   });
@@ -15734,7 +15857,11 @@ body.docmode .doc-figcap {
       if (e.key === '0' || e.key === 'Backspace' || e.key === 'Delete') { enter(0); return true; }
       if (e.key === 'n' || e.key === 'N') { toggleNotes(); return true; }
       const move = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -N, ArrowDown: N }[e.key];
-      if (move && sel != null) {
+      if (move) {
+        // there was no keyboard-reachable way to select a first cell at all —
+        // only a pointerdown ever set `sel`, so a keyboard-only player could
+        // never place a single digit despite the how-to text promising it
+        if (sel == null) { sel = 0; render(); return true; }
         const nr = sel + move;
         if (nr >= 0 && nr < 81 && !(Math.abs(move) === 1 && Math.floor(nr / N) !== Math.floor(sel / N))) {
           sel = nr;
@@ -25436,6 +25563,7 @@ body.docmode .doc-figcap {
       player = []; dealer = [];
       stake = curBet;
       bankroll -= stake;             /* the bet goes onto the felt */
+      api.save('chips', bankroll);   // persist the wager immediately — leaving mid-hand must not refund it
       player.push(drawCard()); dealer.push(drawCard());
       player.push(drawCard()); dealer.push(drawCard());
       revealHole = false;
@@ -25476,6 +25604,7 @@ body.docmode .doc-figcap {
     function double() {
       if (phase !== 'player' || player.length !== 2 || bankroll < stake) return;
       bankroll -= stake;             /* match the original bet */
+      api.save('chips', bankroll);   // persist the double-down debit immediately too
       stake *= 2;
       player.push(drawCard());
       api.sfx.blip(600);
@@ -25687,9 +25816,12 @@ body.docmode .doc-figcap {
     const handEl = h('div', { class: 'vp-hand' });
     const cardEls = [];
     for (let i = 0; i < 5; i++) {
-      const el = h('div', { class: 'vp-card back' },
+      const el = h('div', { class: 'vp-card back', tabindex: '0', role: 'button', 'aria-label': 'Card ' + (i + 1) + ', hold' },
         h('span', { class: 'vp-rank' }, ''), h('span', { class: 'vp-hold' }, 'HOLD'));
       el.addEventListener('click', () => toggleHold(i));
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleHold(i); }
+      });
       cardEls.push(el); handEl.appendChild(el);
     }
     const dealBtn = h('button', { class: 'btn primary vp-deal', type: 'button' }, 'Deal');
@@ -25833,7 +25965,7 @@ body.docmode .doc-figcap {
 
   function mount(root, api) {
     const bagg = Engine.bag();
-    let you = 0, cpu = 0, turn = 0, whose = 'you', over = false, streak = 0, disposed = false, gen = 0;
+    let you = 0, cpu = 0, turn = 0, whose = 'you', over = false, streak = api.load('streak', 0), disposed = false, gen = 0;
 
     const pStreak = api.pill('win streak: 0');
     const youScore = h('div', { class: 'pig-score' }, '0');
@@ -25896,6 +26028,7 @@ body.docmode .doc-figcap {
       over = true; busy(true);
       if (youWon) { streak++; api.sfx.great(); const r = api.submit(streak); msg.textContent = 'You hit ' + GOAL + '! Win streak ' + streak + '.' + (r.isRecord ? ' Best yet!' : ''); msg.className = 'pig-msg win'; }
       else { streak = 0; api.sfx.bad(); msg.textContent = 'Deskmate reached ' + GOAL + ' first. Streak reset.'; msg.className = 'pig-msg lose'; }
+      api.save('streak', streak);
       sync();
     }
 
@@ -26026,8 +26159,16 @@ body.docmode .doc-figcap {
 
   function mount(root, api) {
     const bagg = Engine.bag();
+    const saved = api.load('save', null);
     let staples = 0, made = 0, clickPow = 1, acc = 0, since = 0, disposed = false, firstBuy = true;
     const owned = {}; BUILDINGS.forEach((b) => { owned[b.id] = 0; });
+    if (saved) {
+      staples = saved.staples || 0;
+      made = saved.made || 0;
+      firstBuy = !saved.everBought;
+      BUILDINGS.forEach((b) => { if (saved.owned && saved.owned[b.id]) owned[b.id] = saved.owned[b.id]; });
+    }
+    function save() { api.save('save', { staples, made, owned, everBought: !firstBuy }); }
 
     const pRate = api.pill('0 /s');
     const countEl = h('div', { class: 'stp-count' }, '0');
@@ -26059,7 +26200,7 @@ body.docmode .doc-figcap {
         try { const r = btn.getBoundingClientRect(); Engine.fx.burst(r.left + r.width / 2, r.top + r.height / 2, 40); }
         catch (e) { api.sfx.great(); }
       }
-      api.submit(Math.floor(made)); sync();
+      api.submit(Math.floor(made)); sync(); save();
     }
     stapler.addEventListener('click', () => {
       staples += clickPow; made += clickPow; api.sfx.click();
@@ -26085,12 +26226,12 @@ body.docmode .doc-figcap {
       if (r > 0) { const add = r * dt; staples += add; made += add; }
       acc += dt; since += dt;
       if (acc > 0.1) { acc = 0; sync(); }
-      if (since > 3) { since = 0; api.submit(Math.floor(made)); }
+      if (since > 3) { since = 0; api.submit(Math.floor(made)); save(); }
     }));
 
     api.status('Click the stapler for staples. Spend them on interns and machines that staple for you. It never really ends — that is the point.');
     sync();
-    return () => { disposed = true; api.submit(Math.floor(made)); bagg.dispose(); };
+    return () => { disposed = true; api.submit(Math.floor(made)); save(); bagg.dispose(); };
   }
 
   Arcade.register({
@@ -26143,11 +26284,12 @@ body.docmode .doc-figcap {
       betLabel.textContent = 'bet: ' + bet;
       spinBtn.textContent = 'Spin (' + bet + ')';
     }
+    function save() { api.save('credits', credits); api.save('bestCredits', best); }
     function reset() {
       credits = 20; best = 20; bet = 1; spinning = false;
       reelEls.forEach((r) => { r.textContent = '❓'; });
       msg.textContent = 'Spin costs your bet. A pair returns it; three of a kind pays.'; msg.className = 'slot-msg';
-      setBet(1); sync();
+      setBet(1); sync(); save();
       api.status('Each spin costs your bet. A pair just returns your stake — three of a kind is where the money is, and three 7s is the jackpot. The house keeps a thin edge, so a good run has to be pressed. Bet bigger for bigger swings.');
     }
     function sync() {
@@ -26203,12 +26345,19 @@ body.docmode .doc-figcap {
           }
           sync();   // sync() is what actually raises `best` to the new credits total
           api.submit(best);
+          save();
         }
       }, 70);
       bagg.add(() => clearInterval(iv));
     }
 
-    reset();
+    credits = api.load('credits', 20);
+    best = api.load('bestCredits', 20);
+    setBet(Math.min(bet, Math.min(3, Math.max(1, credits))));
+    reelEls.forEach((r) => { r.textContent = '❓'; });
+    msg.textContent = 'Spin costs your bet. A pair returns it; three of a kind pays.'; msg.className = 'slot-msg';
+    sync();
+    api.status('Each spin costs your bet. A pair just returns your stake — three of a kind is where the money is, and three 7s is the jackpot. The house keeps a thin edge, so a good run has to be pressed. Bet bigger for bigger swings.');
     return () => { disposed = true; bagg.dispose(); };
   }
 

@@ -85,11 +85,7 @@
        Grows past the intrinsic size on roomy screens and shrinks on cramped
        ones. Self-removes when detached. */
     function fitCanvas() {
-      if (!c.isConnected) {
-        global.removeEventListener('resize', fitCanvas);
-        if (global.visualViewport) global.visualViewport.removeEventListener('resize', fitCanvas);
-        return;
-      }
+      if (!c.isConnected) { cleanup(); return; }
       if (document.body.classList.contains('bigscreen')) { c.style.maxWidth = 'var(--gw)'; return; }
       /* disguise mode: the canvas is an embedded FIGURE in a document, not the
          whole show. Size it to the text column, capped to a portion of the
@@ -119,13 +115,35 @@
          the free width — no intrinsic-size ceiling, so it upscales to fill */
       c.style.maxWidth = Math.round(Math.min(availW, availH * w / hh)) + 'px';
     }
+    let cleaned = false;
+    function cleanup() {
+      if (cleaned) return;
+      cleaned = true;
+      global.removeEventListener('resize', fitCanvas);
+      if (global.visualViewport) global.visualViewport.removeEventListener('resize', fitCanvas);
+      if (mo) mo.disconnect();
+    }
     global.addEventListener('resize', fitCanvas);
     if (global.visualViewport) global.visualViewport.addEventListener('resize', fitCanvas);
     requestAnimationFrame(fitCanvas);
     setTimeout(fitCanvas, 80);   // second pass once pads/panels have laid out
+    /* the fitCanvas() call above only self-removes the NEXT time a resize
+       event happens to fire after the canvas is already detached — on a
+       desktop session where the window is never resized, that never
+       happens, so the listener (and everything it closes over: this canvas,
+       its parent chain) leaked for the rest of the page's life. A game
+       switch replaces #view's children synchronously, so watch for that and
+       clean up the instant it happens instead of waiting on a maybe-never
+       event. */
+    const viewEl = document.getElementById('view');
+    const mo = viewEl && global.MutationObserver
+      ? new MutationObserver(() => { if (!c.isConnected) cleanup(); })
+      : null;
+    if (mo) mo.observe(viewEl, { childList: true, subtree: true });
 
     return {
       fit: fitCanvas,
+      dispose: cleanup,
       el: c, ctx, w, h: hh,
       pos(ev) {
         const r = c.getBoundingClientRect();

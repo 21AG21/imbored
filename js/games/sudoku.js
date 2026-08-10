@@ -243,7 +243,11 @@
       if (e.key === '0' || e.key === 'Backspace' || e.key === 'Delete') { enter(0); return true; }
       if (e.key === 'n' || e.key === 'N') { toggleNotes(); return true; }
       const move = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -N, ArrowDown: N }[e.key];
-      if (move && sel != null) {
+      if (move) {
+        // there was no keyboard-reachable way to select a first cell at all —
+        // only a pointerdown ever set `sel`, so a keyboard-only player could
+        // never place a single digit despite the how-to text promising it
+        if (sel == null) { sel = 0; render(); return true; }
         const nr = sel + move;
         if (nr >= 0 && nr < 81 && !(Math.abs(move) === 1 && Math.floor(nr / N) !== Math.floor(sel / N))) {
           sel = nr;

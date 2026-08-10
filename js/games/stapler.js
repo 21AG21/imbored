@@ -20,8 +20,16 @@
 
   function mount(root, api) {
     const bagg = Engine.bag();
+    const saved = api.load('save', null);
     let staples = 0, made = 0, clickPow = 1, acc = 0, since = 0, disposed = false, firstBuy = true;
     const owned = {}; BUILDINGS.forEach((b) => { owned[b.id] = 0; });
+    if (saved) {
+      staples = saved.staples || 0;
+      made = saved.made || 0;
+      firstBuy = !saved.everBought;
+      BUILDINGS.forEach((b) => { if (saved.owned && saved.owned[b.id]) owned[b.id] = saved.owned[b.id]; });
+    }
+    function save() { api.save('save', { staples, made, owned, everBought: !firstBuy }); }
 
     const pRate = api.pill('0 /s');
     const countEl = h('div', { class: 'stp-count' }, '0');
@@ -53,7 +61,7 @@
         try { const r = btn.getBoundingClientRect(); Engine.fx.burst(r.left + r.width / 2, r.top + r.height / 2, 40); }
         catch (e) { api.sfx.great(); }
       }
-      api.submit(Math.floor(made)); sync();
+      api.submit(Math.floor(made)); sync(); save();
     }
     stapler.addEventListener('click', () => {
       staples += clickPow; made += clickPow; api.sfx.click();
@@ -79,12 +87,12 @@
       if (r > 0) { const add = r * dt; staples += add; made += add; }
       acc += dt; since += dt;
       if (acc > 0.1) { acc = 0; sync(); }
-      if (since > 3) { since = 0; api.submit(Math.floor(made)); }
+      if (since > 3) { since = 0; api.submit(Math.floor(made)); save(); }
     }));
 
     api.status('Click the stapler for staples. Spend them on interns and machines that staple for you. It never really ends — that is the point.');
     sync();
-    return () => { disposed = true; api.submit(Math.floor(made)); bagg.dispose(); };
+    return () => { disposed = true; api.submit(Math.floor(made)); save(); bagg.dispose(); };
   }
 
   Arcade.register({

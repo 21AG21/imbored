@@ -346,9 +346,81 @@
     api.button('Undo', undo);
     api.button('Send home', autoFinish, 'primary');
 
+    /* ---------------- keyboard play ----------------
+       Every real move was reachable only by dragging a card with a mouse or
+       finger — a keyboard-only player following the "Z undoes, Space draws"
+       how-to text could undo and draw, but could never actually move a
+       card. Left/Right cycle a cursor through all 13 piles (stock, waste,
+       4 foundations, 7 tableau columns); Enter picks up the pile under the
+       cursor (or flips a face-down top card, or draws the stock) and, with
+       a run already held, Enter on a different pile attempts to place it
+       there using the exact same legality checks the mouse path uses.
+       Enter again on the pile you picked up from cancels the hold. */
+    let kbCursor = 0, kbHeld = null;
+    function findGrabStart(pile) {
+      let firstUp = pile.length;
+      for (let i = pile.length - 1; i >= 0; i--) { if (pile[i].up) firstUp = i; else break; }
+      if (firstUp >= pile.length) return -1;
+      for (let i = firstUp; i < pile.length; i++) if (grabbable(pile, i)) return i;
+      return -1;
+    }
+    function kbPileAt(idx) { return pileRects()[Engine.clamp(idx, 0, 12)]; }
+    function kbSamePile(a, b) { return a.kind === b.kind && a.i === b.i; }
+    function kbPickUp(r) {
+      if (r.kind === 'stock') { drawFromStock(); return; }
+      if (r.kind === 'waste') {
+        const c = waste[waste.length - 1];
+        if (c) kbHeld = { cards: [c], from: 'waste', fromI: 0 };
+        return;
+      }
+      if (r.kind === 'found') {
+        const c = found[r.i][found[r.i].length - 1];
+        if (c) kbHeld = { cards: [c], from: 'found', fromI: r.i };
+        return;
+      }
+      const pile = tab[r.i];
+      if (!pile.length) return;
+      const top = pile[pile.length - 1];
+      if (!top.up) { pushUndo(); top.up = true; moves++; api.sfx.click(); sync(); return; }
+      const start = findGrabStart(pile);
+      if (start >= 0) kbHeld = { cards: pile.slice(start), from: 'tab', fromI: r.i, fromK: start };
+    }
+    function kbRemoveHeld() {
+      if (kbHeld.from === 'waste') waste.pop();
+      else if (kbHeld.from === 'found') found[kbHeld.fromI].pop();
+      else tab[kbHeld.fromI].splice(kbHeld.fromK);
+    }
+    function kbPlace(r) {
+      const d = kbHeld, lead = d.cards[0];
+      if (r.kind === 'found' && d.cards.length === 1 && canFound(lead, r.i)) {
+        pushUndo(); kbRemoveHeld(); found[r.i].push(lead);
+        moves++; flipExposed(); api.sfx.good(); sync(); checkWin(); kbHeld = null; return;
+      }
+      if (r.kind === 'tab' && canTab(lead, r.i)) {
+        pushUndo(); kbRemoveHeld();
+        for (const c of d.cards) tab[r.i].push(c);
+        moves++; flipExposed(); api.sfx.tone({ freq: 300, to: 200, dur: 0.07, type: 'triangle', vol: 0.07 }); sync(); checkWin(); kbHeld = null; return;
+      }
+      api.sfx.thud();   // an illegal target — nothing moves, hold stays selected
+    }
+    function kbActivate() {
+      if (won) return;
+      const r = kbPileAt(kbCursor);
+      if (!kbHeld) { kbPickUp(r); return; }
+      if (kbSamePile(r, { kind: kbHeld.from === 'tab' ? 'tab' : kbHeld.from, i: kbHeld.fromI })) { kbHeld = null; api.sfx.click(); return; }
+      kbPlace(r);
+    }
+
     bagg.add(Engine.onKey((e) => {
       if ((e.key === 'z' || e.key === 'Z') && !e.ctrlKey && !e.metaKey) { undo(); return true; }
       if (e.key === ' ') { drawFromStock(); return true; }
+      if (e.key === 'ArrowLeft') { kbCursor = (kbCursor + 12) % 13; return true; }
+      if (e.key === 'ArrowRight') { kbCursor = (kbCursor + 1) % 13; return true; }
+      if (e.key === 'Enter') { kbActivate(); return true; }
+      /* Escape is deliberately left alone here — it's already the site-wide
+         "back to shelf" shortcut (js/core/arcade.js), and Engine.onKey
+         handlers can't stop that from also firing, so claiming Escape here
+         too would silently exit the game instead of just cancelling a hold */
     }));
 
     /* ---------------- drawing ---------------- */
@@ -471,6 +543,31 @@
         for (let k = 0; k < cut; k++) card(colX(t), cardY(t, k), pile[k]);
       }
 
+      /* keyboard cursor + held-run highlight */
+      const kbRect = pileRects()[kbCursor];
+      ctx.save();
+      ctx.strokeStyle = '#ffcb1f';
+      ctx.lineWidth = 4;
+      Engine.roundRect(ctx, kbRect.x - 4, kbRect.y - 4, kbRect.w + 8, kbRect.h + 8, 10);
+      ctx.stroke();
+      ctx.restore();
+      if (kbHeld) {
+        ctx.save();
+        ctx.strokeStyle = '#33c0d0';
+        ctx.lineWidth = 4;
+        if (kbHeld.from === 'tab') {
+          const y0 = cardY(kbHeld.fromI, kbHeld.fromK);
+          const yEnd = cardY(kbHeld.fromI, tab[kbHeld.fromI].length - 1) + CH;
+          Engine.roundRect(ctx, colX(kbHeld.fromI) - 4, y0 - 4, CW + 8, yEnd - y0 + 8, 10);
+        } else if (kbHeld.from === 'waste') {
+          Engine.roundRect(ctx, colX(1) - 4, TOPY - 4, CW + 8, CH + 8, 10);
+        } else if (kbHeld.from === 'found') {
+          Engine.roundRect(ctx, colX(3 + kbHeld.fromI) - 4, TOPY - 4, CW + 8, CH + 8, 10);
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+
       /* the card(s) in hand */
       if (drag) {
         drag.cards.forEach((c, i) => {
@@ -509,7 +606,8 @@
       'In the columns, stack down in alternating colours. Only a King fills an empty column.',
       'Drag a card and any proper run on top of it moves too.',
       'Click a card without dragging to send it home. Send home clears everything that can go.',
-      'Z undoes, Space draws. Chill and normal draw one card with unlimited redeals. Hard draws three with two redeals, nightmare with one.'
+      'Z undoes, Space draws. Keyboard only: Left/Right move a cursor between piles, Enter picks up or places a run, Enter again on the same pile cancels the hold.',
+      'Chill and normal draw one card with unlimited redeals. Hard draws three with two redeals, nightmare with one.'
     ],
     mount
   });

@@ -82,14 +82,20 @@
     get: (id) => byId.get(id),
 
     best(id) { return store.get('best:' + id, null); },
+    /* "plays" is a SESSION count ("N sessions on the clock" per the stats
+       page), incremented once per mount in renderGame() — deliberately
+       independent of submit(), which some open-ended sims (frost, life,
+       kuramoto...) call many times a second to track a live-updating peak.
+       Coupling the two used to credit one sitting of an idle sim as
+       thousands of "plays". */
     submit(id, value) {
       const g = byId.get(id);
       const prev = store.get('best:' + id, null);
       const better = prev == null || (g && g.lowerIsBetter ? value < prev : value > prev);
       if (better) store.set('best:' + id, value);
-      store.set('plays:' + id, store.get('plays:' + id, 0) + 1);
       return { best: better ? value : prev, isRecord: better && prev != null, isFirst: prev == null };
     },
+    countPlay(id) { store.set('plays:' + id, store.get('plays:' + id, 0) + 1); },
     plays(id) { return store.get('plays:' + id, 0); },
     store,
     muted() { return Engine.audio.muted; },
@@ -1163,6 +1169,7 @@
     let dispose = null;
     try {
       dispose = g.mount(stage, api);
+      Arcade.countPlay(g.id);
     } catch (e) {
       console.error('[' + g.id + '] failed to start', e);
       stage.replaceChildren(h('p', { class: 'empty' }, 'This one fell over on startup. Sorry. Try another.'));

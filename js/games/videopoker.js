@@ -74,9 +74,12 @@
     const handEl = h('div', { class: 'vp-hand' });
     const cardEls = [];
     for (let i = 0; i < 5; i++) {
-      const el = h('div', { class: 'vp-card back' },
+      const el = h('div', { class: 'vp-card back', tabindex: '0', role: 'button', 'aria-label': 'Card ' + (i + 1) + ', hold' },
         h('span', { class: 'vp-rank' }, ''), h('span', { class: 'vp-hold' }, 'HOLD'));
       el.addEventListener('click', () => toggleHold(i));
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleHold(i); }
+      });
       cardEls.push(el); handEl.appendChild(el);
     }
     const dealBtn = h('button', { class: 'btn primary vp-deal', type: 'button' }, 'Deal');
