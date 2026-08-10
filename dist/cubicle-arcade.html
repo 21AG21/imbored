@@ -2346,6 +2346,24 @@ body.docmode .sb-label {
   text-shadow: 0 0 18px currentColor;
 }
 
+/* doc zoom (Shift+Z): a plain "reading it up close" look — one paragraph,
+   blown up, floated in a sea of blank paper, exactly like a real document
+   zoomed to 200%+. Sits outside .stage on purpose (appended to body), so it
+   never goes through the disguise's invert/grayscale filter — author the
+   final paper/ink colours straight from the --doc-* variables. */
+.gag-zoom {
+  position: fixed; inset: 0; z-index: 9998;   /* above achievement toasts (9997) too — nothing should peek through */
+  background: var(--doc-paper, #fff);
+  display: flex; justify-content: center;
+  padding: 20vh 8vw 0; cursor: default;
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+}
+.gag-zoom p {
+  margin: 0; max-width: 900px;
+  font-size: clamp(22px, 3.4vw, 32px); line-height: 1.55;
+  color: var(--doc-ink, #1f2329);
+}
+
 /* konami: a quick celebratory tilt */
 @keyframes gag-wobble { 0%,100% { transform: none; } 25% { transform: rotate(.6deg); } 75% { transform: rotate(-.6deg); } }
 .gag-konami .view, .gag-konami .topbar { animation: gag-wobble .5s ease-in-out 3; }
@@ -3034,6 +3052,18 @@ body.docmode .status {
    hard-coded dark DOM boards), and the control pads flip back so they stay
    natural. Dark disguise keeps the dark playfield, which already fits. ---- */
 body.docmode.in-game .stage { gap: 12px; }
+/* .view clips horizontal overflow in-game (body.in-game .view) so nothing
+   normally spills past the page — but that clip also silently caps the
+   figure-size slider once a user drags a figure wider than the doc column,
+   with no visible cue why it stopped growing. Doc mode's own single centred
+   column can afford to let a deliberately oversized figure spill past its
+   margins, the same as dragging a Word image wider than the page. */
+body.docmode.in-game .view { overflow-x: visible; }
+/* the figure-size slider itself is wired into fitStage()/fitCanvas()'s
+   existing auto-fit math (arcade.js / engine.js) rather than a standalone
+   CSS zoom rule here — both of those already own stage.style.zoom /
+   canvas.style.maxWidth via inline styles that would just fight a separate
+   CSS rule for the same property. */
 :root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) {
   /* strictly black-and-white: grayscale kills every colour; brightness floods
      the field to white; the sub-1 contrast softens what would be solid black
@@ -3313,13 +3343,15 @@ body.docmode .g2048 .cell[data-v="1024"] { background: #4c515a; color: #fff; }
 body.docmode .g2048 .cell[data-v="2048"] { background: #2f333a; color: #fff; }
 body.docmode .g2048 .cell.big { background: #2f333a; color: #fff; }
 
-/* document-mode figure-exposure slider: a quiet caption-row control that only
-   appears while a game is dressed as a figure. Monochrome to match the page. */
-.figbar { display: none; }
-body.docmode.in-game .figbar {
-  display: flex; align-items: center; gap: 10px;
+/* document-mode figure-exposure / figure-size sliders: quiet caption-row
+   controls that only appear while a game is dressed as a figure. Monochrome
+   to match the page. */
+.figbar-group { display: none; }
+body.docmode.in-game .figbar-group {
+  display: flex; flex-direction: column; gap: 4px;
   max-width: 840px; margin: 10px auto 0; padding: 0 2px;
 }
+.figbar { display: flex; align-items: center; gap: 10px; }
 .figbar-cap {
   font: 12px Verdana, Geneva, sans-serif; letter-spacing: .02em;
   color: var(--doc-mut); white-space: nowrap;
@@ -3452,7 +3484,7 @@ body.docmode .doc-figcap {
        ones. Self-removes when detached. */
     function fitCanvas() {
       if (!c.isConnected) { cleanup(); return; }
-      if (document.body.classList.contains('bigscreen')) { c.style.maxWidth = 'var(--gw)'; return; }
+      if (document.body.classList.contains('bigscreen')) { c.style.width = ''; c.style.maxWidth = 'var(--gw)'; return; }
       /* disguise mode: the canvas is an embedded FIGURE in a document, not the
          whole show. Size it to the text column, capped to a portion of the
          viewport height, so report prose can flow above and below it without the
@@ -3460,7 +3492,19 @@ body.docmode .doc-figcap {
       if (document.body.classList.contains('docmode')) {
         const parentW = (c.parentElement && c.parentElement.clientWidth) || c.getBoundingClientRect().width;
         const capH = ((global.visualViewport && global.visualViewport.height) || global.innerHeight) * 0.72;
-        c.style.maxWidth = Math.round(Math.min(parentW, capH * w / hh)) + 'px';
+        /* the figure-size slider is a multiplier on top of this fit, not a
+           replacement for it — deliberately allowed to exceed parentW/capH
+           when the user drags past "fits the column", same as resizing an
+           inserted image past a document's margins. */
+        const fit = Math.min(parentW, capH * w / hh);
+        const target = Math.max(60, Math.round(fit * Engine.docFigScale())) + 'px';
+        /* .gcanvas is `width: 100%` in the stylesheet — max-width alone can
+           only ever shrink that (100% of a container that hasn't grown
+           doesn't grow just because the cap did), never exceed the parent.
+           Set width explicitly too, inline, so it wins over the 100% rule
+           and the figure can actually outgrow its column once asked to. */
+        c.style.maxWidth = target;
+        c.style.width = target;
         return;
       }
       const vpH = (global.visualViewport && global.visualViewport.height) || global.innerHeight;
@@ -3479,6 +3523,7 @@ body.docmode .doc-figcap {
       const availW = Math.max(140, parentW);
       /* largest width that respects both the free height (via aspect ratio) and
          the free width — no intrinsic-size ceiling, so it upscales to fill */
+      c.style.width = '';               // clear any explicit width a prior doc-mode fit left behind
       c.style.maxWidth = Math.round(Math.min(availW, availH * w / hh)) + 'px';
     }
     let cleaned = false;
@@ -3566,6 +3611,12 @@ body.docmode .doc-figcap {
   Engine.docInk = function docInk() { return isDarkDoc() ? Engine.docColor('--doc-ink', '#e9ebef') : '#000000'; };
   Engine.docMut = function docMut() { return Engine.docColor('--doc-mut', '#767d88'); };
   Engine.docRule = function docRule() { return Engine.docColor('--doc-rule2', '#d3d6dc'); };
+  /* the doc-mode figure-size slider (Arcade.setFigScale) — a multiplier the
+     auto-fit sizing below scales its own result by, not a size in itself. */
+  Engine.docFigScale = function docFigScale() {
+    const v = parseFloat(Engine.docColor('--doc-fig-scale', '1'));
+    return isFinite(v) && v > 0 ? v : 1;
+  };
   Engine.docColor = function docColor(name, fallback) {
     try {
       const v = getComputedStyle(document.body).getPropertyValue(name).trim();
@@ -5459,6 +5510,16 @@ body.docmode .doc-figcap {
     el.style.setProperty('--doc-fig-bright', b.toFixed(3));
     el.style.setProperty('--doc-fig-bright-lb', Math.max(1, b - 0.23).toFixed(3));  // light boards run a touch dimmer
   }
+  /* disguise figure size: how big the "figure" (the actual game) renders,
+     same 50%-is-the-default convention as the brightness slider above. Pure
+     CSS zoom on .stage, so it works uniformly across canvas games and DOM
+     board games alike without touching each game's own layout code. */
+  let figScalePct = store.get('figscale', 50);
+  function applyFigScale() {
+    const pct = Engine.clamp(figScalePct, 0, 100);
+    const s = pct <= 50 ? Engine.lerp(0.4, 1, pct / 50) : Engine.lerp(1, 2.4, (pct - 50) / 50);
+    document.documentElement.style.setProperty('--doc-fig-scale', s.toFixed(3));
+  }
   /* The site's display name. Editable straight from the top bar (click it and
      type); defaults to a forgettable "Docs" so a glance at the header or the
      browser tab gives nothing away. Drives both the brand and the tab title. */
@@ -5527,6 +5588,17 @@ body.docmode .doc-figcap {
       figBrightPct = Engine.clamp(Math.round(pct), 0, 100);
       store.set('figbright', figBrightPct);
       applyFigBright();
+    },
+    figScale() { return figScalePct; },
+    setFigScale(pct) {
+      figScalePct = Engine.clamp(Math.round(pct), 0, 100);
+      store.set('figscale', figScalePct);
+      applyFigScale();
+      /* DOM board games re-fit via fitStageSoon(); canvas games size
+         themselves off a 'resize' listener instead (fitStage() explicitly
+         skips them), same dual path applyDocMode() already uses. */
+      try { global.dispatchEvent(new Event('resize')); } catch (e) { /* ignore */ }
+      fitStageSoon();
     }
   };
   global.Arcade = Arcade;
@@ -5536,6 +5608,7 @@ body.docmode .doc-figcap {
   const docBtnSyncers = [];
   function applyDocMode() {
     document.body.classList.toggle('docmode', docModeOn);
+    if (!docModeOn && global.Gags && global.Gags.docZoom) global.Gags.docZoom.hide();
     const hash = location.hash || '';
     const onHub = !currentGame && hash !== '#stats' && !/^#(g|daily)\//.test(hash);
     /* the home is a document only in disguise mode; keep the flag in sync */
@@ -5558,6 +5631,7 @@ body.docmode .doc-figcap {
     stage.style.transform = '';
     stage.style.transformOrigin = '';
     stage.style.zoom = '';
+    stage.style.width = '';
     if (stage.querySelector('canvas')) return;   // canvas games size themselves
     const docm = document.body.classList.contains('docmode') && !bigOn;
     const rect = stage.getBoundingClientRect();
@@ -5581,7 +5655,21 @@ body.docmode .doc-figcap {
       const capH = Math.min(global.innerHeight * 0.72, vBottom - rect.top);
       let z = Math.min(availW / natW, capH / natH);
       z = Math.max(1, Math.min(z, 2.2));
-      if (z > 1.02) stage.style.zoom = z.toFixed(3);
+      /* the figure-size slider layers on top of the auto-fit above, same
+         deal as the canvas path in Engine.canvas — deliberately allowed to
+         push past the auto-fit's own 1-2.2x range once the user asks for it. */
+      z *= Engine.docFigScale();
+      if (Math.abs(z - 1) > 0.02) {
+        stage.style.zoom = z.toFixed(3);
+        /* .stage has no intrinsic width of its own (it's a block-level flex
+           container, so "auto" just fills whatever the parent offers) — zoom
+           scales that box AFTER auto-width has already been resolved against
+           the UNZOOMED parent, so a box that's already filling its column
+           can't be zoomed any wider. Give it the content's real width
+           explicitly once zoom would need to exceed the column, so zoom has
+           something of its own to scale past that boundary. */
+        if (natW * z > availW) stage.style.width = Math.ceil(natW) + 'px';
+      }
       return;
     }
     /* Bound growth to the space the board actually has: down to the bottom of
@@ -6616,9 +6704,22 @@ body.docmode .doc-figcap {
       value: String(Arcade.figBright()), 'aria-label': 'Figure brightness',
       oninput: () => Arcade.setFigBright(+figSlider.value)
     });
-    const figBar = h('div', { class: 'figbar' },
-      h('span', { class: 'figbar-cap' }, 'Figure exposure'),
-      figSlider);
+    /* and a second slider to resize the figure itself — free-form, not the
+       auto-fit size. Canvas games re-measure their available space (via
+       Arcade.setFigScale -> fitStageSoon) once the zoom lands, same as a
+       viewport resize; DOM board games just ride the CSS zoom directly. */
+    const figSizeSlider = h('input', {
+      class: 'fig-bright', type: 'range', min: '0', max: '100', step: '1',
+      value: String(Arcade.figScale()), 'aria-label': 'Figure size',
+      oninput: () => Arcade.setFigScale(+figSizeSlider.value)
+    });
+    const figBar = h('div', { class: 'figbar-group' },
+      h('div', { class: 'figbar' },
+        h('span', { class: 'figbar-cap' }, 'Figure exposure'),
+        figSlider),
+      h('div', { class: 'figbar' },
+        h('span', { class: 'figbar-cap' }, 'Figure size'),
+        figSizeSlider));
 
     /* how-to panel: the game's written instructions. */
     const howList = h('ul', null, g.how.map((s) => h('li', null, s)));
@@ -6771,6 +6872,7 @@ body.docmode .doc-figcap {
     if (store.get('colorsafe', false)) document.body.classList.add('colorsafe');
     docModeOn = store.get('docmode', true);
     applyFigBright();
+    applyFigScale();
     buildChrome();
     applyDocMode();
     document.body.appendChild(Boss.build());
@@ -7019,6 +7121,26 @@ body.docmode .doc-figcap {
   }
   function hideSaver() { if (saverRaf) cancelAnimationFrame(saverRaf); saverRaf = 0; if (saverEl) { saverEl.remove(); saverEl = null; } armIdle(); }
 
+  /* ---------------- doc zoom (Shift+Z) ----------------
+     A "someone's walking by" reflex: blow up whatever paragraph is already
+     on screen to the size you'd see if a real document were zoomed to
+     200%+, and hide everything else. No hint text, no toast — the whole
+     point is that it looks exactly like a person calmly reading, not like
+     a feature just fired. Click, Escape, or Shift+Z again puts it away. */
+  let zoomEl = null;
+  function currentParagraph() {
+    const ps = Array.from(document.querySelectorAll('.doc-prose p, .docpage p'))
+      .filter((p) => !p.classList.contains('doc-figcap') && p.textContent.trim());
+    return ps.length ? ps[(Math.random() * ps.length) | 0].textContent.trim() : 'Nothing here changes the headline conclusion.';
+  }
+  function showZoom() {
+    if (zoomEl || bossOn() || !document.body.classList.contains('docmode')) return;
+    zoomEl = h('div', { class: 'gag-zoom', onclick: hideZoom }, h('p', null, currentParagraph()));
+    document.body.appendChild(zoomEl);
+  }
+  function hideZoom() { if (zoomEl) { zoomEl.remove(); zoomEl = null; } }
+  function toggleZoom() { zoomEl ? hideZoom() : showZoom(); }
+
   /* ---------------- fake office alerts ---------------- */
   const OFFICE = [
     { icon: '📅', title: 'Reminder', body: 'Standup starts in 5 minutes.' },
@@ -7061,7 +7183,16 @@ body.docmode .doc-figcap {
   function keyHandler(e) {
     const t = e.target;
     const typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
-    if (e.key === 'Escape') { if (matrixEl) stopMatrix(); if (saverEl) hideSaver(); }
+    if (e.key === 'Escape') { if (matrixEl) stopMatrix(); if (saverEl) hideSaver(); if (zoomEl) hideZoom(); }
+    /* Shift+Z: works in-game too (that's the whole point — zoom in on the
+       doc you're already "reading"), so this is checked ahead of the
+       inGame() early-return below, same as Escape just above. */
+    if (e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey && e.key.toLowerCase() === 'z') {
+      if (typing) return;
+      e.preventDefault();
+      toggleZoom();
+      return;
+    }
     if (typing || inGame()) { konI = 0; return; }   // eggs only on the calm hub, never mid-game or mid-typing
     const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     if (k === KON[konI]) { konI++; if (konI === KON.length) { konI = 0; konami(); } }
@@ -7100,6 +7231,7 @@ body.docmode .doc-figcap {
 
   global.Gags = {
     toast, itPopup, matrix, init,
+    docZoom: { toggle: toggleZoom, hide: hideZoom, isOn: () => !!zoomEl },
     screensaver: { enabled: saverOn, set(on) { store().set('saver', !!on); if (!on && saverEl) hideSaver(); armIdle(); } },
     officeAlerts: { enabled: officeOn, set(on) { store().set('office', !!on); armOffice(); } }
   };

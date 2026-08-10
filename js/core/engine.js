@@ -86,7 +86,7 @@
        ones. Self-removes when detached. */
     function fitCanvas() {
       if (!c.isConnected) { cleanup(); return; }
-      if (document.body.classList.contains('bigscreen')) { c.style.maxWidth = 'var(--gw)'; return; }
+      if (document.body.classList.contains('bigscreen')) { c.style.width = ''; c.style.maxWidth = 'var(--gw)'; return; }
       /* disguise mode: the canvas is an embedded FIGURE in a document, not the
          whole show. Size it to the text column, capped to a portion of the
          viewport height, so report prose can flow above and below it without the
@@ -94,7 +94,19 @@
       if (document.body.classList.contains('docmode')) {
         const parentW = (c.parentElement && c.parentElement.clientWidth) || c.getBoundingClientRect().width;
         const capH = ((global.visualViewport && global.visualViewport.height) || global.innerHeight) * 0.72;
-        c.style.maxWidth = Math.round(Math.min(parentW, capH * w / hh)) + 'px';
+        /* the figure-size slider is a multiplier on top of this fit, not a
+           replacement for it — deliberately allowed to exceed parentW/capH
+           when the user drags past "fits the column", same as resizing an
+           inserted image past a document's margins. */
+        const fit = Math.min(parentW, capH * w / hh);
+        const target = Math.max(60, Math.round(fit * Engine.docFigScale())) + 'px';
+        /* .gcanvas is `width: 100%` in the stylesheet — max-width alone can
+           only ever shrink that (100% of a container that hasn't grown
+           doesn't grow just because the cap did), never exceed the parent.
+           Set width explicitly too, inline, so it wins over the 100% rule
+           and the figure can actually outgrow its column once asked to. */
+        c.style.maxWidth = target;
+        c.style.width = target;
         return;
       }
       const vpH = (global.visualViewport && global.visualViewport.height) || global.innerHeight;
@@ -113,6 +125,7 @@
       const availW = Math.max(140, parentW);
       /* largest width that respects both the free height (via aspect ratio) and
          the free width — no intrinsic-size ceiling, so it upscales to fill */
+      c.style.width = '';               // clear any explicit width a prior doc-mode fit left behind
       c.style.maxWidth = Math.round(Math.min(availW, availH * w / hh)) + 'px';
     }
     let cleaned = false;
@@ -200,6 +213,12 @@
   Engine.docInk = function docInk() { return isDarkDoc() ? Engine.docColor('--doc-ink', '#e9ebef') : '#000000'; };
   Engine.docMut = function docMut() { return Engine.docColor('--doc-mut', '#767d88'); };
   Engine.docRule = function docRule() { return Engine.docColor('--doc-rule2', '#d3d6dc'); };
+  /* the doc-mode figure-size slider (Arcade.setFigScale) — a multiplier the
+     auto-fit sizing below scales its own result by, not a size in itself. */
+  Engine.docFigScale = function docFigScale() {
+    const v = parseFloat(Engine.docColor('--doc-fig-scale', '1'));
+    return isFinite(v) && v > 0 ? v : 1;
+  };
   Engine.docColor = function docColor(name, fallback) {
     try {
       const v = getComputedStyle(document.body).getPropertyValue(name).trim();

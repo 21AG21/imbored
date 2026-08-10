@@ -139,6 +139,26 @@
   }
   function hideSaver() { if (saverRaf) cancelAnimationFrame(saverRaf); saverRaf = 0; if (saverEl) { saverEl.remove(); saverEl = null; } armIdle(); }
 
+  /* ---------------- doc zoom (Shift+Z) ----------------
+     A "someone's walking by" reflex: blow up whatever paragraph is already
+     on screen to the size you'd see if a real document were zoomed to
+     200%+, and hide everything else. No hint text, no toast — the whole
+     point is that it looks exactly like a person calmly reading, not like
+     a feature just fired. Click, Escape, or Shift+Z again puts it away. */
+  let zoomEl = null;
+  function currentParagraph() {
+    const ps = Array.from(document.querySelectorAll('.doc-prose p, .docpage p'))
+      .filter((p) => !p.classList.contains('doc-figcap') && p.textContent.trim());
+    return ps.length ? ps[(Math.random() * ps.length) | 0].textContent.trim() : 'Nothing here changes the headline conclusion.';
+  }
+  function showZoom() {
+    if (zoomEl || bossOn() || !document.body.classList.contains('docmode')) return;
+    zoomEl = h('div', { class: 'gag-zoom', onclick: hideZoom }, h('p', null, currentParagraph()));
+    document.body.appendChild(zoomEl);
+  }
+  function hideZoom() { if (zoomEl) { zoomEl.remove(); zoomEl = null; } }
+  function toggleZoom() { zoomEl ? hideZoom() : showZoom(); }
+
   /* ---------------- fake office alerts ---------------- */
   const OFFICE = [
     { icon: '📅', title: 'Reminder', body: 'Standup starts in 5 minutes.' },
@@ -181,7 +201,16 @@
   function keyHandler(e) {
     const t = e.target;
     const typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
-    if (e.key === 'Escape') { if (matrixEl) stopMatrix(); if (saverEl) hideSaver(); }
+    if (e.key === 'Escape') { if (matrixEl) stopMatrix(); if (saverEl) hideSaver(); if (zoomEl) hideZoom(); }
+    /* Shift+Z: works in-game too (that's the whole point — zoom in on the
+       doc you're already "reading"), so this is checked ahead of the
+       inGame() early-return below, same as Escape just above. */
+    if (e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey && e.key.toLowerCase() === 'z') {
+      if (typing) return;
+      e.preventDefault();
+      toggleZoom();
+      return;
+    }
     if (typing || inGame()) { konI = 0; return; }   // eggs only on the calm hub, never mid-game or mid-typing
     const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     if (k === KON[konI]) { konI++; if (konI === KON.length) { konI = 0; konami(); } }
@@ -220,6 +249,7 @@
 
   global.Gags = {
     toast, itPopup, matrix, init,
+    docZoom: { toggle: toggleZoom, hide: hideZoom, isOn: () => !!zoomEl },
     screensaver: { enabled: saverOn, set(on) { store().set('saver', !!on); if (!on && saverEl) hideSaver(); armIdle(); } },
     officeAlerts: { enabled: officeOn, set(on) { store().set('office', !!on); armOffice(); } }
   };

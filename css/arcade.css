@@ -2331,6 +2331,24 @@ body.docmode .sb-label {
   text-shadow: 0 0 18px currentColor;
 }
 
+/* doc zoom (Shift+Z): a plain "reading it up close" look — one paragraph,
+   blown up, floated in a sea of blank paper, exactly like a real document
+   zoomed to 200%+. Sits outside .stage on purpose (appended to body), so it
+   never goes through the disguise's invert/grayscale filter — author the
+   final paper/ink colours straight from the --doc-* variables. */
+.gag-zoom {
+  position: fixed; inset: 0; z-index: 9998;   /* above achievement toasts (9997) too — nothing should peek through */
+  background: var(--doc-paper, #fff);
+  display: flex; justify-content: center;
+  padding: 20vh 8vw 0; cursor: default;
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+}
+.gag-zoom p {
+  margin: 0; max-width: 900px;
+  font-size: clamp(22px, 3.4vw, 32px); line-height: 1.55;
+  color: var(--doc-ink, #1f2329);
+}
+
 /* konami: a quick celebratory tilt */
 @keyframes gag-wobble { 0%,100% { transform: none; } 25% { transform: rotate(.6deg); } 75% { transform: rotate(-.6deg); } }
 .gag-konami .view, .gag-konami .topbar { animation: gag-wobble .5s ease-in-out 3; }
@@ -3019,6 +3037,18 @@ body.docmode .status {
    hard-coded dark DOM boards), and the control pads flip back so they stay
    natural. Dark disguise keeps the dark playfield, which already fits. ---- */
 body.docmode.in-game .stage { gap: 12px; }
+/* .view clips horizontal overflow in-game (body.in-game .view) so nothing
+   normally spills past the page — but that clip also silently caps the
+   figure-size slider once a user drags a figure wider than the doc column,
+   with no visible cue why it stopped growing. Doc mode's own single centred
+   column can afford to let a deliberately oversized figure spill past its
+   margins, the same as dragging a Word image wider than the page. */
+body.docmode.in-game .view { overflow-x: visible; }
+/* the figure-size slider itself is wired into fitStage()/fitCanvas()'s
+   existing auto-fit math (arcade.js / engine.js) rather than a standalone
+   CSS zoom rule here — both of those already own stage.style.zoom /
+   canvas.style.maxWidth via inline styles that would just fight a separate
+   CSS rule for the same property. */
 :root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) {
   /* strictly black-and-white: grayscale kills every colour; brightness floods
      the field to white; the sub-1 contrast softens what would be solid black
@@ -3298,13 +3328,15 @@ body.docmode .g2048 .cell[data-v="1024"] { background: #4c515a; color: #fff; }
 body.docmode .g2048 .cell[data-v="2048"] { background: #2f333a; color: #fff; }
 body.docmode .g2048 .cell.big { background: #2f333a; color: #fff; }
 
-/* document-mode figure-exposure slider: a quiet caption-row control that only
-   appears while a game is dressed as a figure. Monochrome to match the page. */
-.figbar { display: none; }
-body.docmode.in-game .figbar {
-  display: flex; align-items: center; gap: 10px;
+/* document-mode figure-exposure / figure-size sliders: quiet caption-row
+   controls that only appear while a game is dressed as a figure. Monochrome
+   to match the page. */
+.figbar-group { display: none; }
+body.docmode.in-game .figbar-group {
+  display: flex; flex-direction: column; gap: 4px;
   max-width: 840px; margin: 10px auto 0; padding: 0 2px;
 }
+.figbar { display: flex; align-items: center; gap: 10px; }
 .figbar-cap {
   font: 12px Verdana, Geneva, sans-serif; letter-spacing: .02em;
   color: var(--doc-mut); white-space: nowrap;

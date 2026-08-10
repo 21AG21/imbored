@@ -91,6 +91,16 @@
     el.style.setProperty('--doc-fig-bright', b.toFixed(3));
     el.style.setProperty('--doc-fig-bright-lb', Math.max(1, b - 0.23).toFixed(3));  // light boards run a touch dimmer
   }
+  /* disguise figure size: how big the "figure" (the actual game) renders,
+     same 50%-is-the-default convention as the brightness slider above. Pure
+     CSS zoom on .stage, so it works uniformly across canvas games and DOM
+     board games alike without touching each game's own layout code. */
+  let figScalePct = store.get('figscale', 50);
+  function applyFigScale() {
+    const pct = Engine.clamp(figScalePct, 0, 100);
+    const s = pct <= 50 ? Engine.lerp(0.4, 1, pct / 50) : Engine.lerp(1, 2.4, (pct - 50) / 50);
+    document.documentElement.style.setProperty('--doc-fig-scale', s.toFixed(3));
+  }
   /* The site's display name. Editable straight from the top bar (click it and
      type); defaults to a forgettable "Docs" so a glance at the header or the
      browser tab gives nothing away. Drives both the brand and the tab title. */
@@ -159,6 +169,17 @@
       figBrightPct = Engine.clamp(Math.round(pct), 0, 100);
       store.set('figbright', figBrightPct);
       applyFigBright();
+    },
+    figScale() { return figScalePct; },
+    setFigScale(pct) {
+      figScalePct = Engine.clamp(Math.round(pct), 0, 100);
+      store.set('figscale', figScalePct);
+      applyFigScale();
+      /* DOM board games re-fit via fitStageSoon(); canvas games size
+         themselves off a 'resize' listener instead (fitStage() explicitly
+         skips them), same dual path applyDocMode() already uses. */
+      try { global.dispatchEvent(new Event('resize')); } catch (e) { /* ignore */ }
+      fitStageSoon();
     }
   };
   global.Arcade = Arcade;
@@ -168,6 +189,7 @@
   const docBtnSyncers = [];
   function applyDocMode() {
     document.body.classList.toggle('docmode', docModeOn);
+    if (!docModeOn && global.Gags && global.Gags.docZoom) global.Gags.docZoom.hide();
     const hash = location.hash || '';
     const onHub = !currentGame && hash !== '#stats' && !/^#(g|daily)\//.test(hash);
     /* the home is a document only in disguise mode; keep the flag in sync */
@@ -190,6 +212,7 @@
     stage.style.transform = '';
     stage.style.transformOrigin = '';
     stage.style.zoom = '';
+    stage.style.width = '';
     if (stage.querySelector('canvas')) return;   // canvas games size themselves
     const docm = document.body.classList.contains('docmode') && !bigOn;
     const rect = stage.getBoundingClientRect();
@@ -213,7 +236,21 @@
       const capH = Math.min(global.innerHeight * 0.72, vBottom - rect.top);
       let z = Math.min(availW / natW, capH / natH);
       z = Math.max(1, Math.min(z, 2.2));
-      if (z > 1.02) stage.style.zoom = z.toFixed(3);
+      /* the figure-size slider layers on top of the auto-fit above, same
+         deal as the canvas path in Engine.canvas — deliberately allowed to
+         push past the auto-fit's own 1-2.2x range once the user asks for it. */
+      z *= Engine.docFigScale();
+      if (Math.abs(z - 1) > 0.02) {
+        stage.style.zoom = z.toFixed(3);
+        /* .stage has no intrinsic width of its own (it's a block-level flex
+           container, so "auto" just fills whatever the parent offers) — zoom
+           scales that box AFTER auto-width has already been resolved against
+           the UNZOOMED parent, so a box that's already filling its column
+           can't be zoomed any wider. Give it the content's real width
+           explicitly once zoom would need to exceed the column, so zoom has
+           something of its own to scale past that boundary. */
+        if (natW * z > availW) stage.style.width = Math.ceil(natW) + 'px';
+      }
       return;
     }
     /* Bound growth to the space the board actually has: down to the bottom of
@@ -1248,9 +1285,22 @@
       value: String(Arcade.figBright()), 'aria-label': 'Figure brightness',
       oninput: () => Arcade.setFigBright(+figSlider.value)
     });
-    const figBar = h('div', { class: 'figbar' },
-      h('span', { class: 'figbar-cap' }, 'Figure exposure'),
-      figSlider);
+    /* and a second slider to resize the figure itself — free-form, not the
+       auto-fit size. Canvas games re-measure their available space (via
+       Arcade.setFigScale -> fitStageSoon) once the zoom lands, same as a
+       viewport resize; DOM board games just ride the CSS zoom directly. */
+    const figSizeSlider = h('input', {
+      class: 'fig-bright', type: 'range', min: '0', max: '100', step: '1',
+      value: String(Arcade.figScale()), 'aria-label': 'Figure size',
+      oninput: () => Arcade.setFigScale(+figSizeSlider.value)
+    });
+    const figBar = h('div', { class: 'figbar-group' },
+      h('div', { class: 'figbar' },
+        h('span', { class: 'figbar-cap' }, 'Figure exposure'),
+        figSlider),
+      h('div', { class: 'figbar' },
+        h('span', { class: 'figbar-cap' }, 'Figure size'),
+        figSizeSlider));
 
     /* how-to panel: the game's written instructions. */
     const howList = h('ul', null, g.how.map((s) => h('li', null, s)));
@@ -1403,6 +1453,7 @@
     if (store.get('colorsafe', false)) document.body.classList.add('colorsafe');
     docModeOn = store.get('docmode', true);
     applyFigBright();
+    applyFigScale();
     buildChrome();
     applyDocMode();
     document.body.appendChild(Boss.build());
