@@ -33,13 +33,19 @@
     /* the whole point is noise, so make sure sound is on and the top-bar icon agrees */
     if (Engine.audio.muted) { const b = document.querySelector('button[title="Noise on/off"]'); if (b) b.click(); else Engine.audio.muted = false; }
 
+    /* scoreLabel promises a "Noises made" count, so it needs an actual submit
+       — same gap this game shared with Rave Mode before that got fixed */
+    let noises = api.load('noises', 0);
     const grid = h('div', { class: 'sb-grid' });
     const pads = SOUNDS.map((s) => {
       const pad = h('button', { class: 'sb-pad', type: 'button' },
         h('span', { class: 'sb-emoji' }, s.emoji),
         h('span', { class: 'sb-label' }, s.label),
         h('span', { class: 'sb-key' }, s.key.toUpperCase()));
-      const hit = () => { s.play(); pad.classList.remove('lit'); void pad.offsetWidth; pad.classList.add('lit'); };
+      const hit = () => {
+        s.play(); pad.classList.remove('lit'); void pad.offsetWidth; pad.classList.add('lit');
+        noises++; api.save('noises', noises); api.submit(noises);
+      };
       pad.addEventListener('click', hit);
       s._hit = hit;
       grid.appendChild(pad);

@@ -3230,6 +3230,18 @@ body.docmode .db-box.cpu { background: #767d88; }
 body.docmode .esc-cell.esc-you { background: var(--doc-ink); }
 body.docmode .esc-cell.esc-ai { background: #767d88; }
 
+/* Peg Solitaire: an empty hole (light --paper2) and a filled peg (banana
+   radial gradient) both invert under the blanket filter, but land close
+   enough in luminance to fall under the 3:1 non-text-contrast guideline —
+   playable, but subtler than it should be. Counter-invert and author an
+   explicit empty-outline vs. filled-dot pair instead, the same fix pattern
+   as everything else in this section. */
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .peg-hole {
+  filter: invert(1) hue-rotate(180deg);
+}
+body.docmode .peg-hole { background: var(--doc-paper); border-color: var(--doc-rule2); }
+body.docmode .peg-hole.peg { background: var(--doc-ink); border-color: var(--doc-ink); box-shadow: none; }
+
 /* 2048 as a document: a tidy greyscale data grid, not an inverted wall of
    black tiles. Low values sit near-white and step toward grey as they climb,
    so only the numerals really carry ink ("very limited black"). */
@@ -5492,7 +5504,18 @@ body.docmode .doc-figcap {
     }
   }
   Arcade.fitBig = fitStage;
-  function fitStageSoon() { requestAnimationFrame(fitStage); setTimeout(fitStage, 90); setTimeout(fitStage, 260); }
+  let fitStageRaf = null, fitStageT1 = null, fitStageT2 = null;
+  function fitStageSoon() {
+    /* cancel any still-pending passes from a previous call so rapid, repeated
+       triggers (doc-mode toggled several times in quick succession, say) don't
+       pile up an ever-growing queue of redundant recomputes */
+    if (fitStageRaf != null) cancelAnimationFrame(fitStageRaf);
+    if (fitStageT1 != null) clearTimeout(fitStageT1);
+    if (fitStageT2 != null) clearTimeout(fitStageT2);
+    fitStageRaf = requestAnimationFrame(fitStage);
+    fitStageT1 = setTimeout(fitStage, 90);
+    fitStageT2 = setTimeout(fitStage, 260);
+  }
   function setBig(on) {
     bigOn = on;
     document.body.classList.toggle('bigscreen', bigOn);
@@ -5581,9 +5604,15 @@ body.docmode .doc-figcap {
       e.stopPropagation();
       pop.classList.toggle('hidden');
     });
+    /* capture phase, not bubble: a swatch click rebuilds (and thereby detaches)
+       itself synchronously in its own handler before the event ever bubbles
+       back up to document, so a bubble-phase listener always sees a detached
+       e.target and pop.contains(e.target) always comes back false, closing
+       the picker after every single selection. Running in capture fires this
+       BEFORE that rebuild, while e.target is still the live, attached button. */
     document.addEventListener('click', (e) => {
       if (!pop.classList.contains('hidden') && !pop.contains(e.target) && e.target !== btn) pop.classList.add('hidden');
-    });
+    }, true);
     return h('div', { class: 'theme-wrap' }, btn, pop);
   }
 
@@ -6410,7 +6439,20 @@ body.docmode .doc-figcap {
   function hashId(s) { let x = 2166136261; for (let i = 0; i < s.length; i++) { x ^= s.charCodeAt(i); x = (x * 16777619) >>> 0; } return x; }
   function docProse(g) {
     const seed = hashId(g.id || 'x');
-    const P = (k) => PROSE[(seed >>> (k * 4)) % PROSE.length];   // unsigned shift — signed >> can go negative -> undefined
+    /* six independent 4-bit slices of one 32-bit seed collide often enough
+       (many game ids hit it) that the exact same "report" sentence could
+       appear twice or three times back to back — an obvious tell in text
+       meant to read as a real document. Draw a seeded permutation instead,
+       so every slot P(0..5) is guaranteed distinct; still fully determined
+       by the game id, so the same game always shows the same prose. */
+    const order = PROSE.map((_, i) => i);
+    let s = seed >>> 0;
+    for (let i = order.length - 1; i > 0; i--) {
+      s = (Math.imul(s, 1103515245) + 12345) >>> 0;
+      const j = s % (i + 1);
+      const t = order[i]; order[i] = order[j]; order[j] = t;
+    }
+    const P = (k) => PROSE[order[k % order.length]];
     const intro = h('div', { class: 'doc-prose doc-intro' },
       h('p', null, P(0)),
       h('p', null, P(1) + ' ' + P(2)));
@@ -6533,8 +6575,30 @@ body.docmode .doc-figcap {
       }
     } catch (e) { ro = null; }
 
+    /* every game reveals its end-of-round banner the same way (flip its own
+       .banner element's inline display style), and on a tall canvas or a
+       long board that banner — the only feedback on the result, and the
+       only way back in short of a small toolbar button — can land well
+       below the fold with no way back up. Watch for exactly that one
+       transition here, once, instead of patching every game's own call site. */
+    let bannerObs = null;
+    try {
+      if (global.MutationObserver) {
+        bannerObs = new global.MutationObserver((muts) => {
+          for (const m of muts) {
+            const el = m.target;
+            if (el.classList && el.classList.contains('banner') && el.style.display !== 'none') {
+              el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }
+          }
+        });
+        bannerObs.observe(stage, { attributes: true, attributeFilter: ['style'], subtree: true });
+      }
+    } catch (e) { bannerObs = null; }
+
     currentDispose = () => {
       if (ro) { try { ro.disconnect(); } catch (e) { /* ignore */ } ro = null; }
+      if (bannerObs) { try { bannerObs.disconnect(); } catch (e) { /* ignore */ } bannerObs = null; }
       if (typeof dispose === 'function') dispose();
     };
     currentGame = g;
@@ -6734,6 +6798,12 @@ body.docmode .doc-figcap {
   function toastHost() {
     let host = document.querySelector('.gag-toasts');
     if (!host) { host = h('div', { class: 'gag-toasts', 'aria-live': 'polite' }); document.body.appendChild(host); }
+    /* the topbar carries the panic key's on-screen button, so a toast must
+       never sit over it — a fixed top offset can't account for the topbar
+       wrapping to two rows on a narrow phone, so measure its real rendered
+       bottom edge fresh on every toast instead of guessing a pixel value */
+    const bar = document.querySelector('.topbar');
+    host.style.top = bar ? (bar.getBoundingClientRect().bottom + 8) + 'px' : '';
     return host;
   }
   function toast(o) {
@@ -12229,6 +12299,13 @@ body.docmode .doc-figcap {
     bagg.listen(window, 'pointermove', moveDrag);
     bagg.listen(window, 'pointerup', endDrag);
     bagg.listen(window, 'pointercancel', cancelDrag);
+    /* the ghost and drop target only recompute on an actual pointermove, so a
+       drag held through a viewport resize or a doc-mode toggle (which also
+       dispatches a synthetic resize, see arcade.js's applyDocMode) freezes
+       the ghost at its pre-change position and would commit to a stale cell
+       on release — cancel outright rather than place somewhere the player
+       never actually pointed at */
+    bagg.listen(window, 'resize', () => { if (dragIdx != null) cancelDrag(); });
 
     function finish() {
       over = true;
@@ -13859,7 +13936,15 @@ body.docmode .doc-figcap {
         h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Another grid'));
     }
 
-    function cellFrom(e) { const t = e.target.closest('.ws-cell'); return t ? +t.dataset.i : null; }
+    /* elementFromPoint, not e.target: boardEl.setPointerCapture below pins
+       e.target to boardEl itself for the rest of the gesture, so a plain
+       e.target.closest('.ws-cell') on move/up always misses and the drag
+       could never advance past the starting cell */
+    function cellFrom(e) {
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      const t = el && el.closest ? el.closest('.ws-cell') : null;
+      return t ? +t.dataset.i : null;
+    }
     function showPath(cells) {
       for (const el of cellEls) el.classList.remove('sel');
       if (cells) for (const i of cells) cellEls[i].classList.add('sel');
@@ -25665,6 +25750,12 @@ body.docmode .doc-figcap {
     const pMat = api.pill('Sand');
     const pCount = api.pill('Filled: 0%');
 
+    /* scoreLabel promises a "Messes made" count, so it needs an actual
+       submit — same gap this game shared with Rave Mode before that got
+       fixed. Count per paint stroke (pointerdown), not per animation frame,
+       since draw() below runs every frame and submit() shouldn't. */
+    let messes = api.load('messes', 0);
+
     api.select('Material', MATS.map((m) => ({ value: String(m.id), label: m.label })), String(SAND), (v) => {
       mat = +v; pMat.textContent = MATS.find((m) => m.id === mat).label;
     });
@@ -25847,7 +25938,11 @@ body.docmode .doc-figcap {
         else if (isLiquid(mat) || mat === FIRE || mat === SAND) set(i, mat, lf);
       }
     }
-    bagg.listen(cv.el, 'pointerdown', (e) => { painting = true; paintAt(e); try { if (cv.el.setPointerCapture) cv.el.setPointerCapture(e.pointerId); } catch (err) { /* */ } });
+    bagg.listen(cv.el, 'pointerdown', (e) => {
+      painting = true; paintAt(e);
+      messes++; api.save('messes', messes); api.submit(messes);
+      try { if (cv.el.setPointerCapture) cv.el.setPointerCapture(e.pointerId); } catch (err) { /* */ }
+    });
     bagg.listen(cv.el, 'pointermove', (e) => { if (painting) paintAt(e); });
     bagg.listen(cv.el, 'pointerup', () => { painting = false; });
 
@@ -27744,13 +27839,19 @@ body.docmode .doc-figcap {
     /* the whole point is noise, so make sure sound is on and the top-bar icon agrees */
     if (Engine.audio.muted) { const b = document.querySelector('button[title="Noise on/off"]'); if (b) b.click(); else Engine.audio.muted = false; }
 
+    /* scoreLabel promises a "Noises made" count, so it needs an actual submit
+       — same gap this game shared with Rave Mode before that got fixed */
+    let noises = api.load('noises', 0);
     const grid = h('div', { class: 'sb-grid' });
     const pads = SOUNDS.map((s) => {
       const pad = h('button', { class: 'sb-pad', type: 'button' },
         h('span', { class: 'sb-emoji' }, s.emoji),
         h('span', { class: 'sb-label' }, s.label),
         h('span', { class: 'sb-key' }, s.key.toUpperCase()));
-      const hit = () => { s.play(); pad.classList.remove('lit'); void pad.offsetWidth; pad.classList.add('lit'); };
+      const hit = () => {
+        s.play(); pad.classList.remove('lit'); void pad.offsetWidth; pad.classList.add('lit');
+        noises++; api.save('noises', noises); api.submit(noises);
+      };
       pad.addEventListener('click', hit);
       s._hit = hit;
       grid.appendChild(pad);

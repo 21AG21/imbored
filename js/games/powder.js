@@ -45,6 +45,12 @@
     const pMat = api.pill('Sand');
     const pCount = api.pill('Filled: 0%');
 
+    /* scoreLabel promises a "Messes made" count, so it needs an actual
+       submit — same gap this game shared with Rave Mode before that got
+       fixed. Count per paint stroke (pointerdown), not per animation frame,
+       since draw() below runs every frame and submit() shouldn't. */
+    let messes = api.load('messes', 0);
+
     api.select('Material', MATS.map((m) => ({ value: String(m.id), label: m.label })), String(SAND), (v) => {
       mat = +v; pMat.textContent = MATS.find((m) => m.id === mat).label;
     });
@@ -227,7 +233,11 @@
         else if (isLiquid(mat) || mat === FIRE || mat === SAND) set(i, mat, lf);
       }
     }
-    bagg.listen(cv.el, 'pointerdown', (e) => { painting = true; paintAt(e); try { if (cv.el.setPointerCapture) cv.el.setPointerCapture(e.pointerId); } catch (err) { /* */ } });
+    bagg.listen(cv.el, 'pointerdown', (e) => {
+      painting = true; paintAt(e);
+      messes++; api.save('messes', messes); api.submit(messes);
+      try { if (cv.el.setPointerCapture) cv.el.setPointerCapture(e.pointerId); } catch (err) { /* */ }
+    });
     bagg.listen(cv.el, 'pointermove', (e) => { if (painting) paintAt(e); });
     bagg.listen(cv.el, 'pointerup', () => { painting = false; });
 

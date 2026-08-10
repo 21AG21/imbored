@@ -164,7 +164,15 @@
         h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'Another grid'));
     }
 
-    function cellFrom(e) { const t = e.target.closest('.ws-cell'); return t ? +t.dataset.i : null; }
+    /* elementFromPoint, not e.target: boardEl.setPointerCapture below pins
+       e.target to boardEl itself for the rest of the gesture, so a plain
+       e.target.closest('.ws-cell') on move/up always misses and the drag
+       could never advance past the starting cell */
+    function cellFrom(e) {
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      const t = el && el.closest ? el.closest('.ws-cell') : null;
+      return t ? +t.dataset.i : null;
+    }
     function showPath(cells) {
       for (const el of cellEls) el.classList.remove('sel');
       if (cells) for (const i of cells) cellEls[i].classList.add('sel');

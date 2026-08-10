@@ -246,6 +246,13 @@
     bagg.listen(window, 'pointermove', moveDrag);
     bagg.listen(window, 'pointerup', endDrag);
     bagg.listen(window, 'pointercancel', cancelDrag);
+    /* the ghost and drop target only recompute on an actual pointermove, so a
+       drag held through a viewport resize or a doc-mode toggle (which also
+       dispatches a synthetic resize, see arcade.js's applyDocMode) freezes
+       the ghost at its pre-change position and would commit to a stale cell
+       on release — cancel outright rather than place somewhere the player
+       never actually pointed at */
+    bagg.listen(window, 'resize', () => { if (dragIdx != null) cancelDrag(); });
 
     function finish() {
       over = true;

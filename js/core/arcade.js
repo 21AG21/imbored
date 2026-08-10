@@ -221,7 +221,18 @@
     }
   }
   Arcade.fitBig = fitStage;
-  function fitStageSoon() { requestAnimationFrame(fitStage); setTimeout(fitStage, 90); setTimeout(fitStage, 260); }
+  let fitStageRaf = null, fitStageT1 = null, fitStageT2 = null;
+  function fitStageSoon() {
+    /* cancel any still-pending passes from a previous call so rapid, repeated
+       triggers (doc-mode toggled several times in quick succession, say) don't
+       pile up an ever-growing queue of redundant recomputes */
+    if (fitStageRaf != null) cancelAnimationFrame(fitStageRaf);
+    if (fitStageT1 != null) clearTimeout(fitStageT1);
+    if (fitStageT2 != null) clearTimeout(fitStageT2);
+    fitStageRaf = requestAnimationFrame(fitStage);
+    fitStageT1 = setTimeout(fitStage, 90);
+    fitStageT2 = setTimeout(fitStage, 260);
+  }
   function setBig(on) {
     bigOn = on;
     document.body.classList.toggle('bigscreen', bigOn);
@@ -310,9 +321,15 @@
       e.stopPropagation();
       pop.classList.toggle('hidden');
     });
+    /* capture phase, not bubble: a swatch click rebuilds (and thereby detaches)
+       itself synchronously in its own handler before the event ever bubbles
+       back up to document, so a bubble-phase listener always sees a detached
+       e.target and pop.contains(e.target) always comes back false, closing
+       the picker after every single selection. Running in capture fires this
+       BEFORE that rebuild, while e.target is still the live, attached button. */
     document.addEventListener('click', (e) => {
       if (!pop.classList.contains('hidden') && !pop.contains(e.target) && e.target !== btn) pop.classList.add('hidden');
-    });
+    }, true);
     return h('div', { class: 'theme-wrap' }, btn, pop);
   }
 
@@ -1139,7 +1156,20 @@
   function hashId(s) { let x = 2166136261; for (let i = 0; i < s.length; i++) { x ^= s.charCodeAt(i); x = (x * 16777619) >>> 0; } return x; }
   function docProse(g) {
     const seed = hashId(g.id || 'x');
-    const P = (k) => PROSE[(seed >>> (k * 4)) % PROSE.length];   // unsigned shift — signed >> can go negative -> undefined
+    /* six independent 4-bit slices of one 32-bit seed collide often enough
+       (many game ids hit it) that the exact same "report" sentence could
+       appear twice or three times back to back — an obvious tell in text
+       meant to read as a real document. Draw a seeded permutation instead,
+       so every slot P(0..5) is guaranteed distinct; still fully determined
+       by the game id, so the same game always shows the same prose. */
+    const order = PROSE.map((_, i) => i);
+    let s = seed >>> 0;
+    for (let i = order.length - 1; i > 0; i--) {
+      s = (Math.imul(s, 1103515245) + 12345) >>> 0;
+      const j = s % (i + 1);
+      const t = order[i]; order[i] = order[j]; order[j] = t;
+    }
+    const P = (k) => PROSE[order[k % order.length]];
     const intro = h('div', { class: 'doc-prose doc-intro' },
       h('p', null, P(0)),
       h('p', null, P(1) + ' ' + P(2)));
@@ -1262,8 +1292,30 @@
       }
     } catch (e) { ro = null; }
 
+    /* every game reveals its end-of-round banner the same way (flip its own
+       .banner element's inline display style), and on a tall canvas or a
+       long board that banner — the only feedback on the result, and the
+       only way back in short of a small toolbar button — can land well
+       below the fold with no way back up. Watch for exactly that one
+       transition here, once, instead of patching every game's own call site. */
+    let bannerObs = null;
+    try {
+      if (global.MutationObserver) {
+        bannerObs = new global.MutationObserver((muts) => {
+          for (const m of muts) {
+            const el = m.target;
+            if (el.classList && el.classList.contains('banner') && el.style.display !== 'none') {
+              el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }
+          }
+        });
+        bannerObs.observe(stage, { attributes: true, attributeFilter: ['style'], subtree: true });
+      }
+    } catch (e) { bannerObs = null; }
+
     currentDispose = () => {
       if (ro) { try { ro.disconnect(); } catch (e) { /* ignore */ } ro = null; }
+      if (bannerObs) { try { bannerObs.disconnect(); } catch (e) { /* ignore */ } bannerObs = null; }
       if (typeof dispose === 'function') dispose();
     };
     currentGame = g;

@@ -24,6 +24,12 @@
   function toastHost() {
     let host = document.querySelector('.gag-toasts');
     if (!host) { host = h('div', { class: 'gag-toasts', 'aria-live': 'polite' }); document.body.appendChild(host); }
+    /* the topbar carries the panic key's on-screen button, so a toast must
+       never sit over it — a fixed top offset can't account for the topbar
+       wrapping to two rows on a narrow phone, so measure its real rendered
+       bottom edge fresh on every toast instead of guessing a pixel value */
+    const bar = document.querySelector('.topbar');
+    host.style.top = bar ? (bar.getBoundingClientRect().bottom + 8) + 'px' : '';
     return host;
   }
   function toast(o) {

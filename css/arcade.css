@@ -3215,6 +3215,18 @@ body.docmode .db-box.cpu { background: #767d88; }
 body.docmode .esc-cell.esc-you { background: var(--doc-ink); }
 body.docmode .esc-cell.esc-ai { background: #767d88; }
 
+/* Peg Solitaire: an empty hole (light --paper2) and a filled peg (banana
+   radial gradient) both invert under the blanket filter, but land close
+   enough in luminance to fall under the 3:1 non-text-contrast guideline —
+   playable, but subtler than it should be. Counter-invert and author an
+   explicit empty-outline vs. filled-dot pair instead, the same fix pattern
+   as everything else in this section. */
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .peg-hole {
+  filter: invert(1) hue-rotate(180deg);
+}
+body.docmode .peg-hole { background: var(--doc-paper); border-color: var(--doc-rule2); }
+body.docmode .peg-hole.peg { background: var(--doc-ink); border-color: var(--doc-ink); box-shadow: none; }
+
 /* 2048 as a document: a tidy greyscale data grid, not an inverted wall of
    black tiles. Low values sit near-white and step toward grey as they climb,
    so only the numerals really carry ink ("very limited black"). */
