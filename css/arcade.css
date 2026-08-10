@@ -1355,20 +1355,78 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
   .shop-blurb { white-space: normal; }
 }
 
-/* landscape phones again: every pixel of height belongs to the game */
+/* landscape phones again: every pixel of height belongs to the game.
+   These need the body.in-game prefix to actually win — body.in-game .gamehead
+   and body.in-game .gametools (defined earlier, for the general in-game case)
+   are equally-or-more specific than a bare .gamehead/.gametools here, so
+   without the prefix this whole block was silently losing that fight and
+   never actually shrinking anything, no matter how short the screen got. */
 @media (orientation: landscape) and (max-height: 560px) {
   body.in-game .search,
   body.in-game .rel-link,
   body.in-game .brand { display: none; }
-  .topbar { padding: 3px 8px; row-gap: 3px; }
-  .gamehead { padding: 3px 7px; margin-bottom: 4px; border-width: 3px; }
-  .gtitle { font-size: 14px; }
-  .gmeta { margin-left: auto; width: auto; }
-  .gametools { margin-bottom: 4px; }
-  .gcanvas { max-height: calc(100svh - 88px); border-width: 3px; }
-  .meter { height: 10px; }
-  .panel { padding: 6px 8px; }
-  .panel h4 { margin-bottom: 4px; font-size: 10px; }
+  /* the "View: Documents" toggle and the difficulty readout both carry the
+     44px accessible-tap-target minimum, which alone was most of the
+     topbar's height — neither is something you need mid-game, both stay
+     one tap away via the shelf, so drop them here and reclaim the space
+     for the thing you actually need to reach: your controls */
+  body.in-game .docmode-btn, body.in-game .diffbtn { display: none; }
+  body.in-game .topbar { padding: 3px 8px; row-gap: 3px; }
+  body.in-game .gamehead { padding: 3px 7px; margin-bottom: 4px; border-width: 3px; }
+  body.in-game .gtitle { font-size: 14px; }
+  body.in-game .gmeta { margin-left: auto; width: auto; }
+  body.in-game .gametools { margin-bottom: 4px; }
+  body.in-game .gcanvas { max-height: calc(100svh - 88px); border-width: 3px; }
+  body.in-game .meter { height: 10px; }
+  body.in-game .panel { padding: 6px 8px; }
+  body.in-game .panel h4 { margin-bottom: 4px; font-size: 10px; }
+  body.in-game .dpad { grid-template-columns: repeat(3, 44px); grid-template-rows: repeat(3, 34px); gap: 3px; }
+  body.in-game .stage { gap: 6px; }
+
+  /* fixed-size DOM boards (2048, fifteen) are tall enough to run off the
+     bottom of a landscape phone entirely — cap cells to the viewport's
+     short side instead of a flat px value so the whole board stays visible */
+  body.in-game .g2048 .cell { width: min(74px, 9vh); height: min(74px, 9vh); font-size: min(25px, 3.2vh); }
+  body.in-game .g2048 .board { gap: min(6px, 1vh); }
+  body.in-game .f15 .cell { width: min(68px, 8.5vh); height: min(68px, 8.5vh); font-size: min(27px, 3vh); }
+  body.in-game .f15 .board { gap: min(6px, 1vh); }
+
+  /* mastermind's 10-guess log is naturally taller than a landscape phone —
+     let the log itself scroll instead of pushing the color palette (the
+     part you actually tap every turn) off screen; render() keeps the
+     active row scrolled into view as you play */
+  body.in-game .mm-board { max-height: 120px; overflow-y: auto; gap: 2px; padding: 6px; }
+  body.in-game .mm-slot { width: 24px; height: 24px; font-size: 10px; }
+  body.in-game .mm-swatch { width: 30px; height: 30px; font-size: 12px; }
+  body.in-game .mm-palette { gap: 5px; }
+  body.in-game .mastermind { gap: 6px; }
+
+  /* hangman's A-Z keyboard is laid out for a tall portrait screen (9 cols x
+     3 rows); a landscape phone has width to spare and height to lose, so
+     flip the grid wider and shorter instead of leaving 2/3 of it offscreen */
+  body.in-game .hangman { gap: 6px; padding: 6px; }
+  body.in-game .hm-gallows { font-size: 28px; }
+  body.in-game .hm-word { gap: 5px; }
+  body.in-game .hm-slot { min-width: 18px; height: 26px; font-size: 18px; }
+  body.in-game .hm-keys { grid-template-columns: repeat(13, 1fr); max-width: 640px; gap: 3px; }
+  body.in-game .hm-key { min-height: 26px; padding: 4px 0; font-size: 11px; }
+
+  /* video poker: the paytable is reference material, the cards + Deal
+     button are the game — reorder so the part you tap every hand loads
+     above the fold, and let the paytable scroll in its own small strip */
+  body.in-game .vp-hand { order: 1; margin-bottom: 8px; }
+  body.in-game .vp-controls { order: 2; margin-bottom: 6px; }
+  body.in-game .vp-table { order: 3; max-height: 90px; overflow-y: auto; margin-bottom: 6px; }
+  body.in-game .vp-status { order: 4; }
+
+  /* power grid: the frequency chart is a readout, the plant sliders below
+     it are the actual controls — don't let the chart eat the room they need */
+  body[data-game="powergrid"].in-game .gcanvas { max-height: 30vh; }
+  body.in-game .panelrow { gap: 6px; }
+  body.in-game .panel.plant { padding: 5px 8px; font-size: 11px; }
+  body.in-game .panel h4 { margin: 0 0 3px; }
+  body.in-game .plant .row { margin-top: 2px; }
+  body.in-game .slider { margin: 1px 0; }
 }
 
 /* Rather than guessing how tall the chrome is, let flexbox measure it:

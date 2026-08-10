@@ -179,6 +179,8 @@
       }
       pStreak.textContent = 'Streak: ' + streak;
       pRow.textContent = 'Guess ' + Math.min(done ? rows.length : rows.length + 1, ROWS) + '/' + ROWS;
+      const active = boardEl.querySelector('.mm-row.active');
+      if (active) active.scrollIntoView({ block: 'nearest' });
     }
 
     function reset() {

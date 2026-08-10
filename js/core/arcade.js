@@ -1224,6 +1224,7 @@
     if (dmatch && byId.get(dmatch[1])) { g = byId.get(dmatch[1]); daily = decodeURIComponent(dmatch[2]); }
     else if (m) g = byId.get(m[1]);
     document.body.classList.toggle('in-game', !!g);
+    if (g) document.body.dataset.game = g.id; else delete document.body.dataset.game;
     /* the hub renders as a plain document ONLY in disguise mode; in normal mode
        it is the arcade shelf, so the document chrome must not apply */
     document.body.classList.toggle('home-doc', !g && (location.hash || '') !== '#stats' && docModeOn);
