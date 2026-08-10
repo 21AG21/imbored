@@ -119,9 +119,10 @@
       const prev = store.get('best:' + id, null);
       const better = prev == null || (g && g.lowerIsBetter ? value < prev : value > prev);
       if (better) store.set('best:' + id, value);
+      checkNewBadges();
       return { best: better ? value : prev, isRecord: better && prev != null, isFirst: prev == null };
     },
-    countPlay(id) { store.set('plays:' + id, store.get('plays:' + id, 0) + 1); },
+    countPlay(id) { store.set('plays:' + id, store.get('plays:' + id, 0) + 1); checkNewBadges(); },
     plays(id) { return store.get('plays:' + id, 0); },
     store,
     muted() { return Engine.audio.muted; },
@@ -830,6 +831,11 @@
           best == null ? 'never touched' : g.scoreLabel + ': ' + (g.formatScore ? g.formatScore(best) : best)));
     });
 
+    /* returning players get a resume row instead of the onboarding picks —
+       "recent" is already tracked (most-recent-first, capped at 8) purely to
+       drive this, nothing new to store */
+    const recentGames = store.get('recent', []).map((id) => byId.get(id)).filter(Boolean).slice(0, 4);
+
     view.replaceChildren(
       h('section', { class: 'hero' },
         h('span', { class: 'sticker s1' }, games.length + ' games'),
@@ -840,7 +846,16 @@
           'The complete shareware collection for people whose meeting has no agenda. ',
           'Everything runs in this tab. Hit ', h('kbd', null, '`'), ' and the whole thing turns into a spreadsheet so fast nobody sees a thing.'),
         h('button', { class: 'btn primary daily-btn', type: 'button', onclick: () => Arcade.daily() }, 'Play today’s Daily')),
-      (!q && activeCat === 'all') ? h('section', { class: 'featured' },
+      (!q && activeCat === 'all' && recentGames.length) ? h('section', { class: 'featured' },
+        h('h2', { class: 'featured-h' }, 'Continue where you left off'),
+        h('div', { class: 'pick-row' },
+          recentGames.map((g) => {
+            const best = Arcade.best(g.id);
+            return h('a', { class: 'pick cat-' + g.cat, href: '#g/' + g.id },
+              h('span', { class: 'pick-emoji', html: Icons.svg(g.emoji, 22) }),
+              h('span', { class: 'pick-title' }, g.title),
+              h('span', { class: 'pick-hook' }, best == null ? 'pick up where you left off' : g.scoreLabel + ': ' + (g.formatScore ? g.formatScore(best) : best)));
+          }))) : (!q && activeCat === 'all') ? h('section', { class: 'featured' },
         h('h2', { class: 'featured-h' }, 'Start here'),
         h('div', { class: 'pick-row' },
           FEATURED.map((f) => {
@@ -907,6 +922,13 @@
       h('kbd', null, '`'), ' to blank the screen to a plain document, and ',
       h('kbd', null, '−'), ' / ', h('kbd', null, '='), ' to set the challenge level.');
 
+    /* a dry "recently referenced" line so a returning reader doesn't have to
+       hunt back through the sections below for what they had open last */
+    const recentGames = store.get('recent', []).map((id) => byId.get(id)).filter(Boolean).slice(0, 3);
+    const recentLine = recentGames.length ? h('p', { class: 'doc-usage' },
+      'Recently referenced: ',
+      recentGames.map((g, i) => [i > 0 ? ', ' : null, h('a', { class: 'doc-open', href: '#g/' + g.id }, g.title)])) : null;
+
     const sections = DOC_ORDER.map((cat, idx) => {
       const listing = games.filter((g) => g.cat === cat);
       if (!listing.length) return null;
@@ -970,7 +992,7 @@
         'No account, no cookies, no tracking, no storage of any kind — scores live only in this tab and are forgotten when you close it. ' +
         'Use “Save an offline copy” to keep everything as one portable file.'));
 
-    view.replaceChildren(h('article', { class: 'docpage' }, masthead, usage, sections, foot));
+    view.replaceChildren(h('article', { class: 'docpage' }, masthead, usage, recentLine, sections, foot));
     applyDocTitle();
   }
   /* ---------------- your timesheet (stats, doubles as camouflage) ---------------- */
@@ -978,21 +1000,17 @@
     [0, 'Intern'], [15, 'Junior Associate'], [40, 'Associate'], [80, 'Senior Associate'],
     [140, 'Team Lead'], [220, 'Manager'], [340, 'Senior Manager'], [500, 'Regional Manager'], [750, 'VP of Morale']
   ];
-  function renderStats() {
-    const view = document.getElementById('view');
-    const rows = [];
+  /* shared by the stats page and the achievement-toast check below, so the
+     two can never drift into disagreeing about which badges exist */
+  function computeBadges() {
     let totalPlays = 0, played = 0, records = 0;
     for (const g of games) {
       const pl = Arcade.plays(g.id), bs = Arcade.best(g.id);
       totalPlays += pl; if (pl > 0) played++; if (bs != null) records++;
-      if (pl > 0 || bs != null) rows.push({ g, pl, bs });
     }
-    rows.sort((a, b) => b.pl - a.pl);
     const score = played * 3 + totalPlays + records * 2;
     let tier = LADDER[0], next = null;
     for (let i = 0; i < LADDER.length; i++) { if (score >= LADDER[i][0]) { tier = LADDER[i]; next = LADDER[i + 1] || null; } }
-    const pct = next ? Math.max(3, Math.round((score - tier[0]) / (next[0] - tier[0]) * 100)) : 100;
-
     const badges = [];
     const add = (cond, name, desc) => { if (cond) badges.push({ name, desc }); };
     add(played >= 1, 'Onboarded', 'Played at least one game.');
@@ -1003,6 +1021,37 @@
     add(played >= games.length, 'Completionist', 'Opened every game. Concerning and impressive.');
     add(Arcade.plays('coffee') > 0, 'Caffeinated', 'You clicked the mug. It began.');
     add(Arcade.best('reflex') != null, 'Quick Draw', 'Logged a reaction time.');
+    return { badges, played, totalPlays, records, score, tier, next };
+  }
+  /* pop a quiet office-notification toast the moment a badge is newly earned,
+     instead of leaving it to be discovered on the next visit to the stats
+     page. Never fires over the panic screen or a backgrounded tab — a badge
+     earned while hidden is simply re-checked (and toasted) next time
+     countPlay/submit runs somewhere safe, it isn't lost. */
+  function checkNewBadges() {
+    if (bossOn || document.hidden) return;
+    const { badges } = computeBadges();
+    const seenSet = new Set(store.get('badges:seen', []));
+    const fresh = badges.filter((b) => !seenSet.has(b.name));
+    if (!fresh.length) return;
+    store.set('badges:seen', badges.map((b) => b.name));
+    fresh.forEach((b, i) => {
+      setTimeout(() => {
+        if (bossOn || document.hidden || !global.Gags) return;
+        global.Gags.toast({ icon: '🏅', title: 'Performance milestone: ' + b.name, body: b.desc });
+      }, i * 1400);
+    });
+  }
+  function renderStats() {
+    const view = document.getElementById('view');
+    const rows = [];
+    for (const g of games) {
+      const pl = Arcade.plays(g.id), bs = Arcade.best(g.id);
+      if (pl > 0 || bs != null) rows.push({ g, pl, bs });
+    }
+    rows.sort((a, b) => b.pl - a.pl);
+    const { badges, played, totalPlays, records, tier, next, score } = computeBadges();
+    const pct = next ? Math.max(3, Math.round((score - tier[0]) / (next[0] - tier[0]) * 100)) : 100;
 
     /* draw a mock dot-matrix certificate to a canvas and download it — no upload */
     function printCertificate() {
