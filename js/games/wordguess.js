@@ -169,6 +169,7 @@
 
   Arcade.register({
     id: 'wordguess',
+    lightBoard: true,   // light unfilled letter tiles would invert to a solid black grid under the figure flip
     title: 'Word Guess',
     emoji: 'wordguess',
     cat: 'brain',

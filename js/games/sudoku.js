@@ -265,6 +265,7 @@
 
   Arcade.register({
     id: 'sudoku',
+    lightBoard: true,   // light board + number pad would invert to a large solid near-black grid under the figure flip
     usesDigits: true,   // 1-9 fill cells — the "1 = Docs" shortcut yields here
     title: 'Sudoku',
     emoji: 'sudoku',

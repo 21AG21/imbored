@@ -119,6 +119,7 @@
 
   Arcade.register({
     id: 'typing',
+    lightBoard: true,   // light passage box + input would invert to near-black slabs under the figure flip
     title: 'Data Entry',
     emoji: 'keys',
     cat: 'brain',

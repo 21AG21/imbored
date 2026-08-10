@@ -12,6 +12,7 @@
   const SUITS = ['♠', '♥', '♦', '♣'];
   const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
   const isRed = (s) => s === 1 || s === 2;
+  const DOC = () => !!(window.Arcade && Arcade.docMode && Arcade.docMode());
 
   const colX = (i) => MX + i * (CW + GAP);
 
@@ -357,14 +358,15 @@
       ctx.fill();
 
       if (!c.up) {
-        ctx.fillStyle = '#2a4bbd';
+        const doc = DOC();
+        ctx.fillStyle = doc ? '#e5e8ec' : '#2a4bbd';
         Engine.roundRect(ctx, x, y, CW, CH, 7);
         ctx.fill();
-        ctx.strokeStyle = '#0c1119';
+        ctx.strokeStyle = doc ? '#2b2f36' : '#0c1119';
         ctx.lineWidth = 3;
         Engine.roundRect(ctx, x, y, CW, CH, 7);
         ctx.stroke();
-        ctx.strokeStyle = 'rgba(255,255,255,.28)';
+        ctx.strokeStyle = doc ? 'rgba(43,47,54,.28)' : 'rgba(255,255,255,.28)';
         ctx.lineWidth = 1.5;
         for (let i = -CH; i < CW; i += 9) {
           ctx.beginPath();
@@ -372,7 +374,7 @@
           ctx.lineTo(x + Math.min(CW, i + CH), y + Math.min(CH, CH - i + (i < 0 ? i : 0)));
           ctx.stroke();
         }
-        ctx.strokeStyle = 'rgba(255,255,255,.5)';
+        ctx.strokeStyle = doc ? 'rgba(43,47,54,.5)' : 'rgba(255,255,255,.5)';
         ctx.lineWidth = 2;
         Engine.roundRect(ctx, x + 6, y + 6, CW - 12, CH - 12, 4);
         ctx.stroke();
@@ -406,14 +408,15 @@
     }
 
     function slot(x, y, label) {
-      ctx.strokeStyle = 'rgba(255,255,255,.4)';
+      const doc = DOC();
+      ctx.strokeStyle = doc ? 'rgba(43,47,54,.4)' : 'rgba(255,255,255,.4)';
       ctx.lineWidth = 2.5;
       ctx.setLineDash([7, 6]);
       Engine.roundRect(ctx, x, y, CW, CH, 7);
       ctx.stroke();
       ctx.setLineDash([]);
       if (label) {
-        ctx.fillStyle = 'rgba(255,255,255,.35)';
+        ctx.fillStyle = doc ? 'rgba(43,47,54,.5)' : 'rgba(255,255,255,.35)';
         ctx.font = '34px Verdana, sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -425,16 +428,17 @@
 
     function draw(dt) {
       if (winAnim > 0) winAnim += dt;
-      ctx.fillStyle = '#1c7a4a';
+      const doc = DOC();
+      ctx.fillStyle = doc ? '#f2f3f5' : '#1c7a4a';
       ctx.fillRect(0, 0, W, H);
-      ctx.fillStyle = 'rgba(0,0,0,.05)';
+      ctx.fillStyle = doc ? 'rgba(0,0,0,.03)' : 'rgba(0,0,0,.05)';
       for (let y = 0; y < H; y += 8) ctx.fillRect(0, y, W, 3);
 
       /* stock */
       if (stock.length) card(colX(0), TOPY, { up: false });
       else slot(colX(0), TOPY, redealsLeft > 0 ? '↺' : '✕');
       if (stock.length) {
-        ctx.fillStyle = '#fffdf3';
+        ctx.fillStyle = doc ? '#2b2f36' : '#fffdf3';
         ctx.font = 'bold 12px Verdana, sans-serif';
         ctx.fillText(String(stock.length), colX(0) + 4, TOPY + CH + 15);
       }
@@ -492,6 +496,7 @@
 
   Arcade.register({
     id: 'solitaire',
+    lightBoard: true,   // light card faces would invert to solid black under the figure flip
     title: 'Solitaire',
     emoji: 'solitaire',
     cat: 'puzzle',

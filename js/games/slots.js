@@ -101,6 +101,7 @@
 
   Arcade.register({
     id: 'slots', title: 'Quarterly Slots', emoji: 'coffee', cat: 'goof', order: 49,
+    lightBoard: true,   // light reel windows would invert to solid black under the figure flip
     blurb: 'A three-reel fruit machine stocked with office supplies. A pair just gives your stake back; three of a kind is the money, and three 7s is the jackpot. The house keeps a thin edge — no real money, only your dignity.',
     scoreLabel: 'Best credits', tags: ['luck', 'slots', 'toy'],
     how: [

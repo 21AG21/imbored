@@ -229,6 +229,7 @@
 
   Arcade.register({
     id: 'busywork',
+    lightBoard: true,   // light hire/upgrade rows would invert to solid black under the figure flip
     title: 'Busywork',
     emoji: 'busywork',
     cat: 'goof',

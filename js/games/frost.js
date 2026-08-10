@@ -163,11 +163,11 @@
       const Y = (ln) => hh - m - ln / lnMax * (hh - m - 10);
       pctx.strokeStyle = '#3a4658'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 10, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(lnMax)); pctx.stroke();
-      pctx.fillStyle = '#6c7a90'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('log N', 2, 12); pctx.fillText('log r', w - 40, hh - 10);
       /* reference slope D = 1.71 through the cloud's lower anchor */
       const r0 = 4, n0 = rhist[1] + rhist[2] + rhist[3] + rhist[4] || 1;
-      pctx.strokeStyle = 'rgba(232,64,42,.8)'; pctx.setLineDash([4, 3]); pctx.beginPath();
+      pctx.strokeStyle = 'rgba(242,237,224,.9)'; pctx.setLineDash([4, 3]); pctx.beginPath();
       let first = true;
       for (let lr = Math.log(r0); lr <= lrMax; lr += 0.1) {
         const ln = Math.log(n0) + DREF * (lr - Math.log(r0));
@@ -175,7 +175,7 @@
         first ? (pctx.moveTo(x, y), first = false) : pctx.lineTo(x, y);
       }
       pctx.stroke(); pctx.setLineDash([]);
-      pctx.fillStyle = '#e8402a'; pctx.fillText('slope ' + DREF, w - 96, 14);
+      pctx.fillStyle = '#f2ede0'; pctx.fillText('slope ' + DREF, w - 96, 14);
       /* measured mass–radius cloud */
       pctx.fillStyle = '#9fe0ff';
       let cum = 0;

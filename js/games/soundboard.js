@@ -61,6 +61,7 @@
 
   Arcade.register({
     id: 'soundboard',
+    lightBoard: true,   // plain light button grid, not a dark canvas scene
     usesDigits: true,    // number keys fire pads — the "1 = Docs" shortcut yields here
     usesLetters: true,   // and q/w/e/r/t/a/s/d/f fire pads too — keep 'r' from restarting
     title: 'Soundboard',

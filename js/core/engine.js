@@ -402,6 +402,11 @@
   Engine.fx = (function () {
     let cv = null, fctx = null, parts = [], raf = 0;
     const COLORS = ['#ffcb1f', '#e8402a', '#00a6b4', '#6fcf2f', '#ff2d87', '#6f3fa8'];
+    /* this canvas is a fixed full-page overlay, outside .stage, so the
+       document-disguise luminance filter never touches it — a rainbow burst
+       would blow the cover instantly. Use flecks of ink instead in doc mode. */
+    const DOC_COLORS = ['#14171c', '#3a3f47', '#6b7178', '#9aa0a8'];
+    const palette = () => (global.Arcade && global.Arcade.docMode && global.Arcade.docMode()) ? DOC_COLORS : COLORS;
     const reduce = () => { try { return global.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } };
     function resize() { if (cv) { cv.width = global.innerWidth; cv.height = global.innerHeight; } }
     function ensure() {
@@ -433,9 +438,10 @@
         if (reduce()) return;
         ensure();
         n = n || 42;
+        const cols = palette();
         for (let i = 0; i < n; i++) {
           const a = Math.random() * Math.PI * 2, sp = 3 + Math.random() * 7;
-          parts.push({ x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 4, life: 0.8 + Math.random() * 0.6, s: 5 + Math.random() * 5, c: COLORS[(Math.random() * COLORS.length) | 0], rot: Math.random() * 6, vr: (Math.random() - 0.5) * 0.4 });
+          parts.push({ x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 4, life: 0.8 + Math.random() * 0.6, s: 5 + Math.random() * 5, c: cols[(Math.random() * cols.length) | 0], rot: Math.random() * 6, vr: (Math.random() - 0.5) * 0.4 });
         }
         if (!raf) raf = requestAnimationFrame(loop);
       }

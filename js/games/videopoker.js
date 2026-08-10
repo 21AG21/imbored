@@ -189,6 +189,7 @@
 
   Arcade.register({
     id: 'videopoker',
+    lightBoard: true,   // light pay table + card faces would invert to solid black under the figure flip
     title: 'Video Poker',
     emoji: 'cards',
     cat: 'goof',

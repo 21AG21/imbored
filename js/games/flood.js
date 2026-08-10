@@ -69,7 +69,10 @@
     }
 
     function render() {
-      const cs = document.body.classList.contains('colorsafe');
+      /* doc mode desaturates everything to grey, so same-luminance colours
+         (red vs hot pink, say) become indistinguishable — reuse the existing
+         colour-blind symbol fallback instead of trying to out-guess the filter */
+      const cs = document.body.classList.contains('colorsafe') || (window.Arcade && Arcade.docMode && Arcade.docMode());
       for (let i = 0; i < N * N; i++) { cells[i].style.background = COLORS[grid[i]]; cells[i].textContent = cs ? SYMS[grid[i]] : ''; }
       swatches.forEach((b, ci) => { b.textContent = cs ? SYMS[ci] : ''; b.classList.remove('cur'); });
       swatches[grid[0]].classList.add('cur');

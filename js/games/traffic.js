@@ -126,7 +126,7 @@
       const Y = (q) => hh - m - q / maxQ * (hh - m - 8);
       pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(maxQ)); pctx.stroke();
-      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('flow', 2, 12); pctx.fillText('density', w - 54, hh - 8);
       /* measured fundamental diagram */
       if (ref.length) {
@@ -138,7 +138,7 @@
         pctx.strokeStyle = 'rgba(232,64,42,.8)'; pctx.setLineDash([4, 3]);
         pctx.beginPath(); pctx.moveTo(X(best.d), Y(0)); pctx.lineTo(X(best.d), Y(maxQ)); pctx.stroke();
         pctx.setLineDash([]);
-        pctx.fillStyle = '#e8402a'; pctx.fillText('peak ~' + best.d.toFixed(2), X(best.d) + 3, Y(maxQ) + 10);
+        pctx.fillStyle = '#f2ede0'; pctx.fillText('peak ~' + best.d.toFixed(2), X(best.d) + 3, Y(maxQ) + 10);
       }
       /* live sample */
       pctx.fillStyle = '#ffcb1f';

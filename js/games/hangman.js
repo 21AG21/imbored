@@ -92,6 +92,7 @@
 
   Arcade.register({
     id: 'hangman', title: 'Hangman', emoji: 'find', cat: 'brain', order: 27,
+    lightBoard: true,   // plain text on the page — the invert filter washed the revealed letters and blank-slot underlines out
     usesLetters: true,
     blurb: 'A hidden office word shown as blanks. Guess letters before six misses fill in the little face. Words are all cubicle stock like deadline, spreadsheet and synergy.',
     scoreLabel: 'Best streak', tags: ['word', 'classic', 'spelling'],

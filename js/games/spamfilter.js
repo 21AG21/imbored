@@ -229,6 +229,7 @@
 
   Arcade.register({
     id: 'spamfilter',
+    lightBoard: true,   // light play field would invert to one solid dark-charcoal block under the figure flip
     title: 'Spam Filter',
     emoji: 'spam',
     cat: 'brain',

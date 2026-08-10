@@ -96,7 +96,7 @@
       const X = (i) => m + i / 520 * (w - m - 8), Y = (v) => hh - 20 - clamp(v, 0, 0.6) / 0.6 * (hh - 30);
       pctx.strokeStyle = '#3a4658'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.stroke();
-      pctx.fillStyle = '#6c7a90'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('population', 2, 12); pctx.fillText('time', w - 30, hh - 6);
       const cols = ['#e8402a', '#6fcf2f', '#2a7fd6'], keys = ['a', 'b', 'c'];
       for (let s = 0; s < 3; s++) {

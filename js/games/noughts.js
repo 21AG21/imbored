@@ -180,6 +180,7 @@
 
   Arcade.register({
     id: 'noughts',
+    lightBoard: true,   // light board would invert to solid black under the figure flip
     title: 'Noughts',
     emoji: 'noughts',
     cat: 'brain',

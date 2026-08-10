@@ -79,6 +79,7 @@
 
   Arcade.register({
     id: 'pig', title: 'Press Your Luck', emoji: 'dice', cat: 'goof', order: 46,
+    lightBoard: true,   // light dice icon would invert to solid black under the figure flip
     blurb: 'Roll to build up points, but a single 1 wipes the whole turn. Bank before that happens. First to 100 beats your deskmate.',
     scoreLabel: 'Win streak', tags: ['dice', 'luck', 'press-your-luck'],
     how: [

@@ -85,6 +85,7 @@
 
   Arcade.register({
     id: 'hanoi', title: 'Tower of Hanoi', emoji: 'stack', cat: 'puzzle', order: 20,
+    lightBoard: true,   // light peg panels would invert to solid dark-grey under the figure flip
     lowerIsBetter: true,
     formatScore: (v) => (v <= 0 ? 'perfect' : '+' + v + ' moves'),
     blurb: 'The classic disk-stacking puzzle, restyled as ring binders. Move the stack one binder at a time, never a big one on a small one.',

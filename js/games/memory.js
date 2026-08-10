@@ -148,6 +148,10 @@
 
   Arcade.register({
     id: 'memory',
+    // NOT lightBoard: the face-down back (.mem-back, --grape purple) is a
+    // genuinely dark tile that wants the normal invert (dark -> light card
+    // back on the page). Only the revealed .mem-front needs protecting from
+    // that invert, handled in css/arcade.css.
     title: 'Memory Match',
     emoji: 'memory',
     cat: 'brain',

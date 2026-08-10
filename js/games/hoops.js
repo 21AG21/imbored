@@ -9,6 +9,7 @@
   /* the ball floats more than the players fall, so you can actually loft it up
      to the rim and it hangs long enough to aim — basketball, not a hot potato */
   const BALL_GRAV = 1180;
+  const DOC = () => !!(window.Arcade && Arcade.docMode && Arcade.docMode());
 
   function mount(root, api) {
     const bagg = Engine.bag();
@@ -169,10 +170,18 @@
 
       drawPlayer(p1, 1); drawPlayer(p2, -1);
 
-      /* ball */
-      ctx.fillStyle = sport === 'bball' ? '#e8621f' : '#f4f4f4';
+      /* ball — the usual orange/white fills sit at almost the same luminance as
+         the court behind them, so under any monochrome doc-mode transform they
+         camouflage completely. In doc mode, force a dark fill with a bright
+         halo so the ball reads regardless of what's behind it. */
+      const doc = DOC();
+      if (doc) {
+        ctx.fillStyle = 'rgba(255,255,255,.9)';
+        ctx.beginPath(); ctx.arc(ball.x, ball.y, BR + 3, 0, 7); ctx.fill();
+      }
+      ctx.fillStyle = doc ? '#14171c' : (sport === 'bball' ? '#e8621f' : '#f4f4f4');
       ctx.beginPath(); ctx.arc(ball.x, ball.y, BR, 0, 7); ctx.fill();
-      ctx.strokeStyle = '#1d1722'; ctx.lineWidth = 1.4;
+      ctx.strokeStyle = doc ? '#14171c' : '#1d1722'; ctx.lineWidth = 1.4;
       ctx.beginPath(); ctx.arc(ball.x, ball.y, BR, 0, 7); ctx.stroke();
       if (sport === 'bball') { ctx.beginPath(); ctx.moveTo(ball.x - BR, ball.y); ctx.lineTo(ball.x + BR, ball.y); ctx.moveTo(ball.x, ball.y - BR); ctx.lineTo(ball.x, ball.y + BR); ctx.stroke(); }
       void msg;
@@ -195,6 +204,7 @@
 
   Arcade.register({
     id: 'hoops',
+    lightBoard: true,   // outdoor scene reads fine in plain greyscale; also needed so the doc-mode ball colour (authored dark) doesn't get inverted back to white
     title: 'Court',
     emoji: 'hoops',
     cat: 'action',

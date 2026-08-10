@@ -165,13 +165,13 @@
       const Y = (v) => hh - m - v * (hh - m - 8);
       pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(1)); pctx.stroke();
-      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('|M|', 2, 12); pctx.fillText('temperature', w - 74, hh - 8);
       /* T_c line */
       pctx.strokeStyle = 'rgba(232,64,42,.8)'; pctx.setLineDash([4, 3]);
       pctx.beginPath(); pctx.moveTo(X(TC), Y(0)); pctx.lineTo(X(TC), Y(1)); pctx.stroke();
       pctx.setLineDash([]);
-      pctx.fillStyle = '#e8402a'; pctx.fillText('T_c ' + TC.toFixed(3), X(TC) + 4, Y(1) + 10);
+      pctx.fillStyle = '#f2ede0'; pctx.fillText('T_c ' + TC.toFixed(3), X(TC) + 4, Y(1) + 10);
       /* measured magnetisation curve */
       if (ref.length) {
         pctx.strokeStyle = '#00a6b4'; pctx.lineWidth = 2; pctx.beginPath();

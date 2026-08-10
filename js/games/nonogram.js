@@ -290,6 +290,7 @@
 
   Arcade.register({
     id: 'nonogram',
+    lightBoard: true,   // light spreadsheet grid would invert to solid black under the figure flip
     title: 'Cond. Format',
     emoji: 'nonogram',
     cat: 'puzzle',

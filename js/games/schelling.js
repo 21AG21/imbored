@@ -141,7 +141,7 @@
       const Y = (s) => hh - m - s * (hh - m - 8);
       pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(1)); pctx.stroke();
-      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('segregation', 2, 12); pctx.fillText('preference T', w - 78, hh - 8);
       /* mixed baseline ~0.5 */
       pctx.strokeStyle = 'rgba(0,166,180,.6)'; pctx.setLineDash([3, 3]);
@@ -152,7 +152,7 @@
         ref.forEach((s, i) => { const x = X(s.T), y = Y(s.seg); i ? pctx.lineTo(x, y) : pctx.moveTo(x, y); });
         pctx.stroke();
       }
-      for (const s of samples) { pctx.fillStyle = '#e8402a'; pctx.beginPath(); pctx.arc(X(s.T), Y(s.seg), 3, 0, 7); pctx.fill(); }
+      for (const s of samples) { pctx.fillStyle = '#f2ede0'; pctx.beginPath(); pctx.arc(X(s.T), Y(s.seg), 3, 0, 7); pctx.fill(); }
       pctx.fillStyle = '#fffdf3'; pctx.beginPath(); pctx.moveTo(X(T), Y(0) + 2); pctx.lineTo(X(T) - 4, Y(0) + 9); pctx.lineTo(X(T) + 4, Y(0) + 9); pctx.fill();
     }
 

@@ -2025,6 +2025,18 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 .sb-emoji { font-size: 26px; line-height: 1; }
 .sb-label { font: 700 12px Verdana, sans-serif; color: var(--ink); text-align: center; }
 .sb-key { position: absolute; top: 4px; right: 6px; font: 700 9px "Courier New", monospace; color: var(--ink3); }
+/* the giant emoji, bold centred caption and keyboard-shortcut corner badge
+   read unmistakably as app/game chrome — in document mode, drop back to a
+   quiet bordered label, the same footprint as any other flattened button */
+body.docmode .sb-pad {
+  aspect-ratio: auto; background: var(--doc-paper); border: 1px solid var(--doc-rule2);
+  box-shadow: none; padding: 10px 8px;
+}
+body.docmode .sb-emoji { display: none; }
+body.docmode .sb-key { display: none; }
+body.docmode .sb-label {
+  color: var(--doc-ink); font-family: Verdana, Geneva, sans-serif; font-weight: 600;
+}
 
 /* footer privacy line */
 .foot-privacy { font: 11px/1.5 Verdana, sans-serif; color: var(--ink3); max-width: 60ch; }
@@ -2780,7 +2792,11 @@ body.docmode .gtitle {
   margin: 6px 0 0; display: block; text-shadow: none;
 }
 body.docmode .gtitle .ge { display: none; }
-body.docmode .back {
+/* scoped to the <a> shelf-nav link specifically — .back is reused as a
+   face-down-card modifier (.hl-card.back, .bj-card.back, .vp-card.back, all
+   <div>s), and a bare .back selector here was stripping their background,
+   leaving the face-down card invisible */
+body.docmode a.back {
   font-family: Verdana, Geneva, sans-serif; font-size: 12px;
   color: var(--doc-link); background: none; border: 0; box-shadow: none;
   text-decoration: underline; text-underline-offset: 2px; padding: 0; text-transform: none;
@@ -2867,25 +2883,43 @@ body.docmode.in-game .stage.no-doc-invert > * {
   background: var(--doc-paper) !important;
 }
 
-/* game controls become flat, quiet form controls (state still reads) */
+/* an in-stage button (one a game plants in its own board, not routed through
+   the shared toolbar) sits under the full invert filter same as everything
+   else — counter-invert it first, same recipe as .panel/.banner, so the
+   light/dark authored colours below land the right way round. */
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .btn {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* game controls become flat, quiet form controls (state still reads).
+   Covers both the shared toolbar (.gametools) AND any button a game plants
+   directly in its own board — e.g. Nim's "Take 1/2/3" — which otherwise kept
+   its full chunky beveled game-console look even in document mode. */
 body.docmode .gametools .btn,
 body.docmode .gametools .pill,
 body.docmode .gametools .sel,
-body.docmode .gametools .sel-wrap {
+body.docmode .gametools .sel-wrap,
+body.docmode.in-game .stage:not(.no-doc-invert) .btn,
+body.docmode.in-game .stage.no-doc-invert .btn {
   background: var(--doc-paper); color: var(--doc-ink);
   border: 1px solid var(--doc-rule2); box-shadow: none; border-radius: 5px;
   text-transform: none; letter-spacing: 0; font-family: Verdana, Geneva, sans-serif;
   font-weight: 600;
 }
-body.docmode .gametools .btn:hover { background: var(--doc-rule); }
+body.docmode .gametools .btn:hover,
+body.docmode.in-game .stage .btn:hover { background: var(--doc-rule); }
 /* no filled colour blob for the primary action — just a heavier outline */
-body.docmode .gametools .btn.primary {
+body.docmode .gametools .btn.primary,
+body.docmode.in-game .stage .btn.primary {
   background: var(--doc-paper); color: var(--doc-ink);
   border: 1.5px solid var(--doc-ink); font-weight: 700;
 }
 body.docmode .gametools .btn.on,
 body.docmode .gametools .btn.active,
-body.docmode .gametools .btn:active {
+body.docmode .gametools .btn:active,
+body.docmode.in-game .stage .btn.on,
+body.docmode.in-game .stage .btn.active,
+body.docmode.in-game .stage .btn:active {
   background: var(--doc-rule);
   border-color: var(--doc-ink); color: var(--doc-ink);
 }
@@ -2910,6 +2944,66 @@ body.docmode .meter > i {
      written dark to land as a clear mid-grey — visible, but well shy of black */
   background: #3f4247;
 }
+
+/* .banner (win/lose/round-end overlay — used across ~49 games) is the same
+   "light box, not a black slab" case as .panel above, but wasn't covered by
+   that rule, so every banner in a non-lightBoard game inverted to a solid
+   black slab with white text the instant it appeared. Same counter-invert
+   fix, same quiet doc palette. */
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .banner {
+  filter: invert(1) hue-rotate(180deg);
+}
+body.docmode .banner {
+  background: var(--doc-paper); color: var(--doc-ink);
+  border: 1px solid var(--doc-ink); box-shadow: none;
+}
+body.docmode .banner h3 { color: var(--doc-ink); }
+body.docmode .banner p { color: var(--doc-ink2); }
+
+/* status/result text (the many "<prefix>-msg win/lose" classes) uses bright
+   --lime/--tomato accents that either invert to a near-invisible pastel or,
+   for the default dark --ink text, invert straight to white-on-white. Same
+   counter-invert recipe, then force plain dark ink — grayscale erases the
+   red/green distinction anyway, so keeping two "colours" here is pointless;
+   the message text itself still says win or lose. */
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) [class*="-msg"],
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) [class*="-verdict"] {
+  filter: invert(1) hue-rotate(180deg);
+}
+body.docmode [class*="-msg"],
+body.docmode [class*="-verdict"] {
+  color: var(--doc-ink) !important;
+}
+
+/* Blackjack's felt table is a genuinely dark backdrop that WANTS the normal
+   full invert (dark green -> light document page) — unlike every other fix
+   above, do not lightBoard the whole game. Only the light card faces inside
+   it need protecting, so counter-invert just those. */
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .bj-card {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Memory Match: the face-down .mem-back (--grape) is meant to invert to a
+   light card back; only the revealed .mem-front needs protecting so its
+   already-light background doesn't invert to black. */
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .mem-front {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Dots and Boxes: a claimed line needs to look MORE solid than an unclaimed
+   gap (backwards under the raw invert — --grape claimed ends up lighter than
+   --chrome unclaimed), and "you" vs "cpu" boxes (--teal vs --hotpink) share
+   almost identical luminance, so grayscale erases the distinction entirely.
+   Counter-invert + author explicit final colours instead of fighting hue. */
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .db-edge::after,
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .db-box {
+  filter: invert(1) hue-rotate(180deg);
+}
+body.docmode .db-edge::after { background: var(--doc-rule2); }
+body.docmode .db-edge:hover::after { background: var(--doc-mut); }
+body.docmode .db-edge.on::after { background: var(--doc-ink); }
+body.docmode .db-box.you { background: var(--doc-ink); }
+body.docmode .db-box.cpu { background: #767d88; }
 
 /* 2048 as a document: a tidy greyscale data grid, not an inverted wall of
    black tiles. Low values sit near-white and step toward grey as they climb,

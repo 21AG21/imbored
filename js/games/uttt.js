@@ -182,6 +182,7 @@
 
   Arcade.register({
     id: 'uttt', title: 'Ultimate Noughts', emoji: 'uttt', cat: 'brain', order: 24,
+    lightBoard: true,   // light cell grid would invert to near-black boxes under the figure flip
     blurb: 'Tic-tac-toe with a board inside every square. The cell you take decides which small board the deskmate must play next. Win three small boards in a row.',
     scoreLabel: 'Wins', tags: ['strategy', 'board', 'vs cpu'],
     how: [

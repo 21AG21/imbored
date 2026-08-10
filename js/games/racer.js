@@ -410,6 +410,7 @@
 
   Arcade.register({
     id: 'racer',
+    lightBoard: true,   // scene has enough natural tonal range that plain greyscale reads fine; inverting collapsed it to a flat grey blob
     title: 'Company Car',
     emoji: 'car',
     cat: 'action',

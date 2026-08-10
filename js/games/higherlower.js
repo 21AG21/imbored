@@ -67,6 +67,7 @@
 
   Arcade.register({
     id: 'higherlower', title: 'Higher or Lower', emoji: 'cards', cat: 'goof', order: 47,
+    lightBoard: true,   // light card faces would invert to solid black under the figure flip
     blurb: 'One card is up. Guess whether the next is higher or lower and build a streak. A tie counts as a win.',
     scoreLabel: 'Best streak', tags: ['cards', 'luck', 'quick'],
     how: [

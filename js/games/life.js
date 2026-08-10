@@ -151,14 +151,14 @@
       const Y = (v) => hh - 22 - clamp(v / hi, 0, 1) * (hh - 30);
       pctx.strokeStyle = '#3a4658'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(hi)); pctx.stroke();
-      pctx.fillStyle = '#6c7a90'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('alive', 2, 12); pctx.fillText('time', w - 30, hh - 6);
       /* equilibrium density line */
       const eq = grid.length * EQ;
       if (eq <= hi) {
         pctx.strokeStyle = 'rgba(232,64,42,.8)'; pctx.setLineDash([4, 3]);
         pctx.beginPath(); pctx.moveTo(m, Y(eq)); pctx.lineTo(w - 8, Y(eq)); pctx.stroke(); pctx.setLineDash([]);
-        pctx.fillStyle = '#e8402a'; pctx.fillText('~2.9% equilibrium', w - 118, Y(eq) - 4);
+        pctx.fillStyle = '#f2ede0'; pctx.fillText('~2.9% equilibrium', w - 118, Y(eq) - 4);
       }
       /* population curve */
       if (hist.length > 1) {

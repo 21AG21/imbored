@@ -76,6 +76,7 @@
 
   Arcade.register({
     id: 'crack', title: 'Number Cracker', emoji: 'find', cat: 'brain', order: 31,
+    lightBoard: true,   // light guess-history rows would invert to solid black under the figure flip
     blurb: 'A hidden four-digit code, ten guesses. After each try you learn how many digits are right and how many are in the wrong spot. Deduce the rest.',
     scoreLabel: 'Win streak', tags: ['logic', 'deduction', 'numbers'],
     how: [

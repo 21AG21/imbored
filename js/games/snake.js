@@ -58,11 +58,14 @@
     function turn(d) {
       const v = { up: { x: 0, y: -1 }, down: { x: 0, y: 1 }, left: { x: -1, y: 0 }, right: { x: 1, y: 0 } }[d];
       if (!v) return;
+      /* set before the no-op guards below — otherwise pressing the key that
+         already matches the default starting direction (Right) returns early
+         and the game never leaves its "press an arrow key to start" state */
+      started = true;
       const last = queue.length ? queue[queue.length - 1] : dir;
       if (last.x === -v.x && last.y === -v.y) return;    // no instant reversal
       if (last.x === v.x && last.y === v.y) return;
       if (queue.length < 2) queue.push(v);
-      started = true;
     }
 
     function step() {

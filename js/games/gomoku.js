@@ -122,6 +122,7 @@
 
   Arcade.register({
     id: 'gomoku', title: 'Five in a Row', emoji: 'connect4', cat: 'brain', order: 30,
+    lightBoard: true,   // light wood-tan board would invert to a muddy grey under the figure flip
     blurb: 'Place stones on the grid and try to line up five in a row before your deskmate does. Simple to learn, hard to close out.',
     scoreLabel: 'Win streak', tags: ['strategy', 'board', 'classic'],
     how: [

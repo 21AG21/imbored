@@ -186,7 +186,7 @@
       if (shot) bubble(shot.x, shot.y, shot.color);
       else if (!over) bubble(W / 2, H - 34, cur);
       bubble(W / 2 + 46, H - 22, next, 12);
-      ctx.fillStyle = '#8a8064'; ctx.font = '10px Verdana'; ctx.textAlign = 'left'; ctx.fillText('next', W / 2 + 62, H - 19);
+      ctx.fillStyle = '#f2ede0'; ctx.font = '10px Verdana'; ctx.textAlign = 'left'; ctx.fillText('next', W / 2 + 62, H - 19);
     }
 
     /* ---- test seam ---- */

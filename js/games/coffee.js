@@ -182,6 +182,7 @@
 
   Arcade.register({
     id: 'coffee',
+    lightBoard: true,   // light shop panel would invert to solid black under the figure flip
     title: 'Coffee Clicker',
     emoji: 'coffee',
     cat: 'goof',

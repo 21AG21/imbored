@@ -182,7 +182,11 @@
       ctx.moveTo(fx, fy + cell * 0.3);
       ctx.lineTo(fx, fy - cell * 0.3);
       ctx.stroke();
-      ctx.fillStyle = '#e8402a';
+      /* the red flag cloth used to land at almost the same post-invert
+         luminance as the exit cell behind it (both wash to a similar light
+         grey), making it nearly invisible in document mode — match the pole's
+         colour instead, which is chosen to survive inversion as dark ink */
+      ctx.fillStyle = '#fffdf3';
       ctx.beginPath();
       ctx.moveTo(fx, fy - cell * 0.3);
       ctx.lineTo(fx + cell * 0.32, fy - cell * 0.18);

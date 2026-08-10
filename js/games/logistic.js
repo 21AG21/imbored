@@ -131,13 +131,13 @@
       /* zero line */
       pctx.strokeStyle = '#3a4658'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(mL, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.stroke();
-      pctx.fillStyle = '#6c7a90'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('λ', 4, Y(0) - 3); pctx.fillText('0', 16, Y(0) + 3); pctx.fillText('r', w - 14, hh - 8);
       /* onset of chaos marker */
       pctx.strokeStyle = 'rgba(232,64,42,.8)'; pctx.setLineDash([4, 3]);
       pctx.beginPath(); pctx.moveTo(X(RCHAOS), 6); pctx.lineTo(X(RCHAOS), hh - mB); pctx.stroke();
       pctx.setLineDash([]);
-      pctx.fillStyle = '#e8402a'; pctx.fillText('chaos ' + RCHAOS.toFixed(3), X(RCHAOS) - 64, hh - 10);
+      pctx.fillStyle = '#f2ede0'; pctx.fillText('chaos ' + RCHAOS.toFixed(3), X(RCHAOS) - 64, hh - 10);
       /* the curve */
       if (lam) {
         pctx.strokeStyle = '#00a6b4'; pctx.lineWidth = 1.4; pctx.beginPath();
@@ -157,7 +157,7 @@
       /* bifurcation diagram */
       ctx.fillStyle = '#0b0f16'; ctx.fillRect(0, 0, W, H);
       if (bifReady) ctx.drawImage(bif, 0, 0);
-      else { ctx.fillStyle = '#6c7a90'; ctx.font = '13px Verdana'; ctx.fillText('measuring the map…', 20, 30); }
+      else { ctx.fillStyle = '#f2ede0'; ctx.font = '13px Verdana'; ctx.fillText('measuring the map…', 20, 30); }
       /* current-r line + labels on the diagram */
       const xr = RX(r, 0, W - 1);
       ctx.strokeStyle = 'rgba(255,203,31,.9)'; ctx.lineWidth = 1;
@@ -168,7 +168,7 @@
       ctx.beginPath(); ctx.moveTo(xc, 0); ctx.lineTo(xc, BIFH); ctx.stroke(); ctx.setLineDash([]);
       ctx.font = '10px Verdana, sans-serif';
       ctx.fillText('onset of chaos', xc + 3, 12);
-      ctx.fillStyle = '#8a8064';
+      ctx.fillStyle = '#f2ede0';
       ctx.fillText('r = ' + RLO, 4, BIFH - 4); ctx.fillText('r = ' + RHI, W - 44, BIFH - 4);
       ctx.fillStyle = '#ded6c2'; ctx.fillText('population x', 4, 12);
 
@@ -184,7 +184,7 @@
       ctx.stroke();
       ctx.fillStyle = '#6fcf2f';
       for (let i = 0; i < orbit.length; i++) ctx.fillRect(6 + i / 140 * (W - 12) - 1, oy(orbit[i]) - 1, 2, 2);
-      ctx.fillStyle = '#8a8064'; ctx.font = '10px Verdana, sans-serif';
+      ctx.fillStyle = '#f2ede0'; ctx.font = '10px Verdana, sans-serif';
       ctx.fillText('this year → next year (watch the cycle length)', 8, H - 6);
 
       drawPanel();

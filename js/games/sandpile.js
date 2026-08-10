@@ -83,7 +83,7 @@
       pctx.fillStyle = '#12100c'; pctx.fillRect(0, 0, w, hh);
       pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, hh - m); pctx.lineTo(w - 6, hh - m); pctx.moveTo(m, hh - m); pctx.lineTo(m, 8); pctx.stroke();
-      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('log count', 2, 12); pctx.fillText('log avalanche size', w - 118, hh - 8);
       /* logarithmic bins */
       const sizes = Object.keys(hist);
@@ -99,9 +99,9 @@
       let started = false;
       for (let b = 0; b < NB; b++) { if (bins[b] <= 0) continue; const x = X(b), y = Y(bins[b]); started ? pctx.lineTo(x, y) : pctx.moveTo(x, y); started = true; }
       pctx.stroke();
-      pctx.fillStyle = '#e8402a';
+      pctx.fillStyle = '#f2ede0';
       for (let b = 0; b < NB; b++) { if (bins[b] <= 0) continue; pctx.beginPath(); pctx.arc(X(b), Y(bins[b]), 2.5, 0, 7); pctx.fill(); }
-      pctx.fillStyle = '#8a8064'; pctx.fillText('a straight line here = criticality', m + 6, 22);
+      pctx.fillStyle = '#f2ede0'; pctx.fillText('a straight line here = criticality', m + 6, 22);
     }
 
     function draw() {

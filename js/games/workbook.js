@@ -298,6 +298,7 @@
 
   Arcade.register({
     id: 'workbook',
+    lightBoard: true,   // light spreadsheet cell grid would invert to a solid black block under the figure flip
     title: 'Workbook',
     emoji: 'sheet',
     cat: 'puzzle',

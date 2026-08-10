@@ -191,6 +191,7 @@
 
   Arcade.register({
     id: 'wordsearch',
+    lightBoard: true,   // light letter grid would invert to a solid black block under the figure flip
     title: 'Word Search',
     emoji: 'find',
     cat: 'puzzle',

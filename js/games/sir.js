@@ -114,7 +114,7 @@
       pctx.fillStyle = '#12100c'; pctx.fillRect(0, 0, w, hh);
       pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, hh - m); pctx.lineTo(w - 6, hh - m); pctx.moveTo(m, hh - m); pctx.lineTo(m, 8); pctx.stroke();
-      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('fraction', 2, 12); pctx.fillText('time', w - 30, hh - 8);
       const n = series.length; if (n < 2) return;
       const X = (k) => m + k / (n - 1) * (w - m - 6);
@@ -127,7 +127,7 @@
       lineOf('s', '#00a6b4');   // susceptible
       lineOf('r', '#a79e88');   // recovered
       lineOf('i', '#e8402a');   // infected hump
-      pctx.fillStyle = '#e8402a'; pctx.fillText('infected', w - 120, 14);
+      pctx.fillStyle = '#f2ede0'; pctx.fillText('infected', w - 120, 14);
       pctx.fillStyle = '#00a6b4'; pctx.fillText('S', w - 46, 14);
       pctx.fillStyle = '#a79e88'; pctx.fillText('R', w - 30, 14);
     }

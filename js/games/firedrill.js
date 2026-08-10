@@ -136,13 +136,13 @@
       /* axes */
       pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(1)); pctx.stroke();
-      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('burned', 2, 12); pctx.fillText('density p', w - 62, hh - 8);
       /* p_c line */
       pctx.strokeStyle = 'rgba(232,64,42,.8)'; pctx.setLineDash([4, 3]);
       pctx.beginPath(); pctx.moveTo(X(PC), Y(0)); pctx.lineTo(X(PC), Y(1)); pctx.stroke();
       pctx.setLineDash([]);
-      pctx.fillStyle = '#e8402a'; pctx.fillText('p_c ' + PC, X(PC) + 3, Y(1) + 10);
+      pctx.fillStyle = '#f2ede0'; pctx.fillText('p_c ' + PC, X(PC) + 3, Y(1) + 10);
       /* reference curve */
       if (ref.length) {
         pctx.strokeStyle = '#00a6b4'; pctx.lineWidth = 2; pctx.beginPath();

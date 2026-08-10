@@ -2040,6 +2040,18 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 .sb-emoji { font-size: 26px; line-height: 1; }
 .sb-label { font: 700 12px Verdana, sans-serif; color: var(--ink); text-align: center; }
 .sb-key { position: absolute; top: 4px; right: 6px; font: 700 9px "Courier New", monospace; color: var(--ink3); }
+/* the giant emoji, bold centred caption and keyboard-shortcut corner badge
+   read unmistakably as app/game chrome — in document mode, drop back to a
+   quiet bordered label, the same footprint as any other flattened button */
+body.docmode .sb-pad {
+  aspect-ratio: auto; background: var(--doc-paper); border: 1px solid var(--doc-rule2);
+  box-shadow: none; padding: 10px 8px;
+}
+body.docmode .sb-emoji { display: none; }
+body.docmode .sb-key { display: none; }
+body.docmode .sb-label {
+  color: var(--doc-ink); font-family: Verdana, Geneva, sans-serif; font-weight: 600;
+}
 
 /* footer privacy line */
 .foot-privacy { font: 11px/1.5 Verdana, sans-serif; color: var(--ink3); max-width: 60ch; }
@@ -2795,7 +2807,11 @@ body.docmode .gtitle {
   margin: 6px 0 0; display: block; text-shadow: none;
 }
 body.docmode .gtitle .ge { display: none; }
-body.docmode .back {
+/* scoped to the <a> shelf-nav link specifically — .back is reused as a
+   face-down-card modifier (.hl-card.back, .bj-card.back, .vp-card.back, all
+   <div>s), and a bare .back selector here was stripping their background,
+   leaving the face-down card invisible */
+body.docmode a.back {
   font-family: Verdana, Geneva, sans-serif; font-size: 12px;
   color: var(--doc-link); background: none; border: 0; box-shadow: none;
   text-decoration: underline; text-underline-offset: 2px; padding: 0; text-transform: none;
@@ -2882,25 +2898,43 @@ body.docmode.in-game .stage.no-doc-invert > * {
   background: var(--doc-paper) !important;
 }
 
-/* game controls become flat, quiet form controls (state still reads) */
+/* an in-stage button (one a game plants in its own board, not routed through
+   the shared toolbar) sits under the full invert filter same as everything
+   else — counter-invert it first, same recipe as .panel/.banner, so the
+   light/dark authored colours below land the right way round. */
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .btn {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* game controls become flat, quiet form controls (state still reads).
+   Covers both the shared toolbar (.gametools) AND any button a game plants
+   directly in its own board — e.g. Nim's "Take 1/2/3" — which otherwise kept
+   its full chunky beveled game-console look even in document mode. */
 body.docmode .gametools .btn,
 body.docmode .gametools .pill,
 body.docmode .gametools .sel,
-body.docmode .gametools .sel-wrap {
+body.docmode .gametools .sel-wrap,
+body.docmode.in-game .stage:not(.no-doc-invert) .btn,
+body.docmode.in-game .stage.no-doc-invert .btn {
   background: var(--doc-paper); color: var(--doc-ink);
   border: 1px solid var(--doc-rule2); box-shadow: none; border-radius: 5px;
   text-transform: none; letter-spacing: 0; font-family: Verdana, Geneva, sans-serif;
   font-weight: 600;
 }
-body.docmode .gametools .btn:hover { background: var(--doc-rule); }
+body.docmode .gametools .btn:hover,
+body.docmode.in-game .stage .btn:hover { background: var(--doc-rule); }
 /* no filled colour blob for the primary action — just a heavier outline */
-body.docmode .gametools .btn.primary {
+body.docmode .gametools .btn.primary,
+body.docmode.in-game .stage .btn.primary {
   background: var(--doc-paper); color: var(--doc-ink);
   border: 1.5px solid var(--doc-ink); font-weight: 700;
 }
 body.docmode .gametools .btn.on,
 body.docmode .gametools .btn.active,
-body.docmode .gametools .btn:active {
+body.docmode .gametools .btn:active,
+body.docmode.in-game .stage .btn.on,
+body.docmode.in-game .stage .btn.active,
+body.docmode.in-game .stage .btn:active {
   background: var(--doc-rule);
   border-color: var(--doc-ink); color: var(--doc-ink);
 }
@@ -2925,6 +2959,66 @@ body.docmode .meter > i {
      written dark to land as a clear mid-grey — visible, but well shy of black */
   background: #3f4247;
 }
+
+/* .banner (win/lose/round-end overlay — used across ~49 games) is the same
+   "light box, not a black slab" case as .panel above, but wasn't covered by
+   that rule, so every banner in a non-lightBoard game inverted to a solid
+   black slab with white text the instant it appeared. Same counter-invert
+   fix, same quiet doc palette. */
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .banner {
+  filter: invert(1) hue-rotate(180deg);
+}
+body.docmode .banner {
+  background: var(--doc-paper); color: var(--doc-ink);
+  border: 1px solid var(--doc-ink); box-shadow: none;
+}
+body.docmode .banner h3 { color: var(--doc-ink); }
+body.docmode .banner p { color: var(--doc-ink2); }
+
+/* status/result text (the many "<prefix>-msg win/lose" classes) uses bright
+   --lime/--tomato accents that either invert to a near-invisible pastel or,
+   for the default dark --ink text, invert straight to white-on-white. Same
+   counter-invert recipe, then force plain dark ink — grayscale erases the
+   red/green distinction anyway, so keeping two "colours" here is pointless;
+   the message text itself still says win or lose. */
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) [class*="-msg"],
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) [class*="-verdict"] {
+  filter: invert(1) hue-rotate(180deg);
+}
+body.docmode [class*="-msg"],
+body.docmode [class*="-verdict"] {
+  color: var(--doc-ink) !important;
+}
+
+/* Blackjack's felt table is a genuinely dark backdrop that WANTS the normal
+   full invert (dark green -> light document page) — unlike every other fix
+   above, do not lightBoard the whole game. Only the light card faces inside
+   it need protecting, so counter-invert just those. */
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .bj-card {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Memory Match: the face-down .mem-back (--grape) is meant to invert to a
+   light card back; only the revealed .mem-front needs protecting so its
+   already-light background doesn't invert to black. */
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .mem-front {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Dots and Boxes: a claimed line needs to look MORE solid than an unclaimed
+   gap (backwards under the raw invert — --grape claimed ends up lighter than
+   --chrome unclaimed), and "you" vs "cpu" boxes (--teal vs --hotpink) share
+   almost identical luminance, so grayscale erases the distinction entirely.
+   Counter-invert + author explicit final colours instead of fighting hue. */
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .db-edge::after,
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .db-box {
+  filter: invert(1) hue-rotate(180deg);
+}
+body.docmode .db-edge::after { background: var(--doc-rule2); }
+body.docmode .db-edge:hover::after { background: var(--doc-mut); }
+body.docmode .db-edge.on::after { background: var(--doc-ink); }
+body.docmode .db-box.you { background: var(--doc-ink); }
+body.docmode .db-box.cpu { background: #767d88; }
 
 /* 2048 as a document: a tidy greyscale data grid, not an inverted wall of
    black tiles. Low values sit near-white and step toward grey as they climb,
@@ -3400,6 +3494,11 @@ body.docmode .doc-figcap {
   Engine.fx = (function () {
     let cv = null, fctx = null, parts = [], raf = 0;
     const COLORS = ['#ffcb1f', '#e8402a', '#00a6b4', '#6fcf2f', '#ff2d87', '#6f3fa8'];
+    /* this canvas is a fixed full-page overlay, outside .stage, so the
+       document-disguise luminance filter never touches it — a rainbow burst
+       would blow the cover instantly. Use flecks of ink instead in doc mode. */
+    const DOC_COLORS = ['#14171c', '#3a3f47', '#6b7178', '#9aa0a8'];
+    const palette = () => (global.Arcade && global.Arcade.docMode && global.Arcade.docMode()) ? DOC_COLORS : COLORS;
     const reduce = () => { try { return global.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } };
     function resize() { if (cv) { cv.width = global.innerWidth; cv.height = global.innerHeight; } }
     function ensure() {
@@ -3431,9 +3530,10 @@ body.docmode .doc-figcap {
         if (reduce()) return;
         ensure();
         n = n || 42;
+        const cols = palette();
         for (let i = 0; i < n; i++) {
           const a = Math.random() * Math.PI * 2, sp = 3 + Math.random() * 7;
-          parts.push({ x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 4, life: 0.8 + Math.random() * 0.6, s: 5 + Math.random() * 5, c: COLORS[(Math.random() * COLORS.length) | 0], rot: Math.random() * 6, vr: (Math.random() - 0.5) * 0.4 });
+          parts.push({ x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 4, life: 0.8 + Math.random() * 0.6, s: 5 + Math.random() * 5, c: cols[(Math.random() * cols.length) | 0], rot: Math.random() * 6, vr: (Math.random() - 0.5) * 0.4 });
         }
         if (!raf) raf = requestAnimationFrame(loop);
       }
@@ -6874,13 +6974,13 @@ body.docmode .doc-figcap {
       const Y = (v) => hh - m - v * (hh - m - 8);
       pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(1)); pctx.stroke();
-      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('|M|', 2, 12); pctx.fillText('temperature', w - 74, hh - 8);
       /* T_c line */
       pctx.strokeStyle = 'rgba(232,64,42,.8)'; pctx.setLineDash([4, 3]);
       pctx.beginPath(); pctx.moveTo(X(TC), Y(0)); pctx.lineTo(X(TC), Y(1)); pctx.stroke();
       pctx.setLineDash([]);
-      pctx.fillStyle = '#e8402a'; pctx.fillText('T_c ' + TC.toFixed(3), X(TC) + 4, Y(1) + 10);
+      pctx.fillStyle = '#f2ede0'; pctx.fillText('T_c ' + TC.toFixed(3), X(TC) + 4, Y(1) + 10);
       /* measured magnetisation curve */
       if (ref.length) {
         pctx.strokeStyle = '#00a6b4'; pctx.lineWidth = 2; pctx.beginPath();
@@ -7099,13 +7199,13 @@ body.docmode .doc-figcap {
       /* axes */
       pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(1)); pctx.stroke();
-      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('burned', 2, 12); pctx.fillText('density p', w - 62, hh - 8);
       /* p_c line */
       pctx.strokeStyle = 'rgba(232,64,42,.8)'; pctx.setLineDash([4, 3]);
       pctx.beginPath(); pctx.moveTo(X(PC), Y(0)); pctx.lineTo(X(PC), Y(1)); pctx.stroke();
       pctx.setLineDash([]);
-      pctx.fillStyle = '#e8402a'; pctx.fillText('p_c ' + PC, X(PC) + 3, Y(1) + 10);
+      pctx.fillStyle = '#f2ede0'; pctx.fillText('p_c ' + PC, X(PC) + 3, Y(1) + 10);
       /* reference curve */
       if (ref.length) {
         pctx.strokeStyle = '#00a6b4'; pctx.lineWidth = 2; pctx.beginPath();
@@ -7317,7 +7417,7 @@ body.docmode .doc-figcap {
       const Y = (s) => hh - m - s * (hh - m - 8);
       pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(1)); pctx.stroke();
-      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('segregation', 2, 12); pctx.fillText('preference T', w - 78, hh - 8);
       /* mixed baseline ~0.5 */
       pctx.strokeStyle = 'rgba(0,166,180,.6)'; pctx.setLineDash([3, 3]);
@@ -7328,7 +7428,7 @@ body.docmode .doc-figcap {
         ref.forEach((s, i) => { const x = X(s.T), y = Y(s.seg); i ? pctx.lineTo(x, y) : pctx.moveTo(x, y); });
         pctx.stroke();
       }
-      for (const s of samples) { pctx.fillStyle = '#e8402a'; pctx.beginPath(); pctx.arc(X(s.T), Y(s.seg), 3, 0, 7); pctx.fill(); }
+      for (const s of samples) { pctx.fillStyle = '#f2ede0'; pctx.beginPath(); pctx.arc(X(s.T), Y(s.seg), 3, 0, 7); pctx.fill(); }
       pctx.fillStyle = '#fffdf3'; pctx.beginPath(); pctx.moveTo(X(T), Y(0) + 2); pctx.lineTo(X(T) - 4, Y(0) + 9); pctx.lineTo(X(T) + 4, Y(0) + 9); pctx.fill();
     }
 
@@ -7512,7 +7612,7 @@ body.docmode .doc-figcap {
       pctx.fillStyle = '#12100c'; pctx.fillRect(0, 0, w, hh);
       pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, hh - m); pctx.lineTo(w - 6, hh - m); pctx.moveTo(m, hh - m); pctx.lineTo(m, 8); pctx.stroke();
-      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('fraction', 2, 12); pctx.fillText('time', w - 30, hh - 8);
       const n = series.length; if (n < 2) return;
       const X = (k) => m + k / (n - 1) * (w - m - 6);
@@ -7525,7 +7625,7 @@ body.docmode .doc-figcap {
       lineOf('s', '#00a6b4');   // susceptible
       lineOf('r', '#a79e88');   // recovered
       lineOf('i', '#e8402a');   // infected hump
-      pctx.fillStyle = '#e8402a'; pctx.fillText('infected', w - 120, 14);
+      pctx.fillStyle = '#f2ede0'; pctx.fillText('infected', w - 120, 14);
       pctx.fillStyle = '#00a6b4'; pctx.fillText('S', w - 46, 14);
       pctx.fillStyle = '#a79e88'; pctx.fillText('R', w - 30, 14);
     }
@@ -7684,7 +7784,7 @@ body.docmode .doc-figcap {
       pctx.fillStyle = '#12100c'; pctx.fillRect(0, 0, w, hh);
       pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, hh - m); pctx.lineTo(w - 6, hh - m); pctx.moveTo(m, hh - m); pctx.lineTo(m, 8); pctx.stroke();
-      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('log count', 2, 12); pctx.fillText('log avalanche size', w - 118, hh - 8);
       /* logarithmic bins */
       const sizes = Object.keys(hist);
@@ -7700,9 +7800,9 @@ body.docmode .doc-figcap {
       let started = false;
       for (let b = 0; b < NB; b++) { if (bins[b] <= 0) continue; const x = X(b), y = Y(bins[b]); started ? pctx.lineTo(x, y) : pctx.moveTo(x, y); started = true; }
       pctx.stroke();
-      pctx.fillStyle = '#e8402a';
+      pctx.fillStyle = '#f2ede0';
       for (let b = 0; b < NB; b++) { if (bins[b] <= 0) continue; pctx.beginPath(); pctx.arc(X(b), Y(bins[b]), 2.5, 0, 7); pctx.fill(); }
-      pctx.fillStyle = '#8a8064'; pctx.fillText('a straight line here = criticality', m + 6, 22);
+      pctx.fillStyle = '#f2ede0'; pctx.fillText('a straight line here = criticality', m + 6, 22);
     }
 
     function draw() {
@@ -7872,10 +7972,10 @@ body.docmode .doc-figcap {
       const Y = (f) => hh - m - f * (hh - m - 8);
       pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(1)); pctx.stroke();
-      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('alignment', 2, 12); pctx.fillText('noise', w - 40, hh - 8);
       if (ref.length) { pctx.strokeStyle = '#6fcf2f'; pctx.lineWidth = 2; pctx.beginPath(); ref.forEach((s, i) => { const px = X(s.eta), py = Y(s.phi); i ? pctx.lineTo(px, py) : pctx.moveTo(px, py); }); pctx.stroke(); }
-      for (const s of samples) { pctx.fillStyle = '#e8402a'; pctx.beginPath(); pctx.arc(X(s.eta), Y(s.phi), 3, 0, 7); pctx.fill(); }
+      for (const s of samples) { pctx.fillStyle = '#f2ede0'; pctx.beginPath(); pctx.arc(X(s.eta), Y(s.phi), 3, 0, 7); pctx.fill(); }
       pctx.fillStyle = '#fffdf3'; pctx.beginPath(); pctx.moveTo(X(eta), Y(0) + 2); pctx.lineTo(X(eta) - 4, Y(0) + 9); pctx.lineTo(X(eta) + 4, Y(0) + 9); pctx.fill();
     }
 
@@ -8025,11 +8125,11 @@ body.docmode .doc-figcap {
       const Y = (f) => hh - m - f * (hh - m - 8);
       pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(1)); pctx.stroke();
-      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('sync r', 2, 12); pctx.fillText('coupling K', w - 60, hh - 8);
       const kc = 1.6 * SIGMA;
       pctx.strokeStyle = 'rgba(232,64,42,.7)'; pctx.setLineDash([4, 3]); pctx.beginPath(); pctx.moveTo(X(kc), Y(0)); pctx.lineTo(X(kc), Y(1)); pctx.stroke(); pctx.setLineDash([]);
-      pctx.fillStyle = '#e8402a'; pctx.fillText('K_c~' + kc.toFixed(1), X(kc) + 3, Y(1) + 10);
+      pctx.fillStyle = '#f2ede0'; pctx.fillText('K_c~' + kc.toFixed(1), X(kc) + 3, Y(1) + 10);
       if (ref.length) { pctx.strokeStyle = '#ffcb1f'; pctx.lineWidth = 2; pctx.beginPath(); ref.forEach((s, i) => { const px = X(s.K), py = Y(s.r); i ? pctx.lineTo(px, py) : pctx.moveTo(px, py); }); pctx.stroke(); }
       for (const s of samples) { pctx.fillStyle = '#6fcf2f'; pctx.beginPath(); pctx.arc(X(s.K), Y(s.r), 3, 0, 7); pctx.fill(); }
       pctx.fillStyle = '#fffdf3'; pctx.beginPath(); pctx.moveTo(X(K), Y(0) + 2); pctx.lineTo(X(K) - 4, Y(0) + 9); pctx.lineTo(X(K) + 4, Y(0) + 9); pctx.fill();
@@ -8048,8 +8148,11 @@ body.docmode .doc-figcap {
       const o = order();
       ctx.strokeStyle = '#fffdf3'; ctx.lineWidth = 3;
       ctx.beginPath(); ctx.moveTo(CX, CY); ctx.lineTo(CX + Math.cos(o.psi) * RC * o.r, CY + Math.sin(o.psi) * RC * o.r); ctx.stroke();
+      /* readout sits below the circle, not at its centre — the arrow
+         radiates outward FROM the centre in whatever direction psi points,
+         so text placed there gets drawn through more often than not */
       ctx.fillStyle = '#fffdf3'; ctx.font = 'bold 26px system-ui'; ctx.textAlign = 'center';
-      ctx.fillText('r = ' + o.r.toFixed(2), CX, CY + 6); ctx.textAlign = 'left';
+      ctx.fillText('r = ' + o.r.toFixed(2), CX, CY + RC + 34); ctx.textAlign = 'left';
       drawPlot();
     }
 
@@ -8224,7 +8327,7 @@ body.docmode .doc-figcap {
       const Y = (q) => hh - m - q / maxQ * (hh - m - 8);
       pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(maxQ)); pctx.stroke();
-      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('flow', 2, 12); pctx.fillText('density', w - 54, hh - 8);
       /* measured fundamental diagram */
       if (ref.length) {
@@ -8236,7 +8339,7 @@ body.docmode .doc-figcap {
         pctx.strokeStyle = 'rgba(232,64,42,.8)'; pctx.setLineDash([4, 3]);
         pctx.beginPath(); pctx.moveTo(X(best.d), Y(0)); pctx.lineTo(X(best.d), Y(maxQ)); pctx.stroke();
         pctx.setLineDash([]);
-        pctx.fillStyle = '#e8402a'; pctx.fillText('peak ~' + best.d.toFixed(2), X(best.d) + 3, Y(maxQ) + 10);
+        pctx.fillStyle = '#f2ede0'; pctx.fillText('peak ~' + best.d.toFixed(2), X(best.d) + 3, Y(maxQ) + 10);
       }
       /* live sample */
       pctx.fillStyle = '#ffcb1f';
@@ -8511,11 +8614,11 @@ body.docmode .doc-figcap {
       const Y = (ln) => hh - m - ln / lnMax * (hh - m - 10);
       pctx.strokeStyle = '#3a4658'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 10, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(lnMax)); pctx.stroke();
-      pctx.fillStyle = '#6c7a90'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('log N', 2, 12); pctx.fillText('log r', w - 40, hh - 10);
       /* reference slope D = 1.71 through the cloud's lower anchor */
       const r0 = 4, n0 = rhist[1] + rhist[2] + rhist[3] + rhist[4] || 1;
-      pctx.strokeStyle = 'rgba(232,64,42,.8)'; pctx.setLineDash([4, 3]); pctx.beginPath();
+      pctx.strokeStyle = 'rgba(242,237,224,.9)'; pctx.setLineDash([4, 3]); pctx.beginPath();
       let first = true;
       for (let lr = Math.log(r0); lr <= lrMax; lr += 0.1) {
         const ln = Math.log(n0) + DREF * (lr - Math.log(r0));
@@ -8523,7 +8626,7 @@ body.docmode .doc-figcap {
         first ? (pctx.moveTo(x, y), first = false) : pctx.lineTo(x, y);
       }
       pctx.stroke(); pctx.setLineDash([]);
-      pctx.fillStyle = '#e8402a'; pctx.fillText('slope ' + DREF, w - 96, 14);
+      pctx.fillStyle = '#f2ede0'; pctx.fillText('slope ' + DREF, w - 96, 14);
       /* measured mass–radius cloud */
       pctx.fillStyle = '#9fe0ff';
       let cum = 0;
@@ -8722,13 +8825,13 @@ body.docmode .doc-figcap {
       /* zero line */
       pctx.strokeStyle = '#3a4658'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(mL, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.stroke();
-      pctx.fillStyle = '#6c7a90'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('λ', 4, Y(0) - 3); pctx.fillText('0', 16, Y(0) + 3); pctx.fillText('r', w - 14, hh - 8);
       /* onset of chaos marker */
       pctx.strokeStyle = 'rgba(232,64,42,.8)'; pctx.setLineDash([4, 3]);
       pctx.beginPath(); pctx.moveTo(X(RCHAOS), 6); pctx.lineTo(X(RCHAOS), hh - mB); pctx.stroke();
       pctx.setLineDash([]);
-      pctx.fillStyle = '#e8402a'; pctx.fillText('chaos ' + RCHAOS.toFixed(3), X(RCHAOS) - 64, hh - 10);
+      pctx.fillStyle = '#f2ede0'; pctx.fillText('chaos ' + RCHAOS.toFixed(3), X(RCHAOS) - 64, hh - 10);
       /* the curve */
       if (lam) {
         pctx.strokeStyle = '#00a6b4'; pctx.lineWidth = 1.4; pctx.beginPath();
@@ -8748,7 +8851,7 @@ body.docmode .doc-figcap {
       /* bifurcation diagram */
       ctx.fillStyle = '#0b0f16'; ctx.fillRect(0, 0, W, H);
       if (bifReady) ctx.drawImage(bif, 0, 0);
-      else { ctx.fillStyle = '#6c7a90'; ctx.font = '13px Verdana'; ctx.fillText('measuring the map…', 20, 30); }
+      else { ctx.fillStyle = '#f2ede0'; ctx.font = '13px Verdana'; ctx.fillText('measuring the map…', 20, 30); }
       /* current-r line + labels on the diagram */
       const xr = RX(r, 0, W - 1);
       ctx.strokeStyle = 'rgba(255,203,31,.9)'; ctx.lineWidth = 1;
@@ -8759,7 +8862,7 @@ body.docmode .doc-figcap {
       ctx.beginPath(); ctx.moveTo(xc, 0); ctx.lineTo(xc, BIFH); ctx.stroke(); ctx.setLineDash([]);
       ctx.font = '10px Verdana, sans-serif';
       ctx.fillText('onset of chaos', xc + 3, 12);
-      ctx.fillStyle = '#8a8064';
+      ctx.fillStyle = '#f2ede0';
       ctx.fillText('r = ' + RLO, 4, BIFH - 4); ctx.fillText('r = ' + RHI, W - 44, BIFH - 4);
       ctx.fillStyle = '#ded6c2'; ctx.fillText('population x', 4, 12);
 
@@ -8775,7 +8878,7 @@ body.docmode .doc-figcap {
       ctx.stroke();
       ctx.fillStyle = '#6fcf2f';
       for (let i = 0; i < orbit.length; i++) ctx.fillRect(6 + i / 140 * (W - 12) - 1, oy(orbit[i]) - 1, 2, 2);
-      ctx.fillStyle = '#8a8064'; ctx.font = '10px Verdana, sans-serif';
+      ctx.fillStyle = '#f2ede0'; ctx.font = '10px Verdana, sans-serif';
       ctx.fillText('this year → next year (watch the cycle length)', 8, H - 6);
 
       drawPanel();
@@ -8983,14 +9086,14 @@ body.docmode .doc-figcap {
       const Y = (v) => hh - 22 - clamp(v / hi, 0, 1) * (hh - 30);
       pctx.strokeStyle = '#3a4658'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(hi)); pctx.stroke();
-      pctx.fillStyle = '#6c7a90'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('alive', 2, 12); pctx.fillText('time', w - 30, hh - 6);
       /* equilibrium density line */
       const eq = grid.length * EQ;
       if (eq <= hi) {
         pctx.strokeStyle = 'rgba(232,64,42,.8)'; pctx.setLineDash([4, 3]);
         pctx.beginPath(); pctx.moveTo(m, Y(eq)); pctx.lineTo(w - 8, Y(eq)); pctx.stroke(); pctx.setLineDash([]);
-        pctx.fillStyle = '#e8402a'; pctx.fillText('~2.9% equilibrium', w - 118, Y(eq) - 4);
+        pctx.fillStyle = '#f2ede0'; pctx.fillText('~2.9% equilibrium', w - 118, Y(eq) - 4);
       }
       /* population curve */
       if (hist.length > 1) {
@@ -9161,7 +9264,7 @@ body.docmode .doc-figcap {
       const X = (i) => m + i / 520 * (w - m - 8), Y = (v) => hh - 20 - clamp(v, 0, 0.6) / 0.6 * (hh - 30);
       pctx.strokeStyle = '#3a4658'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.stroke();
-      pctx.fillStyle = '#6c7a90'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('population', 2, 12); pctx.fillText('time', w - 30, hh - 6);
       const cols = ['#e8402a', '#6fcf2f', '#2a7fd6'], keys = ['a', 'b', 'c'];
       for (let s = 0; s < 3; s++) {
@@ -11740,7 +11843,10 @@ body.docmode .doc-figcap {
     }
 
     function render() {
-      const cs = document.body.classList.contains('colorsafe');
+      /* doc mode desaturates everything to grey, so same-luminance colours
+         (red vs hot pink, say) become indistinguishable — reuse the existing
+         colour-blind symbol fallback instead of trying to out-guess the filter */
+      const cs = document.body.classList.contains('colorsafe') || (window.Arcade && Arcade.docMode && Arcade.docMode());
       for (let i = 0; i < N * N; i++) { cells[i].style.background = COLORS[grid[i]]; cells[i].textContent = cs ? SYMS[grid[i]] : ''; }
       swatches.forEach((b, ci) => { b.textContent = cs ? SYMS[ci] : ''; b.classList.remove('cur'); });
       swatches[grid[0]].classList.add('cur');
@@ -12076,6 +12182,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'workbook',
+    lightBoard: true,   // light spreadsheet cell grid would invert to a solid black block under the figure flip
     title: 'Workbook',
     emoji: 'sheet',
     cat: 'puzzle',
@@ -12716,6 +12823,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'nonogram',
+    lightBoard: true,   // light spreadsheet grid would invert to solid black under the figure flip
     title: 'Cond. Format',
     emoji: 'nonogram',
     cat: 'puzzle',
@@ -12825,6 +12933,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'hanoi', title: 'Tower of Hanoi', emoji: 'stack', cat: 'puzzle', order: 20,
+    lightBoard: true,   // light peg panels would invert to solid dark-grey under the figure flip
     lowerIsBetter: true,
     formatScore: (v) => (v <= 0 ? 'perfect' : '+' + v + ' moves'),
     blurb: 'The classic disk-stacking puzzle, restyled as ring binders. Move the stack one binder at a time, never a big one on a small one.',
@@ -13127,6 +13236,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'wordsearch',
+    lightBoard: true,   // light letter grid would invert to a solid black block under the figure flip
     title: 'Word Search',
     emoji: 'find',
     cat: 'puzzle',
@@ -13335,7 +13445,7 @@ body.docmode .doc-figcap {
       if (shot) bubble(shot.x, shot.y, shot.color);
       else if (!over) bubble(W / 2, H - 34, cur);
       bubble(W / 2 + 46, H - 22, next, 12);
-      ctx.fillStyle = '#8a8064'; ctx.font = '10px Verdana'; ctx.textAlign = 'left'; ctx.fillText('next', W / 2 + 62, H - 19);
+      ctx.fillStyle = '#f2ede0'; ctx.font = '10px Verdana'; ctx.textAlign = 'left'; ctx.fillText('next', W / 2 + 62, H - 19);
     }
 
     /* ---- test seam ---- */
@@ -14321,7 +14431,11 @@ body.docmode .doc-figcap {
       ctx.moveTo(fx, fy + cell * 0.3);
       ctx.lineTo(fx, fy - cell * 0.3);
       ctx.stroke();
-      ctx.fillStyle = '#e8402a';
+      /* the red flag cloth used to land at almost the same post-invert
+         luminance as the exit cell behind it (both wash to a similar light
+         grey), making it nearly invisible in document mode — match the pole's
+         colour instead, which is chosen to survive inversion as dark ink */
+      ctx.fillStyle = '#fffdf3';
       ctx.beginPath();
       ctx.moveTo(fx, fy - cell * 0.3);
       ctx.lineTo(fx + cell * 0.32, fy - cell * 0.18);
@@ -14405,6 +14519,7 @@ body.docmode .doc-figcap {
   const SUITS = ['♠', '♥', '♦', '♣'];
   const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
   const isRed = (s) => s === 1 || s === 2;
+  const DOC = () => !!(window.Arcade && Arcade.docMode && Arcade.docMode());
 
   const colX = (i) => MX + i * (CW + GAP);
 
@@ -14750,14 +14865,15 @@ body.docmode .doc-figcap {
       ctx.fill();
 
       if (!c.up) {
-        ctx.fillStyle = '#2a4bbd';
+        const doc = DOC();
+        ctx.fillStyle = doc ? '#e5e8ec' : '#2a4bbd';
         Engine.roundRect(ctx, x, y, CW, CH, 7);
         ctx.fill();
-        ctx.strokeStyle = '#0c1119';
+        ctx.strokeStyle = doc ? '#2b2f36' : '#0c1119';
         ctx.lineWidth = 3;
         Engine.roundRect(ctx, x, y, CW, CH, 7);
         ctx.stroke();
-        ctx.strokeStyle = 'rgba(255,255,255,.28)';
+        ctx.strokeStyle = doc ? 'rgba(43,47,54,.28)' : 'rgba(255,255,255,.28)';
         ctx.lineWidth = 1.5;
         for (let i = -CH; i < CW; i += 9) {
           ctx.beginPath();
@@ -14765,7 +14881,7 @@ body.docmode .doc-figcap {
           ctx.lineTo(x + Math.min(CW, i + CH), y + Math.min(CH, CH - i + (i < 0 ? i : 0)));
           ctx.stroke();
         }
-        ctx.strokeStyle = 'rgba(255,255,255,.5)';
+        ctx.strokeStyle = doc ? 'rgba(43,47,54,.5)' : 'rgba(255,255,255,.5)';
         ctx.lineWidth = 2;
         Engine.roundRect(ctx, x + 6, y + 6, CW - 12, CH - 12, 4);
         ctx.stroke();
@@ -14799,14 +14915,15 @@ body.docmode .doc-figcap {
     }
 
     function slot(x, y, label) {
-      ctx.strokeStyle = 'rgba(255,255,255,.4)';
+      const doc = DOC();
+      ctx.strokeStyle = doc ? 'rgba(43,47,54,.4)' : 'rgba(255,255,255,.4)';
       ctx.lineWidth = 2.5;
       ctx.setLineDash([7, 6]);
       Engine.roundRect(ctx, x, y, CW, CH, 7);
       ctx.stroke();
       ctx.setLineDash([]);
       if (label) {
-        ctx.fillStyle = 'rgba(255,255,255,.35)';
+        ctx.fillStyle = doc ? 'rgba(43,47,54,.5)' : 'rgba(255,255,255,.35)';
         ctx.font = '34px Verdana, sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -14818,16 +14935,17 @@ body.docmode .doc-figcap {
 
     function draw(dt) {
       if (winAnim > 0) winAnim += dt;
-      ctx.fillStyle = '#1c7a4a';
+      const doc = DOC();
+      ctx.fillStyle = doc ? '#f2f3f5' : '#1c7a4a';
       ctx.fillRect(0, 0, W, H);
-      ctx.fillStyle = 'rgba(0,0,0,.05)';
+      ctx.fillStyle = doc ? 'rgba(0,0,0,.03)' : 'rgba(0,0,0,.05)';
       for (let y = 0; y < H; y += 8) ctx.fillRect(0, y, W, 3);
 
       /* stock */
       if (stock.length) card(colX(0), TOPY, { up: false });
       else slot(colX(0), TOPY, redealsLeft > 0 ? '↺' : '✕');
       if (stock.length) {
-        ctx.fillStyle = '#fffdf3';
+        ctx.fillStyle = doc ? '#2b2f36' : '#fffdf3';
         ctx.font = 'bold 12px Verdana, sans-serif';
         ctx.fillText(String(stock.length), colX(0) + 4, TOPY + CH + 15);
       }
@@ -14885,6 +15003,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'solitaire',
+    lightBoard: true,   // light card faces would invert to solid black under the figure flip
     title: 'Solitaire',
     emoji: 'solitaire',
     cat: 'puzzle',
@@ -15078,6 +15197,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'wordguess',
+    lightBoard: true,   // light unfilled letter tiles would invert to a solid black grid under the figure flip
     title: 'Word Guess',
     emoji: 'wordguess',
     cat: 'brain',
@@ -15479,6 +15599,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'sudoku',
+    lightBoard: true,   // light board + number pad would invert to a large solid near-black grid under the figure flip
     usesDigits: true,   // 1-9 fill cells — the "1 = Docs" shortcut yields here
     title: 'Sudoku',
     emoji: 'sudoku',
@@ -15682,6 +15803,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'noughts',
+    lightBoard: true,   // light board would invert to solid black under the figure flip
     title: 'Noughts',
     emoji: 'noughts',
     cat: 'brain',
@@ -16114,6 +16236,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'hangman', title: 'Hangman', emoji: 'find', cat: 'brain', order: 27,
+    lightBoard: true,   // plain text on the page — the invert filter washed the revealed letters and blank-slot underlines out
     usesLetters: true,
     blurb: 'A hidden office word shown as blanks. Guess letters before six misses fill in the little face. Words are all cubicle stock like deadline, spreadsheet and synergy.',
     scoreLabel: 'Best streak', tags: ['word', 'classic', 'spelling'],
@@ -16433,6 +16556,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'gomoku', title: 'Five in a Row', emoji: 'connect4', cat: 'brain', order: 30,
+    lightBoard: true,   // light wood-tan board would invert to a muddy grey under the figure flip
     blurb: 'Place stones on the grid and try to line up five in a row before your deskmate does. Simple to learn, hard to close out.',
     scoreLabel: 'Win streak', tags: ['strategy', 'board', 'classic'],
     how: [
@@ -16525,6 +16649,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'crack', title: 'Number Cracker', emoji: 'find', cat: 'brain', order: 31,
+    lightBoard: true,   // light guess-history rows would invert to solid black under the figure flip
     blurb: 'A hidden four-digit code, ten guesses. After each try you learn how many digits are right and how many are in the wrong spot. Deduce the rest.',
     scoreLabel: 'Win streak', tags: ['logic', 'deduction', 'numbers'],
     how: [
@@ -16978,6 +17103,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'uttt', title: 'Ultimate Noughts', emoji: 'uttt', cat: 'brain', order: 24,
+    lightBoard: true,   // light cell grid would invert to near-black boxes under the figure flip
     blurb: 'Tic-tac-toe with a board inside every square. The cell you take decides which small board the deskmate must play next. Win three small boards in a row.',
     scoreLabel: 'Wins', tags: ['strategy', 'board', 'vs cpu'],
     how: [
@@ -17552,6 +17678,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'cryptogram', title: 'Memo Decoder', emoji: 'cipher', cat: 'brain', order: 27,
+    lightBoard: true,   // light letter-keyboard keys would invert to solid black under the figure flip
     usesLetters: true,   // typed letters are gameplay — keep the shell's 'r' = restart shortcut off
     blurb: 'A cryptogram of office-speak. Every letter has been swapped for another; crack the substitution and read the platitude underneath. Chill hands you a few letters to start; harder settings do not.',
     scoreLabel: 'Solved', tags: ['word', 'logic', 'cipher'],
@@ -17867,6 +17994,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'typing',
+    lightBoard: true,   // light passage box + input would invert to near-black slabs under the figure flip
     title: 'Data Entry',
     emoji: 'keys',
     cat: 'brain',
@@ -18118,6 +18246,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'spamfilter',
+    lightBoard: true,   // light play field would invert to one solid dark-charcoal block under the figure flip
     title: 'Spam Filter',
     emoji: 'spam',
     cat: 'brain',
@@ -20135,6 +20264,10 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'memory',
+    // NOT lightBoard: the face-down back (.mem-back, --grape purple) is a
+    // genuinely dark tile that wants the normal invert (dark -> light card
+    // back on the page). Only the revealed .mem-front needs protecting from
+    // that invert, handled in css/arcade.css.
     title: 'Memory Match',
     emoji: 'memory',
     cat: 'brain',
@@ -20847,11 +20980,14 @@ body.docmode .doc-figcap {
     function turn(d) {
       const v = { up: { x: 0, y: -1 }, down: { x: 0, y: 1 }, left: { x: -1, y: 0 }, right: { x: 1, y: 0 } }[d];
       if (!v) return;
+      /* set before the no-op guards below — otherwise pressing the key that
+         already matches the default starting direction (Right) returns early
+         and the game never leaves its "press an arrow key to start" state */
+      started = true;
       const last = queue.length ? queue[queue.length - 1] : dir;
       if (last.x === -v.x && last.y === -v.y) return;    // no instant reversal
       if (last.x === v.x && last.y === v.y) return;
       if (queue.length < 2) queue.push(v);
-      started = true;
     }
 
     function step() {
@@ -22957,6 +23093,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'racer',
+    lightBoard: true,   // scene has enough natural tonal range that plain greyscale reads fine; inverting collapsed it to a flat grey blob
     title: 'Company Car',
     emoji: 'car',
     cat: 'action',
@@ -23214,6 +23351,7 @@ body.docmode .doc-figcap {
   /* the ball floats more than the players fall, so you can actually loft it up
      to the rim and it hangs long enough to aim — basketball, not a hot potato */
   const BALL_GRAV = 1180;
+  const DOC = () => !!(window.Arcade && Arcade.docMode && Arcade.docMode());
 
   function mount(root, api) {
     const bagg = Engine.bag();
@@ -23374,10 +23512,18 @@ body.docmode .doc-figcap {
 
       drawPlayer(p1, 1); drawPlayer(p2, -1);
 
-      /* ball */
-      ctx.fillStyle = sport === 'bball' ? '#e8621f' : '#f4f4f4';
+      /* ball — the usual orange/white fills sit at almost the same luminance as
+         the court behind them, so under any monochrome doc-mode transform they
+         camouflage completely. In doc mode, force a dark fill with a bright
+         halo so the ball reads regardless of what's behind it. */
+      const doc = DOC();
+      if (doc) {
+        ctx.fillStyle = 'rgba(255,255,255,.9)';
+        ctx.beginPath(); ctx.arc(ball.x, ball.y, BR + 3, 0, 7); ctx.fill();
+      }
+      ctx.fillStyle = doc ? '#14171c' : (sport === 'bball' ? '#e8621f' : '#f4f4f4');
       ctx.beginPath(); ctx.arc(ball.x, ball.y, BR, 0, 7); ctx.fill();
-      ctx.strokeStyle = '#1d1722'; ctx.lineWidth = 1.4;
+      ctx.strokeStyle = doc ? '#14171c' : '#1d1722'; ctx.lineWidth = 1.4;
       ctx.beginPath(); ctx.arc(ball.x, ball.y, BR, 0, 7); ctx.stroke();
       if (sport === 'bball') { ctx.beginPath(); ctx.moveTo(ball.x - BR, ball.y); ctx.lineTo(ball.x + BR, ball.y); ctx.moveTo(ball.x, ball.y - BR); ctx.lineTo(ball.x, ball.y + BR); ctx.stroke(); }
       void msg;
@@ -23400,6 +23546,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'hoops',
+    lightBoard: true,   // outdoor scene reads fine in plain greyscale; also needed so the doc-mode ball colour (authored dark) doesn't get inverted back to white
     title: 'Court',
     emoji: 'hoops',
     cat: 'action',
@@ -24392,6 +24539,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'coffee',
+    lightBoard: true,   // light shop panel would invert to solid black under the figure flip
     title: 'Coffee Clicker',
     emoji: 'coffee',
     cat: 'goof',
@@ -24922,6 +25070,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'busywork',
+    lightBoard: true,   // light hire/upgrade rows would invert to solid black under the figure flip
     title: 'Busywork',
     emoji: 'busywork',
     cat: 'goof',
@@ -25251,6 +25400,9 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'blackjack',
+    // NOT lightBoard: the felt table is a genuinely dark backdrop that needs
+    // the normal invert (dark -> light); only the light card faces need
+    // protecting from it, handled in css/arcade.css via a .bj-card counter-invert.
     title: 'Twenty-One',
     emoji: 'blackjack',
     cat: 'goof',
@@ -25463,6 +25615,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'videopoker',
+    lightBoard: true,   // light pay table + card faces would invert to solid black under the figure flip
     title: 'Video Poker',
     emoji: 'cards',
     cat: 'goof',
@@ -25564,6 +25717,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'pig', title: 'Press Your Luck', emoji: 'dice', cat: 'goof', order: 46,
+    lightBoard: true,   // light dice icon would invert to solid black under the figure flip
     blurb: 'Roll to build up points, but a single 1 wipes the whole turn. Bank before that happens. First to 100 beats your deskmate.',
     scoreLabel: 'Win streak', tags: ['dice', 'luck', 'press-your-luck'],
     how: [
@@ -25647,6 +25801,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'higherlower', title: 'Higher or Lower', emoji: 'cards', cat: 'goof', order: 47,
+    lightBoard: true,   // light card faces would invert to solid black under the figure flip
     blurb: 'One card is up. Guess whether the next is higher or lower and build a streak. A tie counts as a win.',
     scoreLabel: 'Best streak', tags: ['cards', 'luck', 'quick'],
     how: [
@@ -25752,6 +25907,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'stapler', title: 'Staple Empire', emoji: 'busywork', cat: 'goof', order: 48,
+    lightBoard: true,   // plain text on the page — the invert filter washed the hint line out
     blurb: 'An office idle clicker. Click the stapler for staples, then spend them on interns and machines that staple for you while the number climbs on its own.',
     scoreLabel: 'Staples made', tags: ['idle', 'clicker', 'numbers'],
     formatScore: (v) => (function f(n) { if (n < 1000) return String(n); const u = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx']; let i = 0; while (n >= 1000 && i < u.length - 1) { n /= 1000; i++; } return (n < 10 ? n.toFixed(2) : n < 100 ? n.toFixed(1) : Math.floor(n)) + u[i]; })(v),
@@ -25870,6 +26026,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'slots', title: 'Quarterly Slots', emoji: 'coffee', cat: 'goof', order: 49,
+    lightBoard: true,   // light reel windows would invert to solid black under the figure flip
     blurb: 'A three-reel fruit machine stocked with office supplies. A pair just gives your stake back; three of a kind is the money, and three 7s is the jackpot. The house keeps a thin edge — no real money, only your dignity.',
     scoreLabel: 'Best credits', tags: ['luck', 'slots', 'toy'],
     how: [
@@ -26000,6 +26157,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'yahtzee', title: 'Deadline Dice', emoji: 'dice', cat: 'goof', order: 50,
+    lightBoard: true,   // light dice buttons + scoring rows would invert to dark slabs under the figure flip
     blurb: 'Yahtzee under an office coat of paint. Five dice, three rolls a turn, thirteen boxes to fill. Chase the straights and the five-of-a-kind for your best total.',
     scoreLabel: 'Best total', tags: ['dice', 'yahtzee', 'classic'],
     how: [
@@ -26527,6 +26685,7 @@ body.docmode .doc-figcap {
 
   Arcade.register({
     id: 'soundboard',
+    lightBoard: true,   // plain light button grid, not a dark canvas scene
     usesDigits: true,    // number keys fire pads — the "1 = Docs" shortcut yields here
     usesLetters: true,   // and q/w/e/r/t/a/s/d/f fire pads too — keep 'r' from restarting
     title: 'Soundboard',

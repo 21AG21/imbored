@@ -306,6 +306,9 @@
 
   Arcade.register({
     id: 'blackjack',
+    // NOT lightBoard: the felt table is a genuinely dark backdrop that needs
+    // the normal invert (dark -> light); only the light card faces need
+    // protecting from it, handled in css/arcade.css via a .bj-card counter-invert.
     title: 'Twenty-One',
     emoji: 'blackjack',
     cat: 'goof',

@@ -86,11 +86,11 @@
       const Y = (f) => hh - m - f * (hh - m - 8);
       pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(1)); pctx.stroke();
-      pctx.fillStyle = '#8a8064'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('sync r', 2, 12); pctx.fillText('coupling K', w - 60, hh - 8);
       const kc = 1.6 * SIGMA;
       pctx.strokeStyle = 'rgba(232,64,42,.7)'; pctx.setLineDash([4, 3]); pctx.beginPath(); pctx.moveTo(X(kc), Y(0)); pctx.lineTo(X(kc), Y(1)); pctx.stroke(); pctx.setLineDash([]);
-      pctx.fillStyle = '#e8402a'; pctx.fillText('K_c~' + kc.toFixed(1), X(kc) + 3, Y(1) + 10);
+      pctx.fillStyle = '#f2ede0'; pctx.fillText('K_c~' + kc.toFixed(1), X(kc) + 3, Y(1) + 10);
       if (ref.length) { pctx.strokeStyle = '#ffcb1f'; pctx.lineWidth = 2; pctx.beginPath(); ref.forEach((s, i) => { const px = X(s.K), py = Y(s.r); i ? pctx.lineTo(px, py) : pctx.moveTo(px, py); }); pctx.stroke(); }
       for (const s of samples) { pctx.fillStyle = '#6fcf2f'; pctx.beginPath(); pctx.arc(X(s.K), Y(s.r), 3, 0, 7); pctx.fill(); }
       pctx.fillStyle = '#fffdf3'; pctx.beginPath(); pctx.moveTo(X(K), Y(0) + 2); pctx.lineTo(X(K) - 4, Y(0) + 9); pctx.lineTo(X(K) + 4, Y(0) + 9); pctx.fill();
@@ -109,8 +109,11 @@
       const o = order();
       ctx.strokeStyle = '#fffdf3'; ctx.lineWidth = 3;
       ctx.beginPath(); ctx.moveTo(CX, CY); ctx.lineTo(CX + Math.cos(o.psi) * RC * o.r, CY + Math.sin(o.psi) * RC * o.r); ctx.stroke();
+      /* readout sits below the circle, not at its centre — the arrow
+         radiates outward FROM the centre in whatever direction psi points,
+         so text placed there gets drawn through more often than not */
       ctx.fillStyle = '#fffdf3'; ctx.font = 'bold 26px system-ui'; ctx.textAlign = 'center';
-      ctx.fillText('r = ' + o.r.toFixed(2), CX, CY + 6); ctx.textAlign = 'left';
+      ctx.fillText('r = ' + o.r.toFixed(2), CX, CY + RC + 34); ctx.textAlign = 'left';
       drawPlot();
     }
 
