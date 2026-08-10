@@ -61,6 +61,11 @@
       const k = (keys.get('ArrowLeft', 'a', 'A') ? -1 : 0) + (keys.get('ArrowRight', 'd', 'D') ? 1 : 0);
       const dir = k || pointerDir;
       if (dir) facing = dir;
+      // the on-canvas prompt and the how-to text both promise a key press
+      // starts the climb, but only pointerdown ever set `started` — a
+      // keyboard-only player following the game's own instructions saw
+      // nothing happen at all
+      if (k) started = true;
       px += dir * 320 * dt;
       if (px < -R) px = W + R; else if (px > W + R) px = -R;
 

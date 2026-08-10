@@ -173,18 +173,21 @@
     }
 
     function chord(x, y) {
+      if (dead || won) return;
       const c = grid[idx(x, y)];
       if (!c.open || !c.n) return;
       let f = 0;
       for (const [nx, ny] of nbrs(x, y)) if (grid[idx(nx, ny)].flag) f++;
       if (f !== c.n) return;
       for (const [nx, ny] of nbrs(x, y)) {
+        if (dead || won) break;   // a mine among the neighbours may have just ended the game
         const nc = grid[idx(nx, ny)];
         if (!nc.flag && !nc.open) dig(nx, ny);
       }
     }
 
     function dig(x, y) {
+      if (dead || won) return;
       const c = grid[idx(x, y)];
       if (c.flag) return;
       if (c.open) { chord(x, y); return; }
@@ -212,7 +215,7 @@
       banner.style.display = '';
       banner.replaceChildren(
         h('h3', null, '#REF!'),
-        h('p', null, 'That cell was a mine. ' + (M - flags) + ' still unflagged. The formula chain broke.'),
+        h('p', null, 'That cell was a mine. ' + Math.max(0, M - flags) + ' still unflagged. The formula chain broke.'),
         h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'New sheet'));
     }
 

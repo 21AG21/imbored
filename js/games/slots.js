@@ -88,8 +88,8 @@
             api.sfx.bad(); msg.textContent = credits <= 0 ? 'Out of credits. Cash out to restart.' : 'Nothing. Spin again.';
             msg.className = 'slot-msg' + (credits <= 0 ? ' lose' : '');
           }
+          sync();   // sync() is what actually raises `best` to the new credits total
           api.submit(best);
-          sync();
         }
       }, 70);
       bagg.add(() => clearInterval(iv));

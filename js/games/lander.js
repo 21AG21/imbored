@@ -128,6 +128,10 @@
       ship.x += ship.vx * dt; ship.y += ship.vy * dt;
       if (ship.x < 6) { ship.x = 6; ship.vx = Math.abs(ship.vx) * 0.4; }
       if (ship.x > W - 6) { ship.x = W - 6; ship.vx = -Math.abs(ship.vx) * 0.4; }
+      // thrust held upright easily beats gravity, so nothing else stopped the
+      // ship from flying straight off the top of the canvas and becoming both
+      // invisible and uncontrollable until it drifted back down
+      if (ship.y < 12) { ship.y = 12; ship.vy = Math.abs(ship.vy) * 0.4; }
 
       const gy = groundYAt(ship.x);
       if (ship.y + 12 >= gy) {

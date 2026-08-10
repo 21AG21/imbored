@@ -134,18 +134,21 @@
     }
 
     function chord(x, y) {
+      if (dead || won) return;
       const c = grid[idx(x, y)];
       if (!c.open || !c.n) return;
       let f = 0;
       for (const [nx, ny] of nbrs(x, y)) if (grid[idx(nx, ny)].flag) f++;
       if (f !== c.n) return;
       for (const [nx, ny] of nbrs(x, y)) {
+        if (dead || won) break;   // a mine among the neighbours may have just ended the game
         const nc = grid[idx(nx, ny)];
         if (!nc.flag && !nc.open) dig(nx, ny);
       }
     }
 
     function dig(x, y) {
+      if (dead || won) return;
       const c = grid[idx(x, y)];
       if (c.flag) return;
       if (c.open) { chord(x, y); return; }
@@ -175,7 +178,7 @@
       banner.style.display = '';
       banner.replaceChildren(
         h('h3', null, 'Boom.'),
-        h('p', null, 'That one was a mine. ' + (M - flags) + ' left unfound.'),
+        h('p', null, 'That one was a mine. ' + Math.max(0, M - flags) + ' left unfound.'),
         h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'New board'));
     }
 
@@ -203,7 +206,7 @@
     }
 
     function syncPills() {
-      pMines.textContent = 'Unflagged: ' + (M - flags);
+      pMines.textContent = 'Unflagged: ' + Math.max(0, M - flags);
       pTime.textContent = '⏱ ' + (started ? elapsed() : 0);
       const b = api.load('time:' + diff, null);
       pBest.textContent = b == null ? 'no time yet' : 'best ' + b + 's';

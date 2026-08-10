@@ -225,7 +225,10 @@
       if (legalMoves.length === 0) { finish(turn); return; }
       if (mode === '1p' && turn === BLK && !done) {
         busy = true; selected = null; render();
-        bagg.timer(aiTurn, 320);
+        // bagg.timer is a repeating setInterval; the CPU only ever gets one
+        // move per turn, so clear it the instant it fires or it keeps
+        // moving Black on every tick forever, stealing Red's turns.
+        const aiId = bagg.timer(() => { clearInterval(aiId); aiTurn(); }, 320);
         return;
       }
       busy = false;

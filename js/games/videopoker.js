@@ -110,6 +110,7 @@
       if (phase === 'deal') {
         if (credits < bet) { api.status('Not enough credits for that bet. Lower the bet or add credits.'); return; }
         credits -= bet;
+        save();   // persist the wager immediately — leaving mid-hand must not refund it
         deck = freshDeck();
         hand = [deck.pop(), deck.pop(), deck.pop(), deck.pop(), deck.pop()];
         held = [false, false, false, false, false];

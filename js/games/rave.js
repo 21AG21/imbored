@@ -122,6 +122,13 @@
     let overlay = null, raf = 0;
     const screamer = makeScreamer();
 
+    // scoreLabel promises a "Parties thrown" count but nothing ever recorded
+    // one — each time this fires counts as one, right away, so quitting via
+    // Shift+S (which never runs any cleanup logic) still gets it saved
+    const parties = api.load('parties', 0) + 1;
+    api.save('parties', parties);
+    api.submit(parties);
+
     /* every pointer is now just a plain white circle — identical dots, so there
        is nothing distinctive about yours to latch onto in the swarm */
     function drawDot(ctx, x, y, r) {

@@ -40,12 +40,16 @@
   --lime:    #6fcf2f;
   --tomato:  #e8402a;
 
-  /* text that sits ON a bright accent surface. Dark reads well on every theme's
-     banana/lime except the few that remap them dark (graphite), which override
-     these. --focus is the keyboard ring, overridable where grape collapses into
-     a theme's neutrals. */
-  --onbanana: #1d1722;
-  --onlime:   #1d1722;
+  /* text that sits ON a bright accent surface (category tags, primary buttons,
+     the "best" pill). Computed per theme as whichever of pure black/white
+     clears WCAG AA (4.5:1) against that theme's accent — every theme overrides
+     the ones where its own accent needs the other choice. --focus is the
+     keyboard ring, overridable where grape collapses into a theme's neutrals. */
+  --onteal:    #000000;
+  --onhotpink: #000000;
+  --onbanana:  #000000;
+  --ongrape:   #ffffff;
+  --onlime:    #000000;
   --focus:    var(--grape);
 
   /* the CRT the games live inside */
@@ -230,7 +234,7 @@ kbd {
     -1px  1px 0 var(--ink);
   transform: skewX(-5deg);
 }
-.hero h1 .accent { color: var(--hotpink); display: inline-block; transform: rotate(-2deg); }
+.hero h1 .accent { color: var(--onbanana); display: inline-block; transform: rotate(-2deg); }   /* the hero panel is always banana */
 .hero p {
   position: relative;
   margin: 0;
@@ -252,9 +256,9 @@ kbd {
   line-height: 1;
   z-index: 2;
 }
-.sticker.s1 { top: 12px; right: 14px; transform: rotate(9deg); background: var(--hotpink); color: var(--label); }
-.sticker.s2 { bottom: 14px; right: 96px; transform: rotate(-6deg); background: var(--teal); color: var(--label); }
-.sticker.s3 { top: 58px; right: 30px; transform: rotate(-3deg); background: var(--lime); }
+.sticker.s1 { top: 12px; right: 14px; transform: rotate(9deg); background: var(--hotpink); color: var(--onhotpink); }
+.sticker.s2 { bottom: 14px; right: 96px; transform: rotate(-6deg); background: var(--teal); color: var(--onteal); }
+.sticker.s3 { top: 58px; right: 30px; transform: rotate(-3deg); background: var(--lime); color: var(--onlime); }
 @media (max-width: 760px) { .sticker.s2, .sticker.s3 { display: none; } }
 
 /* ---------------- category tabs ---------------- */
@@ -359,11 +363,11 @@ kbd {
   transform: rotate(4deg);
   color: var(--ink);
 }
-.cat-sim    .card-cat { background: var(--teal); color: var(--label); }
-.cat-puzzle .card-cat { background: var(--banana); }
-.cat-action .card-cat { background: var(--hotpink); color: var(--label); }
-.cat-brain  .card-cat { background: var(--lime); }
-.cat-goof   .card-cat { background: var(--grape); color: var(--label); }
+.cat-sim    .card-cat { background: var(--teal); color: var(--onteal); }
+.cat-puzzle .card-cat { background: var(--banana); color: var(--onbanana); }
+.cat-action .card-cat { background: var(--hotpink); color: var(--onhotpink); }
+.cat-brain  .card-cat { background: var(--lime); color: var(--onlime); }
+.cat-goof   .card-cat { background: var(--grape); color: var(--ongrape); }
 
 .card-title { margin: 2px 0 0; font-size: 19px; line-height: 1.02; }
 .card-blurb { margin: 0; font-size: 11.5px; line-height: 1.45; color: var(--ink2); flex: 1; }
@@ -4024,7 +4028,9 @@ body.docmode .doc-figcap {
         '--chrome': '#c9c3b4', '--shade': '#9a9280', '--hilite': '#ffffff',
         '--ink': '#191713', '--ink2': '#46423a', '--ink3': '#6d685c',
         '--teal': '#2f7c86', '--hotpink': '#b25574', '--banana': '#d7a13c',
-        '--grape': '#33506c', '--lime': '#4e8a52', '--tomato': '#bf4a34'
+        '--grape': '#33506c', '--lime': '#4e8a52', '--tomato': '#bf4a34',
+        '--onteal': '#ffffff', '--onhotpink': '#ffffff', '--onbanana': '#000000',
+        '--ongrape': '#ffffff', '--onlime': '#000000'
       }
     },
     mono: {
@@ -4034,7 +4040,9 @@ body.docmode .doc-figcap {
         '--chrome': '#d3d3d8', '--shade': '#9f9fa6', '--hilite': '#ffffff',
         '--ink': '#151518', '--ink2': '#45454b', '--ink3': '#6e6e75',
         '--teal': '#2b8a97', '--hotpink': '#5f6b7a', '--banana': '#d3ddec',
-        '--grape': '#1f242e', '--lime': '#cdd8cf', '--tomato': '#d6493a'
+        '--grape': '#1f242e', '--lime': '#cdd8cf', '--tomato': '#d6493a',
+        '--onteal': '#000000', '--onhotpink': '#ffffff', '--onbanana': '#000000',
+        '--ongrape': '#ffffff', '--onlime': '#000000'
       }
     },
     ink: {
@@ -4044,7 +4052,9 @@ body.docmode .doc-figcap {
         '--chrome': '#a99f86', '--shade': '#726a52', '--hilite': '#fffef8',
         '--ink': '#14110b', '--ink2': '#3b3527', '--ink3': '#675e48',
         '--teal': '#0c8a97', '--hotpink': '#df2d78', '--banana': '#f2b60c',
-        '--grape': '#582b84', '--lime': '#4e9c37', '--tomato': '#d83a22'
+        '--grape': '#582b84', '--lime': '#4e9c37', '--tomato': '#d83a22',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#ffffff', '--onlime': '#000000'
       }
     },
     graphite: {
@@ -4059,6 +4069,7 @@ body.docmode .doc-figcap {
         /* banana is a dark blue here, and grape collapses into the neutrals, so
            flip the on-banana text light and give the focus ring its own bright teal */
         '--onbanana': '#f2f4f8', '--focus': '#33c0d0',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--ongrape': '#ffffff', '--onlime': '#000000',
         '--crt': '#0a0d12'
       }
     },
@@ -4076,6 +4087,8 @@ body.docmode .doc-figcap {
         '--grape': '#584a34', '--lime': '#a7bd6a', '--tomato': '#df8a5f',
         /* grape is a muted brown here, so the focus ring needs its own warm glow */
         '--focus': '#e4ba62',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#ffffff', '--onlime': '#000000',
         '--crt': '#160f08'
       }
     },
@@ -4111,7 +4124,9 @@ body.docmode .doc-figcap {
         '--chrome': '#92aec8', '--shade': '#5a7690', '--hilite': '#ffffff',
         '--ink': '#12283a', '--ink2': '#34506a', '--ink3': '#456783', '--brandink': '#14110b',
         '--teal': '#1aa6c0', '--hotpink': '#e05a9a', '--banana': '#e0c84a',
-        '--grape': '#7a7ad0', '--lime': '#5ac09a', '--tomato': '#e06a5a'
+        '--grape': '#7a7ad0', '--lime': '#5ac09a', '--tomato': '#e06a5a',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#000000', '--onlime': '#000000'
       }
     },
     pumpkin: {
@@ -4121,7 +4136,9 @@ body.docmode .doc-figcap {
         '--chrome': '#c79a68', '--shade': '#9a6a3a', '--hilite': '#fffbf0',
         '--ink': '#3a1e0e', '--ink2': '#6a3e22', '--ink3': '#7f5535', '--brandink': '#fbf1df',
         '--teal': '#2a9a8a', '--hotpink': '#e0567a', '--banana': '#f0a828',
-        '--grape': '#8f549c', '--lime': '#8aa82a', '--tomato': '#e0492a'
+        '--grape': '#8f549c', '--lime': '#8aa82a', '--tomato': '#e0492a',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#ffffff', '--onlime': '#000000'
       }
     },
     bubblegum: {
@@ -4131,7 +4148,9 @@ body.docmode .doc-figcap {
         '--chrome': '#d896b8', '--shade': '#a85f88', '--hilite': '#ffffff',
         '--ink': '#3a0f28', '--ink2': '#6a2450', '--ink3': '#894470', '--brandink': '#14110b',
         '--teal': '#2ac0d0', '--hotpink': '#ff3d97', '--banana': '#ffd23a',
-        '--grape': '#a05fd8', '--lime': '#6fdf6a', '--tomato': '#ff6a5a'
+        '--grape': '#a05fd8', '--lime': '#6fdf6a', '--tomato': '#ff6a5a',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#000000', '--onlime': '#000000'
       }
     },
     newsprint: {
@@ -4141,7 +4160,9 @@ body.docmode .doc-figcap {
         '--chrome': '#b0a480', '--shade': '#7a6e50', '--hilite': '#fffef8',
         '--ink': '#201a12', '--ink2': '#4a4030', '--ink3': '#6a5f4b',
         '--teal': '#4a7a6a', '--hotpink': '#b05a6a', '--banana': '#c89a3a',
-        '--grape': '#6a5a8a', '--lime': '#7a8a3a', '--tomato': '#b0503a'
+        '--grape': '#6a5a8a', '--lime': '#7a8a3a', '--tomato': '#b0503a',
+        '--onteal': '#ffffff', '--onhotpink': '#ffffff', '--onbanana': '#000000',
+        '--ongrape': '#ffffff', '--onlime': '#000000'
       }
     },
     noir: {
@@ -4151,7 +4172,9 @@ body.docmode .doc-figcap {
         '--chrome': '#949494', '--shade': '#626262', '--hilite': '#ffffff',
         '--ink': '#161616', '--ink2': '#444444', '--ink3': '#555555',
         '--teal': '#8a8a8a', '--hotpink': '#d83a3a', '--banana': '#b0b0b0',
-        '--grape': '#5a5a5a', '--lime': '#9a9a9a', '--tomato': '#b02020'
+        '--grape': '#5a5a5a', '--lime': '#9a9a9a', '--tomato': '#b02020',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#ffffff', '--onlime': '#000000'
       }
     },
     dusk: {
@@ -4178,6 +4201,8 @@ body.docmode .doc-figcap {
         '--ink': '#7dff92', '--ink2': '#46b862', '--ink3': '#3d9252',
         '--teal': '#29e0c2', '--hotpink': '#ff5f8f', '--banana': '#b6ff4a',
         '--grape': '#4dffab', '--lime': '#57ff42', '--tomato': '#ff8a3a',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#000000', '--onlime': '#000000',
         '--crt': '#04120a'
       }
     },
@@ -4189,6 +4214,8 @@ body.docmode .doc-figcap {
         '--ink': '#ffcf6b', '--ink2': '#d69a3a', '--ink3': '#a67320',
         '--teal': '#ffb02e', '--hotpink': '#ff7a5a', '--banana': '#ffd94a',
         '--grape': '#ff9a3a', '--lime': '#ffe07a', '--tomato': '#ff5a2a',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#000000', '--onlime': '#000000',
         '--crt': '#0f0a03'
       }
     },
@@ -4200,6 +4227,8 @@ body.docmode .doc-figcap {
         '--ink': '#eef4ff', '--ink2': '#b8d4f0', '--ink3': '#86aad0', '--brandink': '#14110b',
         '--teal': '#5fe0ff', '--hotpink': '#ff8ac0', '--banana': '#ffe15a',
         '--grape': '#b08aff', '--lime': '#7affc0', '--tomato': '#ff9a6a',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#000000', '--onlime': '#000000',
         '--crt': '#06172a'
       }
     },
@@ -4211,6 +4240,8 @@ body.docmode .doc-figcap {
         '--ink': '#ffe6ff', '--ink2': '#e0a0e8', '--ink3': '#b070c0', '--brandink': '#14110b',
         '--teal': '#21e6d4', '--hotpink': '#ff4fb0', '--banana': '#ffe15a',
         '--grape': '#a05fff', '--lime': '#5affc0', '--tomato': '#ff6a8a',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#000000', '--onlime': '#000000',
         '--crt': '#120820'
       }
     },
@@ -4222,6 +4253,8 @@ body.docmode .doc-figcap {
         '--ink': '#f0f4e2', '--ink2': '#c4d0a8', '--ink3': '#99ab7e', '--brandink': '#14110b',
         '--teal': '#35b58a', '--hotpink': '#e86a9a', '--banana': '#e8c34a',
         '--grape': '#a07acc', '--lime': '#8fcf3a', '--tomato': '#e0632f',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#000000', '--onlime': '#000000',
         '--crt': '#0e1a0c'
       }
     },
@@ -4233,6 +4266,8 @@ body.docmode .doc-figcap {
         '--ink': '#f4ecff', '--ink2': '#d0b8ee', '--ink3': '#b498d1', '--brandink': '#14110b',
         '--teal': '#3ad0d0', '--hotpink': '#ff6ac0', '--banana': '#ffd84a',
         '--grape': '#c89aff', '--lime': '#9aef5a', '--tomato': '#ff7a5a',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#000000', '--onlime': '#000000',
         '--crt': '#1c0f2c'
       }
     },
@@ -4244,6 +4279,8 @@ body.docmode .doc-figcap {
         '--ink': '#ffe14a', '--ink2': '#c8a82a', '--ink3': '#9a8326',
         '--teal': '#2ac0a0', '--hotpink': '#ff7a3a', '--banana': '#ffd21f',
         '--grape': '#c89aff', '--lime': '#b6e02a', '--tomato': '#ff5a1f',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#000000', '--onlime': '#000000',
         '--crt': '#0d0d06'
       }
     }
@@ -11437,18 +11474,21 @@ body.docmode .doc-figcap {
     }
 
     function chord(x, y) {
+      if (dead || won) return;
       const c = grid[idx(x, y)];
       if (!c.open || !c.n) return;
       let f = 0;
       for (const [nx, ny] of nbrs(x, y)) if (grid[idx(nx, ny)].flag) f++;
       if (f !== c.n) return;
       for (const [nx, ny] of nbrs(x, y)) {
+        if (dead || won) break;   // a mine among the neighbours may have just ended the game
         const nc = grid[idx(nx, ny)];
         if (!nc.flag && !nc.open) dig(nx, ny);
       }
     }
 
     function dig(x, y) {
+      if (dead || won) return;
       const c = grid[idx(x, y)];
       if (c.flag) return;
       if (c.open) { chord(x, y); return; }
@@ -11478,7 +11518,7 @@ body.docmode .doc-figcap {
       banner.style.display = '';
       banner.replaceChildren(
         h('h3', null, 'Boom.'),
-        h('p', null, 'That one was a mine. ' + (M - flags) + ' left unfound.'),
+        h('p', null, 'That one was a mine. ' + Math.max(0, M - flags) + ' left unfound.'),
         h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'New board'));
     }
 
@@ -11506,7 +11546,7 @@ body.docmode .doc-figcap {
     }
 
     function syncPills() {
-      pMines.textContent = 'Unflagged: ' + (M - flags);
+      pMines.textContent = 'Unflagged: ' + Math.max(0, M - flags);
       pTime.textContent = '⏱ ' + (started ? elapsed() : 0);
       const b = api.load('time:' + diff, null);
       pBest.textContent = b == null ? 'no time yet' : 'best ' + b + 's';
@@ -12171,18 +12211,21 @@ body.docmode .doc-figcap {
     }
 
     function chord(x, y) {
+      if (dead || won) return;
       const c = grid[idx(x, y)];
       if (!c.open || !c.n) return;
       let f = 0;
       for (const [nx, ny] of nbrs(x, y)) if (grid[idx(nx, ny)].flag) f++;
       if (f !== c.n) return;
       for (const [nx, ny] of nbrs(x, y)) {
+        if (dead || won) break;   // a mine among the neighbours may have just ended the game
         const nc = grid[idx(nx, ny)];
         if (!nc.flag && !nc.open) dig(nx, ny);
       }
     }
 
     function dig(x, y) {
+      if (dead || won) return;
       const c = grid[idx(x, y)];
       if (c.flag) return;
       if (c.open) { chord(x, y); return; }
@@ -12210,7 +12253,7 @@ body.docmode .doc-figcap {
       banner.style.display = '';
       banner.replaceChildren(
         h('h3', null, '#REF!'),
-        h('p', null, 'That cell was a mine. ' + (M - flags) + ' still unflagged. The formula chain broke.'),
+        h('p', null, 'That cell was a mine. ' + Math.max(0, M - flags) + ' still unflagged. The formula chain broke.'),
         h('button', { class: 'btn primary', type: 'button', onclick: reset }, 'New sheet'));
     }
 
@@ -19489,7 +19532,10 @@ body.docmode .doc-figcap {
       if (legalMoves.length === 0) { finish(turn); return; }
       if (mode === '1p' && turn === BLK && !done) {
         busy = true; selected = null; render();
-        bagg.timer(aiTurn, 320);
+        // bagg.timer is a repeating setInterval; the CPU only ever gets one
+        // move per turn, so clear it the instant it fires or it keeps
+        // moving Black on every tick forever, stealing Red's turns.
+        const aiId = bagg.timer(() => { clearInterval(aiId); aiTurn(); }, 320);
         return;
       }
       busy = false;
@@ -22385,6 +22431,11 @@ body.docmode .doc-figcap {
       const k = (keys.get('ArrowLeft', 'a', 'A') ? -1 : 0) + (keys.get('ArrowRight', 'd', 'D') ? 1 : 0);
       const dir = k || pointerDir;
       if (dir) facing = dir;
+      // the on-canvas prompt and the how-to text both promise a key press
+      // starts the climb, but only pointerdown ever set `started` — a
+      // keyboard-only player following the game's own instructions saw
+      // nothing happen at all
+      if (k) started = true;
       px += dir * 320 * dt;
       if (px < -R) px = W + R; else if (px > W + R) px = -R;
 
@@ -24174,6 +24225,10 @@ body.docmode .doc-figcap {
       ship.x += ship.vx * dt; ship.y += ship.vy * dt;
       if (ship.x < 6) { ship.x = 6; ship.vx = Math.abs(ship.vx) * 0.4; }
       if (ship.x > W - 6) { ship.x = W - 6; ship.vx = -Math.abs(ship.vx) * 0.4; }
+      // thrust held upright easily beats gravity, so nothing else stopped the
+      // ship from flying straight off the top of the canvas and becoming both
+      // invisible and uncontrollable until it drifted back down
+      if (ship.y < 12) { ship.y = 12; ship.vy = Math.abs(ship.vy) * 0.4; }
 
       const gy = groundYAt(ship.x);
       if (ship.y + 12 >= gy) {
@@ -25668,6 +25723,7 @@ body.docmode .doc-figcap {
       if (phase === 'deal') {
         if (credits < bet) { api.status('Not enough credits for that bet. Lower the bet or add credits.'); return; }
         credits -= bet;
+        save();   // persist the wager immediately — leaving mid-hand must not refund it
         deck = freshDeck();
         hand = [deck.pop(), deck.pop(), deck.pop(), deck.pop(), deck.pop()];
         held = [false, false, false, false, false];
@@ -26145,8 +26201,8 @@ body.docmode .doc-figcap {
             api.sfx.bad(); msg.textContent = credits <= 0 ? 'Out of credits. Cash out to restart.' : 'Nothing. Spin again.';
             msg.className = 'slot-msg' + (credits <= 0 ? ' lose' : '');
           }
+          sync();   // sync() is what actually raises `best` to the new credits total
           api.submit(best);
-          sync();
         }
       }, 70);
       bagg.add(() => clearInterval(iv));
@@ -26590,6 +26646,13 @@ body.docmode .doc-figcap {
     const bagg = Engine.bag();
     let overlay = null, raf = 0;
     const screamer = makeScreamer();
+
+    // scoreLabel promises a "Parties thrown" count but nothing ever recorded
+    // one — each time this fires counts as one, right away, so quitting via
+    // Shift+S (which never runs any cleanup logic) still gets it saved
+    const parties = api.load('parties', 0) + 1;
+    api.save('parties', parties);
+    api.submit(parties);
 
     /* every pointer is now just a plain white circle — identical dots, so there
        is nothing distinctive about yours to latch onto in the swarm */
@@ -27792,7 +27855,12 @@ body.docmode .doc-figcap {
     }
 
     api.button('Restart round', startRound);
-    api.button('Replay hole', () => { total -= 0; loadHole(hole); });
+    api.button('Replay hole', () => {
+      // sink() already folded this hole's strokes into total; undo that
+      // before resetting it, or sinking it again double-counts the hole
+      if (sunk) total -= strokes;
+      loadHole(hole);
+    });
 
     startRound();
     bagg.add(Engine.loop((dt) => { update(dt); draw(); }));

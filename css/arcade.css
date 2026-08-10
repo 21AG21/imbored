@@ -25,12 +25,16 @@
   --lime:    #6fcf2f;
   --tomato:  #e8402a;
 
-  /* text that sits ON a bright accent surface. Dark reads well on every theme's
-     banana/lime except the few that remap them dark (graphite), which override
-     these. --focus is the keyboard ring, overridable where grape collapses into
-     a theme's neutrals. */
-  --onbanana: #1d1722;
-  --onlime:   #1d1722;
+  /* text that sits ON a bright accent surface (category tags, primary buttons,
+     the "best" pill). Computed per theme as whichever of pure black/white
+     clears WCAG AA (4.5:1) against that theme's accent — every theme overrides
+     the ones where its own accent needs the other choice. --focus is the
+     keyboard ring, overridable where grape collapses into a theme's neutrals. */
+  --onteal:    #000000;
+  --onhotpink: #000000;
+  --onbanana:  #000000;
+  --ongrape:   #ffffff;
+  --onlime:    #000000;
   --focus:    var(--grape);
 
   /* the CRT the games live inside */
@@ -215,7 +219,7 @@ kbd {
     -1px  1px 0 var(--ink);
   transform: skewX(-5deg);
 }
-.hero h1 .accent { color: var(--hotpink); display: inline-block; transform: rotate(-2deg); }
+.hero h1 .accent { color: var(--onbanana); display: inline-block; transform: rotate(-2deg); }   /* the hero panel is always banana */
 .hero p {
   position: relative;
   margin: 0;
@@ -237,9 +241,9 @@ kbd {
   line-height: 1;
   z-index: 2;
 }
-.sticker.s1 { top: 12px; right: 14px; transform: rotate(9deg); background: var(--hotpink); color: var(--label); }
-.sticker.s2 { bottom: 14px; right: 96px; transform: rotate(-6deg); background: var(--teal); color: var(--label); }
-.sticker.s3 { top: 58px; right: 30px; transform: rotate(-3deg); background: var(--lime); }
+.sticker.s1 { top: 12px; right: 14px; transform: rotate(9deg); background: var(--hotpink); color: var(--onhotpink); }
+.sticker.s2 { bottom: 14px; right: 96px; transform: rotate(-6deg); background: var(--teal); color: var(--onteal); }
+.sticker.s3 { top: 58px; right: 30px; transform: rotate(-3deg); background: var(--lime); color: var(--onlime); }
 @media (max-width: 760px) { .sticker.s2, .sticker.s3 { display: none; } }
 
 /* ---------------- category tabs ---------------- */
@@ -344,11 +348,11 @@ kbd {
   transform: rotate(4deg);
   color: var(--ink);
 }
-.cat-sim    .card-cat { background: var(--teal); color: var(--label); }
-.cat-puzzle .card-cat { background: var(--banana); }
-.cat-action .card-cat { background: var(--hotpink); color: var(--label); }
-.cat-brain  .card-cat { background: var(--lime); }
-.cat-goof   .card-cat { background: var(--grape); color: var(--label); }
+.cat-sim    .card-cat { background: var(--teal); color: var(--onteal); }
+.cat-puzzle .card-cat { background: var(--banana); color: var(--onbanana); }
+.cat-action .card-cat { background: var(--hotpink); color: var(--onhotpink); }
+.cat-brain  .card-cat { background: var(--lime); color: var(--onlime); }
+.cat-goof   .card-cat { background: var(--grape); color: var(--ongrape); }
 
 .card-title { margin: 2px 0 0; font-size: 19px; line-height: 1.02; }
 .card-blurb { margin: 0; font-size: 11.5px; line-height: 1.45; color: var(--ink2); flex: 1; }

@@ -336,7 +336,12 @@
     }
 
     api.button('Restart round', startRound);
-    api.button('Replay hole', () => { total -= 0; loadHole(hole); });
+    api.button('Replay hole', () => {
+      // sink() already folded this hole's strokes into total; undo that
+      // before resetting it, or sinking it again double-counts the hole
+      if (sunk) total -= strokes;
+      loadHole(hole);
+    });
 
     startRound();
     bagg.add(Engine.loop((dt) => { update(dt); draw(); }));

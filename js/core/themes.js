@@ -22,7 +22,9 @@
         '--chrome': '#c9c3b4', '--shade': '#9a9280', '--hilite': '#ffffff',
         '--ink': '#191713', '--ink2': '#46423a', '--ink3': '#6d685c',
         '--teal': '#2f7c86', '--hotpink': '#b25574', '--banana': '#d7a13c',
-        '--grape': '#33506c', '--lime': '#4e8a52', '--tomato': '#bf4a34'
+        '--grape': '#33506c', '--lime': '#4e8a52', '--tomato': '#bf4a34',
+        '--onteal': '#ffffff', '--onhotpink': '#ffffff', '--onbanana': '#000000',
+        '--ongrape': '#ffffff', '--onlime': '#000000'
       }
     },
     mono: {
@@ -32,7 +34,9 @@
         '--chrome': '#d3d3d8', '--shade': '#9f9fa6', '--hilite': '#ffffff',
         '--ink': '#151518', '--ink2': '#45454b', '--ink3': '#6e6e75',
         '--teal': '#2b8a97', '--hotpink': '#5f6b7a', '--banana': '#d3ddec',
-        '--grape': '#1f242e', '--lime': '#cdd8cf', '--tomato': '#d6493a'
+        '--grape': '#1f242e', '--lime': '#cdd8cf', '--tomato': '#d6493a',
+        '--onteal': '#000000', '--onhotpink': '#ffffff', '--onbanana': '#000000',
+        '--ongrape': '#ffffff', '--onlime': '#000000'
       }
     },
     ink: {
@@ -42,7 +46,9 @@
         '--chrome': '#a99f86', '--shade': '#726a52', '--hilite': '#fffef8',
         '--ink': '#14110b', '--ink2': '#3b3527', '--ink3': '#675e48',
         '--teal': '#0c8a97', '--hotpink': '#df2d78', '--banana': '#f2b60c',
-        '--grape': '#582b84', '--lime': '#4e9c37', '--tomato': '#d83a22'
+        '--grape': '#582b84', '--lime': '#4e9c37', '--tomato': '#d83a22',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#ffffff', '--onlime': '#000000'
       }
     },
     graphite: {
@@ -57,6 +63,7 @@
         /* banana is a dark blue here, and grape collapses into the neutrals, so
            flip the on-banana text light and give the focus ring its own bright teal */
         '--onbanana': '#f2f4f8', '--focus': '#33c0d0',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--ongrape': '#ffffff', '--onlime': '#000000',
         '--crt': '#0a0d12'
       }
     },
@@ -74,6 +81,8 @@
         '--grape': '#584a34', '--lime': '#a7bd6a', '--tomato': '#df8a5f',
         /* grape is a muted brown here, so the focus ring needs its own warm glow */
         '--focus': '#e4ba62',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#ffffff', '--onlime': '#000000',
         '--crt': '#160f08'
       }
     },
@@ -109,7 +118,9 @@
         '--chrome': '#92aec8', '--shade': '#5a7690', '--hilite': '#ffffff',
         '--ink': '#12283a', '--ink2': '#34506a', '--ink3': '#456783', '--brandink': '#14110b',
         '--teal': '#1aa6c0', '--hotpink': '#e05a9a', '--banana': '#e0c84a',
-        '--grape': '#7a7ad0', '--lime': '#5ac09a', '--tomato': '#e06a5a'
+        '--grape': '#7a7ad0', '--lime': '#5ac09a', '--tomato': '#e06a5a',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#000000', '--onlime': '#000000'
       }
     },
     pumpkin: {
@@ -119,7 +130,9 @@
         '--chrome': '#c79a68', '--shade': '#9a6a3a', '--hilite': '#fffbf0',
         '--ink': '#3a1e0e', '--ink2': '#6a3e22', '--ink3': '#7f5535', '--brandink': '#fbf1df',
         '--teal': '#2a9a8a', '--hotpink': '#e0567a', '--banana': '#f0a828',
-        '--grape': '#8f549c', '--lime': '#8aa82a', '--tomato': '#e0492a'
+        '--grape': '#8f549c', '--lime': '#8aa82a', '--tomato': '#e0492a',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#ffffff', '--onlime': '#000000'
       }
     },
     bubblegum: {
@@ -129,7 +142,9 @@
         '--chrome': '#d896b8', '--shade': '#a85f88', '--hilite': '#ffffff',
         '--ink': '#3a0f28', '--ink2': '#6a2450', '--ink3': '#894470', '--brandink': '#14110b',
         '--teal': '#2ac0d0', '--hotpink': '#ff3d97', '--banana': '#ffd23a',
-        '--grape': '#a05fd8', '--lime': '#6fdf6a', '--tomato': '#ff6a5a'
+        '--grape': '#a05fd8', '--lime': '#6fdf6a', '--tomato': '#ff6a5a',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#000000', '--onlime': '#000000'
       }
     },
     newsprint: {
@@ -139,7 +154,9 @@
         '--chrome': '#b0a480', '--shade': '#7a6e50', '--hilite': '#fffef8',
         '--ink': '#201a12', '--ink2': '#4a4030', '--ink3': '#6a5f4b',
         '--teal': '#4a7a6a', '--hotpink': '#b05a6a', '--banana': '#c89a3a',
-        '--grape': '#6a5a8a', '--lime': '#7a8a3a', '--tomato': '#b0503a'
+        '--grape': '#6a5a8a', '--lime': '#7a8a3a', '--tomato': '#b0503a',
+        '--onteal': '#ffffff', '--onhotpink': '#ffffff', '--onbanana': '#000000',
+        '--ongrape': '#ffffff', '--onlime': '#000000'
       }
     },
     noir: {
@@ -149,7 +166,9 @@
         '--chrome': '#949494', '--shade': '#626262', '--hilite': '#ffffff',
         '--ink': '#161616', '--ink2': '#444444', '--ink3': '#555555',
         '--teal': '#8a8a8a', '--hotpink': '#d83a3a', '--banana': '#b0b0b0',
-        '--grape': '#5a5a5a', '--lime': '#9a9a9a', '--tomato': '#b02020'
+        '--grape': '#5a5a5a', '--lime': '#9a9a9a', '--tomato': '#b02020',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#ffffff', '--onlime': '#000000'
       }
     },
     dusk: {
@@ -176,6 +195,8 @@
         '--ink': '#7dff92', '--ink2': '#46b862', '--ink3': '#3d9252',
         '--teal': '#29e0c2', '--hotpink': '#ff5f8f', '--banana': '#b6ff4a',
         '--grape': '#4dffab', '--lime': '#57ff42', '--tomato': '#ff8a3a',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#000000', '--onlime': '#000000',
         '--crt': '#04120a'
       }
     },
@@ -187,6 +208,8 @@
         '--ink': '#ffcf6b', '--ink2': '#d69a3a', '--ink3': '#a67320',
         '--teal': '#ffb02e', '--hotpink': '#ff7a5a', '--banana': '#ffd94a',
         '--grape': '#ff9a3a', '--lime': '#ffe07a', '--tomato': '#ff5a2a',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#000000', '--onlime': '#000000',
         '--crt': '#0f0a03'
       }
     },
@@ -198,6 +221,8 @@
         '--ink': '#eef4ff', '--ink2': '#b8d4f0', '--ink3': '#86aad0', '--brandink': '#14110b',
         '--teal': '#5fe0ff', '--hotpink': '#ff8ac0', '--banana': '#ffe15a',
         '--grape': '#b08aff', '--lime': '#7affc0', '--tomato': '#ff9a6a',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#000000', '--onlime': '#000000',
         '--crt': '#06172a'
       }
     },
@@ -209,6 +234,8 @@
         '--ink': '#ffe6ff', '--ink2': '#e0a0e8', '--ink3': '#b070c0', '--brandink': '#14110b',
         '--teal': '#21e6d4', '--hotpink': '#ff4fb0', '--banana': '#ffe15a',
         '--grape': '#a05fff', '--lime': '#5affc0', '--tomato': '#ff6a8a',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#000000', '--onlime': '#000000',
         '--crt': '#120820'
       }
     },
@@ -220,6 +247,8 @@
         '--ink': '#f0f4e2', '--ink2': '#c4d0a8', '--ink3': '#99ab7e', '--brandink': '#14110b',
         '--teal': '#35b58a', '--hotpink': '#e86a9a', '--banana': '#e8c34a',
         '--grape': '#a07acc', '--lime': '#8fcf3a', '--tomato': '#e0632f',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#000000', '--onlime': '#000000',
         '--crt': '#0e1a0c'
       }
     },
@@ -231,6 +260,8 @@
         '--ink': '#f4ecff', '--ink2': '#d0b8ee', '--ink3': '#b498d1', '--brandink': '#14110b',
         '--teal': '#3ad0d0', '--hotpink': '#ff6ac0', '--banana': '#ffd84a',
         '--grape': '#c89aff', '--lime': '#9aef5a', '--tomato': '#ff7a5a',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#000000', '--onlime': '#000000',
         '--crt': '#1c0f2c'
       }
     },
@@ -242,6 +273,8 @@
         '--ink': '#ffe14a', '--ink2': '#c8a82a', '--ink3': '#9a8326',
         '--teal': '#2ac0a0', '--hotpink': '#ff7a3a', '--banana': '#ffd21f',
         '--grape': '#c89aff', '--lime': '#b6e02a', '--tomato': '#ff5a1f',
+        '--onteal': '#000000', '--onhotpink': '#000000', '--onbanana': '#000000',
+        '--ongrape': '#000000', '--onlime': '#000000',
         '--crt': '#0d0d06'
       }
     }
