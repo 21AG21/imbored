@@ -7,6 +7,26 @@
   const G = 1500;                 // gravity px/s^2
   const FLOOR = H - 42;
 
+  const DOC = () => !!(window.Arcade && Arcade.docMode && Arcade.docMode());
+  /* normal office scene vs. a strictly black-and-white one for document mode,
+     so the "figure" reads as a clean line drawing rather than an inverted photo */
+  const PAL_ARC = {
+    wall: '#25304a', wallLine: '#2c3852', floor: '#3b3020', floorLine: '#4a3c28',
+    vent: '#9aa3b5', ventSlat: '#5c6478', pole: '#cfc6ae', flagHi: '#e8402a', flagLo: '#ffcb1f', label: '#9aa3b5',
+    deskTop: '#7a5a34', deskLeg: '#5d452a',
+    bin: '#39435c', binEdge: '#0c1119', binLip: '#0c1119', binLipHi: '#59657f',
+    confetti: null, aim: 'rgba(255,203,31,.85)', arc: 'rgba(255,255,255,.45)',
+    ball: '#fffdf3', ballEdge: '#b6ae99', msg: '#ffcb1f'
+  };
+  const PAL_DOC = {
+    wall: '#ffffff', wallLine: 'rgba(0,0,0,.045)', floor: '#f2f3f5', floorLine: 'rgba(0,0,0,.05)',
+    vent: '#e0e3e8', ventSlat: '#b6bcc6', pole: '#8a8f98', flagHi: '#3f4247', flagLo: '#8a8f98', label: '#767d88',
+    deskTop: '#e0e3e8', deskLeg: '#c3c8d1',
+    bin: '#eef0f3', binEdge: '#2b2f36', binLip: '#2b2f36', binLipHi: '#c3c8d1',
+    confetti: '#9aa0a8', aim: 'rgba(30,34,40,.8)', arc: 'rgba(0,0,0,.28)',
+    ball: '#ffffff', ballEdge: '#2b2f36', msg: '#2b2f36'
+  };
+
   function mount(root, api) {
     const bagg = Engine.bag();
     const cv = Engine.canvas(root, W, H);
@@ -191,35 +211,36 @@
     }
 
     function draw() {
+      const P = DOC() ? PAL_DOC : PAL_ARC;
       /* wall */
-      ctx.fillStyle = '#25304a';
+      ctx.fillStyle = P.wall;
       ctx.fillRect(0, 0, W, H);
-      ctx.fillStyle = '#2c3852';
+      ctx.fillStyle = P.wallLine;
       for (let x = 0; x < W; x += 64) ctx.fillRect(x, 0, 2, FLOOR);
       /* floor */
-      ctx.fillStyle = '#3b3020';
+      ctx.fillStyle = P.floor;
       ctx.fillRect(0, FLOOR, W, H - FLOOR);
-      ctx.fillStyle = '#4a3c28';
+      ctx.fillStyle = P.floorLine;
       for (let x = -20; x < W; x += 78) {
         ctx.fillRect(x, FLOOR + 4, 70, 3);
         ctx.fillRect(x + 40, FLOOR + 22, 70, 3);
       }
 
       /* air-con vent + flag */
-      ctx.fillStyle = '#9aa3b5';
+      ctx.fillStyle = P.vent;
       ctx.fillRect(W - 150, 14, 108, 30);
-      ctx.fillStyle = '#5c6478';
+      ctx.fillStyle = P.ventSlat;
       for (let i = 0; i < 5; i++) ctx.fillRect(W - 144 + i * 21, 18, 12, 22);
       const dir = Math.sign(wind) || 1;
       const strength = clamp(Math.abs(wind) / 90, 0, 1);
       ctx.save();
       ctx.translate(W - 168, 50);
-      ctx.strokeStyle = '#cfc6ae';
+      ctx.strokeStyle = P.pole;
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.moveTo(0, 0); ctx.lineTo(0, 36);
       ctx.stroke();
-      ctx.fillStyle = strength > 0.55 ? '#e8402a' : '#ffcb1f';
+      ctx.fillStyle = strength > 0.55 ? P.flagHi : P.flagLo;
       ctx.beginPath();
       ctx.moveTo(0, 2);
       ctx.lineTo(dir * (10 + strength * 34), 10);
@@ -227,22 +248,22 @@
       ctx.closePath();
       ctx.fill();
       ctx.restore();
-      ctx.fillStyle = '#9aa3b5';
+      ctx.fillStyle = P.label;
       ctx.font = 'bold 11px Verdana, sans-serif';
       ctx.fillText('AIR CON', W - 148, 62);
 
       /* desk if the bin is up high */
       if (bin.desk) {
-        ctx.fillStyle = '#7a5a34';
+        ctx.fillStyle = P.deskTop;
         ctx.fillRect(bin.x - 120, FLOOR - 34, 240, 12);
-        ctx.fillStyle = '#5d452a';
+        ctx.fillStyle = P.deskLeg;
         ctx.fillRect(bin.x - 108, FLOOR - 22, 14, FLOOR - (FLOOR - 22));
         ctx.fillRect(bin.x + 94, FLOOR - 22, 14, 22);
       }
 
       /* bin */
       const lipY = bin.y - bin.h;
-      ctx.fillStyle = '#39435c';
+      ctx.fillStyle = P.bin;
       ctx.beginPath();
       ctx.moveTo(bin.x - bin.w / 2, lipY);
       ctx.lineTo(bin.x + bin.w / 2, lipY);
@@ -250,18 +271,18 @@
       ctx.lineTo(bin.x - bin.w / 2 + 9, bin.y);
       ctx.closePath();
       ctx.fill();
-      ctx.strokeStyle = '#0c1119';
+      ctx.strokeStyle = P.binEdge;
       ctx.lineWidth = 3;
       ctx.stroke();
-      ctx.fillStyle = '#0c1119';
+      ctx.fillStyle = P.binLip;
       ctx.fillRect(bin.x - bin.w / 2, lipY - 5, bin.w, 7);
-      ctx.fillStyle = '#59657f';
+      ctx.fillStyle = P.binLipHi;
       ctx.fillRect(bin.x - bin.w / 2 + 3, lipY - 2, bin.w - 6, 3);
 
       /* confetti */
       for (const b of bits) {
         ctx.globalAlpha = clamp(b.life, 0, 1);
-        ctx.fillStyle = b.c;
+        ctx.fillStyle = P.confetti || b.c;
         ctx.fillRect(b.x - 3, b.y - 3, 6, 6);
       }
       ctx.globalAlpha = 1;
@@ -271,7 +292,7 @@
         const dx = ball.x - aim.x, dy = ball.y - aim.y;
         const power = clamp(Math.hypot(dx, dy), 0, 210);
         const a = Math.atan2(dy, dx);
-        ctx.strokeStyle = 'rgba(255,203,31,.85)';
+        ctx.strokeStyle = P.aim;
         ctx.lineWidth = 3;
         ctx.setLineDash([7, 6]);
         ctx.beginPath();
@@ -282,7 +303,7 @@
         /* predicted arc */
         let px = ball.x, py = ball.y;
         let pvx = Math.cos(a) * power * 4.4, pvy = Math.sin(a) * power * 4.4;
-        ctx.fillStyle = 'rgba(255,255,255,.45)';
+        ctx.fillStyle = P.arc;
         for (let i = 0; i < 26; i++) {
           for (let k = 0; k < 3; k++) {
             pvy += G * 0.016; pvx += wind * 0.016;
@@ -298,7 +319,7 @@
         ctx.save();
         ctx.translate(ball.x, ball.y);
         ctx.rotate(ball.spin);
-        ctx.fillStyle = '#fffdf3';
+        ctx.fillStyle = P.ball;
         ctx.beginPath();
         for (let i = 0; i < 9; i++) {
           const a = i / 9 * Math.PI * 2;
@@ -307,7 +328,7 @@
         }
         ctx.closePath();
         ctx.fill();
-        ctx.strokeStyle = '#b6ae99';
+        ctx.strokeStyle = P.ballEdge;
         ctx.lineWidth = 1.5;
         ctx.stroke();
         ctx.restore();
@@ -315,7 +336,7 @@
 
       if (msgT > 0) {
         ctx.globalAlpha = clamp(msgT, 0, 1);
-        ctx.fillStyle = '#ffcb1f';
+        ctx.fillStyle = P.msg;
         ctx.font = '34px Impact, Haettenschweiler, Arial Black, sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText(msg, W / 2, 120);
@@ -335,6 +356,8 @@
     emoji: 'desktoss',
     cat: 'goof',
     order: 62,
+    lightBoard: true,   // paints its own black-and-white palette in document mode
+
     blurb: 'Catapult crumpled paper into the bin while the air-con vent pushes it off course. A bin up on a desk counts double.',
     scoreLabel: 'Score',
     tags: ['paper', 'basketball', 'bin', 'physics', 'throw'],

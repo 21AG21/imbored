@@ -22,6 +22,27 @@
     { par: 5, ball: [70, 500], cup: [800, 60], walls: [[180, 120, 26, 440], [340, 0, 26, 440], [500, 120, 26, 440], [660, 0, 26, 440]], coffee: [[260, 60, 45], [420, 500, 45], [580, 60, 45]] }
   ];
 
+  const DOC = () => !!(window.Arcade && Arcade.docMode && Arcade.docMode());
+  /* two palettes: the normal green-carpet office, and a strictly black-and-white
+     one for document mode so the figure reads as a clean line drawing, not a
+     grey blob under the luminance flip */
+  const PAL_ARC = {
+    carpet: '#2f7a48', stripe: 'rgba(0,0,0,.05)', sand: '#4a4155', sandHi: 'rgba(255,255,255,.07)',
+    coffee: '#4a2c14', coffeeEdge: '#7a4a22', coffeeHi: 'rgba(255,255,255,.12)',
+    desk: '#7a5a34', deskEdge: '#1d1722', deskHi: 'rgba(255,255,255,.13)',
+    cup: '#0c1119', cupEdge: '#ded6c2', pole: '#fffdf3', flag: '#e8402a', trail: '255,255,255',
+    aim: 'rgba(255,203,31,.9)', powerBg: '#1d1722', pLo: '#6fcf2f', pMid: '#ffcb1f', pHi: '#e8402a',
+    ballShadow: 'rgba(0,0,0,.3)', ball: '#fffdf3', ballEdge: '#b6ae99', win: '#ffcb1f'
+  };
+  const PAL_DOC = {
+    carpet: '#ffffff', stripe: 'rgba(0,0,0,.035)', sand: '#e6e8ec', sandHi: 'rgba(0,0,0,.03)',
+    coffee: '#c2c7cf', coffeeEdge: '#989ea8', coffeeHi: 'rgba(255,255,255,.6)',
+    desk: '#e0e3e8', deskEdge: '#9aa0a8', deskHi: 'rgba(255,255,255,.7)',
+    cup: '#2b2f36', cupEdge: '#8a8f98', pole: '#2b2f36', flag: '#4b5058', trail: '0,0,0',
+    aim: 'rgba(30,34,40,.8)', powerBg: '#d3d6dc', pLo: '#8f95a1', pMid: '#6b7178', pHi: '#3f4247',
+    ballShadow: 'rgba(0,0,0,.14)', ball: '#ffffff', ballEdge: '#2b2f36', win: '#2b2f36'
+  };
+
   function mount(root, api) {
     const bagg = Engine.bag();
     const cv = Engine.canvas(root, W, H);
@@ -199,31 +220,32 @@
 
     function draw() {
       const H0 = HOLES[hole];
+      const P = DOC() ? PAL_DOC : PAL_ARC;
       /* carpet */
-      ctx.fillStyle = '#2f7a48';
+      ctx.fillStyle = P.carpet;
       ctx.fillRect(0, 0, W, H);
-      ctx.fillStyle = 'rgba(0,0,0,.05)';
+      ctx.fillStyle = P.stripe;
       for (let y = 0; y < H; y += 26) ctx.fillRect(0, y, W, 13);
 
       for (const s of (H0.sand || [])) {
-        ctx.fillStyle = '#4a4155';
+        ctx.fillStyle = P.sand;
         ctx.beginPath();
         ctx.arc(s[0], s[1], s[2], 0, 7);
         ctx.fill();
-        ctx.fillStyle = 'rgba(255,255,255,.07)';
+        ctx.fillStyle = P.sandHi;
         ctx.beginPath();
         ctx.arc(s[0], s[1], s[2] - 6, 0, 7);
         ctx.fill();
       }
       for (const c of (H0.coffee || [])) {
-        ctx.fillStyle = '#4a2c14';
+        ctx.fillStyle = P.coffee;
         ctx.beginPath();
         ctx.arc(c[0], c[1], c[2], 0, 7);
         ctx.fill();
-        ctx.strokeStyle = '#7a4a22';
+        ctx.strokeStyle = P.coffeeEdge;
         ctx.lineWidth = 4;
         ctx.stroke();
-        ctx.fillStyle = 'rgba(255,255,255,.12)';
+        ctx.fillStyle = P.coffeeHi;
         ctx.beginPath();
         ctx.ellipse(c[0] - c[2] * 0.3, c[1] - c[2] * 0.3, c[2] * 0.25, c[2] * 0.14, -0.6, 0, 7);
         ctx.fill();
@@ -231,32 +253,32 @@
 
       /* desks */
       for (const wl of H0.walls) {
-        ctx.fillStyle = '#7a5a34';
+        ctx.fillStyle = P.desk;
         ctx.fillRect(wl[0], wl[1], wl[2], wl[3]);
-        ctx.strokeStyle = '#1d1722';
+        ctx.strokeStyle = P.deskEdge;
         ctx.lineWidth = 4;
         ctx.strokeRect(wl[0], wl[1], wl[2], wl[3]);
-        ctx.fillStyle = 'rgba(255,255,255,.13)';
+        ctx.fillStyle = P.deskHi;
         ctx.fillRect(wl[0] + 4, wl[1] + 4, Math.max(2, wl[2] - 8), 5);
       }
 
       /* cup */
       const cup = H0.cup;
-      ctx.fillStyle = '#0c1119';
+      ctx.fillStyle = P.cup;
       ctx.beginPath();
       ctx.arc(cup[0], cup[1], CUPR, 0, 7);
       ctx.fill();
-      ctx.strokeStyle = '#ded6c2';
+      ctx.strokeStyle = P.cupEdge;
       ctx.lineWidth = 2;
       ctx.stroke();
       /* flag */
-      ctx.strokeStyle = '#fffdf3';
+      ctx.strokeStyle = P.pole;
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.moveTo(cup[0], cup[1]);
       ctx.lineTo(cup[0], cup[1] - 46);
       ctx.stroke();
-      ctx.fillStyle = '#e8402a';
+      ctx.fillStyle = P.flag;
       ctx.beginPath();
       ctx.moveTo(cup[0], cup[1] - 46);
       ctx.lineTo(cup[0] + 30, cup[1] - 38);
@@ -266,7 +288,7 @@
 
       /* ball trail */
       trail.forEach((t, i) => {
-        ctx.fillStyle = 'rgba(255,255,255,' + (i / trail.length * 0.22).toFixed(2) + ')';
+        ctx.fillStyle = 'rgba(' + P.trail + ',' + (i / trail.length * 0.22).toFixed(2) + ')';
         ctx.beginPath();
         ctx.arc(t.x, t.y, 3, 0, 7);
         ctx.fill();
@@ -277,7 +299,7 @@
         const dx = ball.x - aim.x, dy = ball.y - aim.y;
         const d = Math.min(Math.hypot(dx, dy), MAXPULL);
         const a = Math.atan2(dy, dx);
-        ctx.strokeStyle = 'rgba(255,203,31,.9)';
+        ctx.strokeStyle = P.aim;
         ctx.lineWidth = 4;
         ctx.setLineDash([8, 6]);
         ctx.beginPath();
@@ -286,26 +308,26 @@
         ctx.stroke();
         ctx.setLineDash([]);
         /* power bar */
-        ctx.fillStyle = '#1d1722';
+        ctx.fillStyle = P.powerBg;
         ctx.fillRect(ball.x - 32, ball.y + 22, 64, 8);
-        ctx.fillStyle = d > MAXPULL * 0.78 ? '#e8402a' : d > MAXPULL * 0.42 ? '#ffcb1f' : '#6fcf2f';
+        ctx.fillStyle = d > MAXPULL * 0.78 ? P.pHi : d > MAXPULL * 0.42 ? P.pMid : P.pLo;
         ctx.fillRect(ball.x - 32, ball.y + 22, 64 * (d / MAXPULL), 8);
       }
 
       if (!sunk) {
-        ctx.fillStyle = 'rgba(0,0,0,.3)';
+        ctx.fillStyle = P.ballShadow;
         ctx.beginPath();
         ctx.arc(ball.x + 2, ball.y + 3, BR, 0, 7);
         ctx.fill();
-        ctx.fillStyle = '#fffdf3';
+        ctx.fillStyle = P.ball;
         ctx.beginPath();
         ctx.arc(ball.x, ball.y, BR, 0, 7);
         ctx.fill();
-        ctx.strokeStyle = '#b6ae99';
+        ctx.strokeStyle = P.ballEdge;
         ctx.lineWidth = 1.5;
         ctx.stroke();
       } else if (sunkT > 0) {
-        ctx.fillStyle = '#ffcb1f';
+        ctx.fillStyle = P.win;
         ctx.font = '40px Impact, Haettenschweiler, Arial Black, sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText('IN THE CUP', W / 2, H / 2);
@@ -327,6 +349,8 @@
     emoji: 'deskgolf',
     cat: 'goof',
     order: 63,
+    lightBoard: true,   // paints its own black-and-white palette in document mode
+
     blurb: 'Nine holes of mini golf across the office carpet. Aim by dragging back from the ball, and mind the desks, mousepads and coffee spills.',
     scoreLabel: 'Best round',
     lowerIsBetter: true,

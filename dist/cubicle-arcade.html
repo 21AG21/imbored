@@ -26769,6 +26769,26 @@ body.docmode .doc-figcap {
   const G = 1500;                 // gravity px/s^2
   const FLOOR = H - 42;
 
+  const DOC = () => !!(window.Arcade && Arcade.docMode && Arcade.docMode());
+  /* normal office scene vs. a strictly black-and-white one for document mode,
+     so the "figure" reads as a clean line drawing rather than an inverted photo */
+  const PAL_ARC = {
+    wall: '#25304a', wallLine: '#2c3852', floor: '#3b3020', floorLine: '#4a3c28',
+    vent: '#9aa3b5', ventSlat: '#5c6478', pole: '#cfc6ae', flagHi: '#e8402a', flagLo: '#ffcb1f', label: '#9aa3b5',
+    deskTop: '#7a5a34', deskLeg: '#5d452a',
+    bin: '#39435c', binEdge: '#0c1119', binLip: '#0c1119', binLipHi: '#59657f',
+    confetti: null, aim: 'rgba(255,203,31,.85)', arc: 'rgba(255,255,255,.45)',
+    ball: '#fffdf3', ballEdge: '#b6ae99', msg: '#ffcb1f'
+  };
+  const PAL_DOC = {
+    wall: '#ffffff', wallLine: 'rgba(0,0,0,.045)', floor: '#f2f3f5', floorLine: 'rgba(0,0,0,.05)',
+    vent: '#e0e3e8', ventSlat: '#b6bcc6', pole: '#8a8f98', flagHi: '#3f4247', flagLo: '#8a8f98', label: '#767d88',
+    deskTop: '#e0e3e8', deskLeg: '#c3c8d1',
+    bin: '#eef0f3', binEdge: '#2b2f36', binLip: '#2b2f36', binLipHi: '#c3c8d1',
+    confetti: '#9aa0a8', aim: 'rgba(30,34,40,.8)', arc: 'rgba(0,0,0,.28)',
+    ball: '#ffffff', ballEdge: '#2b2f36', msg: '#2b2f36'
+  };
+
   function mount(root, api) {
     const bagg = Engine.bag();
     const cv = Engine.canvas(root, W, H);
@@ -26953,35 +26973,36 @@ body.docmode .doc-figcap {
     }
 
     function draw() {
+      const P = DOC() ? PAL_DOC : PAL_ARC;
       /* wall */
-      ctx.fillStyle = '#25304a';
+      ctx.fillStyle = P.wall;
       ctx.fillRect(0, 0, W, H);
-      ctx.fillStyle = '#2c3852';
+      ctx.fillStyle = P.wallLine;
       for (let x = 0; x < W; x += 64) ctx.fillRect(x, 0, 2, FLOOR);
       /* floor */
-      ctx.fillStyle = '#3b3020';
+      ctx.fillStyle = P.floor;
       ctx.fillRect(0, FLOOR, W, H - FLOOR);
-      ctx.fillStyle = '#4a3c28';
+      ctx.fillStyle = P.floorLine;
       for (let x = -20; x < W; x += 78) {
         ctx.fillRect(x, FLOOR + 4, 70, 3);
         ctx.fillRect(x + 40, FLOOR + 22, 70, 3);
       }
 
       /* air-con vent + flag */
-      ctx.fillStyle = '#9aa3b5';
+      ctx.fillStyle = P.vent;
       ctx.fillRect(W - 150, 14, 108, 30);
-      ctx.fillStyle = '#5c6478';
+      ctx.fillStyle = P.ventSlat;
       for (let i = 0; i < 5; i++) ctx.fillRect(W - 144 + i * 21, 18, 12, 22);
       const dir = Math.sign(wind) || 1;
       const strength = clamp(Math.abs(wind) / 90, 0, 1);
       ctx.save();
       ctx.translate(W - 168, 50);
-      ctx.strokeStyle = '#cfc6ae';
+      ctx.strokeStyle = P.pole;
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.moveTo(0, 0); ctx.lineTo(0, 36);
       ctx.stroke();
-      ctx.fillStyle = strength > 0.55 ? '#e8402a' : '#ffcb1f';
+      ctx.fillStyle = strength > 0.55 ? P.flagHi : P.flagLo;
       ctx.beginPath();
       ctx.moveTo(0, 2);
       ctx.lineTo(dir * (10 + strength * 34), 10);
@@ -26989,22 +27010,22 @@ body.docmode .doc-figcap {
       ctx.closePath();
       ctx.fill();
       ctx.restore();
-      ctx.fillStyle = '#9aa3b5';
+      ctx.fillStyle = P.label;
       ctx.font = 'bold 11px Verdana, sans-serif';
       ctx.fillText('AIR CON', W - 148, 62);
 
       /* desk if the bin is up high */
       if (bin.desk) {
-        ctx.fillStyle = '#7a5a34';
+        ctx.fillStyle = P.deskTop;
         ctx.fillRect(bin.x - 120, FLOOR - 34, 240, 12);
-        ctx.fillStyle = '#5d452a';
+        ctx.fillStyle = P.deskLeg;
         ctx.fillRect(bin.x - 108, FLOOR - 22, 14, FLOOR - (FLOOR - 22));
         ctx.fillRect(bin.x + 94, FLOOR - 22, 14, 22);
       }
 
       /* bin */
       const lipY = bin.y - bin.h;
-      ctx.fillStyle = '#39435c';
+      ctx.fillStyle = P.bin;
       ctx.beginPath();
       ctx.moveTo(bin.x - bin.w / 2, lipY);
       ctx.lineTo(bin.x + bin.w / 2, lipY);
@@ -27012,18 +27033,18 @@ body.docmode .doc-figcap {
       ctx.lineTo(bin.x - bin.w / 2 + 9, bin.y);
       ctx.closePath();
       ctx.fill();
-      ctx.strokeStyle = '#0c1119';
+      ctx.strokeStyle = P.binEdge;
       ctx.lineWidth = 3;
       ctx.stroke();
-      ctx.fillStyle = '#0c1119';
+      ctx.fillStyle = P.binLip;
       ctx.fillRect(bin.x - bin.w / 2, lipY - 5, bin.w, 7);
-      ctx.fillStyle = '#59657f';
+      ctx.fillStyle = P.binLipHi;
       ctx.fillRect(bin.x - bin.w / 2 + 3, lipY - 2, bin.w - 6, 3);
 
       /* confetti */
       for (const b of bits) {
         ctx.globalAlpha = clamp(b.life, 0, 1);
-        ctx.fillStyle = b.c;
+        ctx.fillStyle = P.confetti || b.c;
         ctx.fillRect(b.x - 3, b.y - 3, 6, 6);
       }
       ctx.globalAlpha = 1;
@@ -27033,7 +27054,7 @@ body.docmode .doc-figcap {
         const dx = ball.x - aim.x, dy = ball.y - aim.y;
         const power = clamp(Math.hypot(dx, dy), 0, 210);
         const a = Math.atan2(dy, dx);
-        ctx.strokeStyle = 'rgba(255,203,31,.85)';
+        ctx.strokeStyle = P.aim;
         ctx.lineWidth = 3;
         ctx.setLineDash([7, 6]);
         ctx.beginPath();
@@ -27044,7 +27065,7 @@ body.docmode .doc-figcap {
         /* predicted arc */
         let px = ball.x, py = ball.y;
         let pvx = Math.cos(a) * power * 4.4, pvy = Math.sin(a) * power * 4.4;
-        ctx.fillStyle = 'rgba(255,255,255,.45)';
+        ctx.fillStyle = P.arc;
         for (let i = 0; i < 26; i++) {
           for (let k = 0; k < 3; k++) {
             pvy += G * 0.016; pvx += wind * 0.016;
@@ -27060,7 +27081,7 @@ body.docmode .doc-figcap {
         ctx.save();
         ctx.translate(ball.x, ball.y);
         ctx.rotate(ball.spin);
-        ctx.fillStyle = '#fffdf3';
+        ctx.fillStyle = P.ball;
         ctx.beginPath();
         for (let i = 0; i < 9; i++) {
           const a = i / 9 * Math.PI * 2;
@@ -27069,7 +27090,7 @@ body.docmode .doc-figcap {
         }
         ctx.closePath();
         ctx.fill();
-        ctx.strokeStyle = '#b6ae99';
+        ctx.strokeStyle = P.ballEdge;
         ctx.lineWidth = 1.5;
         ctx.stroke();
         ctx.restore();
@@ -27077,7 +27098,7 @@ body.docmode .doc-figcap {
 
       if (msgT > 0) {
         ctx.globalAlpha = clamp(msgT, 0, 1);
-        ctx.fillStyle = '#ffcb1f';
+        ctx.fillStyle = P.msg;
         ctx.font = '34px Impact, Haettenschweiler, Arial Black, sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText(msg, W / 2, 120);
@@ -27097,6 +27118,8 @@ body.docmode .doc-figcap {
     emoji: 'desktoss',
     cat: 'goof',
     order: 62,
+    lightBoard: true,   // paints its own black-and-white palette in document mode
+
     blurb: 'Catapult crumpled paper into the bin while the air-con vent pushes it off course. A bin up on a desk counts double.',
     scoreLabel: 'Score',
     tags: ['paper', 'basketball', 'bin', 'physics', 'throw'],
@@ -27136,6 +27159,27 @@ body.docmode .doc-figcap {
     { par: 4, ball: [430, 500], cup: [430, 80], walls: [[280, 200, 300, 26], [280, 340, 300, 26], [280, 226, 26, 114], [554, 226, 26, 114]], sand: [[180, 300, 80], [680, 300, 80]] },
     { par: 5, ball: [70, 500], cup: [800, 60], walls: [[180, 120, 26, 440], [340, 0, 26, 440], [500, 120, 26, 440], [660, 0, 26, 440]], coffee: [[260, 60, 45], [420, 500, 45], [580, 60, 45]] }
   ];
+
+  const DOC = () => !!(window.Arcade && Arcade.docMode && Arcade.docMode());
+  /* two palettes: the normal green-carpet office, and a strictly black-and-white
+     one for document mode so the figure reads as a clean line drawing, not a
+     grey blob under the luminance flip */
+  const PAL_ARC = {
+    carpet: '#2f7a48', stripe: 'rgba(0,0,0,.05)', sand: '#4a4155', sandHi: 'rgba(255,255,255,.07)',
+    coffee: '#4a2c14', coffeeEdge: '#7a4a22', coffeeHi: 'rgba(255,255,255,.12)',
+    desk: '#7a5a34', deskEdge: '#1d1722', deskHi: 'rgba(255,255,255,.13)',
+    cup: '#0c1119', cupEdge: '#ded6c2', pole: '#fffdf3', flag: '#e8402a', trail: '255,255,255',
+    aim: 'rgba(255,203,31,.9)', powerBg: '#1d1722', pLo: '#6fcf2f', pMid: '#ffcb1f', pHi: '#e8402a',
+    ballShadow: 'rgba(0,0,0,.3)', ball: '#fffdf3', ballEdge: '#b6ae99', win: '#ffcb1f'
+  };
+  const PAL_DOC = {
+    carpet: '#ffffff', stripe: 'rgba(0,0,0,.035)', sand: '#e6e8ec', sandHi: 'rgba(0,0,0,.03)',
+    coffee: '#c2c7cf', coffeeEdge: '#989ea8', coffeeHi: 'rgba(255,255,255,.6)',
+    desk: '#e0e3e8', deskEdge: '#9aa0a8', deskHi: 'rgba(255,255,255,.7)',
+    cup: '#2b2f36', cupEdge: '#8a8f98', pole: '#2b2f36', flag: '#4b5058', trail: '0,0,0',
+    aim: 'rgba(30,34,40,.8)', powerBg: '#d3d6dc', pLo: '#8f95a1', pMid: '#6b7178', pHi: '#3f4247',
+    ballShadow: 'rgba(0,0,0,.14)', ball: '#ffffff', ballEdge: '#2b2f36', win: '#2b2f36'
+  };
 
   function mount(root, api) {
     const bagg = Engine.bag();
@@ -27314,31 +27358,32 @@ body.docmode .doc-figcap {
 
     function draw() {
       const H0 = HOLES[hole];
+      const P = DOC() ? PAL_DOC : PAL_ARC;
       /* carpet */
-      ctx.fillStyle = '#2f7a48';
+      ctx.fillStyle = P.carpet;
       ctx.fillRect(0, 0, W, H);
-      ctx.fillStyle = 'rgba(0,0,0,.05)';
+      ctx.fillStyle = P.stripe;
       for (let y = 0; y < H; y += 26) ctx.fillRect(0, y, W, 13);
 
       for (const s of (H0.sand || [])) {
-        ctx.fillStyle = '#4a4155';
+        ctx.fillStyle = P.sand;
         ctx.beginPath();
         ctx.arc(s[0], s[1], s[2], 0, 7);
         ctx.fill();
-        ctx.fillStyle = 'rgba(255,255,255,.07)';
+        ctx.fillStyle = P.sandHi;
         ctx.beginPath();
         ctx.arc(s[0], s[1], s[2] - 6, 0, 7);
         ctx.fill();
       }
       for (const c of (H0.coffee || [])) {
-        ctx.fillStyle = '#4a2c14';
+        ctx.fillStyle = P.coffee;
         ctx.beginPath();
         ctx.arc(c[0], c[1], c[2], 0, 7);
         ctx.fill();
-        ctx.strokeStyle = '#7a4a22';
+        ctx.strokeStyle = P.coffeeEdge;
         ctx.lineWidth = 4;
         ctx.stroke();
-        ctx.fillStyle = 'rgba(255,255,255,.12)';
+        ctx.fillStyle = P.coffeeHi;
         ctx.beginPath();
         ctx.ellipse(c[0] - c[2] * 0.3, c[1] - c[2] * 0.3, c[2] * 0.25, c[2] * 0.14, -0.6, 0, 7);
         ctx.fill();
@@ -27346,32 +27391,32 @@ body.docmode .doc-figcap {
 
       /* desks */
       for (const wl of H0.walls) {
-        ctx.fillStyle = '#7a5a34';
+        ctx.fillStyle = P.desk;
         ctx.fillRect(wl[0], wl[1], wl[2], wl[3]);
-        ctx.strokeStyle = '#1d1722';
+        ctx.strokeStyle = P.deskEdge;
         ctx.lineWidth = 4;
         ctx.strokeRect(wl[0], wl[1], wl[2], wl[3]);
-        ctx.fillStyle = 'rgba(255,255,255,.13)';
+        ctx.fillStyle = P.deskHi;
         ctx.fillRect(wl[0] + 4, wl[1] + 4, Math.max(2, wl[2] - 8), 5);
       }
 
       /* cup */
       const cup = H0.cup;
-      ctx.fillStyle = '#0c1119';
+      ctx.fillStyle = P.cup;
       ctx.beginPath();
       ctx.arc(cup[0], cup[1], CUPR, 0, 7);
       ctx.fill();
-      ctx.strokeStyle = '#ded6c2';
+      ctx.strokeStyle = P.cupEdge;
       ctx.lineWidth = 2;
       ctx.stroke();
       /* flag */
-      ctx.strokeStyle = '#fffdf3';
+      ctx.strokeStyle = P.pole;
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.moveTo(cup[0], cup[1]);
       ctx.lineTo(cup[0], cup[1] - 46);
       ctx.stroke();
-      ctx.fillStyle = '#e8402a';
+      ctx.fillStyle = P.flag;
       ctx.beginPath();
       ctx.moveTo(cup[0], cup[1] - 46);
       ctx.lineTo(cup[0] + 30, cup[1] - 38);
@@ -27381,7 +27426,7 @@ body.docmode .doc-figcap {
 
       /* ball trail */
       trail.forEach((t, i) => {
-        ctx.fillStyle = 'rgba(255,255,255,' + (i / trail.length * 0.22).toFixed(2) + ')';
+        ctx.fillStyle = 'rgba(' + P.trail + ',' + (i / trail.length * 0.22).toFixed(2) + ')';
         ctx.beginPath();
         ctx.arc(t.x, t.y, 3, 0, 7);
         ctx.fill();
@@ -27392,7 +27437,7 @@ body.docmode .doc-figcap {
         const dx = ball.x - aim.x, dy = ball.y - aim.y;
         const d = Math.min(Math.hypot(dx, dy), MAXPULL);
         const a = Math.atan2(dy, dx);
-        ctx.strokeStyle = 'rgba(255,203,31,.9)';
+        ctx.strokeStyle = P.aim;
         ctx.lineWidth = 4;
         ctx.setLineDash([8, 6]);
         ctx.beginPath();
@@ -27401,26 +27446,26 @@ body.docmode .doc-figcap {
         ctx.stroke();
         ctx.setLineDash([]);
         /* power bar */
-        ctx.fillStyle = '#1d1722';
+        ctx.fillStyle = P.powerBg;
         ctx.fillRect(ball.x - 32, ball.y + 22, 64, 8);
-        ctx.fillStyle = d > MAXPULL * 0.78 ? '#e8402a' : d > MAXPULL * 0.42 ? '#ffcb1f' : '#6fcf2f';
+        ctx.fillStyle = d > MAXPULL * 0.78 ? P.pHi : d > MAXPULL * 0.42 ? P.pMid : P.pLo;
         ctx.fillRect(ball.x - 32, ball.y + 22, 64 * (d / MAXPULL), 8);
       }
 
       if (!sunk) {
-        ctx.fillStyle = 'rgba(0,0,0,.3)';
+        ctx.fillStyle = P.ballShadow;
         ctx.beginPath();
         ctx.arc(ball.x + 2, ball.y + 3, BR, 0, 7);
         ctx.fill();
-        ctx.fillStyle = '#fffdf3';
+        ctx.fillStyle = P.ball;
         ctx.beginPath();
         ctx.arc(ball.x, ball.y, BR, 0, 7);
         ctx.fill();
-        ctx.strokeStyle = '#b6ae99';
+        ctx.strokeStyle = P.ballEdge;
         ctx.lineWidth = 1.5;
         ctx.stroke();
       } else if (sunkT > 0) {
-        ctx.fillStyle = '#ffcb1f';
+        ctx.fillStyle = P.win;
         ctx.font = '40px Impact, Haettenschweiler, Arial Black, sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText('IN THE CUP', W / 2, H / 2);
@@ -27442,6 +27487,8 @@ body.docmode .doc-figcap {
     emoji: 'deskgolf',
     cat: 'goof',
     order: 63,
+    lightBoard: true,   // paints its own black-and-white palette in document mode
+
     blurb: 'Nine holes of mini golf across the office carpet. Aim by dragging back from the ball, and mind the desks, mousepads and coffee spills.',
     scoreLabel: 'Best round',
     lowerIsBetter: true,
