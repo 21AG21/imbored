@@ -1415,6 +1415,13 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
   body.in-game .flood { width: min(430px, calc(100svh - 189px)); }
   body.in-game .flood-swatch { width: 34px; height: 34px; }
 
+  /* Space Allocation's square 9x9 board is width-capped only, same class of
+     bug as match3/flood above — on a landscape phone it (plus the tray
+     below it, the only way to actually play) ran off the bottom entirely */
+  body.in-game .df-board { width: min(430px, calc(100svh - 250px)); }
+  body.in-game .df-tray { gap: 8px; min-height: 0; }
+  body.in-game .df-slot, body.in-game .df-slot-empty { width: 54px; height: 50px; }
+
   /* Word Ladder and Cryptogram's QWERTY keyboards keep the real 3-row
      layout (unlike Hangman's free-form A-Z grid, reflowing these would
      scramble touch-typing muscle memory) — so close the gap by shrinking
@@ -1756,6 +1763,38 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
 .match3 .g4{background:#6fcf2f}
 .match3 .g5{background:#2a4bbd;color:#fffdf3}
 .match3 .g6{background:#ff2d87;color:#fffdf3}
+
+/* deskfit (Space Allocation) */
+.deskfit { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.df-board {
+  display: grid; gap: 3px; width: min(430px, 92vw);
+  background: var(--crt); padding: 8px; border-radius: 10px; box-shadow: var(--bevel-in);
+  touch-action: none;
+}
+.df-cell { aspect-ratio: 1; border-radius: 4px; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.06); transition: background .1s ease; }
+.df-cell.df-alt { background: rgba(255,255,255,.14); }
+.df-c1 { background: #ffcb1f; }
+.df-c2 { background: #e8402a; }
+.df-c3 { background: #00a6b4; }
+.df-c4 { background: #6f3fa8; }
+.df-c5 { background: #6fcf2f; }
+.df-c6 { background: #2a4bbd; }
+.df-cell.df-preview-ok { box-shadow: inset 0 0 0 3px var(--lime); background: rgba(111,207,47,.35); }
+.df-cell.df-preview-bad { box-shadow: inset 0 0 0 3px var(--tomato); background: rgba(232,64,42,.25); }
+.df-tray { display: flex; gap: 16px; justify-content: center; min-height: 74px; }
+.df-slot {
+  width: 78px; height: 74px; display: grid; place-items: center;
+  background: var(--label); border: 3px solid var(--ink); box-shadow: var(--bevel-out);
+  cursor: grab; touch-action: none;
+}
+.df-slot:active { cursor: grabbing; }
+.df-slot-empty { width: 78px; height: 74px; border: 3px dashed var(--chrome); border-radius: 6px; }
+.df-piece { display: grid; gap: 2px; width: 60px; height: 56px; pointer-events: none; }
+.df-mini { border-radius: 3px; }
+.df-ghost {
+  position: fixed; z-index: 999; display: grid; gap: 2px; pointer-events: none;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.4));
+}
 
 /* checkers */
 .board.checkers { gap: 0; background: #4a3221; padding: 7px; border: 5px solid var(--ink); box-shadow: var(--hard); }

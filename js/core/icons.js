@@ -37,6 +37,10 @@
     '2048':
       r(2, 2, 9, 9, P.yellow) + r(13, 2, 9, 9, P.paper) +
       r(2, 13, 9, 9, P.paper) + r(13, 13, 9, 9, P.tomato),
+    deskfit:
+      r(2, 2, 20, 20, P.paper) +
+      r(3, 3, 6, 6, P.teal) + r(10, 3, 5, 5, P.tomato) +
+      r(3, 10, 5, 11, P.yellow) + r(9, 9, 12, 6, P.lime) + r(9, 16, 7, 6, P.grape),
     jam:
       p('M3 14h18v5H3z', P.tomato) + p('M6 14l2-5h8l2 5z', P.tomato) +
       c(7, 19, 2, INK) + c(17, 19, 2, INK) + r(8.5, 10, 7, 3, P.paper),

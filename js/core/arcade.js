@@ -39,6 +39,28 @@
   let currentDispose = null;
   let currentGame = null;
   let bossOn = false;
+
+  /* ---------------- stay-awake guard ----------------
+     A manager glancing over at a suddenly-dimmed "spreadsheet" screen is
+     exactly the moment the disguise most needs to hold up. Request a wake
+     lock for as long as a game or a panic-screen disguise is on screen;
+     release it the instant neither is. Feature-detected — silently a no-op
+     everywhere the API doesn't exist, and any denial (permissions, an
+     unsupported context) is swallowed the same way. */
+  let wakeLock = null;
+  async function syncWakeLock() {
+    const want = (!!currentGame || bossOn) && !document.hidden;
+    if (!('wakeLock' in navigator)) return;
+    if (want && !wakeLock) {
+      try {
+        wakeLock = await navigator.wakeLock.request('screen');
+        wakeLock.addEventListener('release', () => { wakeLock = null; });
+      } catch (e) { /* denied, or called from a context that can't hold one — leave it be */ }
+    } else if (!want && wakeLock) {
+      try { wakeLock.release(); } catch (e) { /* already gone */ }
+      wakeLock = null;
+    }
+  }
   let bigOn = false;
   /* disguise mode: dress the whole app (home AND games) as plain documents, so
      from across the room it reads as paperwork. Default on; the normal arcade
@@ -1249,6 +1271,7 @@
       renderHub();
     }
     scrollTo(0, 0);
+    syncWakeLock();
   }
 
   /* ---------------- panic screen ---------------- */
@@ -1256,6 +1279,7 @@
     bossOn = Boss.toggle(force);
     Engine.paused = bossOn || document.hidden;
     applyDocTitle();
+    syncWakeLock();
   }
 
   Arcade.toggleBoss = toggleBoss;
@@ -1348,6 +1372,9 @@
 
     addEventListener('visibilitychange', () => {
       Engine.paused = bossOn || document.hidden;
+      /* a wake lock auto-releases the instant the tab is hidden, per spec —
+         this is what re-acquires it once the tab is visible again */
+      syncWakeLock();
     });
 
     /* opt-in quick-hide: clicking to another window snaps to the disguise */

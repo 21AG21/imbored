@@ -2,7 +2,7 @@
 
 **The complete shareware collection for people whose meeting has no agenda.**
 
-Ninety games. Zero installers. No account, no network, no build step. It is plain
+Ninety-one games. Zero installers. No account, no network, no build step. It is plain
 HTML, CSS and JavaScript, so you can **double-click `index.html`** and it runs straight
 off the disk.
 
@@ -113,7 +113,7 @@ One driver taps the brakes and the pulse outlives them, travelling backwards thr
 traffic forever. It is linked from the shelf and from Gridlock itself.
 
 ### Puzzles
-**Minesweeper** · **2048** · **Jam Escape** · **Crate Pusher** · **Pipe Dream** · **Solitaire** · **Maze**
+**Minesweeper** · **2048** · **Space Allocation** · **Jam Escape** · **Crate Pusher** · **Pipe Dream** · **Solitaire** · **Maze**
 
 ### Brain
 **Sudoku** · **Word Guess** · **Lights Out** · **Reflex Grid** · **Copycat** · **Four In A Row** · **Memory Match**
