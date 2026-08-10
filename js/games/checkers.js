@@ -357,6 +357,7 @@
     order: 28,
     blurb: 'English draughts against the CPU or a coworker on company time. Jumps are forced, and reaching the far back rank crowns a king.',
     scoreLabel: 'Wins',
+    lightBoard: true,   // doc mode authors its own paper/ink squares (see arcade.css) — the counter-invert trick can't reach true black
     tags: ['checkers', 'draughts', 'board', 'vs-cpu', 'correspondence'],
     how: [
       'Play red at the bottom against black at the top. Win by leaving the other side with no piece or no legal move.',

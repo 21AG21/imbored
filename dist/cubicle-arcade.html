@@ -3217,59 +3217,82 @@ body.docmode .db-box.cpu { background: #767d88; }
 
 /* Escalate: teal (--you) and tomato (--ai) share almost identical luminance,
    the same "grayscale erases the distinction" failure already fixed for
-   Dots and Boxes' --teal/--hotpink pair above — counter-invert and author
-   explicit final colours instead of fighting hue. The near-explosion ring
-   is a solid saturated colour too (not a translucent overlay like the
-   ordinary legal-move hint), so it also needs protecting or it reads as a
-   stark game "about to blow" meter instead of quiet cell formatting. */
-:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .esc-cell.esc-you,
-:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .esc-cell.esc-ai,
-:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .esc-cell.esc-hot {
-  filter: invert(1) hue-rotate(180deg);
-}
-body.docmode .esc-cell.esc-you { background: var(--doc-ink); }
-body.docmode .esc-cell.esc-ai { background: #767d88; }
+   Dots and Boxes' --teal/--hotpink pair above. Counter-inverting used to fix
+   this, but that trick has a hard floor — cancelling the parent's invert
+   still leaves grayscale + contrast(0.8) + brightness(1.35) running on the
+   authored colour, and even authored pure black only reaches ~35/255, a
+   charcoal grey, never true ink. Escalate is `lightBoard: true` instead
+   (see Arcade.register), dropping the invert so only grayscale(1)
+   contrast(0.92) brightness(1.12) remains — that floor is ~11/255, close
+   enough to read as true black. "You" is a solid ink desk, "AI" is a hollow
+   paper desk with an ink outline — a filled/hollow distinction instead of
+   two greys. Light theme authors literal #fff/#000 (this filter would pull
+   the --doc-ink variable's value short of the extremes a second time); dark
+   theme has no such compounding filter on a lightBoard stage, so it uses
+   the variables directly. */
+body.docmode .esc-cell.esc-you { background: #000000; }
+body.docmode .esc-cell.esc-you .esc-count { color: #ffffff; }
+body.docmode .esc-cell.esc-ai { background: #ffffff; box-shadow: inset 0 0 0 2px #000000; }
+body.docmode .esc-cell.esc-ai .esc-count { color: #000000; }
+body.docmode .esc-cell.esc-hot { box-shadow: inset 0 0 0 2px #000000; }
+:root[data-dark="1"] body.docmode .esc-cell.esc-you { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .esc-cell.esc-you .esc-count { color: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .esc-cell.esc-ai { background: var(--doc-paper); box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .esc-cell.esc-ai .esc-count { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .esc-cell.esc-hot { box-shadow: inset 0 0 0 2px var(--doc-ink); }
 
-/* Reversi: the felt square (#219a5b, a mid-tone green) inverts into the same
-   mid-grey band as the checkers squares above rather than reaching white —
-   counter-invert it so it reads as paper; the disc pseudo-elements are
-   nested inside so the same counter-invert cancels their inversion too,
-   leaving the already-near-white/near-black disc colours to render as
-   plain light/dark ink with no extra rule needed. */
-:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .rev .cell {
-  filter: invert(1) hue-rotate(180deg);
-}
-body.docmode .rev .cell { background: var(--doc-paper); border-color: var(--doc-rule2); }
-body.docmode .rev { background: var(--doc-ink); }
-/* the light disc is near-white already, same as the now-white cell it sits
-   on — invisible without its own outline. Give both discs an explicit ring
-   so the light one still reads against paper. */
-body.docmode .rev .cell.l::after { background: var(--doc-paper); box-shadow: inset 0 0 0 2px var(--doc-ink); }
-body.docmode .rev .cell.d::after { background: var(--doc-ink); box-shadow: none; }
+/* Reversi and Checkers: felt green (#219a5b) and the tan/brown square pair
+   both invert into the same mid-grey band instead of reaching white — the
+   classic "mid-tone source doesn't invert to white" failure. Counter-invert
+   fixed the background but has a hard floor: cancelling the parent's invert
+   still leaves grayscale + contrast(0.8) + brightness(1.35) running on the
+   authored colour, and that floor sits at ~35/255 even for authored pure
+   black — a dark charcoal, not ink. Both boards are `lightBoard: true`
+   instead (see their Arcade.register), which drops the invert entirely, so
+   plain grayscale(1) contrast(0.92) brightness(1.12) is all that's left —
+   THAT floor is ~11/255 for pure black, close enough to read as true ink.
+   Author literal #fff/#000 rather than the --doc-paper/--doc-ink variables:
+   those variables are tuned as already-final colours, and running them
+   through this filter a second time would land short of the extremes again.
+   The dark doc theme has no such compounding filter on a lightBoard stage
+   (that rule is scoped off there too), so it uses the variables directly —
+   they ARE the final colour with nothing left to run them through. */
+body.docmode .rev .cell { background: #ffffff; border-color: #000000; }
+body.docmode .rev { background: #000000; }
+body.docmode .rev .cell.l::after { background: #ffffff; box-shadow: inset 0 0 0 2px #000000; }
+body.docmode .rev .cell.d::after { background: #000000; box-shadow: none; }
+:root[data-dark="1"] body.docmode .rev .cell { background: var(--doc-paper); border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .rev { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .rev .cell.l::after { background: var(--doc-paper); box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .rev .cell.d::after { background: var(--doc-ink); box-shadow: none; }
 
-/* Checkers: the light square (--e6d6ac tan) and dark square (--7a5230 brown)
-   both invert into the same mid-grey band and effectively swap roles instead
-   of one reading as paper — the classic "mid-tone source doesn't invert to
-   white" failure. Counter-invert both and author an explicit light/dark
-   paper pair so the board reads as a printed grid, not a grey wash. */
-:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .checkers .cell {
-  filter: invert(1) hue-rotate(180deg);
-}
-body.docmode .checkers .cell { background: var(--doc-paper); }
-body.docmode .checkers .cell.dk { background: var(--doc-rule2); }
-body.docmode .board.checkers { background: var(--doc-ink); }
+body.docmode .checkers .cell { background: #ffffff; }
+body.docmode .checkers .cell.dk { background: #ffffff; box-shadow: inset 0 0 0 1px #000000; }
+body.docmode .board.checkers { background: #000000; }
+body.docmode .checkers .cell .pc { background: #ffffff !important; box-shadow: inset 0 0 0 2px #000000; }
+body.docmode .checkers .cell .pc.blk { background: #000000 !important; box-shadow: none; }
+body.docmode .checkers .cell .pc.king::after { border-color: #000000; }
+body.docmode .checkers .cell .dot { background: #000000; }
+:root[data-dark="1"] body.docmode .checkers .cell { background: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .checkers .cell.dk { background: var(--doc-paper); box-shadow: inset 0 0 0 1px var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .board.checkers { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .checkers .cell .pc { background: var(--doc-paper) !important; box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .checkers .cell .pc.blk { background: var(--doc-ink) !important; box-shadow: none; }
+:root[data-dark="1"] body.docmode .checkers .cell .pc.king::after { border-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .checkers .cell .dot { background: var(--doc-ink); }
 
-/* Peg Solitaire: an empty hole (light --paper2) and a filled peg (banana
-   radial gradient) both invert under the blanket filter, but land close
-   enough in luminance to fall under the 3:1 non-text-contrast guideline —
-   playable, but subtler than it should be. Counter-invert and author an
-   explicit empty-outline vs. filled-dot pair instead, the same fix pattern
-   as everything else in this section. */
-:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .peg-hole {
-  filter: invert(1) hue-rotate(180deg);
-}
-body.docmode .peg-hole { background: var(--doc-paper); border-color: var(--doc-rule2); }
-body.docmode .peg-hole.peg { background: var(--doc-ink); border-color: var(--doc-ink); box-shadow: none; }
+/* Peg Solitaire: an empty hole and a filled peg both invert under the
+   blanket filter, but land close enough in luminance to fall under the
+   3:1 non-text-contrast guideline. It's `lightBoard: true` (see
+   Arcade.register) rather than counter-inverted, for the same reason as
+   Escalate above: counter-invert caps out around ~35/255 for authored
+   black, a charcoal, not ink; a lightBoard stage's plain grayscale(1)
+   contrast(0.92) brightness(1.12) reaches ~11/255, close enough to read
+   as true black. */
+body.docmode .peg-hole { background: #ffffff; border-color: #000000; }
+body.docmode .peg-hole.peg { background: #000000; border-color: #000000; box-shadow: none; }
+:root[data-dark="1"] body.docmode .peg-hole { background: var(--doc-paper); border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .peg-hole.peg { background: var(--doc-ink); border-color: var(--doc-ink); box-shadow: none; }
 
 /* 2048 as a document: a tidy greyscale data grid, not an inverted wall of
    black tiles. Low values sit near-white and step toward grey as they climb,
@@ -3525,10 +3548,22 @@ body.docmode .doc-figcap {
      a background/resting-state colour that lands grey should read this
      (paired with `lightBoard: true` in Arcade.register so the filter stops
      inverting and just desaturates+brightens what's explicitly drawn here)
-     and fill with docPaper()/docInk() directly in doc mode — a guaranteed
-     colour, not a hope that the filter math works out. */
-  Engine.docPaper = function docPaper() { return Engine.docColor('--doc-paper', '#ffffff'); };
-  Engine.docInk = function docInk() { return Engine.docColor('--doc-ink', '#1f2329'); };
+     and fill with docPaper()/docInk() directly in doc mode.
+
+     Naive approach: read --doc-paper/--doc-ink and draw those. Wrong — a
+     lightBoard stage still runs grayscale(1) contrast(0.92) brightness(1.12)
+     OVER whatever gets drawn, and that brightness lift turns --doc-ink
+     (#1f2329, already fairly dark) into ~rgb(47,47,47) on screen: a visible
+     charcoal grey, not ink. The light doc theme has no dark-theme swap to
+     worry about, so feed the filter true extremes (#000/#fff) instead of the
+     tuned CSS value — pure black still clips to a near-black ~11 through
+     that exact filter, pure white stays white. The dark doc theme has no
+     such compounding filter (its lightBoard rule is scoped off in that
+     theme), so there the CSS var IS the final on-screen colour and should be
+     read directly. */
+  const isDarkDoc = () => { try { return document.documentElement.getAttribute('data-dark') === '1'; } catch (e) { return false; } };
+  Engine.docPaper = function docPaper() { return isDarkDoc() ? Engine.docColor('--doc-paper', '#1b1e24') : '#ffffff'; };
+  Engine.docInk = function docInk() { return isDarkDoc() ? Engine.docColor('--doc-ink', '#e9ebef') : '#000000'; };
   Engine.docMut = function docMut() { return Engine.docColor('--doc-mut', '#767d88'); };
   Engine.docRule = function docRule() { return Engine.docColor('--doc-rule2', '#d3d6dc'); };
   Engine.docColor = function docColor(name, fallback) {
@@ -7692,7 +7727,7 @@ body.docmode .doc-figcap {
       const X = (pp) => m + (pp - 0.30) / (0.85 - 0.30) * (w - m - 8);
       const Y = (f) => hh - m - f * (hh - m - 8);
       /* axes */
-      pctx.strokeStyle = doc ? Engine.docRule() : '#4a4436'; pctx.lineWidth = 1;
+      pctx.strokeStyle = doc ? Engine.docInk() : '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(1)); pctx.stroke();
       pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('burned', 2, 12); pctx.fillText('density p', w - 62, hh - 8);
@@ -7701,11 +7736,13 @@ body.docmode .doc-figcap {
       pctx.beginPath(); pctx.moveTo(X(PC), Y(0)); pctx.lineTo(X(PC), Y(1)); pctx.stroke();
       pctx.setLineDash([]);
       pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.fillText('p_c ' + PC, X(PC) + 3, Y(1) + 10);
-      /* reference curve */
+      /* reference curve — ink, dotted, so it reads apart from the dashed p_c line without a second grey */
       if (ref.length) {
-        pctx.strokeStyle = doc ? Engine.docMut() : '#00a6b4'; pctx.lineWidth = 2; pctx.beginPath();
+        pctx.strokeStyle = doc ? Engine.docInk() : '#00a6b4'; pctx.lineWidth = 2;
+        if (doc) pctx.setLineDash([1, 3]);
+        pctx.beginPath();
         ref.forEach((s, i) => { const x = X(s.p), y = Y(s.burned); i ? pctx.lineTo(x, y) : pctx.moveTo(x, y); });
-        pctx.stroke();
+        pctx.stroke(); pctx.setLineDash([]);
       }
       /* your samples */
       for (const s of samples) {
@@ -7721,13 +7758,20 @@ body.docmode .doc-figcap {
       const doc = Arcade.docMode();
       for (let i = 0; i < grid.length; i++) {
         const s = grid[i];
-        ctx.fillStyle = doc
-          ? (s === EMPTY || s === TREE ? Engine.docPaper() : s === FIRE ? Engine.docInk() : Engine.docMut())
-          : (s === EMPTY ? '#141019' : s === TREE ? '#d9c9a0' : s === FIRE ? '#ff5a2a' : '#4a4038');
-        ctx.fillRect((i % N) * CELL, ((i / N) | 0) * CELL, CELL + 1, CELL + 1);
-        if (doc && s === TREE) {
-          ctx.strokeStyle = Engine.docRule(); ctx.lineWidth = 1;
-          ctx.strokeRect((i % N) * CELL + 0.5, ((i / N) | 0) * CELL + 0.5, CELL, CELL);
+        const x = (i % N) * CELL, y = ((i / N) | 0) * CELL;
+        if (doc) {
+          /* a dense grid is far too fine for a per-cell outline — that many
+             thin lines packed together reads as a grey mesh from a
+             distance. Blank paper for standing/unburned, ink only for
+             what's notable. */
+          if (s === FIRE) { ctx.fillStyle = Engine.docInk(); ctx.fillRect(x, y, CELL + 1, CELL + 1); }
+          else if (s === BURNT) {                  // burned out: a small ink mark on blank paper
+            ctx.fillStyle = Engine.docInk();
+            ctx.beginPath(); ctx.arc(x + CELL / 2, y + CELL / 2, CELL * 0.26, 0, 7); ctx.fill();
+          }
+        } else {
+          ctx.fillStyle = s === EMPTY ? '#141019' : s === TREE ? '#d9c9a0' : s === FIRE ? '#ff5a2a' : '#4a4038';
+          ctx.fillRect(x, y, CELL + 1, CELL + 1);
         }
       }
       drawPlot();
@@ -8114,24 +8158,26 @@ body.docmode .doc-figcap {
       const doc = Arcade.docMode();
       const w = plot.width, hh = plot.height, m = 24;
       pctx.fillStyle = doc ? Engine.docPaper() : '#12100c'; pctx.fillRect(0, 0, w, hh);
-      pctx.strokeStyle = doc ? Engine.docRule() : '#4a4436'; pctx.lineWidth = 1;
+      pctx.strokeStyle = doc ? Engine.docInk() : '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, hh - m); pctx.lineTo(w - 6, hh - m); pctx.moveTo(m, hh - m); pctx.lineTo(m, 8); pctx.stroke();
       pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('fraction', 2, 12); pctx.fillText('time', w - 30, hh - 8);
       const n = series.length; if (n < 2) return;
       const X = (k) => m + k / (n - 1) * (w - m - 6);
       const Y = (f) => (hh - m) - f * (hh - m - 8);
-      const lineOf = (key, col) => {
-        pctx.strokeStyle = col; pctx.lineWidth = 2; pctx.beginPath();
+      /* no grey second colour to distinguish the three curves in doc mode —
+         ink everywhere, dash pattern tells them apart instead. */
+      const lineOf = (key, col, dash) => {
+        pctx.strokeStyle = col; pctx.lineWidth = 2; pctx.setLineDash(dash || []); pctx.beginPath();
         for (let k = 0; k < n; k++) { const x = X(k), y = Y(series[k][key]); k ? pctx.lineTo(x, y) : pctx.moveTo(x, y); }
-        pctx.stroke();
+        pctx.stroke(); pctx.setLineDash([]);
       };
-      lineOf('s', doc ? Engine.docMut() : '#00a6b4');    // susceptible
-      lineOf('r', doc ? Engine.docRule() : '#a79e88');   // recovered
-      lineOf('i', doc ? Engine.docInk() : '#e8402a');    // infected hump
-      pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.fillText('infected', w - 120, 14);
-      pctx.fillStyle = doc ? Engine.docMut() : '#00a6b4'; pctx.fillText('S', w - 46, 14);
-      pctx.fillStyle = doc ? Engine.docRule() : '#a79e88'; pctx.fillText('R', w - 30, 14);
+      lineOf('s', doc ? Engine.docInk() : '#00a6b4', doc ? [5, 3] : null);    // susceptible: dashed
+      lineOf('r', doc ? Engine.docInk() : '#a79e88', doc ? [1, 3] : null);    // recovered: dotted
+      lineOf('i', doc ? Engine.docInk() : '#e8402a');                        // infected hump: solid
+      pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.fillText('infected —', w - 132, 14);
+      pctx.fillStyle = doc ? Engine.docInk() : '#00a6b4'; pctx.fillText('S - -', w - 56, 14);
+      pctx.fillStyle = doc ? Engine.docInk() : '#a79e88'; pctx.fillText('R ..', w - 26, 14);
     }
 
     function draw() {
@@ -8140,13 +8186,20 @@ body.docmode .doc-figcap {
       for (let k = 0; k < grid.length; k++) {
         const v = grid[k];
         if (v === EMPTY) continue;
-        ctx.fillStyle = doc
-          ? (v === S ? Engine.docPaper() : v === I ? Engine.docInk() : Engine.docMut())
-          : (v === S ? '#d9c9a0' : v === I ? '#e8402a' : '#6b6350');
-        ctx.fillRect((k % L) * CELL, ((k / L) | 0) * CELL, CELL + 1, CELL + 1);
-        if (doc && v === S) {
-          ctx.strokeStyle = Engine.docRule(); ctx.lineWidth = 1;
-          ctx.strokeRect((k % L) * CELL + 0.5, ((k / L) | 0) * CELL + 0.5, CELL, CELL);
+        const x = (k % L) * CELL, y = ((k / L) | 0) * CELL;
+        if (doc) {
+          /* an 90x90 grid is far too dense for a per-cell outline — that
+             many thin black lines packed together reads as a grey mesh from
+             a distance, exactly the wash this fix is trying to avoid. Blank
+             paper for a susceptible desk, ink only for what's notable. */
+          if (v === I) { ctx.fillStyle = Engine.docInk(); ctx.fillRect(x, y, CELL + 1, CELL + 1); }
+          else if (v === R) {                     // recovered: a small ink mark on blank paper
+            ctx.fillStyle = Engine.docInk();
+            ctx.beginPath(); ctx.arc(x + CELL / 2, y + CELL / 2, CELL * 0.3, 0, 7); ctx.fill();
+          }
+        } else {
+          ctx.fillStyle = v === S ? '#d9c9a0' : v === I ? '#e8402a' : '#6b6350';
+          ctx.fillRect(x, y, CELL + 1, CELL + 1);
         }
       }
       drawPlot();
@@ -13846,7 +13899,8 @@ body.docmode .doc-figcap {
     id: 'pegs', title: 'Peg Solitaire', emoji: 'lightsout', cat: 'puzzle', order: 21,
     lowerIsBetter: true,
     blurb: 'The wooden peg board from every waiting room. Jump pegs over each other to remove them and try to finish with a single peg standing.',
-    scoreLabel: 'Fewest left', tags: ['puzzle', 'classic', 'solitaire'],
+    scoreLabel: 'Fewest left', lightBoard: true,   // doc mode authors its own paper/ink holes (see arcade.css) — the counter-invert trick can't reach true black
+    tags: ['puzzle', 'classic', 'solitaire'],
     how: [
       'Tap a peg to select it, then tap an empty hole two spaces away.',
       'The peg jumps a neighbour into the hole, and the jumped peg is removed.',
@@ -20060,6 +20114,7 @@ body.docmode .doc-figcap {
     order: 27,
     blurb: 'Othello on an 8x8 board. Trap a straight line of light discs between two of your dark ones and the whole line flips to dark. Corners decide most games.',
     scoreLabel: 'Most discs',
+    lightBoard: true,   // doc mode authors its own paper/ink squares (see arcade.css) — the counter-invert trick can't reach true black
     tags: ['othello', 'reversi', 'vs-cpu'],
     how: [
       'You play the dark discs. Legal squares glow, so click one.',
@@ -20335,6 +20390,7 @@ body.docmode .doc-figcap {
     order: 34,
     blurb: 'A ticket queue that overflows onto neighboring desks. Stack tickets on your own desks; overload one and it dumps a ticket on every neighbor, converting them to you.',
     scoreLabel: 'Tickets held',
+    lightBoard: true,   // doc mode authors its own paper/ink cells (see arcade.css) — the counter-invert trick can't reach true black
     tags: ['chain-reaction', 'territory', 'vs-cpu', 'hotseat', 'grid'],
     how: [
       'Click any empty desk, or one you already hold, to add a ticket. Every desk has a capacity based on how many neighbors it has: 2 in a corner, 3 on an edge, 4 in the open floor.',
@@ -20708,6 +20764,7 @@ body.docmode .doc-figcap {
     order: 28,
     blurb: 'English draughts against the CPU or a coworker on company time. Jumps are forced, and reaching the far back rank crowns a king.',
     scoreLabel: 'Wins',
+    lightBoard: true,   // doc mode authors its own paper/ink squares (see arcade.css) — the counter-invert trick can't reach true black
     tags: ['checkers', 'draughts', 'board', 'vs-cpu', 'correspondence'],
     how: [
       'Play red at the bottom against black at the top. Win by leaving the other side with no piece or no legal move.',
@@ -23199,33 +23256,66 @@ body.docmode .doc-figcap {
       ctx.fillStyle = doc ? Engine.docPaper() : '#7ec0ee';
       ctx.fillRect(0, 0, W, H);
 
-      for (const p of pipes) {
-        ctx.fillStyle = doc ? Engine.docMut() : '#4aa72e';
-        ctx.fillRect(p.x, 0, PIPE_W, p.cy - p.g / 2);
-        ctx.fillRect(p.x, p.cy + p.g / 2, PIPE_W, H - (p.cy + p.g / 2));
-        ctx.fillStyle = 'rgba(0,0,0,.16)';
-        ctx.fillRect(p.x + PIPE_W - 10, 0, 10, p.cy - p.g / 2);
-        ctx.fillRect(p.x + PIPE_W - 10, p.cy + p.g / 2, 10, H - (p.cy + p.g / 2));
-        ctx.fillStyle = doc ? Engine.docInk() : '#3c8a24';
-        ctx.fillRect(p.x - 3, p.cy - p.g / 2 - 16, PIPE_W + 6, 16);
-        ctx.fillRect(p.x - 3, p.cy + p.g / 2, PIPE_W + 6, 16);
+      /* doc mode: white pipes with a thin ink outline, never a grey fill —
+         a clean line-figure look instead of a solid tinted shape. */
+      if (doc) {
+        ctx.fillStyle = Engine.docPaper();
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2;
+        for (const p of pipes) {
+          ctx.fillRect(p.x, 0, PIPE_W, p.cy - p.g / 2);
+          ctx.strokeRect(p.x + 1, 1, PIPE_W - 2, p.cy - p.g / 2 - 2);
+          ctx.fillRect(p.x, p.cy + p.g / 2, PIPE_W, H - (p.cy + p.g / 2));
+          ctx.strokeRect(p.x + 1, p.cy + p.g / 2 + 1, PIPE_W - 2, H - (p.cy + p.g / 2) - 2);
+          ctx.strokeRect(p.x - 3 + 1, p.cy - p.g / 2 - 16 + 1, PIPE_W + 6 - 2, 16 - 2);
+          ctx.strokeRect(p.x - 3 + 1, p.cy + p.g / 2 + 1, PIPE_W + 6 - 2, 16 - 2);
+        }
+      } else {
+        for (const p of pipes) {
+          ctx.fillStyle = '#4aa72e';
+          ctx.fillRect(p.x, 0, PIPE_W, p.cy - p.g / 2);
+          ctx.fillRect(p.x, p.cy + p.g / 2, PIPE_W, H - (p.cy + p.g / 2));
+          ctx.fillStyle = 'rgba(0,0,0,.16)';
+          ctx.fillRect(p.x + PIPE_W - 10, 0, 10, p.cy - p.g / 2);
+          ctx.fillRect(p.x + PIPE_W - 10, p.cy + p.g / 2, 10, H - (p.cy + p.g / 2));
+          ctx.fillStyle = '#3c8a24';
+          ctx.fillRect(p.x - 3, p.cy - p.g / 2 - 16, PIPE_W + 6, 16);
+          ctx.fillRect(p.x - 3, p.cy + p.g / 2, PIPE_W + 6, 16);
+        }
       }
 
-      ctx.fillStyle = doc ? Engine.docInk() : '#caa24a';
-      ctx.fillRect(0, H - 6, W, 6);
+      if (doc) {
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, H - 5); ctx.lineTo(W, H - 5); ctx.stroke();
+      } else {
+        ctx.fillStyle = '#caa24a';
+        ctx.fillRect(0, H - 6, W, 6);
+      }
 
       const rot = clamp(bv / 620, -0.5, 1.2);
       ctx.save();
       ctx.translate(BX, by);
       ctx.rotate(started ? rot : 0);
-      ctx.fillStyle = doc ? Engine.docInk() : '#ffd02a';
-      ctx.beginPath(); ctx.arc(0, 0, R, 0, 7); ctx.fill();
-      ctx.fillStyle = doc ? Engine.docPaper() : '#fffdf3';
-      ctx.beginPath(); ctx.arc(6, -5, 5, 0, 7); ctx.fill();
-      ctx.fillStyle = doc ? Engine.docInk() : '#1d1722';
-      ctx.beginPath(); ctx.arc(8, -5, 2.2, 0, 7); ctx.fill();
-      ctx.fillStyle = doc ? Engine.docMut() : '#e8402a';
-      ctx.fillRect(R - 3, -2, 9, 5);
+      if (doc) {
+        /* the bird itself: an outlined circle, not a solid dark blob —
+           minimal ink, everything else white. */
+        ctx.fillStyle = Engine.docPaper();
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(0, 0, R, 0, 7); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = Engine.docInk();
+        ctx.beginPath(); ctx.arc(8, -5, 2, 0, 7); ctx.fill();               // eye: a small solid dot is fine, it's tiny
+        ctx.beginPath();                                                     // beak: outline only
+        ctx.moveTo(R - 3, -3); ctx.lineTo(R + 7, 0.5); ctx.lineTo(R - 3, 4);
+        ctx.closePath(); ctx.stroke();
+      } else {
+        ctx.fillStyle = '#ffd02a';
+        ctx.beginPath(); ctx.arc(0, 0, R, 0, 7); ctx.fill();
+        ctx.fillStyle = '#fffdf3';
+        ctx.beginPath(); ctx.arc(6, -5, 5, 0, 7); ctx.fill();
+        ctx.fillStyle = '#1d1722';
+        ctx.beginPath(); ctx.arc(8, -5, 2.2, 0, 7); ctx.fill();
+        ctx.fillStyle = '#e8402a';
+        ctx.fillRect(R - 3, -2, 9, 5);
+      }
       ctx.restore();
 
       if (!started && !over) {
@@ -24116,7 +24206,7 @@ body.docmode .doc-figcap {
       const sunX = W * 0.5 - (base ? base.curve : 0) * 26 - playerX * 40;
       const sunY = H * 0.30;
       if (doc0) {
-        ctx.strokeStyle = Engine.docRule(); ctx.lineWidth = 1.5;
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5;
         ctx.beginPath(); ctx.arc(sunX, sunY, 34, 0, 7); ctx.stroke();
       } else {
         const sg = ctx.createRadialGradient(sunX, sunY, 6, sunX, sunY, 120);
@@ -24124,11 +24214,18 @@ body.docmode .doc-figcap {
         ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(sunX, sunY, 120, 0, 7); ctx.fill();
         ctx.fillStyle = '#fff2b0'; ctx.beginPath(); ctx.arc(sunX, sunY, 34, 0, 7); ctx.fill();
       }
-      /* distant hill band on the horizon */
-      ctx.fillStyle = doc0 ? Engine.docRule() : 'rgba(46,120,70,.55)';
-      ctx.beginPath(); ctx.moveTo(0, H * 0.52);
-      for (let i = 0; i <= 8; i++) ctx.lineTo(W * i / 8, H * 0.52 - Math.sin(i * 1.3 + (base ? base.i * 0.02 : 0)) * 18 - 10);
-      ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
+      /* distant hill band on the horizon — outline only in doc mode, no grey wash */
+      if (doc0) {
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5; ctx.beginPath();
+        ctx.moveTo(0, H * 0.52);
+        for (let i = 0; i <= 8; i++) ctx.lineTo(W * i / 8, H * 0.52 - Math.sin(i * 1.3 + (base ? base.i * 0.02 : 0)) * 18 - 10);
+        ctx.stroke();
+      } else {
+        ctx.fillStyle = 'rgba(46,120,70,.55)';
+        ctx.beginPath(); ctx.moveTo(0, H * 0.52);
+        for (let i = 0; i <= 8; i++) ctx.lineTo(W * i / 8, H * 0.52 - Math.sin(i * 1.3 + (base ? base.i * 0.02 : 0)) * 18 - 10);
+        ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
+      }
     }
 
     function drawScenery(sp, spr) {
@@ -24136,10 +24233,15 @@ body.docmode .doc-figcap {
       if (s < 1.5) return;
       if (spr.type === 'tree') {
         const th = s * (1.9 + spr.seed * 1.4), tw = s * 0.62;
-        ctx.fillStyle = '#5a3b1c'; ctx.fillRect(x - s * 0.06, y - th * 0.34, s * 0.12, th * 0.34);
-        ctx.fillStyle = spr.seed > 0.5 ? '#1c5a2a' : '#237a35';
-        ctx.beginPath(); ctx.moveTo(x, y - th); ctx.lineTo(x - tw, y - th * 0.34); ctx.lineTo(x + tw, y - th * 0.34); ctx.closePath(); ctx.fill();
-        ctx.beginPath(); ctx.moveTo(x, y - th * 0.78); ctx.lineTo(x - tw * 1.15, y - th * 0.18); ctx.lineTo(x + tw * 1.15, y - th * 0.18); ctx.closePath(); ctx.fill();
+        const doc0 = DOC();
+        ctx.fillStyle = doc0 ? Engine.docPaper() : '#5a3b1c';
+        if (doc0) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1; ctx.strokeRect(x - s * 0.06, y - th * 0.34, s * 0.12, th * 0.34); }
+        else ctx.fillRect(x - s * 0.06, y - th * 0.34, s * 0.12, th * 0.34);
+        ctx.fillStyle = doc0 ? Engine.docPaper() : (spr.seed > 0.5 ? '#1c5a2a' : '#237a35');
+        ctx.beginPath(); ctx.moveTo(x, y - th); ctx.lineTo(x - tw, y - th * 0.34); ctx.lineTo(x + tw, y - th * 0.34); ctx.closePath();
+        if (doc0) { ctx.fill(); ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1; ctx.stroke(); } else ctx.fill();
+        ctx.beginPath(); ctx.moveTo(x, y - th * 0.78); ctx.lineTo(x - tw * 1.15, y - th * 0.18); ctx.lineTo(x + tw * 1.15, y - th * 0.18); ctx.closePath();
+        if (doc0) { ctx.fill(); ctx.stroke(); } else ctx.fill();
       } else if (spr.type === 'bush') {
         const r = s * 0.5;
         ctx.fillStyle = '#2f8a3a';
@@ -24184,8 +24286,11 @@ body.docmode .doc-figcap {
          palette to paper/rule/ink tones for the duration of this frame. */
       const doc0 = DOC();
       if (doc0) {
-        COL.grassL = Engine.docRule(); COL.grassD = Engine.docMut();
-        COL.roadL = Engine.docPaper(); COL.roadD = Engine.docRule();
+        /* road and grass both stay plain paper — no grey stripe alternation.
+           The ink/paper rumble strip at the road edge and the ink lane
+           dashes carry all the motion cues, both true black, not grey. */
+        COL.grassL = Engine.docPaper(); COL.grassD = Engine.docPaper();
+        COL.roadL = Engine.docPaper(); COL.roadD = Engine.docPaper();
         COL.rumbleL = Engine.docInk(); COL.rumbleD = Engine.docPaper();
         COL.lane = Engine.docInk();
       } else {
@@ -24271,9 +24376,11 @@ body.docmode .doc-figcap {
           // becomes a small, calm status line instead — same information,
           // none of the drama
           ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-          ctx.fillStyle = 'rgba(20,23,28,.55)';
+          ctx.fillStyle = Engine.docPaper();
           ctx.fillRect(W / 2 - 90, H / 2 - 16, 180, 32);
-          ctx.fillStyle = '#f2ede0';
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5;
+          ctx.strokeRect(W / 2 - 90 + 0.75, H / 2 - 16 + 0.75, 178.5, 30.5);
+          ctx.fillStyle = Engine.docInk();
           ctx.font = '600 15px "Courier New", monospace';
           ctx.fillText(label, W / 2, H / 2 + 1);
           ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
@@ -24290,37 +24397,61 @@ body.docmode .doc-figcap {
     }
 
     function drawCar(cx, cy, w, hh, lean, braking) {
+      const doc0 = DOC();
       ctx.save(); ctx.translate(cx + lean * 7, cy);
-      ctx.fillStyle = 'rgba(0,0,0,.32)'; ctx.beginPath(); ctx.ellipse(0, hh * 0.44, w * 0.52, hh * 0.17, 0, 0, 7); ctx.fill();
-      /* tyres */
-      ctx.fillStyle = '#111'; ctx.fillRect(-w / 2, hh * 0.16, w * 0.2, hh * 0.34); ctx.fillRect(w / 2 - w * 0.2, hh * 0.16, w * 0.2, hh * 0.34);
-      /* body */
-      ctx.fillStyle = '#c0331f'; ctx.fillRect(-w / 2, -hh * 0.24, w, hh * 0.62);
-      ctx.fillStyle = '#e8402a'; ctx.fillRect(-w / 2, -hh * 0.24, w, hh * 0.24);
-      /* cabin + rear window */
-      ctx.fillStyle = '#12303f'; ctx.fillRect(-w * 0.33, -hh * 0.4, w * 0.66, hh * 0.26);
-      ctx.fillStyle = '#8fd0e8'; ctx.fillRect(-w * 0.29, -hh * 0.37, w * 0.58, hh * 0.14);
-      /* spoiler + brake lights */
-      ctx.fillStyle = '#1d1722'; ctx.fillRect(-w * 0.42, -hh * 0.3, w * 0.84, hh * 0.08);
-      ctx.fillStyle = braking ? '#ff5b47' : '#7a1810';
-      ctx.fillRect(-w / 2 + 6, hh * 0.02, w * 0.2, hh * 0.14); ctx.fillRect(w / 2 - w * 0.2 - 6, hh * 0.02, w * 0.2, hh * 0.14);
+      if (doc0) {
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.ellipse(0, hh * 0.44, w * 0.52, hh * 0.17, 0, 0, 7); ctx.stroke();
+        /* tyres: small, ink is fine */
+        ctx.fillStyle = Engine.docInk();
+        ctx.fillRect(-w / 2, hh * 0.16, w * 0.2, hh * 0.34); ctx.fillRect(w / 2 - w * 0.2, hh * 0.16, w * 0.2, hh * 0.34);
+        /* body: white with an ink outline, not a solid colour block */
+        ctx.fillStyle = Engine.docPaper(); ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5;
+        ctx.fillRect(-w / 2, -hh * 0.24, w, hh * 0.62); ctx.strokeRect(-w / 2 + 0.75, -hh * 0.24 + 0.75, w - 1.5, hh * 0.62 - 1.5);
+        ctx.beginPath(); ctx.moveTo(-w / 2, -hh * 0.24 + hh * 0.24); ctx.lineTo(w / 2, -hh * 0.24 + hh * 0.24); ctx.stroke();
+        /* cabin + rear window: outline only */
+        ctx.strokeRect(-w * 0.33 + 0.75, -hh * 0.4 + 0.75, w * 0.66 - 1.5, hh * 0.26 - 1.5);
+        ctx.strokeRect(-w * 0.29 + 0.75, -hh * 0.37 + 0.75, w * 0.58 - 1.5, hh * 0.14 - 1.5);
+        /* spoiler + brake lights */
+        ctx.fillStyle = Engine.docInk(); ctx.fillRect(-w * 0.42, -hh * 0.3, w * 0.84, hh * 0.08);
+        if (braking) { ctx.fillRect(-w / 2 + 6, hh * 0.02, w * 0.2, hh * 0.14); ctx.fillRect(w / 2 - w * 0.2 - 6, hh * 0.02, w * 0.2, hh * 0.14); }
+        else { ctx.strokeRect(-w / 2 + 6.75, hh * 0.02 + 0.75, w * 0.2 - 1.5, hh * 0.14 - 1.5); ctx.strokeRect(w / 2 - w * 0.2 - 5.25, hh * 0.02 + 0.75, w * 0.2 - 1.5, hh * 0.14 - 1.5); }
+      } else {
+        ctx.fillStyle = 'rgba(0,0,0,.32)'; ctx.beginPath(); ctx.ellipse(0, hh * 0.44, w * 0.52, hh * 0.17, 0, 0, 7); ctx.fill();
+        /* tyres */
+        ctx.fillStyle = '#111'; ctx.fillRect(-w / 2, hh * 0.16, w * 0.2, hh * 0.34); ctx.fillRect(w / 2 - w * 0.2, hh * 0.16, w * 0.2, hh * 0.34);
+        /* body */
+        ctx.fillStyle = '#c0331f'; ctx.fillRect(-w / 2, -hh * 0.24, w, hh * 0.62);
+        ctx.fillStyle = '#e8402a'; ctx.fillRect(-w / 2, -hh * 0.24, w, hh * 0.24);
+        /* cabin + rear window */
+        ctx.fillStyle = '#12303f'; ctx.fillRect(-w * 0.33, -hh * 0.4, w * 0.66, hh * 0.26);
+        ctx.fillStyle = '#8fd0e8'; ctx.fillRect(-w * 0.29, -hh * 0.37, w * 0.58, hh * 0.14);
+        /* spoiler + brake lights */
+        ctx.fillStyle = '#1d1722'; ctx.fillRect(-w * 0.42, -hh * 0.3, w * 0.84, hh * 0.08);
+        ctx.fillStyle = braking ? '#ff5b47' : '#7a1810';
+        ctx.fillRect(-w / 2 + 6, hh * 0.02, w * 0.2, hh * 0.14); ctx.fillRect(w / 2 - w * 0.2 - 6, hh * 0.02, w * 0.2, hh * 0.14);
+      }
       ctx.restore();
     }
 
     function drawHUD() {
+      const doc0 = DOC();
       /* progress bar */
-      ctx.fillStyle = 'rgba(0,0,0,.4)'; ctx.fillRect(10, 10, W - 20, 8);
-      ctx.fillStyle = '#6fcf2f'; ctx.fillRect(10, 10, (W - 20) * clamp(pos / trackLen, 0, 1), 8);
+      ctx.fillStyle = doc0 ? Engine.docPaper() : 'rgba(0,0,0,.4)'; ctx.fillRect(10, 10, W - 20, 8);
+      if (doc0) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1; ctx.strokeRect(10.5, 10.5, W - 21, 7); }
+      ctx.fillStyle = doc0 ? Engine.docInk() : '#6fcf2f'; ctx.fillRect(10, 10, (W - 20) * clamp(pos / trackLen, 0, 1), 8);
       /* mph readout + a little speedo arc, bottom-left */
       const mph = Math.round(speed / MAXSPD * 140);
       const gx = 52, gy = H - 40, gr = 30;
-      ctx.strokeStyle = 'rgba(0,0,0,.45)'; ctx.lineWidth = 7;
+      ctx.strokeStyle = doc0 ? Engine.docPaper() : 'rgba(0,0,0,.45)'; ctx.lineWidth = 7;
       ctx.beginPath(); ctx.arc(gx, gy, gr, Math.PI * 0.85, Math.PI * 2.15); ctx.stroke();
-      ctx.strokeStyle = '#ffcb1f';
+      if (doc0) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1; ctx.stroke(); }
+      ctx.strokeStyle = doc0 ? Engine.docInk() : '#ffcb1f'; ctx.lineWidth = 7;
       ctx.beginPath(); ctx.arc(gx, gy, gr, Math.PI * 0.85, Math.PI * 0.85 + (Math.PI * 1.3) * clamp(speed / MAXSPD, 0, 1)); ctx.stroke();
-      ctx.fillStyle = '#fff'; ctx.strokeStyle = '#1d1722'; ctx.lineWidth = 3;
+      ctx.fillStyle = doc0 ? Engine.docInk() : '#fff'; ctx.strokeStyle = doc0 ? Engine.docPaper() : '#1d1722'; ctx.lineWidth = 3;
       ctx.textAlign = 'center'; ctx.font = 'bold 18px "Courier New", monospace';
-      ctx.strokeText(mph, gx, gy + 6); ctx.fillText(mph, gx, gy + 6);
+      if (!doc0) ctx.strokeText(mph, gx, gy + 6);
+      ctx.fillText(mph, gx, gy + 6);
       ctx.font = 'bold 9px "Courier New", monospace'; ctx.fillText('MPH', gx, gy + 20);
       ctx.textAlign = 'left';
       /* pills mirror the on-canvas HUD */
@@ -24738,10 +24869,16 @@ body.docmode .doc-figcap {
     }
 
     function drawPlayer(pl, face) {
-      ctx.fillStyle = 'rgba(0,0,0,.2)'; ctx.beginPath(); ctx.ellipse(pl.x, GROUND + 4, PR * 0.8, 6, 0, 0, 7); ctx.fill();
-      ctx.fillStyle = pl.col; ctx.beginPath(); ctx.arc(pl.x, pl.y - PR, PR, Math.PI, 0); ctx.rect(pl.x - PR, pl.y - PR, PR * 2, PR); ctx.fill();
-      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(pl.x + face * 8, pl.y - PR - 4, 5, 0, 7); ctx.fill();
-      ctx.fillStyle = '#1d1722'; ctx.beginPath(); ctx.arc(pl.x + face * 10, pl.y - PR - 4, 2.4, 0, 7); ctx.fill();
+      const doc0 = DOC();
+      ctx.fillStyle = doc0 ? Engine.docPaper() : 'rgba(0,0,0,.2)';
+      ctx.beginPath(); ctx.ellipse(pl.x, GROUND + 4, PR * 0.8, 6, 0, 0, 7); ctx.fill();
+      if (doc0) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5; ctx.stroke(); }
+      ctx.beginPath(); ctx.arc(pl.x, pl.y - PR, PR, Math.PI, 0); ctx.rect(pl.x - PR, pl.y - PR, PR * 2, PR);
+      ctx.fillStyle = doc0 ? Engine.docPaper() : pl.col; ctx.fill();
+      if (doc0) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5; ctx.stroke(); }
+      ctx.fillStyle = doc0 ? Engine.docPaper() : '#fff'; ctx.beginPath(); ctx.arc(pl.x + face * 8, pl.y - PR - 4, 5, 0, 7); ctx.fill();
+      if (doc0) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1; ctx.stroke(); }
+      ctx.fillStyle = doc0 ? Engine.docInk() : '#1d1722'; ctx.beginPath(); ctx.arc(pl.x + face * 10, pl.y - PR - 4, 2.4, 0, 7); ctx.fill();
     }
 
     function draw() {
@@ -24751,14 +24888,21 @@ body.docmode .doc-figcap {
         const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#3a6ea5'); g.addColorStop(1, '#5a86b8');
         ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
       }
-      ctx.fillStyle = doc0 ? Engine.docRule() : (sport === 'bball' ? '#c47a3a' : '#3a9d3a'); ctx.fillRect(0, GROUND, W, H - GROUND);
-      ctx.fillStyle = doc0 ? Engine.docMut() : 'rgba(255,255,255,.25)'; ctx.fillRect(W / 2 - 1, 0, 2, GROUND);
+      if (doc0) {
+        ctx.fillStyle = Engine.docPaper(); ctx.fillRect(0, GROUND, W, H - GROUND);
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(0, GROUND + 0.5); ctx.lineTo(W, GROUND + 0.5); ctx.stroke();
+      } else {
+        ctx.fillStyle = sport === 'bball' ? '#c47a3a' : '#3a9d3a'; ctx.fillRect(0, GROUND, W, H - GROUND);
+      }
+      ctx.fillStyle = doc0 ? Engine.docInk() : 'rgba(255,255,255,.25)'; ctx.fillRect(W / 2 - 1, 0, 2, GROUND);
 
       const T = targets();
       if (sport === 'bball') {
         for (const t of [T.left, T.right]) {
           const bx = t.hx < W / 2 ? 4 : W - 18;
-          ctx.fillStyle = doc0 ? Engine.docMut() : '#ded6c2'; ctx.fillRect(bx, t.hy - 44, 14, 60);          // backboard post
+          if (doc0) { ctx.fillStyle = Engine.docPaper(); ctx.fillRect(bx, t.hy - 44, 14, 60); ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5; ctx.strokeRect(bx + 0.75, t.hy - 44 + 0.75, 12.5, 58.5); }
+          else { ctx.fillStyle = '#ded6c2'; ctx.fillRect(bx, t.hy - 44, 14, 60); }          // backboard post
           ctx.fillStyle = doc0 ? Engine.docInk() : '#e8402a'; ctx.fillRect(t.hx - t.rw, t.hy - 4, t.rw * 2, 6);  // rim
           ctx.strokeStyle = doc0 ? Engine.docInk() : 'rgba(255,255,255,.6)'; ctx.lineWidth = 1;
           for (let i = -1; i <= 1; i++) { ctx.beginPath(); ctx.moveTo(t.hx + i * t.rw * 0.7, t.hy); ctx.lineTo(t.hx + i * t.rw * 0.4, t.hy + 20); ctx.stroke(); }
@@ -24780,9 +24924,9 @@ body.docmode .doc-figcap {
         ctx.fillStyle = 'rgba(255,255,255,.9)';
         ctx.beginPath(); ctx.arc(ball.x, ball.y, BR + 3, 0, 7); ctx.fill();
       }
-      ctx.fillStyle = doc ? '#14171c' : (sport === 'bball' ? '#e8621f' : '#f4f4f4');
+      ctx.fillStyle = doc ? Engine.docInk() : (sport === 'bball' ? '#e8621f' : '#f4f4f4');
       ctx.beginPath(); ctx.arc(ball.x, ball.y, BR, 0, 7); ctx.fill();
-      ctx.strokeStyle = doc ? '#14171c' : '#1d1722'; ctx.lineWidth = 1.4;
+      ctx.strokeStyle = doc ? Engine.docInk() : '#1d1722'; ctx.lineWidth = 1.4;
       ctx.beginPath(); ctx.arc(ball.x, ball.y, BR, 0, 7); ctx.stroke();
       if (sport === 'bball') { ctx.beginPath(); ctx.moveTo(ball.x - BR, ball.y); ctx.lineTo(ball.x + BR, ball.y); ctx.moveTo(ball.x, ball.y - BR); ctx.lineTo(ball.x, ball.y + BR); ctx.stroke(); }
       void msg;

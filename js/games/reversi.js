@@ -216,6 +216,7 @@
     order: 27,
     blurb: 'Othello on an 8x8 board. Trap a straight line of light discs between two of your dark ones and the whole line flips to dark. Corners decide most games.',
     scoreLabel: 'Most discs',
+    lightBoard: true,   // doc mode authors its own paper/ink squares (see arcade.css) — the counter-invert trick can't reach true black
     tags: ['othello', 'reversi', 'vs-cpu'],
     how: [
       'You play the dark discs. Legal squares glow, so click one.',

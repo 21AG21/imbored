@@ -182,10 +182,22 @@
      a background/resting-state colour that lands grey should read this
      (paired with `lightBoard: true` in Arcade.register so the filter stops
      inverting and just desaturates+brightens what's explicitly drawn here)
-     and fill with docPaper()/docInk() directly in doc mode — a guaranteed
-     colour, not a hope that the filter math works out. */
-  Engine.docPaper = function docPaper() { return Engine.docColor('--doc-paper', '#ffffff'); };
-  Engine.docInk = function docInk() { return Engine.docColor('--doc-ink', '#1f2329'); };
+     and fill with docPaper()/docInk() directly in doc mode.
+
+     Naive approach: read --doc-paper/--doc-ink and draw those. Wrong — a
+     lightBoard stage still runs grayscale(1) contrast(0.92) brightness(1.12)
+     OVER whatever gets drawn, and that brightness lift turns --doc-ink
+     (#1f2329, already fairly dark) into ~rgb(47,47,47) on screen: a visible
+     charcoal grey, not ink. The light doc theme has no dark-theme swap to
+     worry about, so feed the filter true extremes (#000/#fff) instead of the
+     tuned CSS value — pure black still clips to a near-black ~11 through
+     that exact filter, pure white stays white. The dark doc theme has no
+     such compounding filter (its lightBoard rule is scoped off in that
+     theme), so there the CSS var IS the final on-screen colour and should be
+     read directly. */
+  const isDarkDoc = () => { try { return document.documentElement.getAttribute('data-dark') === '1'; } catch (e) { return false; } };
+  Engine.docPaper = function docPaper() { return isDarkDoc() ? Engine.docColor('--doc-paper', '#1b1e24') : '#ffffff'; };
+  Engine.docInk = function docInk() { return isDarkDoc() ? Engine.docColor('--doc-ink', '#e9ebef') : '#000000'; };
   Engine.docMut = function docMut() { return Engine.docColor('--doc-mut', '#767d88'); };
   Engine.docRule = function docRule() { return Engine.docColor('--doc-rule2', '#d3d6dc'); };
   Engine.docColor = function docColor(name, fallback) {

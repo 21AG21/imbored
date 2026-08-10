@@ -99,33 +99,66 @@
       ctx.fillStyle = doc ? Engine.docPaper() : '#7ec0ee';
       ctx.fillRect(0, 0, W, H);
 
-      for (const p of pipes) {
-        ctx.fillStyle = doc ? Engine.docMut() : '#4aa72e';
-        ctx.fillRect(p.x, 0, PIPE_W, p.cy - p.g / 2);
-        ctx.fillRect(p.x, p.cy + p.g / 2, PIPE_W, H - (p.cy + p.g / 2));
-        ctx.fillStyle = 'rgba(0,0,0,.16)';
-        ctx.fillRect(p.x + PIPE_W - 10, 0, 10, p.cy - p.g / 2);
-        ctx.fillRect(p.x + PIPE_W - 10, p.cy + p.g / 2, 10, H - (p.cy + p.g / 2));
-        ctx.fillStyle = doc ? Engine.docInk() : '#3c8a24';
-        ctx.fillRect(p.x - 3, p.cy - p.g / 2 - 16, PIPE_W + 6, 16);
-        ctx.fillRect(p.x - 3, p.cy + p.g / 2, PIPE_W + 6, 16);
+      /* doc mode: white pipes with a thin ink outline, never a grey fill —
+         a clean line-figure look instead of a solid tinted shape. */
+      if (doc) {
+        ctx.fillStyle = Engine.docPaper();
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2;
+        for (const p of pipes) {
+          ctx.fillRect(p.x, 0, PIPE_W, p.cy - p.g / 2);
+          ctx.strokeRect(p.x + 1, 1, PIPE_W - 2, p.cy - p.g / 2 - 2);
+          ctx.fillRect(p.x, p.cy + p.g / 2, PIPE_W, H - (p.cy + p.g / 2));
+          ctx.strokeRect(p.x + 1, p.cy + p.g / 2 + 1, PIPE_W - 2, H - (p.cy + p.g / 2) - 2);
+          ctx.strokeRect(p.x - 3 + 1, p.cy - p.g / 2 - 16 + 1, PIPE_W + 6 - 2, 16 - 2);
+          ctx.strokeRect(p.x - 3 + 1, p.cy + p.g / 2 + 1, PIPE_W + 6 - 2, 16 - 2);
+        }
+      } else {
+        for (const p of pipes) {
+          ctx.fillStyle = '#4aa72e';
+          ctx.fillRect(p.x, 0, PIPE_W, p.cy - p.g / 2);
+          ctx.fillRect(p.x, p.cy + p.g / 2, PIPE_W, H - (p.cy + p.g / 2));
+          ctx.fillStyle = 'rgba(0,0,0,.16)';
+          ctx.fillRect(p.x + PIPE_W - 10, 0, 10, p.cy - p.g / 2);
+          ctx.fillRect(p.x + PIPE_W - 10, p.cy + p.g / 2, 10, H - (p.cy + p.g / 2));
+          ctx.fillStyle = '#3c8a24';
+          ctx.fillRect(p.x - 3, p.cy - p.g / 2 - 16, PIPE_W + 6, 16);
+          ctx.fillRect(p.x - 3, p.cy + p.g / 2, PIPE_W + 6, 16);
+        }
       }
 
-      ctx.fillStyle = doc ? Engine.docInk() : '#caa24a';
-      ctx.fillRect(0, H - 6, W, 6);
+      if (doc) {
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, H - 5); ctx.lineTo(W, H - 5); ctx.stroke();
+      } else {
+        ctx.fillStyle = '#caa24a';
+        ctx.fillRect(0, H - 6, W, 6);
+      }
 
       const rot = clamp(bv / 620, -0.5, 1.2);
       ctx.save();
       ctx.translate(BX, by);
       ctx.rotate(started ? rot : 0);
-      ctx.fillStyle = doc ? Engine.docInk() : '#ffd02a';
-      ctx.beginPath(); ctx.arc(0, 0, R, 0, 7); ctx.fill();
-      ctx.fillStyle = doc ? Engine.docPaper() : '#fffdf3';
-      ctx.beginPath(); ctx.arc(6, -5, 5, 0, 7); ctx.fill();
-      ctx.fillStyle = doc ? Engine.docInk() : '#1d1722';
-      ctx.beginPath(); ctx.arc(8, -5, 2.2, 0, 7); ctx.fill();
-      ctx.fillStyle = doc ? Engine.docMut() : '#e8402a';
-      ctx.fillRect(R - 3, -2, 9, 5);
+      if (doc) {
+        /* the bird itself: an outlined circle, not a solid dark blob —
+           minimal ink, everything else white. */
+        ctx.fillStyle = Engine.docPaper();
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(0, 0, R, 0, 7); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = Engine.docInk();
+        ctx.beginPath(); ctx.arc(8, -5, 2, 0, 7); ctx.fill();               // eye: a small solid dot is fine, it's tiny
+        ctx.beginPath();                                                     // beak: outline only
+        ctx.moveTo(R - 3, -3); ctx.lineTo(R + 7, 0.5); ctx.lineTo(R - 3, 4);
+        ctx.closePath(); ctx.stroke();
+      } else {
+        ctx.fillStyle = '#ffd02a';
+        ctx.beginPath(); ctx.arc(0, 0, R, 0, 7); ctx.fill();
+        ctx.fillStyle = '#fffdf3';
+        ctx.beginPath(); ctx.arc(6, -5, 5, 0, 7); ctx.fill();
+        ctx.fillStyle = '#1d1722';
+        ctx.beginPath(); ctx.arc(8, -5, 2.2, 0, 7); ctx.fill();
+        ctx.fillStyle = '#e8402a';
+        ctx.fillRect(R - 3, -2, 9, 5);
+      }
       ctx.restore();
 
       if (!started && !over) {

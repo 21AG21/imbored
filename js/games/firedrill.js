@@ -135,7 +135,7 @@
       const X = (pp) => m + (pp - 0.30) / (0.85 - 0.30) * (w - m - 8);
       const Y = (f) => hh - m - f * (hh - m - 8);
       /* axes */
-      pctx.strokeStyle = doc ? Engine.docRule() : '#4a4436'; pctx.lineWidth = 1;
+      pctx.strokeStyle = doc ? Engine.docInk() : '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(1)); pctx.stroke();
       pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('burned', 2, 12); pctx.fillText('density p', w - 62, hh - 8);
@@ -144,11 +144,13 @@
       pctx.beginPath(); pctx.moveTo(X(PC), Y(0)); pctx.lineTo(X(PC), Y(1)); pctx.stroke();
       pctx.setLineDash([]);
       pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.fillText('p_c ' + PC, X(PC) + 3, Y(1) + 10);
-      /* reference curve */
+      /* reference curve — ink, dotted, so it reads apart from the dashed p_c line without a second grey */
       if (ref.length) {
-        pctx.strokeStyle = doc ? Engine.docMut() : '#00a6b4'; pctx.lineWidth = 2; pctx.beginPath();
+        pctx.strokeStyle = doc ? Engine.docInk() : '#00a6b4'; pctx.lineWidth = 2;
+        if (doc) pctx.setLineDash([1, 3]);
+        pctx.beginPath();
         ref.forEach((s, i) => { const x = X(s.p), y = Y(s.burned); i ? pctx.lineTo(x, y) : pctx.moveTo(x, y); });
-        pctx.stroke();
+        pctx.stroke(); pctx.setLineDash([]);
       }
       /* your samples */
       for (const s of samples) {
@@ -164,13 +166,20 @@
       const doc = Arcade.docMode();
       for (let i = 0; i < grid.length; i++) {
         const s = grid[i];
-        ctx.fillStyle = doc
-          ? (s === EMPTY || s === TREE ? Engine.docPaper() : s === FIRE ? Engine.docInk() : Engine.docMut())
-          : (s === EMPTY ? '#141019' : s === TREE ? '#d9c9a0' : s === FIRE ? '#ff5a2a' : '#4a4038');
-        ctx.fillRect((i % N) * CELL, ((i / N) | 0) * CELL, CELL + 1, CELL + 1);
-        if (doc && s === TREE) {
-          ctx.strokeStyle = Engine.docRule(); ctx.lineWidth = 1;
-          ctx.strokeRect((i % N) * CELL + 0.5, ((i / N) | 0) * CELL + 0.5, CELL, CELL);
+        const x = (i % N) * CELL, y = ((i / N) | 0) * CELL;
+        if (doc) {
+          /* a dense grid is far too fine for a per-cell outline — that many
+             thin lines packed together reads as a grey mesh from a
+             distance. Blank paper for standing/unburned, ink only for
+             what's notable. */
+          if (s === FIRE) { ctx.fillStyle = Engine.docInk(); ctx.fillRect(x, y, CELL + 1, CELL + 1); }
+          else if (s === BURNT) {                  // burned out: a small ink mark on blank paper
+            ctx.fillStyle = Engine.docInk();
+            ctx.beginPath(); ctx.arc(x + CELL / 2, y + CELL / 2, CELL * 0.26, 0, 7); ctx.fill();
+          }
+        } else {
+          ctx.fillStyle = s === EMPTY ? '#141019' : s === TREE ? '#d9c9a0' : s === FIRE ? '#ff5a2a' : '#4a4038';
+          ctx.fillRect(x, y, CELL + 1, CELL + 1);
         }
       }
       drawPlot();

@@ -220,7 +220,7 @@
       const sunX = W * 0.5 - (base ? base.curve : 0) * 26 - playerX * 40;
       const sunY = H * 0.30;
       if (doc0) {
-        ctx.strokeStyle = Engine.docRule(); ctx.lineWidth = 1.5;
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5;
         ctx.beginPath(); ctx.arc(sunX, sunY, 34, 0, 7); ctx.stroke();
       } else {
         const sg = ctx.createRadialGradient(sunX, sunY, 6, sunX, sunY, 120);
@@ -228,11 +228,18 @@
         ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(sunX, sunY, 120, 0, 7); ctx.fill();
         ctx.fillStyle = '#fff2b0'; ctx.beginPath(); ctx.arc(sunX, sunY, 34, 0, 7); ctx.fill();
       }
-      /* distant hill band on the horizon */
-      ctx.fillStyle = doc0 ? Engine.docRule() : 'rgba(46,120,70,.55)';
-      ctx.beginPath(); ctx.moveTo(0, H * 0.52);
-      for (let i = 0; i <= 8; i++) ctx.lineTo(W * i / 8, H * 0.52 - Math.sin(i * 1.3 + (base ? base.i * 0.02 : 0)) * 18 - 10);
-      ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
+      /* distant hill band on the horizon — outline only in doc mode, no grey wash */
+      if (doc0) {
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5; ctx.beginPath();
+        ctx.moveTo(0, H * 0.52);
+        for (let i = 0; i <= 8; i++) ctx.lineTo(W * i / 8, H * 0.52 - Math.sin(i * 1.3 + (base ? base.i * 0.02 : 0)) * 18 - 10);
+        ctx.stroke();
+      } else {
+        ctx.fillStyle = 'rgba(46,120,70,.55)';
+        ctx.beginPath(); ctx.moveTo(0, H * 0.52);
+        for (let i = 0; i <= 8; i++) ctx.lineTo(W * i / 8, H * 0.52 - Math.sin(i * 1.3 + (base ? base.i * 0.02 : 0)) * 18 - 10);
+        ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
+      }
     }
 
     function drawScenery(sp, spr) {
@@ -240,10 +247,15 @@
       if (s < 1.5) return;
       if (spr.type === 'tree') {
         const th = s * (1.9 + spr.seed * 1.4), tw = s * 0.62;
-        ctx.fillStyle = '#5a3b1c'; ctx.fillRect(x - s * 0.06, y - th * 0.34, s * 0.12, th * 0.34);
-        ctx.fillStyle = spr.seed > 0.5 ? '#1c5a2a' : '#237a35';
-        ctx.beginPath(); ctx.moveTo(x, y - th); ctx.lineTo(x - tw, y - th * 0.34); ctx.lineTo(x + tw, y - th * 0.34); ctx.closePath(); ctx.fill();
-        ctx.beginPath(); ctx.moveTo(x, y - th * 0.78); ctx.lineTo(x - tw * 1.15, y - th * 0.18); ctx.lineTo(x + tw * 1.15, y - th * 0.18); ctx.closePath(); ctx.fill();
+        const doc0 = DOC();
+        ctx.fillStyle = doc0 ? Engine.docPaper() : '#5a3b1c';
+        if (doc0) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1; ctx.strokeRect(x - s * 0.06, y - th * 0.34, s * 0.12, th * 0.34); }
+        else ctx.fillRect(x - s * 0.06, y - th * 0.34, s * 0.12, th * 0.34);
+        ctx.fillStyle = doc0 ? Engine.docPaper() : (spr.seed > 0.5 ? '#1c5a2a' : '#237a35');
+        ctx.beginPath(); ctx.moveTo(x, y - th); ctx.lineTo(x - tw, y - th * 0.34); ctx.lineTo(x + tw, y - th * 0.34); ctx.closePath();
+        if (doc0) { ctx.fill(); ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1; ctx.stroke(); } else ctx.fill();
+        ctx.beginPath(); ctx.moveTo(x, y - th * 0.78); ctx.lineTo(x - tw * 1.15, y - th * 0.18); ctx.lineTo(x + tw * 1.15, y - th * 0.18); ctx.closePath();
+        if (doc0) { ctx.fill(); ctx.stroke(); } else ctx.fill();
       } else if (spr.type === 'bush') {
         const r = s * 0.5;
         ctx.fillStyle = '#2f8a3a';
@@ -288,8 +300,11 @@
          palette to paper/rule/ink tones for the duration of this frame. */
       const doc0 = DOC();
       if (doc0) {
-        COL.grassL = Engine.docRule(); COL.grassD = Engine.docMut();
-        COL.roadL = Engine.docPaper(); COL.roadD = Engine.docRule();
+        /* road and grass both stay plain paper — no grey stripe alternation.
+           The ink/paper rumble strip at the road edge and the ink lane
+           dashes carry all the motion cues, both true black, not grey. */
+        COL.grassL = Engine.docPaper(); COL.grassD = Engine.docPaper();
+        COL.roadL = Engine.docPaper(); COL.roadD = Engine.docPaper();
         COL.rumbleL = Engine.docInk(); COL.rumbleD = Engine.docPaper();
         COL.lane = Engine.docInk();
       } else {
@@ -375,9 +390,11 @@
           // becomes a small, calm status line instead — same information,
           // none of the drama
           ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-          ctx.fillStyle = 'rgba(20,23,28,.55)';
+          ctx.fillStyle = Engine.docPaper();
           ctx.fillRect(W / 2 - 90, H / 2 - 16, 180, 32);
-          ctx.fillStyle = '#f2ede0';
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5;
+          ctx.strokeRect(W / 2 - 90 + 0.75, H / 2 - 16 + 0.75, 178.5, 30.5);
+          ctx.fillStyle = Engine.docInk();
           ctx.font = '600 15px "Courier New", monospace';
           ctx.fillText(label, W / 2, H / 2 + 1);
           ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
@@ -394,37 +411,61 @@
     }
 
     function drawCar(cx, cy, w, hh, lean, braking) {
+      const doc0 = DOC();
       ctx.save(); ctx.translate(cx + lean * 7, cy);
-      ctx.fillStyle = 'rgba(0,0,0,.32)'; ctx.beginPath(); ctx.ellipse(0, hh * 0.44, w * 0.52, hh * 0.17, 0, 0, 7); ctx.fill();
-      /* tyres */
-      ctx.fillStyle = '#111'; ctx.fillRect(-w / 2, hh * 0.16, w * 0.2, hh * 0.34); ctx.fillRect(w / 2 - w * 0.2, hh * 0.16, w * 0.2, hh * 0.34);
-      /* body */
-      ctx.fillStyle = '#c0331f'; ctx.fillRect(-w / 2, -hh * 0.24, w, hh * 0.62);
-      ctx.fillStyle = '#e8402a'; ctx.fillRect(-w / 2, -hh * 0.24, w, hh * 0.24);
-      /* cabin + rear window */
-      ctx.fillStyle = '#12303f'; ctx.fillRect(-w * 0.33, -hh * 0.4, w * 0.66, hh * 0.26);
-      ctx.fillStyle = '#8fd0e8'; ctx.fillRect(-w * 0.29, -hh * 0.37, w * 0.58, hh * 0.14);
-      /* spoiler + brake lights */
-      ctx.fillStyle = '#1d1722'; ctx.fillRect(-w * 0.42, -hh * 0.3, w * 0.84, hh * 0.08);
-      ctx.fillStyle = braking ? '#ff5b47' : '#7a1810';
-      ctx.fillRect(-w / 2 + 6, hh * 0.02, w * 0.2, hh * 0.14); ctx.fillRect(w / 2 - w * 0.2 - 6, hh * 0.02, w * 0.2, hh * 0.14);
+      if (doc0) {
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.ellipse(0, hh * 0.44, w * 0.52, hh * 0.17, 0, 0, 7); ctx.stroke();
+        /* tyres: small, ink is fine */
+        ctx.fillStyle = Engine.docInk();
+        ctx.fillRect(-w / 2, hh * 0.16, w * 0.2, hh * 0.34); ctx.fillRect(w / 2 - w * 0.2, hh * 0.16, w * 0.2, hh * 0.34);
+        /* body: white with an ink outline, not a solid colour block */
+        ctx.fillStyle = Engine.docPaper(); ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5;
+        ctx.fillRect(-w / 2, -hh * 0.24, w, hh * 0.62); ctx.strokeRect(-w / 2 + 0.75, -hh * 0.24 + 0.75, w - 1.5, hh * 0.62 - 1.5);
+        ctx.beginPath(); ctx.moveTo(-w / 2, -hh * 0.24 + hh * 0.24); ctx.lineTo(w / 2, -hh * 0.24 + hh * 0.24); ctx.stroke();
+        /* cabin + rear window: outline only */
+        ctx.strokeRect(-w * 0.33 + 0.75, -hh * 0.4 + 0.75, w * 0.66 - 1.5, hh * 0.26 - 1.5);
+        ctx.strokeRect(-w * 0.29 + 0.75, -hh * 0.37 + 0.75, w * 0.58 - 1.5, hh * 0.14 - 1.5);
+        /* spoiler + brake lights */
+        ctx.fillStyle = Engine.docInk(); ctx.fillRect(-w * 0.42, -hh * 0.3, w * 0.84, hh * 0.08);
+        if (braking) { ctx.fillRect(-w / 2 + 6, hh * 0.02, w * 0.2, hh * 0.14); ctx.fillRect(w / 2 - w * 0.2 - 6, hh * 0.02, w * 0.2, hh * 0.14); }
+        else { ctx.strokeRect(-w / 2 + 6.75, hh * 0.02 + 0.75, w * 0.2 - 1.5, hh * 0.14 - 1.5); ctx.strokeRect(w / 2 - w * 0.2 - 5.25, hh * 0.02 + 0.75, w * 0.2 - 1.5, hh * 0.14 - 1.5); }
+      } else {
+        ctx.fillStyle = 'rgba(0,0,0,.32)'; ctx.beginPath(); ctx.ellipse(0, hh * 0.44, w * 0.52, hh * 0.17, 0, 0, 7); ctx.fill();
+        /* tyres */
+        ctx.fillStyle = '#111'; ctx.fillRect(-w / 2, hh * 0.16, w * 0.2, hh * 0.34); ctx.fillRect(w / 2 - w * 0.2, hh * 0.16, w * 0.2, hh * 0.34);
+        /* body */
+        ctx.fillStyle = '#c0331f'; ctx.fillRect(-w / 2, -hh * 0.24, w, hh * 0.62);
+        ctx.fillStyle = '#e8402a'; ctx.fillRect(-w / 2, -hh * 0.24, w, hh * 0.24);
+        /* cabin + rear window */
+        ctx.fillStyle = '#12303f'; ctx.fillRect(-w * 0.33, -hh * 0.4, w * 0.66, hh * 0.26);
+        ctx.fillStyle = '#8fd0e8'; ctx.fillRect(-w * 0.29, -hh * 0.37, w * 0.58, hh * 0.14);
+        /* spoiler + brake lights */
+        ctx.fillStyle = '#1d1722'; ctx.fillRect(-w * 0.42, -hh * 0.3, w * 0.84, hh * 0.08);
+        ctx.fillStyle = braking ? '#ff5b47' : '#7a1810';
+        ctx.fillRect(-w / 2 + 6, hh * 0.02, w * 0.2, hh * 0.14); ctx.fillRect(w / 2 - w * 0.2 - 6, hh * 0.02, w * 0.2, hh * 0.14);
+      }
       ctx.restore();
     }
 
     function drawHUD() {
+      const doc0 = DOC();
       /* progress bar */
-      ctx.fillStyle = 'rgba(0,0,0,.4)'; ctx.fillRect(10, 10, W - 20, 8);
-      ctx.fillStyle = '#6fcf2f'; ctx.fillRect(10, 10, (W - 20) * clamp(pos / trackLen, 0, 1), 8);
+      ctx.fillStyle = doc0 ? Engine.docPaper() : 'rgba(0,0,0,.4)'; ctx.fillRect(10, 10, W - 20, 8);
+      if (doc0) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1; ctx.strokeRect(10.5, 10.5, W - 21, 7); }
+      ctx.fillStyle = doc0 ? Engine.docInk() : '#6fcf2f'; ctx.fillRect(10, 10, (W - 20) * clamp(pos / trackLen, 0, 1), 8);
       /* mph readout + a little speedo arc, bottom-left */
       const mph = Math.round(speed / MAXSPD * 140);
       const gx = 52, gy = H - 40, gr = 30;
-      ctx.strokeStyle = 'rgba(0,0,0,.45)'; ctx.lineWidth = 7;
+      ctx.strokeStyle = doc0 ? Engine.docPaper() : 'rgba(0,0,0,.45)'; ctx.lineWidth = 7;
       ctx.beginPath(); ctx.arc(gx, gy, gr, Math.PI * 0.85, Math.PI * 2.15); ctx.stroke();
-      ctx.strokeStyle = '#ffcb1f';
+      if (doc0) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1; ctx.stroke(); }
+      ctx.strokeStyle = doc0 ? Engine.docInk() : '#ffcb1f'; ctx.lineWidth = 7;
       ctx.beginPath(); ctx.arc(gx, gy, gr, Math.PI * 0.85, Math.PI * 0.85 + (Math.PI * 1.3) * clamp(speed / MAXSPD, 0, 1)); ctx.stroke();
-      ctx.fillStyle = '#fff'; ctx.strokeStyle = '#1d1722'; ctx.lineWidth = 3;
+      ctx.fillStyle = doc0 ? Engine.docInk() : '#fff'; ctx.strokeStyle = doc0 ? Engine.docPaper() : '#1d1722'; ctx.lineWidth = 3;
       ctx.textAlign = 'center'; ctx.font = 'bold 18px "Courier New", monospace';
-      ctx.strokeText(mph, gx, gy + 6); ctx.fillText(mph, gx, gy + 6);
+      if (!doc0) ctx.strokeText(mph, gx, gy + 6);
+      ctx.fillText(mph, gx, gy + 6);
       ctx.font = 'bold 9px "Courier New", monospace'; ctx.fillText('MPH', gx, gy + 20);
       ctx.textAlign = 'left';
       /* pills mirror the on-canvas HUD */

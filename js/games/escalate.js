@@ -259,6 +259,7 @@
     order: 34,
     blurb: 'A ticket queue that overflows onto neighboring desks. Stack tickets on your own desks; overload one and it dumps a ticket on every neighbor, converting them to you.',
     scoreLabel: 'Tickets held',
+    lightBoard: true,   // doc mode authors its own paper/ink cells (see arcade.css) — the counter-invert trick can't reach true black
     tags: ['chain-reaction', 'territory', 'vs-cpu', 'hotseat', 'grid'],
     how: [
       'Click any empty desk, or one you already hold, to add a ticket. Every desk has a capacity based on how many neighbors it has: 2 in a corner, 3 on an edge, 4 in the open floor.',

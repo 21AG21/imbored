@@ -3202,59 +3202,82 @@ body.docmode .db-box.cpu { background: #767d88; }
 
 /* Escalate: teal (--you) and tomato (--ai) share almost identical luminance,
    the same "grayscale erases the distinction" failure already fixed for
-   Dots and Boxes' --teal/--hotpink pair above — counter-invert and author
-   explicit final colours instead of fighting hue. The near-explosion ring
-   is a solid saturated colour too (not a translucent overlay like the
-   ordinary legal-move hint), so it also needs protecting or it reads as a
-   stark game "about to blow" meter instead of quiet cell formatting. */
-:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .esc-cell.esc-you,
-:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .esc-cell.esc-ai,
-:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .esc-cell.esc-hot {
-  filter: invert(1) hue-rotate(180deg);
-}
-body.docmode .esc-cell.esc-you { background: var(--doc-ink); }
-body.docmode .esc-cell.esc-ai { background: #767d88; }
+   Dots and Boxes' --teal/--hotpink pair above. Counter-inverting used to fix
+   this, but that trick has a hard floor — cancelling the parent's invert
+   still leaves grayscale + contrast(0.8) + brightness(1.35) running on the
+   authored colour, and even authored pure black only reaches ~35/255, a
+   charcoal grey, never true ink. Escalate is `lightBoard: true` instead
+   (see Arcade.register), dropping the invert so only grayscale(1)
+   contrast(0.92) brightness(1.12) remains — that floor is ~11/255, close
+   enough to read as true black. "You" is a solid ink desk, "AI" is a hollow
+   paper desk with an ink outline — a filled/hollow distinction instead of
+   two greys. Light theme authors literal #fff/#000 (this filter would pull
+   the --doc-ink variable's value short of the extremes a second time); dark
+   theme has no such compounding filter on a lightBoard stage, so it uses
+   the variables directly. */
+body.docmode .esc-cell.esc-you { background: #000000; }
+body.docmode .esc-cell.esc-you .esc-count { color: #ffffff; }
+body.docmode .esc-cell.esc-ai { background: #ffffff; box-shadow: inset 0 0 0 2px #000000; }
+body.docmode .esc-cell.esc-ai .esc-count { color: #000000; }
+body.docmode .esc-cell.esc-hot { box-shadow: inset 0 0 0 2px #000000; }
+:root[data-dark="1"] body.docmode .esc-cell.esc-you { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .esc-cell.esc-you .esc-count { color: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .esc-cell.esc-ai { background: var(--doc-paper); box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .esc-cell.esc-ai .esc-count { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .esc-cell.esc-hot { box-shadow: inset 0 0 0 2px var(--doc-ink); }
 
-/* Reversi: the felt square (#219a5b, a mid-tone green) inverts into the same
-   mid-grey band as the checkers squares above rather than reaching white —
-   counter-invert it so it reads as paper; the disc pseudo-elements are
-   nested inside so the same counter-invert cancels their inversion too,
-   leaving the already-near-white/near-black disc colours to render as
-   plain light/dark ink with no extra rule needed. */
-:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .rev .cell {
-  filter: invert(1) hue-rotate(180deg);
-}
-body.docmode .rev .cell { background: var(--doc-paper); border-color: var(--doc-rule2); }
-body.docmode .rev { background: var(--doc-ink); }
-/* the light disc is near-white already, same as the now-white cell it sits
-   on — invisible without its own outline. Give both discs an explicit ring
-   so the light one still reads against paper. */
-body.docmode .rev .cell.l::after { background: var(--doc-paper); box-shadow: inset 0 0 0 2px var(--doc-ink); }
-body.docmode .rev .cell.d::after { background: var(--doc-ink); box-shadow: none; }
+/* Reversi and Checkers: felt green (#219a5b) and the tan/brown square pair
+   both invert into the same mid-grey band instead of reaching white — the
+   classic "mid-tone source doesn't invert to white" failure. Counter-invert
+   fixed the background but has a hard floor: cancelling the parent's invert
+   still leaves grayscale + contrast(0.8) + brightness(1.35) running on the
+   authored colour, and that floor sits at ~35/255 even for authored pure
+   black — a dark charcoal, not ink. Both boards are `lightBoard: true`
+   instead (see their Arcade.register), which drops the invert entirely, so
+   plain grayscale(1) contrast(0.92) brightness(1.12) is all that's left —
+   THAT floor is ~11/255 for pure black, close enough to read as true ink.
+   Author literal #fff/#000 rather than the --doc-paper/--doc-ink variables:
+   those variables are tuned as already-final colours, and running them
+   through this filter a second time would land short of the extremes again.
+   The dark doc theme has no such compounding filter on a lightBoard stage
+   (that rule is scoped off there too), so it uses the variables directly —
+   they ARE the final colour with nothing left to run them through. */
+body.docmode .rev .cell { background: #ffffff; border-color: #000000; }
+body.docmode .rev { background: #000000; }
+body.docmode .rev .cell.l::after { background: #ffffff; box-shadow: inset 0 0 0 2px #000000; }
+body.docmode .rev .cell.d::after { background: #000000; box-shadow: none; }
+:root[data-dark="1"] body.docmode .rev .cell { background: var(--doc-paper); border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .rev { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .rev .cell.l::after { background: var(--doc-paper); box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .rev .cell.d::after { background: var(--doc-ink); box-shadow: none; }
 
-/* Checkers: the light square (--e6d6ac tan) and dark square (--7a5230 brown)
-   both invert into the same mid-grey band and effectively swap roles instead
-   of one reading as paper — the classic "mid-tone source doesn't invert to
-   white" failure. Counter-invert both and author an explicit light/dark
-   paper pair so the board reads as a printed grid, not a grey wash. */
-:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .checkers .cell {
-  filter: invert(1) hue-rotate(180deg);
-}
-body.docmode .checkers .cell { background: var(--doc-paper); }
-body.docmode .checkers .cell.dk { background: var(--doc-rule2); }
-body.docmode .board.checkers { background: var(--doc-ink); }
+body.docmode .checkers .cell { background: #ffffff; }
+body.docmode .checkers .cell.dk { background: #ffffff; box-shadow: inset 0 0 0 1px #000000; }
+body.docmode .board.checkers { background: #000000; }
+body.docmode .checkers .cell .pc { background: #ffffff !important; box-shadow: inset 0 0 0 2px #000000; }
+body.docmode .checkers .cell .pc.blk { background: #000000 !important; box-shadow: none; }
+body.docmode .checkers .cell .pc.king::after { border-color: #000000; }
+body.docmode .checkers .cell .dot { background: #000000; }
+:root[data-dark="1"] body.docmode .checkers .cell { background: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .checkers .cell.dk { background: var(--doc-paper); box-shadow: inset 0 0 0 1px var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .board.checkers { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .checkers .cell .pc { background: var(--doc-paper) !important; box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .checkers .cell .pc.blk { background: var(--doc-ink) !important; box-shadow: none; }
+:root[data-dark="1"] body.docmode .checkers .cell .pc.king::after { border-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .checkers .cell .dot { background: var(--doc-ink); }
 
-/* Peg Solitaire: an empty hole (light --paper2) and a filled peg (banana
-   radial gradient) both invert under the blanket filter, but land close
-   enough in luminance to fall under the 3:1 non-text-contrast guideline —
-   playable, but subtler than it should be. Counter-invert and author an
-   explicit empty-outline vs. filled-dot pair instead, the same fix pattern
-   as everything else in this section. */
-:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .peg-hole {
-  filter: invert(1) hue-rotate(180deg);
-}
-body.docmode .peg-hole { background: var(--doc-paper); border-color: var(--doc-rule2); }
-body.docmode .peg-hole.peg { background: var(--doc-ink); border-color: var(--doc-ink); box-shadow: none; }
+/* Peg Solitaire: an empty hole and a filled peg both invert under the
+   blanket filter, but land close enough in luminance to fall under the
+   3:1 non-text-contrast guideline. It's `lightBoard: true` (see
+   Arcade.register) rather than counter-inverted, for the same reason as
+   Escalate above: counter-invert caps out around ~35/255 for authored
+   black, a charcoal, not ink; a lightBoard stage's plain grayscale(1)
+   contrast(0.92) brightness(1.12) reaches ~11/255, close enough to read
+   as true black. */
+body.docmode .peg-hole { background: #ffffff; border-color: #000000; }
+body.docmode .peg-hole.peg { background: #000000; border-color: #000000; box-shadow: none; }
+:root[data-dark="1"] body.docmode .peg-hole { background: var(--doc-paper); border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .peg-hole.peg { background: var(--doc-ink); border-color: var(--doc-ink); box-shadow: none; }
 
 /* 2048 as a document: a tidy greyscale data grid, not an inverted wall of
    black tiles. Low values sit near-white and step toward grey as they climb,

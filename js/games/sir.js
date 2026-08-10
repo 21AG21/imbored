@@ -113,24 +113,26 @@
       const doc = Arcade.docMode();
       const w = plot.width, hh = plot.height, m = 24;
       pctx.fillStyle = doc ? Engine.docPaper() : '#12100c'; pctx.fillRect(0, 0, w, hh);
-      pctx.strokeStyle = doc ? Engine.docRule() : '#4a4436'; pctx.lineWidth = 1;
+      pctx.strokeStyle = doc ? Engine.docInk() : '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, hh - m); pctx.lineTo(w - 6, hh - m); pctx.moveTo(m, hh - m); pctx.lineTo(m, 8); pctx.stroke();
       pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('fraction', 2, 12); pctx.fillText('time', w - 30, hh - 8);
       const n = series.length; if (n < 2) return;
       const X = (k) => m + k / (n - 1) * (w - m - 6);
       const Y = (f) => (hh - m) - f * (hh - m - 8);
-      const lineOf = (key, col) => {
-        pctx.strokeStyle = col; pctx.lineWidth = 2; pctx.beginPath();
+      /* no grey second colour to distinguish the three curves in doc mode —
+         ink everywhere, dash pattern tells them apart instead. */
+      const lineOf = (key, col, dash) => {
+        pctx.strokeStyle = col; pctx.lineWidth = 2; pctx.setLineDash(dash || []); pctx.beginPath();
         for (let k = 0; k < n; k++) { const x = X(k), y = Y(series[k][key]); k ? pctx.lineTo(x, y) : pctx.moveTo(x, y); }
-        pctx.stroke();
+        pctx.stroke(); pctx.setLineDash([]);
       };
-      lineOf('s', doc ? Engine.docMut() : '#00a6b4');    // susceptible
-      lineOf('r', doc ? Engine.docRule() : '#a79e88');   // recovered
-      lineOf('i', doc ? Engine.docInk() : '#e8402a');    // infected hump
-      pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.fillText('infected', w - 120, 14);
-      pctx.fillStyle = doc ? Engine.docMut() : '#00a6b4'; pctx.fillText('S', w - 46, 14);
-      pctx.fillStyle = doc ? Engine.docRule() : '#a79e88'; pctx.fillText('R', w - 30, 14);
+      lineOf('s', doc ? Engine.docInk() : '#00a6b4', doc ? [5, 3] : null);    // susceptible: dashed
+      lineOf('r', doc ? Engine.docInk() : '#a79e88', doc ? [1, 3] : null);    // recovered: dotted
+      lineOf('i', doc ? Engine.docInk() : '#e8402a');                        // infected hump: solid
+      pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.fillText('infected —', w - 132, 14);
+      pctx.fillStyle = doc ? Engine.docInk() : '#00a6b4'; pctx.fillText('S - -', w - 56, 14);
+      pctx.fillStyle = doc ? Engine.docInk() : '#a79e88'; pctx.fillText('R ..', w - 26, 14);
     }
 
     function draw() {
@@ -139,13 +141,20 @@
       for (let k = 0; k < grid.length; k++) {
         const v = grid[k];
         if (v === EMPTY) continue;
-        ctx.fillStyle = doc
-          ? (v === S ? Engine.docPaper() : v === I ? Engine.docInk() : Engine.docMut())
-          : (v === S ? '#d9c9a0' : v === I ? '#e8402a' : '#6b6350');
-        ctx.fillRect((k % L) * CELL, ((k / L) | 0) * CELL, CELL + 1, CELL + 1);
-        if (doc && v === S) {
-          ctx.strokeStyle = Engine.docRule(); ctx.lineWidth = 1;
-          ctx.strokeRect((k % L) * CELL + 0.5, ((k / L) | 0) * CELL + 0.5, CELL, CELL);
+        const x = (k % L) * CELL, y = ((k / L) | 0) * CELL;
+        if (doc) {
+          /* an 90x90 grid is far too dense for a per-cell outline — that
+             many thin black lines packed together reads as a grey mesh from
+             a distance, exactly the wash this fix is trying to avoid. Blank
+             paper for a susceptible desk, ink only for what's notable. */
+          if (v === I) { ctx.fillStyle = Engine.docInk(); ctx.fillRect(x, y, CELL + 1, CELL + 1); }
+          else if (v === R) {                     // recovered: a small ink mark on blank paper
+            ctx.fillStyle = Engine.docInk();
+            ctx.beginPath(); ctx.arc(x + CELL / 2, y + CELL / 2, CELL * 0.3, 0, 7); ctx.fill();
+          }
+        } else {
+          ctx.fillStyle = v === S ? '#d9c9a0' : v === I ? '#e8402a' : '#6b6350';
+          ctx.fillRect(x, y, CELL + 1, CELL + 1);
         }
       }
       drawPlot();

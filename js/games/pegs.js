@@ -78,7 +78,8 @@
     id: 'pegs', title: 'Peg Solitaire', emoji: 'lightsout', cat: 'puzzle', order: 21,
     lowerIsBetter: true,
     blurb: 'The wooden peg board from every waiting room. Jump pegs over each other to remove them and try to finish with a single peg standing.',
-    scoreLabel: 'Fewest left', tags: ['puzzle', 'classic', 'solitaire'],
+    scoreLabel: 'Fewest left', lightBoard: true,   // doc mode authors its own paper/ink holes (see arcade.css) — the counter-invert trick can't reach true black
+    tags: ['puzzle', 'classic', 'solitaire'],
     how: [
       'Tap a peg to select it, then tap an empty hole two spaces away.',
       'The peg jumps a neighbour into the hole, and the jumped peg is removed.',

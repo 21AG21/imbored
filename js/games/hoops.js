@@ -141,10 +141,16 @@
     }
 
     function drawPlayer(pl, face) {
-      ctx.fillStyle = 'rgba(0,0,0,.2)'; ctx.beginPath(); ctx.ellipse(pl.x, GROUND + 4, PR * 0.8, 6, 0, 0, 7); ctx.fill();
-      ctx.fillStyle = pl.col; ctx.beginPath(); ctx.arc(pl.x, pl.y - PR, PR, Math.PI, 0); ctx.rect(pl.x - PR, pl.y - PR, PR * 2, PR); ctx.fill();
-      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(pl.x + face * 8, pl.y - PR - 4, 5, 0, 7); ctx.fill();
-      ctx.fillStyle = '#1d1722'; ctx.beginPath(); ctx.arc(pl.x + face * 10, pl.y - PR - 4, 2.4, 0, 7); ctx.fill();
+      const doc0 = DOC();
+      ctx.fillStyle = doc0 ? Engine.docPaper() : 'rgba(0,0,0,.2)';
+      ctx.beginPath(); ctx.ellipse(pl.x, GROUND + 4, PR * 0.8, 6, 0, 0, 7); ctx.fill();
+      if (doc0) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5; ctx.stroke(); }
+      ctx.beginPath(); ctx.arc(pl.x, pl.y - PR, PR, Math.PI, 0); ctx.rect(pl.x - PR, pl.y - PR, PR * 2, PR);
+      ctx.fillStyle = doc0 ? Engine.docPaper() : pl.col; ctx.fill();
+      if (doc0) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5; ctx.stroke(); }
+      ctx.fillStyle = doc0 ? Engine.docPaper() : '#fff'; ctx.beginPath(); ctx.arc(pl.x + face * 8, pl.y - PR - 4, 5, 0, 7); ctx.fill();
+      if (doc0) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1; ctx.stroke(); }
+      ctx.fillStyle = doc0 ? Engine.docInk() : '#1d1722'; ctx.beginPath(); ctx.arc(pl.x + face * 10, pl.y - PR - 4, 2.4, 0, 7); ctx.fill();
     }
 
     function draw() {
@@ -154,14 +160,21 @@
         const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#3a6ea5'); g.addColorStop(1, '#5a86b8');
         ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
       }
-      ctx.fillStyle = doc0 ? Engine.docRule() : (sport === 'bball' ? '#c47a3a' : '#3a9d3a'); ctx.fillRect(0, GROUND, W, H - GROUND);
-      ctx.fillStyle = doc0 ? Engine.docMut() : 'rgba(255,255,255,.25)'; ctx.fillRect(W / 2 - 1, 0, 2, GROUND);
+      if (doc0) {
+        ctx.fillStyle = Engine.docPaper(); ctx.fillRect(0, GROUND, W, H - GROUND);
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(0, GROUND + 0.5); ctx.lineTo(W, GROUND + 0.5); ctx.stroke();
+      } else {
+        ctx.fillStyle = sport === 'bball' ? '#c47a3a' : '#3a9d3a'; ctx.fillRect(0, GROUND, W, H - GROUND);
+      }
+      ctx.fillStyle = doc0 ? Engine.docInk() : 'rgba(255,255,255,.25)'; ctx.fillRect(W / 2 - 1, 0, 2, GROUND);
 
       const T = targets();
       if (sport === 'bball') {
         for (const t of [T.left, T.right]) {
           const bx = t.hx < W / 2 ? 4 : W - 18;
-          ctx.fillStyle = doc0 ? Engine.docMut() : '#ded6c2'; ctx.fillRect(bx, t.hy - 44, 14, 60);          // backboard post
+          if (doc0) { ctx.fillStyle = Engine.docPaper(); ctx.fillRect(bx, t.hy - 44, 14, 60); ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5; ctx.strokeRect(bx + 0.75, t.hy - 44 + 0.75, 12.5, 58.5); }
+          else { ctx.fillStyle = '#ded6c2'; ctx.fillRect(bx, t.hy - 44, 14, 60); }          // backboard post
           ctx.fillStyle = doc0 ? Engine.docInk() : '#e8402a'; ctx.fillRect(t.hx - t.rw, t.hy - 4, t.rw * 2, 6);  // rim
           ctx.strokeStyle = doc0 ? Engine.docInk() : 'rgba(255,255,255,.6)'; ctx.lineWidth = 1;
           for (let i = -1; i <= 1; i++) { ctx.beginPath(); ctx.moveTo(t.hx + i * t.rw * 0.7, t.hy); ctx.lineTo(t.hx + i * t.rw * 0.4, t.hy + 20); ctx.stroke(); }
@@ -183,9 +196,9 @@
         ctx.fillStyle = 'rgba(255,255,255,.9)';
         ctx.beginPath(); ctx.arc(ball.x, ball.y, BR + 3, 0, 7); ctx.fill();
       }
-      ctx.fillStyle = doc ? '#14171c' : (sport === 'bball' ? '#e8621f' : '#f4f4f4');
+      ctx.fillStyle = doc ? Engine.docInk() : (sport === 'bball' ? '#e8621f' : '#f4f4f4');
       ctx.beginPath(); ctx.arc(ball.x, ball.y, BR, 0, 7); ctx.fill();
-      ctx.strokeStyle = doc ? '#14171c' : '#1d1722'; ctx.lineWidth = 1.4;
+      ctx.strokeStyle = doc ? Engine.docInk() : '#1d1722'; ctx.lineWidth = 1.4;
       ctx.beginPath(); ctx.arc(ball.x, ball.y, BR, 0, 7); ctx.stroke();
       if (sport === 'bball') { ctx.beginPath(); ctx.moveTo(ball.x - BR, ball.y); ctx.lineTo(ball.x + BR, ball.y); ctx.moveTo(ball.x, ball.y - BR); ctx.lineTo(ball.x, ball.y + BR); ctx.stroke(); }
       void msg;
