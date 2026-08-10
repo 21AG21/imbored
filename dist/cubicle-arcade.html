@@ -3192,6 +3192,14 @@ body.docmode .db-box.cpu { background: #767d88; }
   filter: invert(1) hue-rotate(180deg);
 }
 
+/* Battleship: "Your floor" / "Enemy floor" captions sit directly on the
+   transparent stage with no background box, so the single blanket invert
+   flips their dark text to near-white — invisible against the page. No
+   box to repaint here, just counter-invert the text like the cases above. */
+:root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) .bs-side h4 {
+  filter: invert(1) hue-rotate(180deg);
+}
+
 /* 2048 as a document: a tidy greyscale data grid, not an inverted wall of
    black tiles. Low values sit near-white and step toward grey as they climb,
    so only the numerals really carry ink ("very limited black"). */
