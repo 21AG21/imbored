@@ -108,9 +108,14 @@
   const docBtnSyncers = [];
   function applyDocMode() {
     document.body.classList.toggle('docmode', docModeOn);
+    const hash = location.hash || '';
+    const onHub = !currentGame && hash !== '#stats' && !/^#(g|daily)\//.test(hash);
+    /* the home is a document only in disguise mode; keep the flag in sync */
+    document.body.classList.toggle('home-doc', onHub && docModeOn);
     docBtnSyncers.forEach((fn) => { try { fn(); } catch (e) { /* ignore */ } });
     applyDocTitle();
-    if (currentGame) { try { global.dispatchEvent(new Event('resize')); } catch (e) { /* ignore */ } fitStageSoon(); }   // re-fit canvas + DOM boards for the new layout
+    if (currentGame) { try { global.dispatchEvent(new Event('resize')); } catch (e) { /* ignore */ } fitStageSoon(); }   // re-fit for the new layout
+    else if (onHub) renderHub();   // repaint the home in the newly-selected style
   }
 
   /* ---------------- big screen ---------------- */
@@ -732,10 +737,87 @@
   };
   const DOC_ORDER = ['sim', 'puzzle', 'brain', 'action', 'goof'];
 
-  /* The home screen is a plain, professional document. No cards, no buttons,
+  /* The home renders one of two ways: the plain professional document (disguise
+     mode) or the original arcade shelf (normal mode). The View toggle flips
+     between them, so there is always a way back to the normal home screen. */
+  function renderHub() {
+    if (docModeOn) renderHubDoc(); else renderHubArcade();
+  }
+
+  function renderHubArcade() {
+    const view = document.getElementById('view');
+    if (!view) return;
+    const q = ((Arcade._search && Arcade._search.value) || '').trim().toLowerCase();
+
+    const list = games.filter((g) => {
+      if (activeCat !== 'all' && g.cat !== activeCat) return false;
+      if (!q) return true;
+      return (g.title + ' ' + g.blurb + ' ' + (g.tags || []).join(' ') + ' ' + g.cat).toLowerCase().includes(q);
+    });
+
+    const chips = h('div', { class: 'chips' },
+      ['all'].concat(CATS.map((c) => c.id)).map((id) =>
+        h('button', {
+          class: 'chip' + (activeCat === id ? ' active' : ''), type: 'button',
+          onclick: () => { activeCat = id; renderHub(); }
+        }, id === 'all'
+          ? 'Everything (' + games.length + ')'
+          : (CATS.find((c) => c.id === id) || {}).label + ' (' + games.filter((g) => g.cat === id).length + ')')));
+
+    const cards = list.map((g) => {
+      const best = Arcade.best(g.id);
+      return h('a', { class: 'card cat-' + g.cat, href: '#g/' + g.id },
+        h('span', { class: 'card-emoji', html: Icons.svg(g.emoji, 28) }),
+        h('span', { class: 'card-cat' }, (CATS.find((c) => c.id === g.cat) || { label: g.cat }).label),
+        h('h3', { class: 'card-title' }, g.title),
+        h('p', { class: 'card-blurb' }, g.blurb),
+        h('span', { class: 'card-best' + (best == null ? '' : ' played') },
+          best == null ? 'never touched' : g.scoreLabel + ': ' + (g.formatScore ? g.formatScore(best) : best)));
+    });
+
+    view.replaceChildren(
+      h('section', { class: 'hero' },
+        h('span', { class: 'sticker s1' }, games.length + ' games'),
+        h('span', { class: 'sticker s2' }, '0 calories'),
+        h('span', { class: 'sticker s3' }, 'no install!'),
+        h('h1', null, 'Look busy. ', h('span', { class: 'accent' }, 'Be busy.')),
+        h('p', null,
+          'The complete shareware collection for people whose meeting has no agenda. ',
+          'Everything runs in this tab. Hit ', h('kbd', null, '`'), ' and the whole thing turns into a spreadsheet so fast nobody sees a thing.'),
+        h('button', { class: 'btn primary daily-btn', type: 'button', onclick: () => Arcade.daily() }, 'Play today’s Daily')),
+      (!q && activeCat === 'all') ? h('section', { class: 'featured' },
+        h('h2', { class: 'featured-h' }, 'Start here'),
+        h('div', { class: 'pick-row' },
+          FEATURED.map((f) => {
+            const g = games.find((x) => x.id === f.id);
+            if (!g) return null;
+            return h('a', { class: 'pick cat-' + g.cat, href: '#g/' + g.id },
+              h('span', { class: 'pick-emoji', html: Icons.svg(g.emoji, 22) }),
+              h('span', { class: 'pick-title' }, g.title),
+              h('span', { class: 'pick-hook' }, f.hook));
+          }))) : null,
+      chips,
+      h('div', { class: 'grid' },
+        cards.length ? cards : h('p', { class: 'empty' }, 'Nothing by that name. Try fewer letters.'),
+        (!q && (activeCat === 'all' || activeCat === 'sim')) ? h('a', {
+          class: 'card card-link', href: 'https://claude.ai/code/artifact/245d9555-fb6f-4685-b698-42a8f82c10bd', target: '_blank', rel: 'noopener'
+        },
+          h('span', { class: 'card-emoji', html: Icons.svg('road', 28) }),
+          h('span', { class: 'card-cat' }, 'Bonus'),
+          h('h3', { class: 'card-title' }, 'Phantom'),
+          h('p', { class: 'card-blurb' }, 'A traffic jam with no cause at all. One driver taps the brakes and the pulse outlives them, travelling backwards through the traffic forever. Watch it, then go play Gridlock again.'),
+          h('span', { class: 'card-best' }, 'opens in a new tab ↗')) : null),
+      h('div', { class: 'ticker' }, h('span', null,
+        '*** NOW WITH ' + games.length + ' GAMES ***' + TICKER.slice(2).join(''))));
+    const gridEl = view.querySelector('.grid');
+    if (gridEl) wireGridKeys(gridEl);
+    applyDocTitle();
+  }
+
+  /* The disguise home: a plain, professional document. No cards, no buttons,
      no colour — every game is opened by clicking its title, the way you would
      follow a link in a report. The office disguise, but sincere. */
-  function renderHub() {
+  function renderHubDoc() {
     const view = document.getElementById('view');
     if (!view) return;
     const n = games.length;
@@ -818,10 +900,9 @@
     }, 'Save an offline copy');
     dlBtn.addEventListener('click', () => { if (Arcade._downloadSelf) Arcade._downloadSelf(dlBtn); });
 
-    const viewBtn = h('button', { class: 'doc-tool', type: 'button', title: 'Whether games open disguised as documents or in the normal arcade view' });
-    const syncViewBtn = () => { viewBtn.textContent = 'Game view: ' + (docModeOn ? 'Documents' : 'Arcade'); };
-    viewBtn.addEventListener('click', () => { Arcade.setDocMode(); syncViewBtn(); });
-    syncViewBtn();
+    const viewBtn = h('button', { class: 'doc-tool', type: 'button', title: 'Switch between the document disguise and the normal arcade home' },
+      'Switch to the arcade view');
+    viewBtn.addEventListener('click', () => Arcade.setDocMode(false));
 
     const sep = () => h('span', { class: 'doc-sep' }, '·');
     const tools = h('div', { class: 'doc-tools' },
@@ -1115,8 +1196,9 @@
     if (dmatch && byId.get(dmatch[1])) { g = byId.get(dmatch[1]); daily = decodeURIComponent(dmatch[2]); }
     else if (m) g = byId.get(m[1]);
     document.body.classList.toggle('in-game', !!g);
-    /* the hub renders as a plain document; flag it so the chrome can step aside */
-    document.body.classList.toggle('home-doc', !g && (location.hash || '') !== '#stats');
+    /* the hub renders as a plain document ONLY in disguise mode; in normal mode
+       it is the arcade shelf, so the document chrome must not apply */
+    document.body.classList.toggle('home-doc', !g && (location.hash || '') !== '#stats' && docModeOn);
     if (g) {
       if (daily) restoreRandom = installSeed('daily:' + daily + ':' + g.id);
       const recent = store.get('recent', []).filter((x) => x !== g.id);

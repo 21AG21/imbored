@@ -2827,15 +2827,15 @@ body.docmode .status {
    natural. Dark disguise keeps the dark playfield, which already fits. ---- */
 body.docmode.in-game .stage { gap: 12px; }
 :root:not([data-dark="1"]) body.docmode.in-game .stage:not(.no-doc-invert) {
-  /* invert flips the dark playfield light; the contrast boost pushes that
-     near-white backdrop the rest of the way to the document's exact white while
-     deepening the foreground; the heavy desaturation keeps it near black-and-
-     white (no big colour blobs) while leaving just enough hue to play by */
-  filter: invert(1) hue-rotate(180deg) saturate(.26) contrast(1.3);
+  /* strictly black-and-white: grayscale kills every colour; brightness floods
+     the field to white; the sub-1 contrast softens what would be solid black
+     into grey, so ink stays sparse ("very limited black") while the playfield
+     is essentially white paper */
+  filter: invert(1) grayscale(1) contrast(0.8) brightness(1.35);
 }
-/* light boards keep their own light background but lose their colour too */
+/* light boards keep their own light background but go grey and mostly white too */
 :root:not([data-dark="1"]) body.docmode.in-game .stage.no-doc-invert {
-  filter: saturate(.26);
+  filter: grayscale(1) contrast(0.92) brightness(1.12);
 }
 /* the d-pad is a dead giveaway at a glance (no document has one), and on desktop
    the keyboard already drives every game that uses it — so hide it in disguise
