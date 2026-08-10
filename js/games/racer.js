@@ -208,18 +208,28 @@
     }
 
     function drawSky(base) {
-      const g = ctx.createLinearGradient(0, 0, 0, H);
-      g.addColorStop(0, '#2f6fb0'); g.addColorStop(0.55, '#6aa8e0'); g.addColorStop(1, '#bfe0f5');
-      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      const doc0 = DOC();
+      if (doc0) {
+        ctx.fillStyle = Engine.docPaper(); ctx.fillRect(0, 0, W, H);
+      } else {
+        const g = ctx.createLinearGradient(0, 0, 0, H);
+        g.addColorStop(0, '#2f6fb0'); g.addColorStop(0.55, '#6aa8e0'); g.addColorStop(1, '#bfe0f5');
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      }
       /* sun drifts opposite the road's lean so bends feel like they sweep past */
       const sunX = W * 0.5 - (base ? base.curve : 0) * 26 - playerX * 40;
       const sunY = H * 0.30;
-      const sg = ctx.createRadialGradient(sunX, sunY, 6, sunX, sunY, 120);
-      sg.addColorStop(0, 'rgba(255,246,196,.95)'); sg.addColorStop(0.4, 'rgba(255,221,120,.55)'); sg.addColorStop(1, 'rgba(255,221,120,0)');
-      ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(sunX, sunY, 120, 0, 7); ctx.fill();
-      ctx.fillStyle = '#fff2b0'; ctx.beginPath(); ctx.arc(sunX, sunY, 34, 0, 7); ctx.fill();
+      if (doc0) {
+        ctx.strokeStyle = Engine.docRule(); ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(sunX, sunY, 34, 0, 7); ctx.stroke();
+      } else {
+        const sg = ctx.createRadialGradient(sunX, sunY, 6, sunX, sunY, 120);
+        sg.addColorStop(0, 'rgba(255,246,196,.95)'); sg.addColorStop(0.4, 'rgba(255,221,120,.55)'); sg.addColorStop(1, 'rgba(255,221,120,0)');
+        ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(sunX, sunY, 120, 0, 7); ctx.fill();
+        ctx.fillStyle = '#fff2b0'; ctx.beginPath(); ctx.arc(sunX, sunY, 34, 0, 7); ctx.fill();
+      }
       /* distant hill band on the horizon */
-      ctx.fillStyle = 'rgba(46,120,70,.55)';
+      ctx.fillStyle = doc0 ? Engine.docRule() : 'rgba(46,120,70,.55)';
       ctx.beginPath(); ctx.moveTo(0, H * 0.52);
       for (let i = 0; i <= 8; i++) ctx.lineTo(W * i / 8, H * 0.52 - Math.sin(i * 1.3 + (base ? base.i * 0.02 : 0)) * 18 - 10);
       ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
@@ -272,6 +282,22 @@
       const shy = shakeT > 0 ? (Math.random() - 0.5) * 10 * shakeT : 0;
       ctx.save();
       ctx.translate(shx, shy);
+
+      /* the asphalt/grass palette is literal gray by design (roads ARE gray) —
+         fine normally, but doc mode wants paper, not gray, so swap the shared
+         palette to paper/rule/ink tones for the duration of this frame. */
+      const doc0 = DOC();
+      if (doc0) {
+        COL.grassL = Engine.docRule(); COL.grassD = Engine.docMut();
+        COL.roadL = Engine.docPaper(); COL.roadD = Engine.docRule();
+        COL.rumbleL = Engine.docInk(); COL.rumbleD = Engine.docPaper();
+        COL.lane = Engine.docInk();
+      } else {
+        COL.grassL = '#3a9d3a'; COL.grassD = '#329033';
+        COL.roadL = '#6b6b6b'; COL.roadD = '#666666';
+        COL.rumbleL = '#e8402a'; COL.rumbleD = '#f4f4f4';
+        COL.lane = '#f4f4f4';
+      }
 
       drawSky(base);
 

@@ -174,6 +174,27 @@
     clamp, lerp, rand, randInt, pick, shuffle, fmtTime, h, bag, canvas, roundRect
   };
 
+  /* ---------- doc-mode canvas colours ----------
+     Canvas games can't rely on the disguise's blanket invert()/grayscale()
+     filter to turn their native palette white — that only works for sources
+     dark enough to invert into the light end, and mid-tone colours (a tan
+     "susceptible" cell, a sky-blue backdrop) land in grey instead. Games with
+     a background/resting-state colour that lands grey should read this
+     (paired with `lightBoard: true` in Arcade.register so the filter stops
+     inverting and just desaturates+brightens what's explicitly drawn here)
+     and fill with docPaper()/docInk() directly in doc mode — a guaranteed
+     colour, not a hope that the filter math works out. */
+  Engine.docPaper = function docPaper() { return Engine.docColor('--doc-paper', '#ffffff'); };
+  Engine.docInk = function docInk() { return Engine.docColor('--doc-ink', '#1f2329'); };
+  Engine.docMut = function docMut() { return Engine.docColor('--doc-mut', '#767d88'); };
+  Engine.docRule = function docRule() { return Engine.docColor('--doc-rule2', '#d3d6dc'); };
+  Engine.docColor = function docColor(name, fallback) {
+    try {
+      const v = getComputedStyle(document.body).getPropertyValue(name).trim();
+      return v || fallback;
+    } catch (e) { return fallback; }
+  };
+
   /* ---------- game loop (respects a global pause) ---------- */
   Engine.loop = function loop(fn) {
     let last = performance.now();

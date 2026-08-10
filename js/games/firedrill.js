@@ -128,42 +128,50 @@
     }
 
     function drawPlot() {
+      const doc = Arcade.docMode();
       const w = plot.width, hh = plot.height, m = 26;
       pctx.clearRect(0, 0, w, hh);
-      pctx.fillStyle = '#12100c'; pctx.fillRect(0, 0, w, hh);
+      pctx.fillStyle = doc ? Engine.docPaper() : '#12100c'; pctx.fillRect(0, 0, w, hh);
       const X = (pp) => m + (pp - 0.30) / (0.85 - 0.30) * (w - m - 8);
       const Y = (f) => hh - m - f * (hh - m - 8);
       /* axes */
-      pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
+      pctx.strokeStyle = doc ? Engine.docRule() : '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(1)); pctx.stroke();
-      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('burned', 2, 12); pctx.fillText('density p', w - 62, hh - 8);
       /* p_c line */
-      pctx.strokeStyle = 'rgba(232,64,42,.8)'; pctx.setLineDash([4, 3]);
+      pctx.strokeStyle = doc ? Engine.docInk() : 'rgba(232,64,42,.8)'; pctx.setLineDash([4, 3]);
       pctx.beginPath(); pctx.moveTo(X(PC), Y(0)); pctx.lineTo(X(PC), Y(1)); pctx.stroke();
       pctx.setLineDash([]);
-      pctx.fillStyle = '#f2ede0'; pctx.fillText('p_c ' + PC, X(PC) + 3, Y(1) + 10);
+      pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.fillText('p_c ' + PC, X(PC) + 3, Y(1) + 10);
       /* reference curve */
       if (ref.length) {
-        pctx.strokeStyle = '#00a6b4'; pctx.lineWidth = 2; pctx.beginPath();
+        pctx.strokeStyle = doc ? Engine.docMut() : '#00a6b4'; pctx.lineWidth = 2; pctx.beginPath();
         ref.forEach((s, i) => { const x = X(s.p), y = Y(s.burned); i ? pctx.lineTo(x, y) : pctx.moveTo(x, y); });
         pctx.stroke();
       }
       /* your samples */
       for (const s of samples) {
-        pctx.fillStyle = '#ffcb1f';
+        pctx.fillStyle = doc ? Engine.docInk() : '#ffcb1f';
         pctx.beginPath(); pctx.arc(X(s.p), Y(s.burned), 3, 0, 7); pctx.fill();
       }
       /* current p marker */
-      pctx.fillStyle = '#fffdf3';
+      pctx.fillStyle = doc ? Engine.docInk() : '#fffdf3';
       pctx.beginPath(); pctx.moveTo(X(p), Y(0) + 2); pctx.lineTo(X(p) - 4, Y(0) + 9); pctx.lineTo(X(p) + 4, Y(0) + 9); pctx.fill();
     }
 
     function draw() {
+      const doc = Arcade.docMode();
       for (let i = 0; i < grid.length; i++) {
         const s = grid[i];
-        ctx.fillStyle = s === EMPTY ? '#141019' : s === TREE ? '#d9c9a0' : s === FIRE ? '#ff5a2a' : '#4a4038';
+        ctx.fillStyle = doc
+          ? (s === EMPTY || s === TREE ? Engine.docPaper() : s === FIRE ? Engine.docInk() : Engine.docMut())
+          : (s === EMPTY ? '#141019' : s === TREE ? '#d9c9a0' : s === FIRE ? '#ff5a2a' : '#4a4038');
         ctx.fillRect((i % N) * CELL, ((i / N) | 0) * CELL, CELL + 1, CELL + 1);
+        if (doc && s === TREE) {
+          ctx.strokeStyle = Engine.docRule(); ctx.lineWidth = 1;
+          ctx.strokeRect((i % N) * CELL + 0.5, ((i / N) | 0) * CELL + 0.5, CELL, CELL);
+        }
       }
       drawPlot();
     }
@@ -197,6 +205,7 @@
     order: 6,
     blurb: 'Pick a paper density with the slider, then ignite the top row. There is a sharp threshold where a small corner fire turns into one that crosses the whole floor.',
     scoreLabel: 'Biggest burn',
+    lightBoard: true,   // doc mode draws its own paper/ink palette above; the blanket invert would only flip it back
     tags: ['percolation', 'phase-transition', 'emergence'],
     how: [
       'Set the density slider, then press Ignite to light every papered desk in the top row.',

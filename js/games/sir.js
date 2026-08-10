@@ -110,11 +110,12 @@
     function syncPills() { pR0.textContent = 'R0 ~ ' + r0().toFixed(2); pR0.className = 'pill ' + (r0() > 1 ? 'warn' : 'good'); }
 
     function drawPlot() {
+      const doc = Arcade.docMode();
       const w = plot.width, hh = plot.height, m = 24;
-      pctx.fillStyle = '#12100c'; pctx.fillRect(0, 0, w, hh);
-      pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
+      pctx.fillStyle = doc ? Engine.docPaper() : '#12100c'; pctx.fillRect(0, 0, w, hh);
+      pctx.strokeStyle = doc ? Engine.docRule() : '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, hh - m); pctx.lineTo(w - 6, hh - m); pctx.moveTo(m, hh - m); pctx.lineTo(m, 8); pctx.stroke();
-      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('fraction', 2, 12); pctx.fillText('time', w - 30, hh - 8);
       const n = series.length; if (n < 2) return;
       const X = (k) => m + k / (n - 1) * (w - m - 6);
@@ -124,21 +125,28 @@
         for (let k = 0; k < n; k++) { const x = X(k), y = Y(series[k][key]); k ? pctx.lineTo(x, y) : pctx.moveTo(x, y); }
         pctx.stroke();
       };
-      lineOf('s', '#00a6b4');   // susceptible
-      lineOf('r', '#a79e88');   // recovered
-      lineOf('i', '#e8402a');   // infected hump
-      pctx.fillStyle = '#f2ede0'; pctx.fillText('infected', w - 120, 14);
-      pctx.fillStyle = '#00a6b4'; pctx.fillText('S', w - 46, 14);
-      pctx.fillStyle = '#a79e88'; pctx.fillText('R', w - 30, 14);
+      lineOf('s', doc ? Engine.docMut() : '#00a6b4');    // susceptible
+      lineOf('r', doc ? Engine.docRule() : '#a79e88');   // recovered
+      lineOf('i', doc ? Engine.docInk() : '#e8402a');    // infected hump
+      pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.fillText('infected', w - 120, 14);
+      pctx.fillStyle = doc ? Engine.docMut() : '#00a6b4'; pctx.fillText('S', w - 46, 14);
+      pctx.fillStyle = doc ? Engine.docRule() : '#a79e88'; pctx.fillText('R', w - 30, 14);
     }
 
     function draw() {
-      ctx.fillStyle = '#141019'; ctx.fillRect(0, 0, W, H);
+      const doc = Arcade.docMode();
+      ctx.fillStyle = doc ? Engine.docPaper() : '#141019'; ctx.fillRect(0, 0, W, H);
       for (let k = 0; k < grid.length; k++) {
         const v = grid[k];
         if (v === EMPTY) continue;
-        ctx.fillStyle = v === S ? '#d9c9a0' : v === I ? '#e8402a' : '#6b6350';
+        ctx.fillStyle = doc
+          ? (v === S ? Engine.docPaper() : v === I ? Engine.docInk() : Engine.docMut())
+          : (v === S ? '#d9c9a0' : v === I ? '#e8402a' : '#6b6350');
         ctx.fillRect((k % L) * CELL, ((k / L) | 0) * CELL, CELL + 1, CELL + 1);
+        if (doc && v === S) {
+          ctx.strokeStyle = Engine.docRule(); ctx.lineWidth = 1;
+          ctx.strokeRect((k % L) * CELL + 0.5, ((k / L) | 0) * CELL + 0.5, CELL, CELL);
+        }
       }
       drawPlot();
     }
@@ -187,6 +195,7 @@
     order: 8,
     blurb: 'A spreading-illness sim on a grid of desks. Set the spread rate, recovery rate, and how packed the desks are, then watch whether the outbreak fizzles or sweeps the floor. It turns on one number, R0, crossing 1.',
     scoreLabel: 'Worst attack rate',
+    lightBoard: true,   // doc mode draws its own paper/ink palette above; the blanket invert would only flip it back
     tags: ['sir', 'epidemic', 'threshold', 'emergence'],
     how: [
       'Each desk is susceptible (paper), infected (red), or recovered (grey). Each step, an infected desk infects susceptible neighbours at rate beta and recovers at rate gamma.',

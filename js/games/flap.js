@@ -95,49 +95,50 @@
     function sync() { pScore.textContent = 'Score: ' + score; }
 
     function draw() {
-      ctx.fillStyle = '#7ec0ee';
+      const doc = Arcade.docMode();
+      ctx.fillStyle = doc ? Engine.docPaper() : '#7ec0ee';
       ctx.fillRect(0, 0, W, H);
 
       for (const p of pipes) {
-        ctx.fillStyle = '#4aa72e';
+        ctx.fillStyle = doc ? Engine.docMut() : '#4aa72e';
         ctx.fillRect(p.x, 0, PIPE_W, p.cy - p.g / 2);
         ctx.fillRect(p.x, p.cy + p.g / 2, PIPE_W, H - (p.cy + p.g / 2));
         ctx.fillStyle = 'rgba(0,0,0,.16)';
         ctx.fillRect(p.x + PIPE_W - 10, 0, 10, p.cy - p.g / 2);
         ctx.fillRect(p.x + PIPE_W - 10, p.cy + p.g / 2, 10, H - (p.cy + p.g / 2));
-        ctx.fillStyle = '#3c8a24';
+        ctx.fillStyle = doc ? Engine.docInk() : '#3c8a24';
         ctx.fillRect(p.x - 3, p.cy - p.g / 2 - 16, PIPE_W + 6, 16);
         ctx.fillRect(p.x - 3, p.cy + p.g / 2, PIPE_W + 6, 16);
       }
 
-      ctx.fillStyle = '#caa24a';
+      ctx.fillStyle = doc ? Engine.docInk() : '#caa24a';
       ctx.fillRect(0, H - 6, W, 6);
 
       const rot = clamp(bv / 620, -0.5, 1.2);
       ctx.save();
       ctx.translate(BX, by);
       ctx.rotate(started ? rot : 0);
-      ctx.fillStyle = '#ffd02a';
+      ctx.fillStyle = doc ? Engine.docInk() : '#ffd02a';
       ctx.beginPath(); ctx.arc(0, 0, R, 0, 7); ctx.fill();
-      ctx.fillStyle = '#fffdf3';
+      ctx.fillStyle = doc ? Engine.docPaper() : '#fffdf3';
       ctx.beginPath(); ctx.arc(6, -5, 5, 0, 7); ctx.fill();
-      ctx.fillStyle = '#1d1722';
+      ctx.fillStyle = doc ? Engine.docInk() : '#1d1722';
       ctx.beginPath(); ctx.arc(8, -5, 2.2, 0, 7); ctx.fill();
-      ctx.fillStyle = '#e8402a';
+      ctx.fillStyle = doc ? Engine.docMut() : '#e8402a';
       ctx.fillRect(R - 3, -2, 9, 5);
       ctx.restore();
 
       if (!started && !over) {
-        ctx.fillStyle = 'rgba(0,0,0,.5)';
+        ctx.fillStyle = doc ? Engine.docInk() : 'rgba(0,0,0,.5)';
         ctx.font = 'bold 22px system-ui';
         ctx.textAlign = 'center';
         ctx.fillText('tap / space to flap', W / 2, H / 2 - 70);
         ctx.textAlign = 'left';
       }
       if (over) {
-        ctx.fillStyle = 'rgba(232,64,42,.30)'; ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = doc ? Engine.docPaper() : 'rgba(232,64,42,.30)'; ctx.fillRect(0, 0, W, H);
         ctx.textAlign = 'center';
-        ctx.fillStyle = '#fff'; ctx.font = 'bold 34px system-ui';
+        ctx.fillStyle = doc ? Engine.docInk() : '#fff'; ctx.font = 'bold 34px system-ui';
         ctx.fillText(lastScore + (lastScore === 1 ? ' pipe' : ' pipes'), W / 2, H / 2 - 12);
         ctx.font = 'bold 17px system-ui';
         ctx.fillText('tap to go again', W / 2, H / 2 + 22);
@@ -158,6 +159,7 @@
     order: 34,
     blurb: 'One button keeps a bird in the air. Tap to flap, thread the pipe gaps, and see how far you get before you clip one.',
     scoreLabel: 'Score',
+    lightBoard: true,   // doc mode draws its own paper/ink palette above; the blanket invert would only flip it back
     tags: ['flappy', 'one-button', 'tap'],
     how: [
       'Click, tap, or press Space to flap upward. Every flap is the same strength.',

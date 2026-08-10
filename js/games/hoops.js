@@ -148,22 +148,26 @@
     }
 
     function draw() {
-      const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#3a6ea5'); g.addColorStop(1, '#5a86b8');
-      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-      ctx.fillStyle = sport === 'bball' ? '#c47a3a' : '#3a9d3a'; ctx.fillRect(0, GROUND, W, H - GROUND);
-      ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.fillRect(W / 2 - 1, 0, 2, GROUND);
+      const doc0 = DOC();
+      if (doc0) { ctx.fillStyle = Engine.docPaper(); ctx.fillRect(0, 0, W, H); }
+      else {
+        const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#3a6ea5'); g.addColorStop(1, '#5a86b8');
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      }
+      ctx.fillStyle = doc0 ? Engine.docRule() : (sport === 'bball' ? '#c47a3a' : '#3a9d3a'); ctx.fillRect(0, GROUND, W, H - GROUND);
+      ctx.fillStyle = doc0 ? Engine.docMut() : 'rgba(255,255,255,.25)'; ctx.fillRect(W / 2 - 1, 0, 2, GROUND);
 
       const T = targets();
       if (sport === 'bball') {
         for (const t of [T.left, T.right]) {
           const bx = t.hx < W / 2 ? 4 : W - 18;
-          ctx.fillStyle = '#ded6c2'; ctx.fillRect(bx, t.hy - 44, 14, 60);          // backboard post
-          ctx.fillStyle = '#e8402a'; ctx.fillRect(t.hx - t.rw, t.hy - 4, t.rw * 2, 6);  // rim
-          ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 1;
+          ctx.fillStyle = doc0 ? Engine.docMut() : '#ded6c2'; ctx.fillRect(bx, t.hy - 44, 14, 60);          // backboard post
+          ctx.fillStyle = doc0 ? Engine.docInk() : '#e8402a'; ctx.fillRect(t.hx - t.rw, t.hy - 4, t.rw * 2, 6);  // rim
+          ctx.strokeStyle = doc0 ? Engine.docInk() : 'rgba(255,255,255,.6)'; ctx.lineWidth = 1;
           for (let i = -1; i <= 1; i++) { ctx.beginPath(); ctx.moveTo(t.hx + i * t.rw * 0.7, t.hy); ctx.lineTo(t.hx + i * t.rw * 0.4, t.hy + 20); ctx.stroke(); }
         }
       } else {
-        ctx.fillStyle = 'rgba(255,255,255,.85)';
+        ctx.fillStyle = doc0 ? Engine.docInk() : 'rgba(255,255,255,.85)';
         ctx.fillRect(T.left.gx, T.left.gy, T.left.gw, T.left.gh);
         ctx.fillRect(T.right.gx, T.right.gy, T.right.gw, T.right.gh);
       }
