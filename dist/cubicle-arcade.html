@@ -1934,6 +1934,37 @@ body.docmode .sud-key.on { background: #000000; color: #ffffff; box-shadow: none
 .mastermind .banner .mm-sub { font-size: 12px; opacity: 0.8; }
 @keyframes mm-shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
 
+/* Password Reset (mastermind): the dark CRT board (--crt), a banana active-
+   row tint, and the near-black/near-cream slot resting colours all survive
+   grayscale() as a wash of mid-grey — same trap as everywhere else on this
+   page, before even counting the eight rainbow peg colours (fixed in
+   mount(), see js/games/mastermind.js). It's `lightBoard: true` (see
+   Arcade.register), so only grayscale(1) contrast(0.92) brightness(1.12)
+   runs, no invert. The active-row highlight and the next-empty-slot
+   marker are both told apart by outline style (solid vs dashed) instead
+   of a colour shift. Light theme literal #fff/#000 (the tuned variables
+   would land short of the extremes a second time through this filter);
+   dark theme has no such compounding filter on a lightBoard stage, so it
+   reads the variables directly. */
+body.docmode .mm-board { background: #ffffff; border-color: #000000; box-shadow: none; }
+body.docmode .mm-row.active { background: transparent; outline-color: #000000; }
+body.docmode .mm-num { color: #000000; }
+body.docmode .mm-slot { border-color: #000000; background: #ffffff; color: #000000; box-shadow: none; }
+body.docmode .mm-slot.mm-next { outline-color: #000000; }
+body.docmode .mm-fb { border-color: #000000; }
+body.docmode .mm-fb.black { background: #000000; border-color: #000000; }
+body.docmode .mm-fb.white { background: #ffffff; border-color: #000000; }
+body.docmode .mm-swatch { border-color: #000000; box-shadow: none; }
+:root[data-dark="1"] body.docmode .mm-board { background: var(--doc-paper); border-color: var(--doc-ink); box-shadow: none; }
+:root[data-dark="1"] body.docmode .mm-row.active { background: transparent; outline-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .mm-num { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .mm-slot { border-color: var(--doc-rule2); background: var(--doc-paper); color: var(--doc-ink); box-shadow: none; }
+:root[data-dark="1"] body.docmode .mm-slot.mm-next { outline-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .mm-fb { border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .mm-fb.black { background: var(--doc-ink); border-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .mm-fb.white { background: var(--doc-paper); border-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .mm-swatch { border-color: var(--doc-rule2); box-shadow: none; }
+
 /* blackjack */
 .blackjack { width: 100%; max-width: 640px; margin: 0 auto; }
 .blackjack .bj-felt {
@@ -3016,6 +3047,33 @@ body.docmode .rps-verdict.win, body.docmode .rps-verdict.lose, body.docmode .rps
 .hm-key.miss { background: var(--tomato); opacity: .65; }
 .hm-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
 .hm-msg.win { color: var(--lime); } .hm-msg.lose { color: var(--tomato); }
+.hm-svg-face { display: none; }
+
+/* Hangman is `lightBoard: true` (see Arcade.register); its revealed-letter
+   grape purple, the blank-slot --ink underline, and the shared .btn doc-mode
+   rule's own --doc-ink/--doc-paper authoring all land as a visible grey once
+   this game's lightBoard filter compounds on top of them — the same
+   "authored non-pure-black" failure explained at Pig above, and the same
+   !important-over-specificity fix its .pig-btns .btn override uses. Guessed
+   keys also pick up the shared .btn:disabled 50% opacity, which blends ink
+   and paper into a genuinely grey pixel — restored to full opacity here.
+   The severity face swaps from the colour emoji glyph to a drawn line-art
+   face (js/games/hangman.js): emoji bake in their own gradient shading that
+   survives grayscale as visible grey no matter what filter runs over them. */
+body.docmode .hm-key { color: #000000 !important; border-color: #000000 !important; background: #ffffff !important; }
+body.docmode .hm-key:disabled { opacity: 1; }
+body.docmode .hm-key.hit { box-shadow: inset 0 0 0 2px #000000; }
+body.docmode .hm-key.miss { text-decoration: line-through; }
+body.docmode .hm-slot { border-bottom-color: #000000; }
+body.docmode .hm-slot.shown { color: #000000; }
+body.docmode .hm-emoji { display: none; }
+body.docmode .hm-svg-face { display: inline-flex; color: #000000; }
+:root[data-dark="1"] body.docmode .hm-key { color: var(--doc-ink) !important; border-color: var(--doc-ink) !important; background: var(--doc-paper) !important; }
+:root[data-dark="1"] body.docmode .hm-key:disabled { opacity: 1; }
+:root[data-dark="1"] body.docmode .hm-key.hit { box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .hm-slot { border-bottom-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .hm-slot.shown { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .hm-svg-face { color: var(--doc-ink); }
 
 /* ================= Press Your Luck (pig) ================= */
 .pig { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 14px; }
@@ -3129,6 +3187,15 @@ body.docmode .hn-disk.d4, body.docmode .hn-disk.d5, body.docmode .hn-disk.d6 { b
 .ana-row { display: flex; gap: 8px; }
 .ana-msg { font: 700 15px Verdana, sans-serif; min-height: 22px; }
 .ana-msg.win { color: var(--lime); }
+body.docmode .ana-scramble { color: #000000; }
+body.docmode .ana-input { background: #ffffff; border-color: #000000; color: #000000; box-shadow: none; outline-color: #000000; }
+/* the browser's default placeholder colour is a translucent grey blend —
+   full-opacity ink plus italics stands in for "placeholder" instead, since
+   any partial-opacity black-on-white IS a literal grey pixel value */
+body.docmode .ana-input::placeholder { color: #000000; opacity: 1; font-style: italic; }
+:root[data-dark="1"] body.docmode .ana-scramble { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .ana-input { background: var(--doc-paper); border-color: var(--doc-rule2); color: var(--doc-ink); box-shadow: none; outline-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .ana-input::placeholder { color: var(--doc-ink); opacity: 1; font-style: italic; }
 
 /* ================= Last Stick (nim) ================= */
 .nim { display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 16px; }
@@ -3137,8 +3204,15 @@ body.docmode .hn-disk.d4, body.docmode .hn-disk.d5, body.docmode .hn-disk.d6 { b
 .nim-msg { font: 700 15px Verdana, sans-serif; min-height: 22px; text-align: center; }
 .nim-msg.win { color: var(--lime); } .nim-msg.lose { color: var(--tomato); }
 .nim-btns { display: flex; gap: 10px; }
-body.docmode .nim-stick { background: #000000; border-color: #000000; box-shadow: none; }
-:root[data-dark="1"] body.docmode .nim-stick { background: var(--doc-ink); border-color: var(--doc-ink); box-shadow: none; }
+body.docmode .nim-stick {
+  background: #000000; border: 0; box-shadow: none; border-radius: 0;
+  /* wider ink bar for the same count of hairline edges: each stick's grey
+     comes from its two tall side edges antialiasing against a fractional
+     flex-wrap position, a cost that stays ~fixed per stick regardless of
+     width — so more width per stick means proportionally less grey. */
+  width: 22px;
+}
+:root[data-dark="1"] body.docmode .nim-stick { background: var(--doc-ink); border: 0; box-shadow: none; }
 
 /* ================= Staple Empire (idle) ================= */
 .stapler { display: flex; gap: 20px; padding: 16px; flex-wrap: wrap; justify-content: center; }
@@ -3511,6 +3585,42 @@ body.docmode .mc-msg.win, body.docmode .mc-msg.lose { color: #000000; }
 .lad-key.wide { max-width: 48px; flex-basis: 44px; }
 .lad-key.go { background: var(--lime); color: var(--onlime); }
 
+/* Word Ladder, doc mode: `lightBoard: true` (see Arcade.register) drops the
+   blanket invert, so every banana/teal/lime tile below needs its own
+   doc-mode colour instead of relying on that invert to flip it light. The
+   start word is a solid ink tile, the target/solved rungs a hollow
+   ink-outlined tile — filled vs. hollow instead of a colour pair grayscale
+   would erase anyway. */
+body.docmode .lad-arrow { color: #000000; }
+body.docmode .lad-word b { background: #ffffff; color: #000000; border-color: #000000; box-shadow: none; }
+body.docmode .lad-word.from b { background: #000000; color: #ffffff; }
+body.docmode .lad-word.to b { background: #ffffff; color: #000000; box-shadow: inset 0 0 0 2px #000000; }
+body.docmode .lad-rung { opacity: 1; }
+body.docmode .lad-rung.start .lad-word b { background: #000000; color: #ffffff; }
+body.docmode .lad-rung.hit .lad-word b { background: #ffffff; color: #000000; box-shadow: inset 0 0 0 2px #000000; }
+body.docmode .lad-slot { background: #ffffff; border-color: #000000; color: #000000; }
+body.docmode .lad-slot.on { border-color: #000000; background: #ffffff; }
+body.docmode .lad-msg,
+body.docmode .lad-msg.win,
+body.docmode .lad-msg.warn { color: #000000; }
+body.docmode .lad-key { border-color: #000000; background: #ffffff; color: #000000; box-shadow: none; }
+body.docmode .lad-key:active { box-shadow: none; }
+body.docmode .lad-key.go { background: #000000; color: #ffffff; }
+
+:root[data-dark="1"] body.docmode .lad-arrow { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .lad-word b { background: var(--doc-paper); color: var(--doc-ink); border-color: var(--doc-rule2); box-shadow: none; }
+:root[data-dark="1"] body.docmode .lad-word.from b { background: var(--doc-ink); color: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .lad-word.to b { background: var(--doc-paper); color: var(--doc-ink); box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .lad-rung.start .lad-word b { background: var(--doc-ink); color: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .lad-rung.hit .lad-word b { background: var(--doc-paper); color: var(--doc-ink); box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .lad-slot { background: var(--doc-paper); border-color: var(--doc-rule2); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .lad-slot.on { border-color: var(--doc-ink); background: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .lad-msg,
+:root[data-dark="1"] body.docmode .lad-msg.win,
+:root[data-dark="1"] body.docmode .lad-msg.warn { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .lad-key { border-color: var(--doc-rule2); background: var(--doc-paper); color: var(--doc-ink); box-shadow: none; }
+:root[data-dark="1"] body.docmode .lad-key.go { background: var(--doc-ink); color: var(--doc-paper); }
+
 /* ================= Memo Decoder (cryptogram) ================= */
 .cryptogram { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 10px; width: 100%; max-width: 640px; margin: 0 auto; }
 .cg-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
@@ -3533,6 +3643,30 @@ body.docmode .mc-msg.win, body.docmode .mc-msg.lose { color: #000000; }
 .cg-key:active { box-shadow: var(--bevel-in); }
 .cg-key.used { opacity: .45; }
 .cg-key.wide { max-width: 52px; flex-basis: 48px; }
+body.docmode .cg-puzzle { background: #ffffff; border-color: #000000; box-shadow: none; }
+body.docmode .cg-punc { color: #000000; }
+body.docmode .cg-plain { color: #000000; }
+body.docmode .cg-code { color: #000000; border-top-color: #000000; }
+body.docmode .cg-cell.sel { background: #000000; }
+body.docmode .cg-cell.sel .cg-code { border-top-color: #ffffff; }
+body.docmode .cg-cell.sel .cg-plain { color: #ffffff; }
+body.docmode .cg-cell.filled .cg-plain { color: #000000; }
+body.docmode .cg-cell.lock .cg-plain { color: #000000; }
+body.docmode .cg-key { background: #ffffff; border-color: #000000; color: #000000; box-shadow: none; }
+/* "used" dims via opacity in the normal theme — a translucent black-on-white
+   key is a literal grey blend, so swap the cue to a strike-through at full
+   ink instead of fading it */
+body.docmode .cg-key.used { opacity: 1; text-decoration: line-through; }
+:root[data-dark="1"] body.docmode .cg-puzzle { background: var(--doc-paper); border-color: var(--doc-rule2); box-shadow: none; }
+:root[data-dark="1"] body.docmode .cg-punc { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .cg-plain { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .cg-code { color: var(--doc-ink); border-top-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .cg-cell.sel { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .cg-cell.sel .cg-code { border-top-color: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .cg-cell.sel .cg-plain { color: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .cg-cell.filled .cg-plain { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .cg-cell.lock .cg-plain { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .cg-key { background: var(--doc-paper); border-color: var(--doc-rule2); color: var(--doc-ink); box-shadow: none; }
 
 /* ================= Desk Lander pad ================= */
 .lander-pad { display: none; gap: 8px; justify-content: center; margin-top: 10px; }
@@ -18259,14 +18393,32 @@ body.docmode .doc-act-list li { margin: 0 0 6px; }
     const banner = h('div', { class: 'banner', style: { display: 'none' } });
     root.append(boardEl, palette, controls, banner);
 
-    for (let i = 0; i < numColors; i++) {
-      const c = COLORS[i];
-      palette.appendChild(h('button', {
-        class: 'mm-swatch', type: 'button',
-        style: { background: c.hex, color: c.light ? '#fffdf3' : '#1d1722' },
-        onclick: () => place(i)
-      }, String(i + 1)));
+    /* doc mode: every swatch is already labelled with its own digit — the
+       colour was a redundant second encoding of the same choice, so drop
+       it rather than run eight distinct hues through grayscale() into
+       eight barely-distinguishable greys. Plain ink-on-paper circles,
+       told apart only by the numeral, same as the pegs below. Doc mode
+       can be toggled while this game is already mounted (it's a body-
+       class + CSS filter flip, not a remount), so this is a function
+       re-run from a resize listener below rather than a one-time loop —
+       otherwise a mid-session toggle would leave the old palette behind. */
+    let lastDocMode = null;
+    function renderPalette() {
+      const doc = Arcade.docMode();
+      if (doc === lastDocMode) return;
+      lastDocMode = doc;
+      palette.replaceChildren();
+      for (let i = 0; i < numColors; i++) {
+        const c = COLORS[i];
+        palette.appendChild(h('button', {
+          class: 'mm-swatch', type: 'button',
+          style: doc ? { background: Engine.docPaper(), color: Engine.docInk() } : { background: c.hex, color: c.light ? '#fffdf3' : '#1d1722' },
+          onclick: () => place(i)
+        }, String(i + 1)));
+      }
     }
+    renderPalette();
+    bagg.listen(window, 'resize', () => { renderPalette(); render(); });
 
     api.button('New code', newCode);
     api.button('Give up', () => {
@@ -18299,9 +18451,18 @@ body.docmode .doc-act-list li { margin: 0 0 6px; }
       if (onClick) attrs.onclick = onClick;
       const el = h('div', attrs, ci >= 0 ? String(ci + 1) : '');
       if (ci >= 0) {
-        const c = COLORS[ci];
-        el.style.background = c.hex;
-        el.style.color = c.light ? '#fffdf3' : '#1d1722';
+        /* same reasoning as the palette above: the digit already says
+           which colour this is, so doc mode inks the peg instead of
+           colouring it. render() rebuilds every slot from scratch on
+           every call, so this naturally follows a doc-mode toggle too. */
+        if (Arcade.docMode()) {
+          el.style.background = Engine.docPaper();
+          el.style.color = Engine.docInk();
+        } else {
+          const c = COLORS[ci];
+          el.style.background = c.hex;
+          el.style.color = c.light ? '#fffdf3' : '#1d1722';
+        }
       }
       return el;
     }
@@ -18440,6 +18601,7 @@ body.docmode .doc-act-list li { margin: 0 0 6px; }
   Arcade.register({
     id: 'mastermind',
     usesDigits: true,   // number keys pick pegs — the "1 = Docs" shortcut yields here
+    lightBoard: true,   // doc mode inks the pegs/swatches in mount() above; the blanket invert would only flip it back
     title: 'Password Reset',
     emoji: 'mastermind',
     cat: 'brain',
@@ -18592,7 +18754,9 @@ body.docmode .doc-act-list li { margin: 0 0 6px; }
 
     const pStreak = api.pill('streak: 0');
     const pLives = api.pill('misses: 0/' + stages);
-    const face = h('div', { class: 'hm-gallows' }, FACES[0]);
+    const faceEmoji = h('span', { class: 'hm-emoji' }, FACES[0]);
+    const faceSvgEl = h('span', { class: 'hm-svg-face', html: faceSVG(0) });
+    const face = h('div', { class: 'hm-gallows' }, faceEmoji, faceSvgEl);
     const wordEl = h('div', { class: 'hm-word' });
     const msg = h('div', { class: 'hm-msg' }, '');
     const keysEl = h('div', { class: 'hm-keys' });
@@ -18629,7 +18793,9 @@ body.docmode .doc-act-list li { margin: 0 0 6px; }
         h('span', { class: 'hm-slot' + (guessed[ch] || over ? ' shown' : '') }, guessed[ch] || over ? ch : '')));
       pStreak.textContent = 'streak: ' + streak;
       pLives.textContent = 'misses: ' + misses + '/' + stages;
-      face.textContent = FACES[Math.min(6, Math.round(misses / stages * 6))];
+      const stage = Math.min(6, Math.round(misses / stages * 6));
+      faceEmoji.textContent = FACES[stage];
+      faceSvgEl.innerHTML = faceSVG(stage);
     }
     function guess(c) {
       if (over || guessed[c] !== undefined) return;
@@ -18760,6 +18926,7 @@ body.docmode .doc-act-list li { margin: 0 0 6px; }
 
   Arcade.register({
     id: 'anagram', title: 'Word Scramble', emoji: 'wordguess', cat: 'brain', order: 28,
+    lightBoard: true,   // doc mode paints its own literal black/white palette (see arcade.css) — the blanket invert can't reach true black on a themed accent colour
     blurb: 'Unscramble office words against a 60-second clock. Each one you get scores a point.',
     scoreLabel: 'Best (60s)', tags: ['word', 'speed', 'spelling'],
     how: [
@@ -24424,6 +24591,7 @@ body.docmode .doc-act-list li { margin: 0 0 6px; }
 (function () {
   'use strict';
   const { h, clamp, randInt } = Engine;
+  const DOC = () => !!(window.Arcade && Arcade.docMode && Arcade.docMode());
 
   const COLS = 10, ROWS = 20, CELL = 26;
   const WX = 28, WY = 34;
@@ -24675,18 +24843,39 @@ body.docmode .doc-act-list li { margin: 0 0 6px; }
     }
 
     /* ---------------- render ---------------- */
-    function cellRect(x, y, color, alpha) {
+    function cellRect(x, y, color, alpha, doc0, flash) {
       ctx.globalAlpha = alpha === undefined ? 1 : alpha;
-      ctx.fillStyle = color;
-      Engine.roundRect(ctx, x + 1, y + 1, CELL - 2, CELL - 2, 4);
-      ctx.fill();
-      ctx.fillStyle = 'rgba(255,255,255,.16)';
-      Engine.roundRect(ctx, x + 4, y + 4, CELL - 8, 4, 2);
-      ctx.fill();
+      if (doc0) {
+        if (flash) {
+          /* the line-clear white flash is already paper in doc mode, so it
+             flashes to solid ink instead — still a flash, just inverted */
+          ctx.fillStyle = Engine.docInk();
+          Engine.roundRect(ctx, x + 1, y + 1, CELL - 2, CELL - 2, 4);
+          ctx.fill();
+        } else {
+          /* every piece colour becomes the same paper fill + thin ink
+             outline, exactly like flap.js's pipes and bird — the shape
+             carries the piece identity, not a colour that would just
+             survive grayscale as a grey block anyway */
+          ctx.fillStyle = Engine.docPaper();
+          Engine.roundRect(ctx, x + 1, y + 1, CELL - 2, CELL - 2, 4);
+          ctx.fill();
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.3;
+          Engine.roundRect(ctx, x + 1.5, y + 1.5, CELL - 3, CELL - 3, 3.5);
+          ctx.stroke();
+        }
+      } else {
+        ctx.fillStyle = color;
+        Engine.roundRect(ctx, x + 1, y + 1, CELL - 2, CELL - 2, 4);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,.16)';
+        Engine.roundRect(ctx, x + 4, y + 4, CELL - 8, 4, 2);
+        ctx.fill();
+      }
       ctx.globalAlpha = 1;
     }
 
-    function drawMini(name, ox, oy, scale) {
+    function drawMini(name, ox, oy, scale, doc0) {
       if (!name) return;
       const p = PIECES[name];
       const s = CELL * scale;
@@ -24695,22 +24884,30 @@ body.docmode .doc-act-list li { margin: 0 0 6px; }
       const ch = (Math.max(...ys) - Math.min(...ys) + 1) * s;
       const bx = ox - cw / 2 - Math.min(...xs) * s;
       const by = oy - ch / 2 - Math.min(...ys) * s;
-      ctx.fillStyle = p.color;
+      if (doc0) { ctx.fillStyle = Engine.docPaper(); ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.2; }
+      else ctx.fillStyle = p.color;
       for (const [cx, cy] of p.cells) {
         Engine.roundRect(ctx, bx + cx * s + 1, by + cy * s + 1, s - 2, s - 2, 3);
         ctx.fill();
+        if (doc0) ctx.stroke();
       }
     }
 
     function draw() {
-      ctx.fillStyle = '#080d18';
+      const doc0 = DOC();
+      ctx.fillStyle = doc0 ? Engine.docPaper() : '#080d18';
       ctx.fillRect(0, 0, W, H);
 
       /* well */
-      ctx.fillStyle = '#0d1424';
+      ctx.fillStyle = doc0 ? Engine.docPaper() : '#0d1424';
       Engine.roundRect(ctx, WX - 5, WY - 5, COLS * CELL + 10, ROWS * CELL + 10, 8);
       ctx.fill();
-      ctx.strokeStyle = '#232d48';
+      if (doc0) {
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.3;
+        Engine.roundRect(ctx, WX - 5 + 0.65, WY - 5 + 0.65, COLS * CELL + 10 - 1.3, ROWS * CELL + 10 - 1.3, 7.5);
+        ctx.stroke();
+      }
+      ctx.strokeStyle = doc0 ? Engine.docRule() : '#232d48';
       ctx.lineWidth = 1;
       ctx.beginPath();
       for (let x = 1; x < COLS; x++) { ctx.moveTo(WX + x * CELL, WY); ctx.lineTo(WX + x * CELL, WY + ROWS * CELL); }
@@ -24720,7 +24917,7 @@ body.docmode .doc-act-list li { margin: 0 0 6px; }
       for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
         if (!board[y][x]) continue;
         const clearing = clearAnim && clearAnim.rows.includes(y);
-        cellRect(WX + x * CELL, WY + y * CELL, clearing ? '#ffffff' : board[y][x], clearing ? clamp(clearAnim.t / 0.28, 0, 1) : 1);
+        cellRect(WX + x * CELL, WY + y * CELL, clearing ? '#ffffff' : board[y][x], clearing ? clamp(clearAnim.t / 0.28, 0, 1) : 1, doc0, clearing);
       }
 
       if (cur && !clearAnim) {
@@ -24728,7 +24925,7 @@ body.docmode .doc-act-list li { margin: 0 0 6px; }
         for (const [cx, cy] of blocksOf(cur)) {
           const y = gy + cy;
           if (y < 0) continue;
-          ctx.strokeStyle = cur.color;
+          ctx.strokeStyle = doc0 ? Engine.docInk() : cur.color;
           ctx.globalAlpha = 0.32;
           ctx.lineWidth = 2;
           Engine.roundRect(ctx, WX + (cur.x + cx) * CELL + 2, WY + y * CELL + 2, CELL - 4, CELL - 4, 4);
@@ -24738,32 +24935,52 @@ body.docmode .doc-act-list li { margin: 0 0 6px; }
         for (const [cx, cy] of blocksOf(cur)) {
           const y = cur.y + cy;
           if (y < 0) continue;
-          cellRect(WX + (cur.x + cx) * CELL, WY + y * CELL, cur.color);
+          cellRect(WX + (cur.x + cx) * CELL, WY + y * CELL, cur.color, undefined, doc0, false);
         }
       }
 
       /* side panel */
       const px = PANX, midx = px + PANW / 2;
-      ctx.fillStyle = '#8f9ab8';
+      ctx.fillStyle = doc0 ? Engine.docInk() : '#8f9ab8';
       ctx.font = 'bold 14px system-ui';
       ctx.textAlign = 'left';
       ctx.fillText('HOLD', px, WY + 9);
-      ctx.fillStyle = '#0d1424';
+      ctx.fillStyle = doc0 ? Engine.docPaper() : '#0d1424';
       Engine.roundRect(ctx, px, WY + 16, PANW, 70, 8);
       ctx.fill();
-      if (hold) drawMini(hold, midx, WY + 51, narrow ? 0.58 : 0.72);
+      if (doc0) {
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1;
+        Engine.roundRect(ctx, px + 0.5, WY + 16.5, PANW - 1, 69, 7.5);
+        ctx.stroke();
+      }
+      if (hold) drawMini(hold, midx, WY + 51, narrow ? 0.58 : 0.72, doc0);
 
-      ctx.fillStyle = '#8f9ab8';
+      ctx.fillStyle = doc0 ? Engine.docInk() : '#8f9ab8';
       ctx.fillText('NEXT', px, WY + 119);
-      ctx.fillStyle = '#0d1424';
+      ctx.fillStyle = doc0 ? Engine.docPaper() : '#0d1424';
       Engine.roundRect(ctx, px, WY + 126, PANW, 300, 8);
       ctx.fill();
-      queue.slice(0, 5).forEach((n, i) => drawMini(n, midx, WY + 166 + i * 58, narrow ? 0.52 : 0.62));
+      if (doc0) {
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1;
+        Engine.roundRect(ctx, px + 0.5, WY + 126.5, PANW - 1, 299, 7.5);
+        ctx.stroke();
+      }
+      queue.slice(0, 5).forEach((n, i) => drawMini(n, midx, WY + 166 + i * 58, narrow ? 0.52 : 0.62, doc0));
 
       if (paused || over) {
-        ctx.fillStyle = 'rgba(8,13,24,.68)';
-        ctx.fillRect(WX - 5, WY - 5, COLS * CELL + 10, ROWS * CELL + 10);
-        ctx.fillStyle = '#e8ecf7';
+        if (doc0) {
+          ctx.fillStyle = Engine.docPaper();
+          Engine.roundRect(ctx, WX - 5, WY - 5, COLS * CELL + 10, ROWS * CELL + 10, 8);
+          ctx.fill();
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.3;
+          Engine.roundRect(ctx, WX - 5 + 0.65, WY - 5 + 0.65, COLS * CELL + 10 - 1.3, ROWS * CELL + 10 - 1.3, 7.5);
+          ctx.stroke();
+          ctx.fillStyle = Engine.docInk();
+        } else {
+          ctx.fillStyle = 'rgba(8,13,24,.68)';
+          ctx.fillRect(WX - 5, WY - 5, COLS * CELL + 10, ROWS * CELL + 10);
+          ctx.fillStyle = '#e8ecf7';
+        }
         ctx.font = 'bold 22px system-ui';
         ctx.textAlign = 'center';
         ctx.fillText(over ? 'game over' : 'paused', WX + COLS * CELL / 2, WY + ROWS * CELL / 2);
@@ -24799,6 +25016,7 @@ body.docmode .doc-act-list li { margin: 0 0 6px; }
 
   Arcade.register({
     id: 'tetris',
+    lightBoard: true,   // dark well backdrop + the 7 tetromino colours need paper/ink, not an invert of a mid-tone palette
     title: 'Stacker',
     emoji: 'tetris',
     cat: 'action',

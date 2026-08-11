@@ -76,6 +76,7 @@
 
   Arcade.register({
     id: 'anagram', title: 'Word Scramble', emoji: 'wordguess', cat: 'brain', order: 28,
+    lightBoard: true,   // doc mode paints its own literal black/white palette (see arcade.css) — the blanket invert can't reach true black on a themed accent colour
     blurb: 'Unscramble office words against a 60-second clock. Each one you get scores a point.',
     scoreLabel: 'Best (60s)', tags: ['word', 'speed', 'spelling'],
     how: [

@@ -36,14 +36,32 @@
     const banner = h('div', { class: 'banner', style: { display: 'none' } });
     root.append(boardEl, palette, controls, banner);
 
-    for (let i = 0; i < numColors; i++) {
-      const c = COLORS[i];
-      palette.appendChild(h('button', {
-        class: 'mm-swatch', type: 'button',
-        style: { background: c.hex, color: c.light ? '#fffdf3' : '#1d1722' },
-        onclick: () => place(i)
-      }, String(i + 1)));
+    /* doc mode: every swatch is already labelled with its own digit — the
+       colour was a redundant second encoding of the same choice, so drop
+       it rather than run eight distinct hues through grayscale() into
+       eight barely-distinguishable greys. Plain ink-on-paper circles,
+       told apart only by the numeral, same as the pegs below. Doc mode
+       can be toggled while this game is already mounted (it's a body-
+       class + CSS filter flip, not a remount), so this is a function
+       re-run from a resize listener below rather than a one-time loop —
+       otherwise a mid-session toggle would leave the old palette behind. */
+    let lastDocMode = null;
+    function renderPalette() {
+      const doc = Arcade.docMode();
+      if (doc === lastDocMode) return;
+      lastDocMode = doc;
+      palette.replaceChildren();
+      for (let i = 0; i < numColors; i++) {
+        const c = COLORS[i];
+        palette.appendChild(h('button', {
+          class: 'mm-swatch', type: 'button',
+          style: doc ? { background: Engine.docPaper(), color: Engine.docInk() } : { background: c.hex, color: c.light ? '#fffdf3' : '#1d1722' },
+          onclick: () => place(i)
+        }, String(i + 1)));
+      }
     }
+    renderPalette();
+    bagg.listen(window, 'resize', () => { renderPalette(); render(); });
 
     api.button('New code', newCode);
     api.button('Give up', () => {
@@ -76,9 +94,18 @@
       if (onClick) attrs.onclick = onClick;
       const el = h('div', attrs, ci >= 0 ? String(ci + 1) : '');
       if (ci >= 0) {
-        const c = COLORS[ci];
-        el.style.background = c.hex;
-        el.style.color = c.light ? '#fffdf3' : '#1d1722';
+        /* same reasoning as the palette above: the digit already says
+           which colour this is, so doc mode inks the peg instead of
+           colouring it. render() rebuilds every slot from scratch on
+           every call, so this naturally follows a doc-mode toggle too. */
+        if (Arcade.docMode()) {
+          el.style.background = Engine.docPaper();
+          el.style.color = Engine.docInk();
+        } else {
+          const c = COLORS[ci];
+          el.style.background = c.hex;
+          el.style.color = c.light ? '#fffdf3' : '#1d1722';
+        }
       }
       return el;
     }
@@ -217,6 +244,7 @@
   Arcade.register({
     id: 'mastermind',
     usesDigits: true,   // number keys pick pegs — the "1 = Docs" shortcut yields here
+    lightBoard: true,   // doc mode inks the pegs/swatches in mount() above; the blanket invert would only flip it back
     title: 'Password Reset',
     emoji: 'mastermind',
     cat: 'brain',

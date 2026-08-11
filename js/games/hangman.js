@@ -40,7 +40,9 @@
 
     const pStreak = api.pill('streak: 0');
     const pLives = api.pill('misses: 0/' + stages);
-    const face = h('div', { class: 'hm-gallows' }, FACES[0]);
+    const faceEmoji = h('span', { class: 'hm-emoji' }, FACES[0]);
+    const faceSvgEl = h('span', { class: 'hm-svg-face', html: faceSVG(0) });
+    const face = h('div', { class: 'hm-gallows' }, faceEmoji, faceSvgEl);
     const wordEl = h('div', { class: 'hm-word' });
     const msg = h('div', { class: 'hm-msg' }, '');
     const keysEl = h('div', { class: 'hm-keys' });
@@ -77,7 +79,9 @@
         h('span', { class: 'hm-slot' + (guessed[ch] || over ? ' shown' : '') }, guessed[ch] || over ? ch : '')));
       pStreak.textContent = 'streak: ' + streak;
       pLives.textContent = 'misses: ' + misses + '/' + stages;
-      face.textContent = FACES[Math.min(6, Math.round(misses / stages * 6))];
+      const stage = Math.min(6, Math.round(misses / stages * 6));
+      faceEmoji.textContent = FACES[stage];
+      faceSvgEl.innerHTML = faceSVG(stage);
     }
     function guess(c) {
       if (over || guessed[c] !== undefined) return;
