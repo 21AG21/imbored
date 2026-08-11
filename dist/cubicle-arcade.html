@@ -811,6 +811,12 @@ body.docmode .kbd-key.miss { background: #ffffff; color: #000000; box-shadow: no
   border-color: var(--ink);
   box-shadow: inset -4px -4px 0 rgba(0,0,0,.22), inset 4px 4px 0 rgba(255,255,255,.65);
 }
+body.docmode .lo { background: #000000; }
+body.docmode .lo .cell { background: #ffffff; border-color: #000000; }
+body.docmode .lo .cell.on { background: #000000; border-color: #000000; box-shadow: none; }
+:root[data-dark="1"] body.docmode .lo { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .lo .cell { background: var(--doc-paper); border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .lo .cell.on { background: var(--doc-ink); border-color: var(--doc-ink); box-shadow: none; }
 
 /* solitaire + card games */
 .felt {
@@ -1340,10 +1346,10 @@ body.docmode .coffee-event.up,
 body.docmode .coffee-event.down { background: #ffffff; color: #000000; }
 body.docmode .shop { background: #ffffff; border-color: #000000; box-shadow: none; }
 /* the "can't afford yet" state was a flat .55 opacity — over solid ink that
-   is a literal 55%-grey blend, not a shade the filter can be blamed for.
-   A dashed vs. solid outline reads the same way at full ink instead. */
-body.docmode .shop-row { background: #ffffff; border-color: #000000; border-style: dashed; color: #000000; opacity: 1; }
-body.docmode .shop-row.afford { background: #ffffff; border-style: solid; box-shadow: inset 0 0 0 2px #000000; }
+   is a literal 55%-grey blend, not a shade the filter can be blamed for. A
+   thin vs. thick outline reads the same way at full ink instead. */
+body.docmode .shop-row { background: #ffffff; border-color: #000000; border-width: 1px; color: #000000; opacity: 1; }
+body.docmode .shop-row.afford { background: #ffffff; border-width: 3px; box-shadow: none; }
 body.docmode .shop-row.afford:hover { background: #ffffff; }
 body.docmode .shop-blurb,
 body.docmode .shop-own,
@@ -1355,8 +1361,8 @@ body.docmode .shop-foot { color: #000000; }
 :root[data-dark="1"] body.docmode .coffee-event.up,
 :root[data-dark="1"] body.docmode .coffee-event.down { background: var(--doc-paper); color: var(--doc-ink); }
 :root[data-dark="1"] body.docmode .shop { background: var(--doc-paper); border-color: var(--doc-rule2); box-shadow: none; }
-:root[data-dark="1"] body.docmode .shop-row { background: var(--doc-paper); border-color: var(--doc-rule2); border-style: dashed; color: var(--doc-ink); opacity: 1; }
-:root[data-dark="1"] body.docmode .shop-row.afford { background: var(--doc-paper); border-style: solid; box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .shop-row { background: var(--doc-paper); border-color: var(--doc-rule2); border-width: 1px; color: var(--doc-ink); opacity: 1; }
+:root[data-dark="1"] body.docmode .shop-row.afford { background: var(--doc-paper); border-color: var(--doc-ink); border-width: 3px; box-shadow: none; }
 :root[data-dark="1"] body.docmode .shop-blurb,
 :root[data-dark="1"] body.docmode .shop-own,
 :root[data-dark="1"] body.docmode .shop-foot { color: var(--doc-mut); }
@@ -3131,6 +3137,8 @@ body.docmode .hn-disk.d4, body.docmode .hn-disk.d5, body.docmode .hn-disk.d6 { b
 .nim-msg { font: 700 15px Verdana, sans-serif; min-height: 22px; text-align: center; }
 .nim-msg.win { color: var(--lime); } .nim-msg.lose { color: var(--tomato); }
 .nim-btns { display: flex; gap: 10px; }
+body.docmode .nim-stick { background: #000000; border-color: #000000; box-shadow: none; }
+:root[data-dark="1"] body.docmode .nim-stick { background: var(--doc-ink); border-color: var(--doc-ink); box-shadow: none; }
 
 /* ================= Staple Empire (idle) ================= */
 .stapler { display: flex; gap: 20px; padding: 16px; flex-wrap: wrap; justify-content: center; }
@@ -17700,6 +17708,7 @@ body.docmode .doc-act-list li { margin: 0 0 6px; }
     emoji: 'lightsout',
     cat: 'brain',
     order: 22,
+    lightBoard: true,   // doc mode paints its own literal black/white cells (see arcade.css) — the blanket invert can't reach true black on a themed cell colour
     blurb: 'Click a light and it toggles itself and its four neighbours. Clear the whole grid to dark.',
     scoreLabel: 'Level',
     tags: ['grid', 'toggle', 'logic'],
@@ -18545,6 +18554,28 @@ body.docmode .doc-act-list li { margin: 0 0 6px; }
 (function () {
   'use strict';
   const { h } = Engine;
+  /* the severity face is a colour emoji glyph — emoji bake in their own
+     gradient shading that survives the doc filter's grayscale as visible
+     grey no matter what runs over them (see css/arcade.css for the fuller
+     note), so doc mode swaps in a drawn line-art face instead: a plain
+     stroked circle whose mouth curve and eyes are computed from the same
+     0..6 severity index the emoji array already uses. Both faces are kept
+     in the DOM at all times and CSS toggles which one shows, the same
+     "flips live with no re-render" contract every other doc-mode style in
+     this file relies on. */
+  function faceSVG(i) {
+    const t = Engine.clamp(i / 6, 0, 1);
+    const dead = i >= 6;
+    const eyes = dead
+      ? '<path d="M8 9l4 4M12 9l-4 4M17 9l4 4M21 9l-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'
+      : '<circle cx="10.5" cy="11.5" r="1.5" fill="currentColor"/><circle cx="18.5" cy="11.5" r="1.5" fill="currentColor"/>';
+    const my = 18, bow = 6 - t * 12;
+    return '<svg viewBox="0 0 29 29" width="54" height="54" fill="none" aria-hidden="true">' +
+      '<circle cx="14.5" cy="14.5" r="12.5" stroke="currentColor" stroke-width="1.6"/>' +
+      eyes +
+      '<path d="M9 ' + my + ' Q14.5 ' + (my + bow) + ' 20 ' + my + '" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/>' +
+      '</svg>';
+  }
   const WORDS = ['COFFEE', 'EMAIL', 'MONDAY', 'LUNCH', 'DESK', 'CHAIR', 'MOUSE', 'INBOX',
     'PENCIL', 'STAPLER', 'PRINTER', 'MEETING', 'DEADLINE', 'BUDGET', 'COMMUTE', 'PARKING',
     'PAYROLL', 'SNACK', 'NAPTIME', 'WEEKEND', 'MEMO', 'BOSS', 'RAISE', 'SPREADSHEET',
@@ -18817,6 +18848,7 @@ body.docmode .doc-act-list li { margin: 0 0 6px; }
 
   Arcade.register({
     id: 'nim', title: 'Last Stick', emoji: 'priority', cat: 'brain', order: 29,
+    lightBoard: true,   // doc mode paints its own literal black sticks (see arcade.css) — the blanket invert can't reach true black on a themed accent colour
     blurb: 'Take one, two, or three sticks per turn against the deskmate. Whoever takes the last stick loses.',
     scoreLabel: 'Win streak', tags: ['strategy', 'maths', 'classic'],
     how: [
@@ -19900,6 +19932,7 @@ body.docmode .doc-act-list li { margin: 0 0 6px; }
     usesLetters: true,   // typed letters are gameplay — keep the shell's 'r' = restart shortcut off
     blurb: 'Turn one word into another by changing a single letter at a time — and every step in between has to be a real word. Each puzzle is built to have a solution and a par.',
     scoreLabel: 'Solved', tags: ['word', 'puzzle', 'vocabulary'],
+    lightBoard: true,   // doc mode recolours every tile to paper/ink in css/arcade.css; the blanket invert would only flip the colours back
     how: [
       'You start on one four-letter word and have to reach the target shown at the top.',
       'Each rung changes exactly one letter, and must itself be a real word from the list.',

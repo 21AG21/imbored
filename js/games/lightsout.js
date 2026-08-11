@@ -95,6 +95,7 @@
     emoji: 'lightsout',
     cat: 'brain',
     order: 22,
+    lightBoard: true,   // doc mode paints its own literal black/white cells (see arcade.css) — the blanket invert can't reach true black on a themed cell colour
     blurb: 'Click a light and it toggles itself and its four neighbours. Clear the whole grid to dark.',
     scoreLabel: 'Level',
     tags: ['grid', 'toggle', 'logic'],

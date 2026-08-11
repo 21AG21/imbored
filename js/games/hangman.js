@@ -2,6 +2,28 @@
 (function () {
   'use strict';
   const { h } = Engine;
+  /* the severity face is a colour emoji glyph — emoji bake in their own
+     gradient shading that survives the doc filter's grayscale as visible
+     grey no matter what runs over them (see css/arcade.css for the fuller
+     note), so doc mode swaps in a drawn line-art face instead: a plain
+     stroked circle whose mouth curve and eyes are computed from the same
+     0..6 severity index the emoji array already uses. Both faces are kept
+     in the DOM at all times and CSS toggles which one shows, the same
+     "flips live with no re-render" contract every other doc-mode style in
+     this file relies on. */
+  function faceSVG(i) {
+    const t = Engine.clamp(i / 6, 0, 1);
+    const dead = i >= 6;
+    const eyes = dead
+      ? '<path d="M8 9l4 4M12 9l-4 4M17 9l4 4M21 9l-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'
+      : '<circle cx="10.5" cy="11.5" r="1.5" fill="currentColor"/><circle cx="18.5" cy="11.5" r="1.5" fill="currentColor"/>';
+    const my = 18, bow = 6 - t * 12;
+    return '<svg viewBox="0 0 29 29" width="54" height="54" fill="none" aria-hidden="true">' +
+      '<circle cx="14.5" cy="14.5" r="12.5" stroke="currentColor" stroke-width="1.6"/>' +
+      eyes +
+      '<path d="M9 ' + my + ' Q14.5 ' + (my + bow) + ' 20 ' + my + '" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/>' +
+      '</svg>';
+  }
   const WORDS = ['COFFEE', 'EMAIL', 'MONDAY', 'LUNCH', 'DESK', 'CHAIR', 'MOUSE', 'INBOX',
     'PENCIL', 'STAPLER', 'PRINTER', 'MEETING', 'DEADLINE', 'BUDGET', 'COMMUTE', 'PARKING',
     'PAYROLL', 'SNACK', 'NAPTIME', 'WEEKEND', 'MEMO', 'BOSS', 'RAISE', 'SPREADSHEET',

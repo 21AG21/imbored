@@ -72,6 +72,7 @@
 
   Arcade.register({
     id: 'nim', title: 'Last Stick', emoji: 'priority', cat: 'brain', order: 29,
+    lightBoard: true,   // doc mode paints its own literal black sticks (see arcade.css) — the blanket invert can't reach true black on a themed accent colour
     blurb: 'Take one, two, or three sticks per turn against the deskmate. Whoever takes the last stick loses.',
     scoreLabel: 'Win streak', tags: ['strategy', 'maths', 'classic'],
     how: [

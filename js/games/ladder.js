@@ -177,6 +177,7 @@
     usesLetters: true,   // typed letters are gameplay — keep the shell's 'r' = restart shortcut off
     blurb: 'Turn one word into another by changing a single letter at a time — and every step in between has to be a real word. Each puzzle is built to have a solution and a par.',
     scoreLabel: 'Solved', tags: ['word', 'puzzle', 'vocabulary'],
+    lightBoard: true,   // doc mode recolours every tile to paper/ink in css/arcade.css; the blanket invert would only flip the colours back
     how: [
       'You start on one four-letter word and have to reach the target shown at the top.',
       'Each rung changes exactly one letter, and must itself be a real word from the list.',
