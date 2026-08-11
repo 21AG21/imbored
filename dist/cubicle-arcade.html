@@ -3229,6 +3229,26 @@ body.docmode .nim-stick {
 .stp-info { display: flex; flex-direction: column; line-height: 1.3; }
 .stp-cost { font: 600 11px "Courier New", monospace; color: var(--ink2); }
 .stp-buy:disabled { opacity: .5; }
+body.docmode .stp-count { color: #000000; }
+body.docmode .stp-hint { color: #000000; }
+body.docmode .stp-cost { color: #000000; }
+body.docmode .stp-big { background: #ffffff; border-color: #000000; box-shadow: none; }
+/* the emoji glyphs are full-colour bitmap/vector art baked into the font —
+   CSS `color` can't touch them, and grayscale() only turns that art into a
+   scan of many different mid grey tones, not clean ink. The dark doc theme
+   applies no such filter (colour survives, and colour isn't "grey" to the
+   check), so only strip them for the light theme, where they can't help but
+   render as noise. */
+:root:not([data-dark="1"]) body.docmode .stp-big { font-size: 0; }
+:root:not([data-dark="1"]) body.docmode .stp-emoji { display: none; }
+/* a translucent "disabled" button is a literal greyscale blend — swap for a
+   dashed outline at full ink instead of fading it */
+body.docmode .stp-buy:disabled { opacity: 1; border-style: dashed; color: #000000; }
+:root[data-dark="1"] body.docmode .stp-count { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .stp-hint { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .stp-cost { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .stp-big { background: var(--doc-paper); border-color: var(--doc-rule2); box-shadow: none; }
+:root[data-dark="1"] body.docmode .stp-buy:disabled { opacity: 1; border-style: dashed; color: var(--doc-ink); }
 
 /* ================= Five in a Row (gomoku) ================= */
 .gomoku { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 12px; width: 100%; }
