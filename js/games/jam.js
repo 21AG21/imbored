@@ -201,15 +201,17 @@
     }
 
     function draw(dt) {
+      const doc = Arcade.docMode();
       if (solvedAnim > 0) solvedAnim += dt;
-      ctx.fillStyle = '#0a1020';
+      ctx.fillStyle = doc ? Engine.docPaper() : '#0a1020';
       ctx.fillRect(0, 0, W, H);
 
       /* board */
-      ctx.fillStyle = '#151d31';
+      ctx.fillStyle = doc ? Engine.docPaper() : '#151d31';
       Engine.roundRect(ctx, PAD - 8, PAD - 8, N * CELL + 16, N * CELL + 16, 14);
       ctx.fill();
-      ctx.strokeStyle = '#28324e';
+      if (doc) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5; Engine.roundRect(ctx, PAD - 8, PAD - 8, N * CELL + 16, N * CELL + 16, 14); ctx.stroke(); }
+      ctx.strokeStyle = doc ? Engine.docInk() : '#28324e';
       ctx.lineWidth = 1;
       for (let i = 0; i <= N; i++) {
         ctx.beginPath();
@@ -220,9 +222,10 @@
 
       /* exit */
       const ey = by(EXIT_ROW);
-      ctx.fillStyle = '#1b2740';
+      ctx.fillStyle = doc ? Engine.docPaper() : '#1b2740';
       ctx.fillRect(bx(N) + 8, ey + 6, 34, CELL - 12);
-      ctx.fillStyle = '#ff4d5e';
+      if (doc) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5; ctx.strokeRect(bx(N) + 8, ey + 6, 34, CELL - 12); }
+      ctx.fillStyle = doc ? Engine.docInk() : '#ff4d5e';
       ctx.beginPath();
       ctx.moveTo(bx(N) + 16, ey + CELL / 2 - 12);
       ctx.lineTo(bx(N) + 38, ey + CELL / 2);
@@ -239,21 +242,33 @@
         const w = (v.horiz ? v.len : 1) * CELL - 10;
         const hh = (v.horiz ? 1 : v.len) * CELL - 10;
 
-        ctx.fillStyle = 'rgba(0,0,0,.32)';
-        Engine.roundRect(ctx, x + 3, y + 4, w, hh, 11);
-        ctx.fill();
-        ctx.fillStyle = v.color;
-        Engine.roundRect(ctx, x, y, w, hh, 11);
-        ctx.fill();
+        if (doc) {
+          /* no per-car colour palette, no translucent drop shadow (blends to
+             grey over paper) — the red car you drive is a solid ink block,
+             every blocker is a hollow paper block with an ink outline. */
+          ctx.fillStyle = v.red ? Engine.docInk() : Engine.docPaper();
+          Engine.roundRect(ctx, x, y, w, hh, 11);
+          ctx.fill();
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2;
+          Engine.roundRect(ctx, x, y, w, hh, 11);
+          ctx.stroke();
+        } else {
+          ctx.fillStyle = 'rgba(0,0,0,.32)';
+          Engine.roundRect(ctx, x + 3, y + 4, w, hh, 11);
+          ctx.fill();
+          ctx.fillStyle = v.color;
+          Engine.roundRect(ctx, x, y, w, hh, 11);
+          ctx.fill();
 
-        /* windows */
-        ctx.fillStyle = 'rgba(10,16,32,.38)';
-        if (v.horiz) Engine.roundRect(ctx, x + w * 0.24, y + 7, w * 0.52, hh - 14, 6);
-        else Engine.roundRect(ctx, x + 7, y + hh * 0.24, w - 14, hh * 0.52, 6);
-        ctx.fill();
+          /* windows */
+          ctx.fillStyle = 'rgba(10,16,32,.38)';
+          if (v.horiz) Engine.roundRect(ctx, x + w * 0.24, y + 7, w * 0.52, hh - 14, 6);
+          else Engine.roundRect(ctx, x + 7, y + hh * 0.24, w - 14, hh * 0.52, 6);
+          ctx.fill();
+        }
 
         if (v.red) {
-          ctx.fillStyle = 'rgba(255,255,255,.85)';
+          ctx.fillStyle = doc ? Engine.docPaper() : 'rgba(255,255,255,.85)';
           ctx.font = 'bold 15px system-ui';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
@@ -278,6 +293,7 @@
     emoji: 'jam',
     cat: 'puzzle',
     order: 12,
+    lightBoard: true,   // doc mode draws its own paper/ink board above; the blanket invert would only flip it back
     blurb: 'Slide the blocking cars out of the way and drive the red car to the exit. Twenty-eight boards, each one checked to be solvable.',
     scoreLabel: 'Levels solved',
     tags: ['rush hour', 'sliding', 'cars', 'unblock'],

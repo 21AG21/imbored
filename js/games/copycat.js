@@ -165,30 +165,36 @@
     }
 
     function draw() {
-      ctx.fillStyle = '#141a26';
+      const doc = Arcade.docMode();
+      ctx.fillStyle = doc ? Engine.docPaper() : '#141a26';
       ctx.fillRect(0, 0, W, H);
 
       const cx = W / 2, cy = H / 2, R = 232, gap = 0.045;
       PADS.forEach((p, i) => {
         const on = litIdx === i || flashAll > 0;
-        ctx.fillStyle = on ? p.lit : p.col;
+        /* doc mode: no coloured wedges — an "on" pad flips to a solid ink
+           fill (a flash), an idle one stays blank paper, both with a plain
+           ink outline. Never a lit/dim colour pair, which grayscale erases. */
+        ctx.fillStyle = doc ? (on ? Engine.docInk() : Engine.docPaper()) : (on ? p.lit : p.col);
         ctx.beginPath();
         ctx.moveTo(cx, cy);
         ctx.arc(cx, cy, R, p.a0 + gap, p.a1 - gap);
         ctx.closePath();
         ctx.fill();
-        ctx.strokeStyle = '#0c1119';
-        ctx.lineWidth = 6;
+        ctx.strokeStyle = doc ? Engine.docInk() : '#0c1119';
+        ctx.lineWidth = doc ? 2 : 6;
         ctx.stroke();
-        if (on) {
+        if (on && !doc) {
           ctx.strokeStyle = 'rgba(255,255,255,.85)';
           ctx.lineWidth = 3;
           ctx.stroke();
         }
-        /* colour-safe: a number on each pad so it never depends on the colour */
-        if (document.body.classList.contains('colorsafe')) {
+        /* colour-safe: a number on each pad so it never depends on the colour —
+           always shown in doc mode too, since it's the only thing telling four
+           identically-inked wedges apart. */
+        if (doc || document.body.classList.contains('colorsafe')) {
           const mid = (p.a0 + p.a1) / 2, rr = R * 0.62;
-          ctx.fillStyle = '#0c1119';
+          ctx.fillStyle = doc ? (on ? Engine.docPaper() : Engine.docInk()) : '#0c1119';
           ctx.font = 'bold 42px Impact, Haettenschweiler, Arial Black, sans-serif';
           ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
           ctx.fillText(String(i + 1), cx + Math.cos(mid) * rr, cy + Math.sin(mid) * rr);
@@ -197,21 +203,21 @@
       });
 
       /* hub */
-      ctx.fillStyle = '#1d1722';
+      ctx.fillStyle = doc ? Engine.docPaper() : '#1d1722';
       ctx.beginPath();
       ctx.arc(cx, cy, 78, 0, 7);
       ctx.fill();
-      ctx.strokeStyle = '#ded6c2';
+      ctx.strokeStyle = doc ? Engine.docInk() : '#ded6c2';
       ctx.lineWidth = 4;
       ctx.stroke();
 
-      ctx.fillStyle = '#ded6c2';
+      ctx.fillStyle = doc ? Engine.docInk() : '#ded6c2';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.font = '46px Impact, Haettenschweiler, Arial Black, sans-serif';
       ctx.fillText(String(seq.length), cx, cy - 8);
       ctx.font = 'bold 11px Verdana, sans-serif';
-      ctx.fillStyle = '#ffcb1f';
+      ctx.fillStyle = doc ? Engine.docInk() : '#ffcb1f';
       ctx.fillText(twoP ? (over ? 'OVER' : 'PLAYER ' + turn2)
         : mode === 'play' ? 'WATCH' : mode === 'input' ? 'REPEAT' : mode === 'over' ? 'OVER' : 'NICE',
         cx, cy + 24);
@@ -219,17 +225,31 @@
       /* how many of the sequence you have entered */
       if (mode === 'input' && !twoP) {
         for (let i = 0; i < seq.length; i++) {
-          ctx.fillStyle = i < step ? '#6fcf2f' : '#3a3446';
-          ctx.fillRect(cx - seq.length * 6 + i * 12, H - 26, 9, 9);
+          const x = cx - seq.length * 6 + i * 12;
+          if (doc) {
+            ctx.fillStyle = i < step ? Engine.docInk() : Engine.docPaper();
+            ctx.fillRect(x, H - 26, 9, 9);
+            ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1; ctx.strokeRect(x + 0.5, H - 25.5, 8, 8);
+          } else {
+            ctx.fillStyle = i < step ? '#6fcf2f' : '#3a3446';
+            ctx.fillRect(x, H - 26, 9, 9);
+          }
         }
         const f = clamp(waitT / patience(), 0, 1);
-        ctx.fillStyle = f > 0.4 ? '#ded6c2' : '#e8402a';
+        ctx.fillStyle = doc ? Engine.docInk() : (f > 0.4 ? '#ded6c2' : '#e8402a');
         ctx.fillRect(cx - 90, 16, 180 * f, 6);
       } else if (twoP && !over) {
         /* progress through the replay before you get to add a note */
         for (let i = 0; i < seq.length; i++) {
-          ctx.fillStyle = i < inp ? '#6fcf2f' : '#3a3446';
-          ctx.fillRect(cx - seq.length * 6 + i * 12, H - 26, 9, 9);
+          const x = cx - seq.length * 6 + i * 12;
+          if (doc) {
+            ctx.fillStyle = i < inp ? Engine.docInk() : Engine.docPaper();
+            ctx.fillRect(x, H - 26, 9, 9);
+            ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1; ctx.strokeRect(x + 0.5, H - 25.5, 8, 8);
+          } else {
+            ctx.fillStyle = i < inp ? '#6fcf2f' : '#3a3446';
+            ctx.fillRect(x, H - 26, 9, 9);
+          }
         }
       }
       ctx.textAlign = 'left';
@@ -269,6 +289,7 @@
     emoji: 'copycat',
     cat: 'brain',
     order: 24,
+    lightBoard: true,   // doc mode draws its own paper/ink pads above; the blanket invert would only flip them back
     blurb: 'The game lights a sequence of pads, adding one each round. Watch it, then tap the whole sequence back from memory.',
     scoreLabel: 'Longest',
     tags: ['simon', 'memory', 'sequence', 'sounds'],

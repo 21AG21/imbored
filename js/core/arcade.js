@@ -232,10 +232,23 @@
          screen, and zooming past that pushed the board off-screen with no way
          to reach it. */
       const availW = stage.clientWidth - 8;
-      const vBottom = view.getBoundingClientRect().bottom - 6;
-      const capH = Math.min(global.innerHeight * 0.72, vBottom - rect.top);
+      /* cap to whichever is smaller: the usual 72%-of-viewport figure budget,
+         or the room actually left below wherever the stage sits on the page —
+         .view's own bottom is effectively unbounded (it just wraps whatever
+         flows into it), so that term alone never actually capped anything;
+         a board with a full page of report prose ahead of it still claimed
+         72% of the WHOLE viewport height and ran off the bottom of the
+         screen. Floored so a very text-heavy page still leaves the board a
+         usable minimum instead of collapsing toward zero. */
+      const capH = Math.max(100, Math.min(global.innerHeight * 0.72, global.innerHeight - rect.top - 16));
       let z = Math.min(availW / natW, capH / natH);
-      z = Math.max(1, Math.min(z, 2.2));
+      /* doc mode is the one place boards are allowed to shrink below their
+         native size — a resized figure in a document does exactly that —
+         so the floor here is a legibility guard, not a "never shrink" rule.
+         A heavier report page (more prose above/below the figure) is
+         expected to push a game smaller, same as shrinking a picture to
+         fit the remaining space on a real page. */
+      z = Math.max(0.4, Math.min(z, 2.2));
       /* the figure-size slider layers on top of the auto-fit above, same
          deal as the canvas path in Engine.canvas — deliberately allowed to
          push past the auto-fit's own 1-2.2x range once the user asks for it. */
@@ -1191,39 +1204,82 @@
     'The underlying detail has been checked against the source records and reconciled where discrepancies were found.',
     'These notes are circulated ahead of the meeting so that comments can be gathered and resolved in advance.',
     'Nothing here changes the headline conclusion, which is unchanged from the earlier draft shared last week.',
-    'The next steps are listed at the end, with an owner and a rough timing recorded against each item.'
+    'The next steps are listed at the end, with an owner and a rough timing recorded against each item.',
+    'The variance this period sits within the usual range and does not need separate commentary.',
+    'Owners are listed against each item so follow-up does not stall between meetings.',
+    'This draft supersedes the version circulated before the break and should be treated as current.',
+    'Any figures not yet confirmed are marked provisional until the source system reconciles.',
+    'The format follows the template agreed with the wider team last quarter.',
+    'Feedback on the previous cycle has been incorporated where it changed the recommendation.',
+    'This is a working document; please raise corrections directly rather than through a separate thread.',
+    'The scope here is limited to the period in question and excludes carryover items.',
+    'Terminology follows the glossary circulated separately, to keep this consistent with other reports.',
+    'A short verbal update will accompany this at the next standing meeting.',
+    'Historical context is included only where it changes how the current figures should be read.',
+    'The reviewer’s comments from the last pass have been addressed inline.',
+    'This section will be retired once the underlying process is fully migrated.',
+    'Rounding may cause minor discrepancies between totals and their components.',
+    'Distribution is limited to the working group until the figures are finalised.',
+    'Anything marked draft should be treated as subject to change before the next cycle.'
   ];
   const FIGCAPS = [
     'Figure 1. Current-state overview, captured for this review.',
     'Figure 1. Summary layout for the period under review.',
     'Figure 1. Reference view, as referred to in the notes above.',
     'Table 1. Working figures — provisional and subject to revision.',
-    'Figure 1. Snapshot circulated for comment ahead of the meeting.'
+    'Figure 1. Snapshot circulated for comment ahead of the meeting.',
+    'Figure 1. As-of view, current at time of writing.',
+    'Table 1. Detail supporting the summary above.',
+    'Figure 1. Included for reference; see notes for context.'
+  ];
+  /* short "open items" bullets appended after the figure — the kind of flat
+     follow-up list every real status report ends on. Same seeded-pick
+     treatment as PROSE below, just a shorter, listier register. */
+  const ACTIONS = [
+    'Confirm the current figures with the desk owner before this goes out again.',
+    'Circulate to the wider team once the open questions above are closed out.',
+    'Re-run the check next cycle and compare against this baseline.',
+    'Flag any material variance to the working group ahead of the next review.',
+    'File alongside the prior period’s notes for continuity.',
+    'No action required unless the picture changes materially.',
+    'Owner to confirm timing once the dependency clears.',
+    'Hold for sign-off before distribution outside the group.',
+    'Update the tracker once this is reconciled.',
+    'Revisit if the underlying assumptions change.'
   ];
   function hashId(s) { let x = 2166136261; for (let i = 0; i < s.length; i++) { x ^= s.charCodeAt(i); x = (x * 16777619) >>> 0; } return x; }
-  function docProse(g) {
-    const seed = hashId(g.id || 'x');
-    /* six independent 4-bit slices of one 32-bit seed collide often enough
-       (many game ids hit it) that the exact same "report" sentence could
-       appear twice or three times back to back — an obvious tell in text
-       meant to read as a real document. Draw a seeded permutation instead,
-       so every slot P(0..5) is guaranteed distinct; still fully determined
-       by the game id, so the same game always shows the same prose. */
-    const order = PROSE.map((_, i) => i);
+  /* seeded Fisher-Yates so a given source array always yields a distinct,
+     collision-free order for a given game id — repeats back-to-back are the
+     one thing that gives generic filler prose away as filler. */
+  function seededOrder(len, seed) {
+    const order = Array.from({ length: len }, (_, i) => i);
     let s = seed >>> 0;
     for (let i = order.length - 1; i > 0; i--) {
       s = (Math.imul(s, 1103515245) + 12345) >>> 0;
       const j = s % (i + 1);
       const t = order[i]; order[i] = order[j]; order[j] = t;
     }
+    return order;
+  }
+  function docProse(g) {
+    const seed = hashId(g.id || 'x');
+    const order = seededOrder(PROSE.length, seed);
     const P = (k) => PROSE[order[k % order.length]];
+    /* a second, independently-shuffled order (seed nudged, not reused) picks
+       the open-items bullets so they don't echo whichever prose sentences
+       already landed in the paragraphs above. */
+    const actOrder = seededOrder(ACTIONS.length, (seed ^ 0x9e3779b9) >>> 0);
+    const A = (k) => ACTIONS[actOrder[k % actOrder.length]];
     const intro = h('div', { class: 'doc-prose doc-intro' },
       h('p', null, P(0)),
-      h('p', null, P(1) + ' ' + P(2)));
+      h('p', null, P(1)),
+      h('p', null, P(2) + ' ' + P(3)));
     const after = h('div', { class: 'doc-prose doc-after' },
       h('p', { class: 'doc-figcap' }, FIGCAPS[seed % FIGCAPS.length]),
-      h('p', null, P(3) + ' ' + P(4)),
-      h('p', null, P(5)));
+      h('p', null, P(4) + ' ' + P(5)),
+      h('p', null, P(6)),
+      h('p', { class: 'doc-act-lead' }, 'Open items for this cycle:'),
+      h('ul', { class: 'doc-act-list' }, [A(0), A(1), A(2)].map((a) => h('li', null, a))));
     return { intro, after };
   }
 

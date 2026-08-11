@@ -164,29 +164,39 @@
     }
 
     function bubble(x, y, color, rad) {
+      /* doc mode: every colour bubble becomes the same paper-white disc with
+         a thin ink ring — no fillStyle taken from COLORS[] or any rgba tint,
+         since a translucent black/white overlay still grayscales to a solid
+         mid-tone under the lightBoard filter. */
+      if (Arcade.docMode()) {
+        ctx.fillStyle = Engine.docPaper(); ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(x, y, rad || R, 0, 7); ctx.fill(); ctx.stroke();
+        return;
+      }
       ctx.fillStyle = COLORS[color]; ctx.strokeStyle = 'rgba(0,0,0,.35)'; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.arc(x, y, rad || R, 0, 7); ctx.fill(); ctx.stroke();
       ctx.fillStyle = 'rgba(255,255,255,.5)'; ctx.beginPath(); ctx.arc(x - (rad || R) * 0.3, y - (rad || R) * 0.3, (rad || R) * 0.28, 0, 7); ctx.fill();
     }
 
     function draw() {
-      ctx.fillStyle = '#141019'; ctx.fillRect(0, 0, W, H);
+      const doc = Arcade.docMode();
+      ctx.fillStyle = doc ? Engine.docPaper() : '#141019'; ctx.fillRect(0, 0, W, H);
       /* danger line */
       const dy = cyOf(DANGER) - ROWH / 2;
-      ctx.strokeStyle = '#e8402a'; ctx.setLineDash([8, 6]); ctx.lineWidth = 2;
+      ctx.strokeStyle = doc ? Engine.docInk() : '#e8402a'; ctx.setLineDash([8, 6]); ctx.lineWidth = 2;
       ctx.beginPath(); ctx.moveTo(0, dy); ctx.lineTo(W, dy); ctx.stroke(); ctx.setLineDash([]);
       /* grid */
       for (let r = 0; r < grid.length; r++) for (let c = 0; c < (grid[r] ? grid[r].length : 0); c++) if (at(r, c) !== -1) bubble(cx(r, c), cyOf(r), grid[r][c]);
       /* aim guide */
       if (!over && !shot) {
-        ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.setLineDash([4, 6]); ctx.lineWidth = 2;
+        ctx.strokeStyle = doc ? Engine.docInk() : 'rgba(255,255,255,.35)'; ctx.setLineDash([4, 6]); ctx.lineWidth = 2;
         ctx.beginPath(); ctx.moveTo(W / 2, H - 34); ctx.lineTo(W / 2 + Math.cos(aim) * 160, H - 34 + Math.sin(aim) * 160); ctx.stroke(); ctx.setLineDash([]);
       }
       /* shooter + queue */
       if (shot) bubble(shot.x, shot.y, shot.color);
       else if (!over) bubble(W / 2, H - 34, cur);
       bubble(W / 2 + 46, H - 22, next, 12);
-      ctx.fillStyle = '#f2ede0'; ctx.font = '10px Verdana'; ctx.textAlign = 'left'; ctx.fillText('next', W / 2 + 62, H - 19);
+      ctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; ctx.font = '10px Verdana'; ctx.textAlign = 'left'; ctx.fillText('next', W / 2 + 62, H - 19);
     }
 
     /* ---- test seam ---- */
@@ -211,6 +221,7 @@
     emoji: 'bubble',
     cat: 'puzzle',
     order: 19,
+    lightBoard: true,   // doc mode draws its own paper/ink palette above; the blanket invert would only flip it back
     blurb: 'A bubble shooter. Fire bubbles up the board and pop clusters of three or more of a color. Every miss sticks and pushes the wall down toward the line.',
     scoreLabel: 'Boards cleared',
     tags: ['bubble-shooter', 'match', 'puzzle', 'aim'],

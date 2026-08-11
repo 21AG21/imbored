@@ -683,6 +683,38 @@ body.in-game .status { margin: 2px 0; font-size: 12px; }
 .ms .n4 { color: #4b1a9e; } .ms .n5 { color: #8a4b0f; } .ms .n6 { color: #0f7d80; }
 .ms .n7 { color: #b2158c; } .ms .n8 { color: #333; }
 
+/* minesweeper doc mode: literal black/white — the tan --paper/--paper2 fills
+   and var(--ink) borders all survive lightBoard's grayscale+contrast+brightness
+   as visible mid-greys (var(--ink) alone lands around lum 38, inside the
+   "gray" band), so every surface here is repainted with true extremes instead.
+   Unopened cells stay blank paper; mines/flags fill solid ink so they still
+   read at a glance. The baked-colour mine/flag/boom SVG icons (Icons.svg,
+   fills are literal hex, not currentColor) can't be recoloured by CSS
+   `color` — brightness(0) forces every opaque icon pixel to black regardless
+   of its original hue, and on the solid-ink mine cells the same trick plus a
+   trailing invert(1) flips that black silhouette to white so it still shows
+   up against the black fill. */
+body.docmode .ms { background: #ffffff; border-color: #000000; box-shadow: none; }
+body.docmode .ms .cell { background: #ffffff; border-color: #000000; box-shadow: none; }
+body.docmode .ms .cell:hover { background: #000000; }
+body.docmode .ms .cell.open { background: #ffffff; }
+body.docmode .ms .cell.mine { background: #000000; }
+body.docmode .ms .cell.flag { background: #ffffff; }
+:root:not([data-dark="1"]) body.docmode .ms .cell svg { filter: brightness(0); }
+:root:not([data-dark="1"]) body.docmode .ms .cell.mine svg { filter: brightness(0) invert(1); }
+body.docmode .ms .n1, body.docmode .ms .n2, body.docmode .ms .n3, body.docmode .ms .n4,
+body.docmode .ms .n5, body.docmode .ms .n6, body.docmode .ms .n7, body.docmode .ms .n8 { color: #000000; }
+:root[data-dark="1"] body.docmode .ms { background: var(--doc-paper); border-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .ms .cell { background: var(--doc-paper); border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .ms .cell:hover { background: var(--doc-rule); }
+:root[data-dark="1"] body.docmode .ms .cell.open { background: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .ms .cell.mine { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .ms .cell.flag { background: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .ms .n1, :root[data-dark="1"] body.docmode .ms .n2,
+:root[data-dark="1"] body.docmode .ms .n3, :root[data-dark="1"] body.docmode .ms .n4,
+:root[data-dark="1"] body.docmode .ms .n5, :root[data-dark="1"] body.docmode .ms .n6,
+:root[data-dark="1"] body.docmode .ms .n7, :root[data-dark="1"] body.docmode .ms .n8 { color: var(--doc-ink); }
+
 /* 2048 */
 .g2048 { background: var(--ink); padding: 8px; border: 5px solid var(--ink); box-shadow: var(--hard); touch-action: none; }
 .g2048 .board { gap: 6px; }
@@ -1928,9 +1960,55 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
 }
 .gcell.error { background: var(--tomato); box-shadow: inset 0 0 0 2px #7a1206; }
 
+/* Cond. Format (nonogram): the tan-on-cream spreadsheet skin — #fbfaf4/#fffdf3
+   paper, #b9b4a2 hairline grid rules, #4a4636 clue text, a #b0392a X mark —
+   all survive grayscale() as a dense mesh of mid-grey lines and text across
+   the whole board (a 10-15 cell grid means a LOT of hairlines). It's
+   `lightBoard: true` (see Arcade.register), so only grayscale(1)
+   contrast(0.92) brightness(1.12) runs here, no invert to fight. Light
+   theme authors literal #fff/#000 rather than the --doc-paper/--doc-ink
+   variables (those are tuned as already-final colours, and running them
+   through this filter a second time would land short of the extremes);
+   dark theme has no such compounding filter on a lightBoard stage, so it
+   reads the variables directly — they ARE the final colour. */
+body.docmode .nono-wrap,
+body.docmode .nono-grid { background: #ffffff; }
+body.docmode .nono-grid > div { border-color: #000000; }
+body.docmode .nono-grid > div.band-r,
+body.docmode .nono-grid > div.band-b { border-color: #000000; }
+body.docmode .nono-hcell { background: #ffffff; color: #000000; }
+body.docmode .corner { background: #ffffff; color: #000000; }
+body.docmode .gcell { background: #ffffff; }
+body.docmode .gcell:hover { box-shadow: inset 0 0 0 3px #000000; }
+body.docmode .gcell.filled { background: #000000; }
+body.docmode .gcell.marked::after { color: #000000; }
+body.docmode .gcell.error { background: #ffffff; box-shadow: inset 0 0 0 2px #000000; }
+:root[data-dark="1"] body.docmode .nono-wrap,
+:root[data-dark="1"] body.docmode .nono-grid { background: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .nono-grid > div { border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .nono-grid > div.band-r,
+:root[data-dark="1"] body.docmode .nono-grid > div.band-b { border-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .nono-hcell { background: var(--doc-paper); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .corner { background: var(--doc-paper); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .gcell { background: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .gcell:hover { box-shadow: inset 0 0 0 3px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .gcell.filled { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .gcell.marked::after { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .gcell.error { background: var(--doc-paper); box-shadow: inset 0 0 0 2px var(--doc-ink); }
+
 /* firedrill (percolation) */
 .fire-panel { width: min(560px, 92vw); display: flex; justify-content: center; margin-top: 4px; }
 .fire-plot { width: 100%; max-width: 520px; border: 4px solid var(--ink); box-shadow: var(--hard); background: #12100c; }
+/* the trend chart is a second, fixed-size figure stacked under the main
+   board — left at full size it alone can eat ~200px of the doc-mode height
+   budget regardless of how little room a text-heavy page has left, running
+   the whole figure off the bottom of the screen. Halve it by default (still
+   tied to the figure-size slider, same as the board above it) so it fits
+   inside the same auto-fit budget instead of sitting outside it. */
+body.docmode .fire-plot {
+  max-width: calc(240px * var(--doc-fig-scale, 1));
+  border: 1px solid var(--doc-rule2); box-shadow: none;
+}
 
 /* battleship */
 .battleship { --bsc: 27px; width: 100%; position: relative; }
@@ -2498,6 +2576,32 @@ body.docmode .sb-label {
 .pig-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
 .pig-msg.win { color: var(--lime); } .pig-msg.lose { color: var(--tomato); }
 .pig-btns { display: flex; gap: 10px; }
+
+/* Pig is `lightBoard: true` (see Arcade.register), so its stage runs plain
+   grayscale(1) contrast(0.92) brightness(1.12) with no invert. Any authored
+   colour that isn't pure black/white still survives that as a visible
+   mid-grey (--ink2, --ink, --label, the die's --bevel-out shadow all do),
+   and the generic .btn / [class*="-msg"] doc-mode rules elsewhere in this
+   file author --doc-ink/--doc-paper, which land the same way once this
+   filter compounds on top of them. Beat those with literal #000/#fff, scoped
+   to the light doc theme only — the dark doc theme runs no filter on a
+   lightBoard stage (see the :root:not([data-dark="1"]) guard on that filter
+   rule), so the generic rules' variables are already the correct final
+   colour there and this file's own --ink/--ink2/--label would otherwise leak
+   through unconverted; give pig its own dark-theme block using the real
+   --doc-ink/--doc-paper variables instead. */
+body.docmode .pig .pig-lbl,
+body.docmode .pig .pig-score,
+body.docmode .pig .pig-turn,
+body.docmode .pig .pig-msg { color: #000000 !important; }
+body.docmode .pig .pig-die { background: #ffffff; border-color: #000000; box-shadow: none; }
+body.docmode .pig .pig-btns .btn { color: #000000 !important; border-color: #000000 !important; background: #ffffff !important; }
+:root[data-dark="1"] body.docmode .pig .pig-lbl,
+:root[data-dark="1"] body.docmode .pig .pig-score,
+:root[data-dark="1"] body.docmode .pig .pig-turn,
+:root[data-dark="1"] body.docmode .pig .pig-msg { color: var(--doc-ink) !important; }
+:root[data-dark="1"] body.docmode .pig .pig-die { background: var(--doc-paper); border-color: var(--doc-ink); box-shadow: none; }
+:root[data-dark="1"] body.docmode .pig .pig-btns .btn { color: var(--doc-ink) !important; border-color: var(--doc-ink) !important; background: var(--doc-paper) !important; }
 
 /* ================= Higher or Lower ================= */
 .hilo { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 14px; }
@@ -3386,6 +3490,9 @@ body.docmode .doc-figcap {
   font-family: Verdana, Geneva, sans-serif; font-size: 12.5px; font-style: italic;
   color: var(--doc-mut); text-align: center; max-width: none; margin: 12px 0 20px;
 }
+body.docmode .doc-act-lead { margin: 0 0 4px; font-weight: 700; font-style: normal; font-size: 15px; color: var(--doc-ink2); }
+body.docmode .doc-act-list { margin: 0 0 13px; padding-left: 22px; max-width: 74ch; }
+body.docmode .doc-act-list li { margin: 0 0 6px; }
 
 /* the disguise toggle button sitting in the arcade topbar */
 .docmode-btn { white-space: nowrap; }
@@ -3491,7 +3598,29 @@ body.docmode .doc-figcap {
          canvas chasing the viewport bottom and overlapping that prose. */
       if (document.body.classList.contains('docmode')) {
         const parentW = (c.parentElement && c.parentElement.clientWidth) || c.getBoundingClientRect().width;
-        const capH = ((global.visualViewport && global.visualViewport.height) || global.innerHeight) * 0.72;
+        const vpH = (global.visualViewport && global.visualViewport.height) || global.innerHeight;
+        const cr0 = c.getBoundingClientRect();
+        /* a few games (the spatial sims) stack a small fixed-size trend
+           chart below the main canvas, inside the same figure — same
+           "overhang" measurement as the non-doc branch below, so that
+           panel's own room is reserved too and the whole figure — not just
+           the canvas — ends up fitting on the page. */
+        let lowest0 = cr0.bottom;
+        for (let sib = c.nextElementSibling; sib; sib = sib.nextElementSibling) {
+          const rb = sib.getBoundingClientRect().bottom;
+          if (rb > lowest0) lowest0 = rb;
+        }
+        const overhang0 = lowest0 - cr0.bottom;
+        /* cap to whichever is smaller: the usual 72%-of-viewport figure
+           budget, or the room actually left below wherever the canvas sits
+           on the page — a flat 72% ignored how much report prose already
+           sits above it, so a figure with a full page of text ahead of it
+           still claimed 72% of the WHOLE viewport and ran off the bottom.
+           The floor is a legibility guard, not a size target — a heavier
+           report page (more prose above/below the figure) is expected to
+           push a game smaller, same as shrinking a picture to fit the
+           remaining space on a real page. */
+        const capH = Math.max(100, Math.min(vpH * 0.72, vpH - cr0.top - overhang0 - 16));
         /* the figure-size slider is a multiplier on top of this fit, not a
            replacement for it — deliberately allowed to exceed parentW/capH
            when the user drags past "fits the column", same as resizing an
@@ -5651,10 +5780,23 @@ body.docmode .doc-figcap {
          screen, and zooming past that pushed the board off-screen with no way
          to reach it. */
       const availW = stage.clientWidth - 8;
-      const vBottom = view.getBoundingClientRect().bottom - 6;
-      const capH = Math.min(global.innerHeight * 0.72, vBottom - rect.top);
+      /* cap to whichever is smaller: the usual 72%-of-viewport figure budget,
+         or the room actually left below wherever the stage sits on the page —
+         .view's own bottom is effectively unbounded (it just wraps whatever
+         flows into it), so that term alone never actually capped anything;
+         a board with a full page of report prose ahead of it still claimed
+         72% of the WHOLE viewport height and ran off the bottom of the
+         screen. Floored so a very text-heavy page still leaves the board a
+         usable minimum instead of collapsing toward zero. */
+      const capH = Math.max(100, Math.min(global.innerHeight * 0.72, global.innerHeight - rect.top - 16));
       let z = Math.min(availW / natW, capH / natH);
-      z = Math.max(1, Math.min(z, 2.2));
+      /* doc mode is the one place boards are allowed to shrink below their
+         native size — a resized figure in a document does exactly that —
+         so the floor here is a legibility guard, not a "never shrink" rule.
+         A heavier report page (more prose above/below the figure) is
+         expected to push a game smaller, same as shrinking a picture to
+         fit the remaining space on a real page. */
+      z = Math.max(0.4, Math.min(z, 2.2));
       /* the figure-size slider layers on top of the auto-fit above, same
          deal as the canvas path in Engine.canvas — deliberately allowed to
          push past the auto-fit's own 1-2.2x range once the user asks for it. */
@@ -6610,39 +6752,82 @@ body.docmode .doc-figcap {
     'The underlying detail has been checked against the source records and reconciled where discrepancies were found.',
     'These notes are circulated ahead of the meeting so that comments can be gathered and resolved in advance.',
     'Nothing here changes the headline conclusion, which is unchanged from the earlier draft shared last week.',
-    'The next steps are listed at the end, with an owner and a rough timing recorded against each item.'
+    'The next steps are listed at the end, with an owner and a rough timing recorded against each item.',
+    'The variance this period sits within the usual range and does not need separate commentary.',
+    'Owners are listed against each item so follow-up does not stall between meetings.',
+    'This draft supersedes the version circulated before the break and should be treated as current.',
+    'Any figures not yet confirmed are marked provisional until the source system reconciles.',
+    'The format follows the template agreed with the wider team last quarter.',
+    'Feedback on the previous cycle has been incorporated where it changed the recommendation.',
+    'This is a working document; please raise corrections directly rather than through a separate thread.',
+    'The scope here is limited to the period in question and excludes carryover items.',
+    'Terminology follows the glossary circulated separately, to keep this consistent with other reports.',
+    'A short verbal update will accompany this at the next standing meeting.',
+    'Historical context is included only where it changes how the current figures should be read.',
+    'The reviewer’s comments from the last pass have been addressed inline.',
+    'This section will be retired once the underlying process is fully migrated.',
+    'Rounding may cause minor discrepancies between totals and their components.',
+    'Distribution is limited to the working group until the figures are finalised.',
+    'Anything marked draft should be treated as subject to change before the next cycle.'
   ];
   const FIGCAPS = [
     'Figure 1. Current-state overview, captured for this review.',
     'Figure 1. Summary layout for the period under review.',
     'Figure 1. Reference view, as referred to in the notes above.',
     'Table 1. Working figures — provisional and subject to revision.',
-    'Figure 1. Snapshot circulated for comment ahead of the meeting.'
+    'Figure 1. Snapshot circulated for comment ahead of the meeting.',
+    'Figure 1. As-of view, current at time of writing.',
+    'Table 1. Detail supporting the summary above.',
+    'Figure 1. Included for reference; see notes for context.'
+  ];
+  /* short "open items" bullets appended after the figure — the kind of flat
+     follow-up list every real status report ends on. Same seeded-pick
+     treatment as PROSE below, just a shorter, listier register. */
+  const ACTIONS = [
+    'Confirm the current figures with the desk owner before this goes out again.',
+    'Circulate to the wider team once the open questions above are closed out.',
+    'Re-run the check next cycle and compare against this baseline.',
+    'Flag any material variance to the working group ahead of the next review.',
+    'File alongside the prior period’s notes for continuity.',
+    'No action required unless the picture changes materially.',
+    'Owner to confirm timing once the dependency clears.',
+    'Hold for sign-off before distribution outside the group.',
+    'Update the tracker once this is reconciled.',
+    'Revisit if the underlying assumptions change.'
   ];
   function hashId(s) { let x = 2166136261; for (let i = 0; i < s.length; i++) { x ^= s.charCodeAt(i); x = (x * 16777619) >>> 0; } return x; }
-  function docProse(g) {
-    const seed = hashId(g.id || 'x');
-    /* six independent 4-bit slices of one 32-bit seed collide often enough
-       (many game ids hit it) that the exact same "report" sentence could
-       appear twice or three times back to back — an obvious tell in text
-       meant to read as a real document. Draw a seeded permutation instead,
-       so every slot P(0..5) is guaranteed distinct; still fully determined
-       by the game id, so the same game always shows the same prose. */
-    const order = PROSE.map((_, i) => i);
+  /* seeded Fisher-Yates so a given source array always yields a distinct,
+     collision-free order for a given game id — repeats back-to-back are the
+     one thing that gives generic filler prose away as filler. */
+  function seededOrder(len, seed) {
+    const order = Array.from({ length: len }, (_, i) => i);
     let s = seed >>> 0;
     for (let i = order.length - 1; i > 0; i--) {
       s = (Math.imul(s, 1103515245) + 12345) >>> 0;
       const j = s % (i + 1);
       const t = order[i]; order[i] = order[j]; order[j] = t;
     }
+    return order;
+  }
+  function docProse(g) {
+    const seed = hashId(g.id || 'x');
+    const order = seededOrder(PROSE.length, seed);
     const P = (k) => PROSE[order[k % order.length]];
+    /* a second, independently-shuffled order (seed nudged, not reused) picks
+       the open-items bullets so they don't echo whichever prose sentences
+       already landed in the paragraphs above. */
+    const actOrder = seededOrder(ACTIONS.length, (seed ^ 0x9e3779b9) >>> 0);
+    const A = (k) => ACTIONS[actOrder[k % actOrder.length]];
     const intro = h('div', { class: 'doc-prose doc-intro' },
       h('p', null, P(0)),
-      h('p', null, P(1) + ' ' + P(2)));
+      h('p', null, P(1)),
+      h('p', null, P(2) + ' ' + P(3)));
     const after = h('div', { class: 'doc-prose doc-after' },
       h('p', { class: 'doc-figcap' }, FIGCAPS[seed % FIGCAPS.length]),
-      h('p', null, P(3) + ' ' + P(4)),
-      h('p', null, P(5)));
+      h('p', null, P(4) + ' ' + P(5)),
+      h('p', null, P(6)),
+      h('p', { class: 'doc-act-lead' }, 'Open items for this cycle:'),
+      h('ul', { class: 'doc-act-list' }, [A(0), A(1), A(2)].map((a) => h('li', null, a))));
     return { intro, after };
   }
 
@@ -14699,15 +14884,17 @@ body.docmode .doc-figcap {
     }
 
     function draw(dt) {
+      const doc = Arcade.docMode();
       if (solvedAnim > 0) solvedAnim += dt;
-      ctx.fillStyle = '#0a1020';
+      ctx.fillStyle = doc ? Engine.docPaper() : '#0a1020';
       ctx.fillRect(0, 0, W, H);
 
       /* board */
-      ctx.fillStyle = '#151d31';
+      ctx.fillStyle = doc ? Engine.docPaper() : '#151d31';
       Engine.roundRect(ctx, PAD - 8, PAD - 8, N * CELL + 16, N * CELL + 16, 14);
       ctx.fill();
-      ctx.strokeStyle = '#28324e';
+      if (doc) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5; Engine.roundRect(ctx, PAD - 8, PAD - 8, N * CELL + 16, N * CELL + 16, 14); ctx.stroke(); }
+      ctx.strokeStyle = doc ? Engine.docInk() : '#28324e';
       ctx.lineWidth = 1;
       for (let i = 0; i <= N; i++) {
         ctx.beginPath();
@@ -14718,9 +14905,10 @@ body.docmode .doc-figcap {
 
       /* exit */
       const ey = by(EXIT_ROW);
-      ctx.fillStyle = '#1b2740';
+      ctx.fillStyle = doc ? Engine.docPaper() : '#1b2740';
       ctx.fillRect(bx(N) + 8, ey + 6, 34, CELL - 12);
-      ctx.fillStyle = '#ff4d5e';
+      if (doc) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5; ctx.strokeRect(bx(N) + 8, ey + 6, 34, CELL - 12); }
+      ctx.fillStyle = doc ? Engine.docInk() : '#ff4d5e';
       ctx.beginPath();
       ctx.moveTo(bx(N) + 16, ey + CELL / 2 - 12);
       ctx.lineTo(bx(N) + 38, ey + CELL / 2);
@@ -14737,21 +14925,33 @@ body.docmode .doc-figcap {
         const w = (v.horiz ? v.len : 1) * CELL - 10;
         const hh = (v.horiz ? 1 : v.len) * CELL - 10;
 
-        ctx.fillStyle = 'rgba(0,0,0,.32)';
-        Engine.roundRect(ctx, x + 3, y + 4, w, hh, 11);
-        ctx.fill();
-        ctx.fillStyle = v.color;
-        Engine.roundRect(ctx, x, y, w, hh, 11);
-        ctx.fill();
+        if (doc) {
+          /* no per-car colour palette, no translucent drop shadow (blends to
+             grey over paper) — the red car you drive is a solid ink block,
+             every blocker is a hollow paper block with an ink outline. */
+          ctx.fillStyle = v.red ? Engine.docInk() : Engine.docPaper();
+          Engine.roundRect(ctx, x, y, w, hh, 11);
+          ctx.fill();
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2;
+          Engine.roundRect(ctx, x, y, w, hh, 11);
+          ctx.stroke();
+        } else {
+          ctx.fillStyle = 'rgba(0,0,0,.32)';
+          Engine.roundRect(ctx, x + 3, y + 4, w, hh, 11);
+          ctx.fill();
+          ctx.fillStyle = v.color;
+          Engine.roundRect(ctx, x, y, w, hh, 11);
+          ctx.fill();
 
-        /* windows */
-        ctx.fillStyle = 'rgba(10,16,32,.38)';
-        if (v.horiz) Engine.roundRect(ctx, x + w * 0.24, y + 7, w * 0.52, hh - 14, 6);
-        else Engine.roundRect(ctx, x + 7, y + hh * 0.24, w - 14, hh * 0.52, 6);
-        ctx.fill();
+          /* windows */
+          ctx.fillStyle = 'rgba(10,16,32,.38)';
+          if (v.horiz) Engine.roundRect(ctx, x + w * 0.24, y + 7, w * 0.52, hh - 14, 6);
+          else Engine.roundRect(ctx, x + 7, y + hh * 0.24, w - 14, hh * 0.52, 6);
+          ctx.fill();
+        }
 
         if (v.red) {
-          ctx.fillStyle = 'rgba(255,255,255,.85)';
+          ctx.fillStyle = doc ? Engine.docPaper() : 'rgba(255,255,255,.85)';
           ctx.font = 'bold 15px system-ui';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
@@ -14776,6 +14976,7 @@ body.docmode .doc-figcap {
     emoji: 'jam',
     cat: 'puzzle',
     order: 12,
+    lightBoard: true,   // doc mode draws its own paper/ink board above; the blanket invert would only flip it back
     blurb: 'Slide the blocking cars out of the way and drive the red car to the exit. Twenty-eight boards, each one checked to be solvable.',
     scoreLabel: 'Levels solved',
     tags: ['rush hour', 'sliding', 'cars', 'unblock'],
@@ -15165,7 +15366,8 @@ body.docmode .doc-figcap {
 
     function draw(dt) {
       t += dt;
-      ctx.fillStyle = '#08101d';
+      const doc = Arcade.docMode();
+      ctx.fillStyle = doc ? Engine.docPaper() : '#08101d';
       ctx.fillRect(0, 0, cv.w, cv.h);
 
       for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
@@ -15173,38 +15375,62 @@ body.docmode .doc-figcap {
         cell.ang += (cell.target - cell.ang) * Math.min(1, dt * 14);
         const x = OX + c * CELL, y = OY + r * CELL;
 
-        ctx.fillStyle = cell.powered ? '#111f33' : '#131a2b';
-        Engine.roundRect(ctx, x + 2, y + 2, CELL - 4, CELL - 4, 8);
-        ctx.fill();
-        ctx.strokeStyle = '#1d2740';
-        ctx.lineWidth = 1;
-        Engine.roundRect(ctx, x + 2, y + 2, CELL - 4, CELL - 4, 8);
-        ctx.stroke();
+        /* doc mode: skip the per-cell box entirely — a NxN grid of thin
+           outlined tiles is exactly the "many thin lines packed together
+           reads as a grey mesh from a distance" trap (see sir.js). The
+           board is already blank paper; ink is reserved for the pipe
+           strokes themselves, same as blank paper for an un-notable desk
+           in Sick Day. */
+        if (!doc) {
+          ctx.fillStyle = cell.powered ? '#111f33' : '#131a2b';
+          Engine.roundRect(ctx, x + 2, y + 2, CELL - 4, CELL - 4, 8);
+          ctx.fill();
+          ctx.strokeStyle = '#1d2740';
+          ctx.lineWidth = 1;
+          Engine.roundRect(ctx, x + 2, y + 2, CELL - 4, CELL - 4, 8);
+          ctx.stroke();
+        }
 
         /* the source sits under its pipe so the junction stays readable */
         if (r * N + c === root0) {
           const pulse = 1 + Math.sin(t * 3) * 0.08;
-          ctx.fillStyle = 'rgba(255,192,67,.22)';
-          ctx.beginPath();
-          ctx.arc(x + CELL / 2, y + CELL / 2, CELL * 0.42 * pulse, 0, 7);
-          ctx.fill();
-          ctx.fillStyle = '#ffc043';
-          ctx.shadowColor = '#ffc043';
-          ctx.shadowBlur = 16;
-          ctx.beginPath();
-          ctx.arc(x + CELL / 2, y + CELL / 2, CELL * 0.19 * pulse, 0, 7);
-          ctx.fill();
-          ctx.shadowBlur = 0;
+          if (doc) {
+            ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.arc(x + CELL / 2, y + CELL / 2, CELL * 0.32 * pulse, 0, 7);
+            ctx.stroke();
+            ctx.fillStyle = Engine.docInk();
+            ctx.beginPath();
+            ctx.arc(x + CELL / 2, y + CELL / 2, CELL * 0.13, 0, 7);
+            ctx.fill();
+          } else {
+            ctx.fillStyle = 'rgba(255,192,67,.22)';
+            ctx.beginPath();
+            ctx.arc(x + CELL / 2, y + CELL / 2, CELL * 0.42 * pulse, 0, 7);
+            ctx.fill();
+            ctx.fillStyle = '#ffc043';
+            ctx.shadowColor = '#ffc043';
+            ctx.shadowBlur = 16;
+            ctx.beginPath();
+            ctx.arc(x + CELL / 2, y + CELL / 2, CELL * 0.19 * pulse, 0, 7);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          }
         }
 
         ctx.save();
         ctx.translate(x + CELL / 2, y + CELL / 2);
         ctx.rotate(cell.ang);
-        const col = cell.powered ? '#38e1ff' : '#4d5a7a';
+        const col = doc ? Engine.docInk() : (cell.powered ? '#38e1ff' : '#4d5a7a');
         ctx.strokeStyle = col;
         ctx.lineCap = 'round';
-        ctx.lineWidth = Math.max(5, CELL * 0.16);
-        if (cell.powered) { ctx.shadowColor = '#38e1ff'; ctx.shadowBlur = 10; }
+        /* doc mode: same ink for powered and unpowered pipes, told apart by
+           stroke weight (thick = live) instead of a hue change — no cyan,
+           no dim slate-grey stub. */
+        ctx.lineWidth = doc
+          ? (cell.powered ? Math.max(5, CELL * 0.16) : Math.max(2, CELL * 0.06))
+          : Math.max(5, CELL * 0.16);
+        if (!doc && cell.powered) { ctx.shadowColor = '#38e1ff'; ctx.shadowBlur = 10; }
         const reach = CELL / 2 - 2;
         const base = cell.base;
         ctx.beginPath();
@@ -15243,6 +15469,7 @@ body.docmode .doc-figcap {
     order: 14,
     blurb: 'Rotate every pipe until the whole grid connects to the glowing source. New levels forever, and every one has a solution.',
     scoreLabel: 'Level',
+    lightBoard: true,   // doc mode draws its own paper/ink palette above; the blanket invert would only flip it back
     tags: ['net', 'rotate', 'connect', 'plumbing'],
     how: [
       'Left-click a pipe to turn it clockwise. Right-click turns it back.',
@@ -19548,30 +19775,36 @@ body.docmode .doc-figcap {
     }
 
     function draw() {
-      ctx.fillStyle = '#141a26';
+      const doc = Arcade.docMode();
+      ctx.fillStyle = doc ? Engine.docPaper() : '#141a26';
       ctx.fillRect(0, 0, W, H);
 
       const cx = W / 2, cy = H / 2, R = 232, gap = 0.045;
       PADS.forEach((p, i) => {
         const on = litIdx === i || flashAll > 0;
-        ctx.fillStyle = on ? p.lit : p.col;
+        /* doc mode: no coloured wedges — an "on" pad flips to a solid ink
+           fill (a flash), an idle one stays blank paper, both with a plain
+           ink outline. Never a lit/dim colour pair, which grayscale erases. */
+        ctx.fillStyle = doc ? (on ? Engine.docInk() : Engine.docPaper()) : (on ? p.lit : p.col);
         ctx.beginPath();
         ctx.moveTo(cx, cy);
         ctx.arc(cx, cy, R, p.a0 + gap, p.a1 - gap);
         ctx.closePath();
         ctx.fill();
-        ctx.strokeStyle = '#0c1119';
-        ctx.lineWidth = 6;
+        ctx.strokeStyle = doc ? Engine.docInk() : '#0c1119';
+        ctx.lineWidth = doc ? 2 : 6;
         ctx.stroke();
-        if (on) {
+        if (on && !doc) {
           ctx.strokeStyle = 'rgba(255,255,255,.85)';
           ctx.lineWidth = 3;
           ctx.stroke();
         }
-        /* colour-safe: a number on each pad so it never depends on the colour */
-        if (document.body.classList.contains('colorsafe')) {
+        /* colour-safe: a number on each pad so it never depends on the colour —
+           always shown in doc mode too, since it's the only thing telling four
+           identically-inked wedges apart. */
+        if (doc || document.body.classList.contains('colorsafe')) {
           const mid = (p.a0 + p.a1) / 2, rr = R * 0.62;
-          ctx.fillStyle = '#0c1119';
+          ctx.fillStyle = doc ? (on ? Engine.docPaper() : Engine.docInk()) : '#0c1119';
           ctx.font = 'bold 42px Impact, Haettenschweiler, Arial Black, sans-serif';
           ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
           ctx.fillText(String(i + 1), cx + Math.cos(mid) * rr, cy + Math.sin(mid) * rr);
@@ -19580,21 +19813,21 @@ body.docmode .doc-figcap {
       });
 
       /* hub */
-      ctx.fillStyle = '#1d1722';
+      ctx.fillStyle = doc ? Engine.docPaper() : '#1d1722';
       ctx.beginPath();
       ctx.arc(cx, cy, 78, 0, 7);
       ctx.fill();
-      ctx.strokeStyle = '#ded6c2';
+      ctx.strokeStyle = doc ? Engine.docInk() : '#ded6c2';
       ctx.lineWidth = 4;
       ctx.stroke();
 
-      ctx.fillStyle = '#ded6c2';
+      ctx.fillStyle = doc ? Engine.docInk() : '#ded6c2';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.font = '46px Impact, Haettenschweiler, Arial Black, sans-serif';
       ctx.fillText(String(seq.length), cx, cy - 8);
       ctx.font = 'bold 11px Verdana, sans-serif';
-      ctx.fillStyle = '#ffcb1f';
+      ctx.fillStyle = doc ? Engine.docInk() : '#ffcb1f';
       ctx.fillText(twoP ? (over ? 'OVER' : 'PLAYER ' + turn2)
         : mode === 'play' ? 'WATCH' : mode === 'input' ? 'REPEAT' : mode === 'over' ? 'OVER' : 'NICE',
         cx, cy + 24);
@@ -19602,17 +19835,31 @@ body.docmode .doc-figcap {
       /* how many of the sequence you have entered */
       if (mode === 'input' && !twoP) {
         for (let i = 0; i < seq.length; i++) {
-          ctx.fillStyle = i < step ? '#6fcf2f' : '#3a3446';
-          ctx.fillRect(cx - seq.length * 6 + i * 12, H - 26, 9, 9);
+          const x = cx - seq.length * 6 + i * 12;
+          if (doc) {
+            ctx.fillStyle = i < step ? Engine.docInk() : Engine.docPaper();
+            ctx.fillRect(x, H - 26, 9, 9);
+            ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1; ctx.strokeRect(x + 0.5, H - 25.5, 8, 8);
+          } else {
+            ctx.fillStyle = i < step ? '#6fcf2f' : '#3a3446';
+            ctx.fillRect(x, H - 26, 9, 9);
+          }
         }
         const f = clamp(waitT / patience(), 0, 1);
-        ctx.fillStyle = f > 0.4 ? '#ded6c2' : '#e8402a';
+        ctx.fillStyle = doc ? Engine.docInk() : (f > 0.4 ? '#ded6c2' : '#e8402a');
         ctx.fillRect(cx - 90, 16, 180 * f, 6);
       } else if (twoP && !over) {
         /* progress through the replay before you get to add a note */
         for (let i = 0; i < seq.length; i++) {
-          ctx.fillStyle = i < inp ? '#6fcf2f' : '#3a3446';
-          ctx.fillRect(cx - seq.length * 6 + i * 12, H - 26, 9, 9);
+          const x = cx - seq.length * 6 + i * 12;
+          if (doc) {
+            ctx.fillStyle = i < inp ? Engine.docInk() : Engine.docPaper();
+            ctx.fillRect(x, H - 26, 9, 9);
+            ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1; ctx.strokeRect(x + 0.5, H - 25.5, 8, 8);
+          } else {
+            ctx.fillStyle = i < inp ? '#6fcf2f' : '#3a3446';
+            ctx.fillRect(x, H - 26, 9, 9);
+          }
         }
       }
       ctx.textAlign = 'left';
@@ -19652,6 +19899,7 @@ body.docmode .doc-figcap {
     emoji: 'copycat',
     cat: 'brain',
     order: 24,
+    lightBoard: true,   // doc mode draws its own paper/ink pads above; the blanket invert would only flip them back
     blurb: 'The game lights a sequence of pads, adding one each round. Watch it, then tap the whole sequence back from memory.',
     scoreLabel: 'Longest',
     tags: ['simon', 'memory', 'sequence', 'sounds'],

@@ -139,7 +139,8 @@
 
     function draw(dt) {
       t += dt;
-      ctx.fillStyle = '#08101d';
+      const doc = Arcade.docMode();
+      ctx.fillStyle = doc ? Engine.docPaper() : '#08101d';
       ctx.fillRect(0, 0, cv.w, cv.h);
 
       for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
@@ -147,38 +148,62 @@
         cell.ang += (cell.target - cell.ang) * Math.min(1, dt * 14);
         const x = OX + c * CELL, y = OY + r * CELL;
 
-        ctx.fillStyle = cell.powered ? '#111f33' : '#131a2b';
-        Engine.roundRect(ctx, x + 2, y + 2, CELL - 4, CELL - 4, 8);
-        ctx.fill();
-        ctx.strokeStyle = '#1d2740';
-        ctx.lineWidth = 1;
-        Engine.roundRect(ctx, x + 2, y + 2, CELL - 4, CELL - 4, 8);
-        ctx.stroke();
+        /* doc mode: skip the per-cell box entirely — a NxN grid of thin
+           outlined tiles is exactly the "many thin lines packed together
+           reads as a grey mesh from a distance" trap (see sir.js). The
+           board is already blank paper; ink is reserved for the pipe
+           strokes themselves, same as blank paper for an un-notable desk
+           in Sick Day. */
+        if (!doc) {
+          ctx.fillStyle = cell.powered ? '#111f33' : '#131a2b';
+          Engine.roundRect(ctx, x + 2, y + 2, CELL - 4, CELL - 4, 8);
+          ctx.fill();
+          ctx.strokeStyle = '#1d2740';
+          ctx.lineWidth = 1;
+          Engine.roundRect(ctx, x + 2, y + 2, CELL - 4, CELL - 4, 8);
+          ctx.stroke();
+        }
 
         /* the source sits under its pipe so the junction stays readable */
         if (r * N + c === root0) {
           const pulse = 1 + Math.sin(t * 3) * 0.08;
-          ctx.fillStyle = 'rgba(255,192,67,.22)';
-          ctx.beginPath();
-          ctx.arc(x + CELL / 2, y + CELL / 2, CELL * 0.42 * pulse, 0, 7);
-          ctx.fill();
-          ctx.fillStyle = '#ffc043';
-          ctx.shadowColor = '#ffc043';
-          ctx.shadowBlur = 16;
-          ctx.beginPath();
-          ctx.arc(x + CELL / 2, y + CELL / 2, CELL * 0.19 * pulse, 0, 7);
-          ctx.fill();
-          ctx.shadowBlur = 0;
+          if (doc) {
+            ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.arc(x + CELL / 2, y + CELL / 2, CELL * 0.32 * pulse, 0, 7);
+            ctx.stroke();
+            ctx.fillStyle = Engine.docInk();
+            ctx.beginPath();
+            ctx.arc(x + CELL / 2, y + CELL / 2, CELL * 0.13, 0, 7);
+            ctx.fill();
+          } else {
+            ctx.fillStyle = 'rgba(255,192,67,.22)';
+            ctx.beginPath();
+            ctx.arc(x + CELL / 2, y + CELL / 2, CELL * 0.42 * pulse, 0, 7);
+            ctx.fill();
+            ctx.fillStyle = '#ffc043';
+            ctx.shadowColor = '#ffc043';
+            ctx.shadowBlur = 16;
+            ctx.beginPath();
+            ctx.arc(x + CELL / 2, y + CELL / 2, CELL * 0.19 * pulse, 0, 7);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          }
         }
 
         ctx.save();
         ctx.translate(x + CELL / 2, y + CELL / 2);
         ctx.rotate(cell.ang);
-        const col = cell.powered ? '#38e1ff' : '#4d5a7a';
+        const col = doc ? Engine.docInk() : (cell.powered ? '#38e1ff' : '#4d5a7a');
         ctx.strokeStyle = col;
         ctx.lineCap = 'round';
-        ctx.lineWidth = Math.max(5, CELL * 0.16);
-        if (cell.powered) { ctx.shadowColor = '#38e1ff'; ctx.shadowBlur = 10; }
+        /* doc mode: same ink for powered and unpowered pipes, told apart by
+           stroke weight (thick = live) instead of a hue change — no cyan,
+           no dim slate-grey stub. */
+        ctx.lineWidth = doc
+          ? (cell.powered ? Math.max(5, CELL * 0.16) : Math.max(2, CELL * 0.06))
+          : Math.max(5, CELL * 0.16);
+        if (!doc && cell.powered) { ctx.shadowColor = '#38e1ff'; ctx.shadowBlur = 10; }
         const reach = CELL / 2 - 2;
         const base = cell.base;
         ctx.beginPath();
@@ -217,6 +242,7 @@
     order: 14,
     blurb: 'Rotate every pipe until the whole grid connects to the glowing source. New levels forever, and every one has a solution.',
     scoreLabel: 'Level',
+    lightBoard: true,   // doc mode draws its own paper/ink palette above; the blanket invert would only flip it back
     tags: ['net', 'rotate', 'connect', 'plumbing'],
     how: [
       'Left-click a pipe to turn it clockwise. Right-click turns it back.',

@@ -668,6 +668,38 @@ body.in-game .status { margin: 2px 0; font-size: 12px; }
 .ms .n4 { color: #4b1a9e; } .ms .n5 { color: #8a4b0f; } .ms .n6 { color: #0f7d80; }
 .ms .n7 { color: #b2158c; } .ms .n8 { color: #333; }
 
+/* minesweeper doc mode: literal black/white — the tan --paper/--paper2 fills
+   and var(--ink) borders all survive lightBoard's grayscale+contrast+brightness
+   as visible mid-greys (var(--ink) alone lands around lum 38, inside the
+   "gray" band), so every surface here is repainted with true extremes instead.
+   Unopened cells stay blank paper; mines/flags fill solid ink so they still
+   read at a glance. The baked-colour mine/flag/boom SVG icons (Icons.svg,
+   fills are literal hex, not currentColor) can't be recoloured by CSS
+   `color` — brightness(0) forces every opaque icon pixel to black regardless
+   of its original hue, and on the solid-ink mine cells the same trick plus a
+   trailing invert(1) flips that black silhouette to white so it still shows
+   up against the black fill. */
+body.docmode .ms { background: #ffffff; border-color: #000000; box-shadow: none; }
+body.docmode .ms .cell { background: #ffffff; border-color: #000000; box-shadow: none; }
+body.docmode .ms .cell:hover { background: #000000; }
+body.docmode .ms .cell.open { background: #ffffff; }
+body.docmode .ms .cell.mine { background: #000000; }
+body.docmode .ms .cell.flag { background: #ffffff; }
+:root:not([data-dark="1"]) body.docmode .ms .cell svg { filter: brightness(0); }
+:root:not([data-dark="1"]) body.docmode .ms .cell.mine svg { filter: brightness(0) invert(1); }
+body.docmode .ms .n1, body.docmode .ms .n2, body.docmode .ms .n3, body.docmode .ms .n4,
+body.docmode .ms .n5, body.docmode .ms .n6, body.docmode .ms .n7, body.docmode .ms .n8 { color: #000000; }
+:root[data-dark="1"] body.docmode .ms { background: var(--doc-paper); border-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .ms .cell { background: var(--doc-paper); border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .ms .cell:hover { background: var(--doc-rule); }
+:root[data-dark="1"] body.docmode .ms .cell.open { background: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .ms .cell.mine { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .ms .cell.flag { background: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .ms .n1, :root[data-dark="1"] body.docmode .ms .n2,
+:root[data-dark="1"] body.docmode .ms .n3, :root[data-dark="1"] body.docmode .ms .n4,
+:root[data-dark="1"] body.docmode .ms .n5, :root[data-dark="1"] body.docmode .ms .n6,
+:root[data-dark="1"] body.docmode .ms .n7, :root[data-dark="1"] body.docmode .ms .n8 { color: var(--doc-ink); }
+
 /* 2048 */
 .g2048 { background: var(--ink); padding: 8px; border: 5px solid var(--ink); box-shadow: var(--hard); touch-action: none; }
 .g2048 .board { gap: 6px; }
@@ -1601,6 +1633,42 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
   .sud-key.wide { grid-column: span 3; }
 }
 
+/* Sudoku is `lightBoard: true` (see Arcade.register); like Pig above, its
+   board/cell colours (--ink, --teal, --label, --paper2, --banana, --ink3, the
+   --bevel-out key shadow) are none of them pure black/white, so they survive
+   the lightBoard grayscale/contrast/brightness chain as visible mid-greys
+   instead of true ink. Redraw the whole board in paper/ink: white cells,
+   a black board background showing through the 1px gap as grid lines, black
+   digits, and a solid ink fill for the selected cell (the same
+   filled/hollow move Escalate's "you" cell uses elsewhere in this file).
+   Literal #000/#fff for the light doc theme; the dark doc theme runs no
+   filter on a lightBoard stage, so the --doc-ink/--doc-paper/--doc-rule
+   variables are already the correct final colour there. */
+body.docmode .sud-board { background: #000000; border-color: #000000; box-shadow: none; }
+body.docmode .sud-cell,
+body.docmode .sud-cell.given { background: #ffffff; color: #000000; }
+body.docmode .sud-cell.peer,
+body.docmode .sud-cell.given.peer { background: #f2f2f2; }
+body.docmode .sud-cell.same { background: #ffffff; box-shadow: inset 0 0 0 2px #000000; }
+body.docmode .sud-cell.sel,
+body.docmode .sud-cell.sel.given { background: #000000; color: #ffffff; box-shadow: none; }
+body.docmode .sud-cell.wrong { color: #000000; box-shadow: inset 0 0 0 2px #000000; }
+body.docmode .sud-notes { color: #000000; }
+body.docmode .sud-key { background: #ffffff; border-color: #000000; color: #000000; box-shadow: none; }
+body.docmode .sud-key.on { background: #000000; color: #ffffff; box-shadow: none; }
+:root[data-dark="1"] body.docmode .sud-board { background: var(--doc-ink); border-color: var(--doc-ink); box-shadow: none; }
+:root[data-dark="1"] body.docmode .sud-cell,
+:root[data-dark="1"] body.docmode .sud-cell.given { background: var(--doc-paper); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .sud-cell.peer,
+:root[data-dark="1"] body.docmode .sud-cell.given.peer { background: var(--doc-rule); }
+:root[data-dark="1"] body.docmode .sud-cell.same { background: var(--doc-paper); box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .sud-cell.sel,
+:root[data-dark="1"] body.docmode .sud-cell.sel.given { background: var(--doc-ink); color: var(--doc-paper); box-shadow: none; }
+:root[data-dark="1"] body.docmode .sud-cell.wrong { color: var(--doc-ink); box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .sud-notes { color: var(--doc-ink2); }
+:root[data-dark="1"] body.docmode .sud-key { background: var(--doc-paper); border-color: var(--doc-rule2); color: var(--doc-ink); box-shadow: none; }
+:root[data-dark="1"] body.docmode .sud-key.on { background: var(--doc-ink); color: var(--doc-paper); box-shadow: none; }
+
 /* ---------------- memory match ---------------- */
 .mem-board { display: grid; gap: min(10px, 2vw); width: min(560px, 96vw); }
 .mem-card {
@@ -1913,9 +1981,55 @@ body.bigscreen .gcanvas { max-height: calc(100svh - 120px) !important; }
 }
 .gcell.error { background: var(--tomato); box-shadow: inset 0 0 0 2px #7a1206; }
 
+/* Cond. Format (nonogram): the tan-on-cream spreadsheet skin — #fbfaf4/#fffdf3
+   paper, #b9b4a2 hairline grid rules, #4a4636 clue text, a #b0392a X mark —
+   all survive grayscale() as a dense mesh of mid-grey lines and text across
+   the whole board (a 10-15 cell grid means a LOT of hairlines). It's
+   `lightBoard: true` (see Arcade.register), so only grayscale(1)
+   contrast(0.92) brightness(1.12) runs here, no invert to fight. Light
+   theme authors literal #fff/#000 rather than the --doc-paper/--doc-ink
+   variables (those are tuned as already-final colours, and running them
+   through this filter a second time would land short of the extremes);
+   dark theme has no such compounding filter on a lightBoard stage, so it
+   reads the variables directly — they ARE the final colour. */
+body.docmode .nono-wrap,
+body.docmode .nono-grid { background: #ffffff; }
+body.docmode .nono-grid > div { border-color: #000000; }
+body.docmode .nono-grid > div.band-r,
+body.docmode .nono-grid > div.band-b { border-color: #000000; }
+body.docmode .nono-hcell { background: #ffffff; color: #000000; }
+body.docmode .corner { background: #ffffff; color: #000000; }
+body.docmode .gcell { background: #ffffff; }
+body.docmode .gcell:hover { box-shadow: inset 0 0 0 3px #000000; }
+body.docmode .gcell.filled { background: #000000; }
+body.docmode .gcell.marked::after { color: #000000; }
+body.docmode .gcell.error { background: #ffffff; box-shadow: inset 0 0 0 2px #000000; }
+:root[data-dark="1"] body.docmode .nono-wrap,
+:root[data-dark="1"] body.docmode .nono-grid { background: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .nono-grid > div { border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .nono-grid > div.band-r,
+:root[data-dark="1"] body.docmode .nono-grid > div.band-b { border-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .nono-hcell { background: var(--doc-paper); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .corner { background: var(--doc-paper); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .gcell { background: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .gcell:hover { box-shadow: inset 0 0 0 3px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .gcell.filled { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .gcell.marked::after { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .gcell.error { background: var(--doc-paper); box-shadow: inset 0 0 0 2px var(--doc-ink); }
+
 /* firedrill (percolation) */
 .fire-panel { width: min(560px, 92vw); display: flex; justify-content: center; margin-top: 4px; }
 .fire-plot { width: 100%; max-width: 520px; border: 4px solid var(--ink); box-shadow: var(--hard); background: #12100c; }
+/* the trend chart is a second, fixed-size figure stacked under the main
+   board — left at full size it alone can eat ~200px of the doc-mode height
+   budget regardless of how little room a text-heavy page has left, running
+   the whole figure off the bottom of the screen. Halve it by default (still
+   tied to the figure-size slider, same as the board above it) so it fits
+   inside the same auto-fit budget instead of sitting outside it. */
+body.docmode .fire-plot {
+  max-width: calc(240px * var(--doc-fig-scale, 1));
+  border: 1px solid var(--doc-rule2); box-shadow: none;
+}
 
 /* battleship */
 .battleship { --bsc: 27px; width: 100%; position: relative; }
@@ -2483,6 +2597,32 @@ body.docmode .sb-label {
 .pig-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
 .pig-msg.win { color: var(--lime); } .pig-msg.lose { color: var(--tomato); }
 .pig-btns { display: flex; gap: 10px; }
+
+/* Pig is `lightBoard: true` (see Arcade.register), so its stage runs plain
+   grayscale(1) contrast(0.92) brightness(1.12) with no invert. Any authored
+   colour that isn't pure black/white still survives that as a visible
+   mid-grey (--ink2, --ink, --label, the die's --bevel-out shadow all do),
+   and the generic .btn / [class*="-msg"] doc-mode rules elsewhere in this
+   file author --doc-ink/--doc-paper, which land the same way once this
+   filter compounds on top of them. Beat those with literal #000/#fff, scoped
+   to the light doc theme only — the dark doc theme runs no filter on a
+   lightBoard stage (see the :root:not([data-dark="1"]) guard on that filter
+   rule), so the generic rules' variables are already the correct final
+   colour there and this file's own --ink/--ink2/--label would otherwise leak
+   through unconverted; give pig its own dark-theme block using the real
+   --doc-ink/--doc-paper variables instead. */
+body.docmode .pig .pig-lbl,
+body.docmode .pig .pig-score,
+body.docmode .pig .pig-turn,
+body.docmode .pig .pig-msg { color: #000000 !important; }
+body.docmode .pig .pig-die { background: #ffffff; border-color: #000000; box-shadow: none; }
+body.docmode .pig .pig-btns .btn { color: #000000 !important; border-color: #000000 !important; background: #ffffff !important; }
+:root[data-dark="1"] body.docmode .pig .pig-lbl,
+:root[data-dark="1"] body.docmode .pig .pig-score,
+:root[data-dark="1"] body.docmode .pig .pig-turn,
+:root[data-dark="1"] body.docmode .pig .pig-msg { color: var(--doc-ink) !important; }
+:root[data-dark="1"] body.docmode .pig .pig-die { background: var(--doc-paper); border-color: var(--doc-ink); box-shadow: none; }
+:root[data-dark="1"] body.docmode .pig .pig-btns .btn { color: var(--doc-ink) !important; border-color: var(--doc-ink) !important; background: var(--doc-paper) !important; }
 
 /* ================= Higher or Lower ================= */
 .hilo { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 14px; }
@@ -3371,6 +3511,9 @@ body.docmode .doc-figcap {
   font-family: Verdana, Geneva, sans-serif; font-size: 12.5px; font-style: italic;
   color: var(--doc-mut); text-align: center; max-width: none; margin: 12px 0 20px;
 }
+body.docmode .doc-act-lead { margin: 0 0 4px; font-weight: 700; font-style: normal; font-size: 15px; color: var(--doc-ink2); }
+body.docmode .doc-act-list { margin: 0 0 13px; padding-left: 22px; max-width: 74ch; }
+body.docmode .doc-act-list li { margin: 0 0 6px; }
 
 /* the disguise toggle button sitting in the arcade topbar */
 .docmode-btn { white-space: nowrap; }

@@ -93,7 +93,29 @@
          canvas chasing the viewport bottom and overlapping that prose. */
       if (document.body.classList.contains('docmode')) {
         const parentW = (c.parentElement && c.parentElement.clientWidth) || c.getBoundingClientRect().width;
-        const capH = ((global.visualViewport && global.visualViewport.height) || global.innerHeight) * 0.72;
+        const vpH = (global.visualViewport && global.visualViewport.height) || global.innerHeight;
+        const cr0 = c.getBoundingClientRect();
+        /* a few games (the spatial sims) stack a small fixed-size trend
+           chart below the main canvas, inside the same figure — same
+           "overhang" measurement as the non-doc branch below, so that
+           panel's own room is reserved too and the whole figure — not just
+           the canvas — ends up fitting on the page. */
+        let lowest0 = cr0.bottom;
+        for (let sib = c.nextElementSibling; sib; sib = sib.nextElementSibling) {
+          const rb = sib.getBoundingClientRect().bottom;
+          if (rb > lowest0) lowest0 = rb;
+        }
+        const overhang0 = lowest0 - cr0.bottom;
+        /* cap to whichever is smaller: the usual 72%-of-viewport figure
+           budget, or the room actually left below wherever the canvas sits
+           on the page — a flat 72% ignored how much report prose already
+           sits above it, so a figure with a full page of text ahead of it
+           still claimed 72% of the WHOLE viewport and ran off the bottom.
+           The floor is a legibility guard, not a size target — a heavier
+           report page (more prose above/below the figure) is expected to
+           push a game smaller, same as shrinking a picture to fit the
+           remaining space on a real page. */
+        const capH = Math.max(100, Math.min(vpH * 0.72, vpH - cr0.top - overhang0 - 16));
         /* the figure-size slider is a multiplier on top of this fit, not a
            replacement for it — deliberately allowed to exceed parentW/capH
            when the user drags past "fits the column", same as resizing an
