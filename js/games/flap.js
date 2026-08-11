@@ -3,7 +3,7 @@
   'use strict';
   const { h, clamp, randInt } = Engine;
   const W = 560, H = 640;
-  const BX = 150, R = 16, PIPE_W = 74, SPACING = 330;
+  const BX = 150, R = 16, PIPE_W = 74, SPACING = 400;
   const GRAV = 1500, FLAP_V = -430;
 
   function mount(root, api) {
