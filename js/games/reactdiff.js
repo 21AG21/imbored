@@ -21,6 +21,11 @@
 (function () {
   'use strict';
   const { h, clamp } = Engine;
+  const DOC = () => !!(window.Arcade && Arcade.docMode && Arcade.docMode());
+  function hexRGB(hex) {
+    const n = parseInt(String(hex).replace('#', ''), 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
   const W = 720, H = 560, GW = 144, GH = 112;
   const dA = 1.0, dB = 0.5, DT = 1.0;
 
@@ -126,18 +131,40 @@
     }
 
     function render() {
+      const doc0 = DOC();
       const d = img.data;
-      for (let i = 0; i < B.length; i++) {
-        const v = clamp(B[i] * 1.35, 0, 1);
-        /* dark ink -> grape -> teal -> banana colour ramp */
-        const p = i * 4;
-        d[p] = Math.round(20 + v * (v < 0.5 ? 200 : 235));
-        d[p + 1] = Math.round(12 + Math.pow(v, 1.4) * 200);
-        d[p + 2] = Math.round(30 + (1 - v) * 90 + v * 30);
-        d[p + 3] = 255;
+      if (doc0) {
+        /* a document figure of a Gray-Scott field reads as a hard black/white
+           threshold plate, not a continuous grape-teal-banana heat ramp — the
+           same b>0.2 cutoff `stats()` already uses to define "covered", so
+           the figure and the coverage readout agree on what counts as ink. */
+        const ink = hexRGB(Engine.docInk()), paper = hexRGB(Engine.docPaper());
+        for (let i = 0; i < B.length; i++) {
+          const c = B[i] > 0.2 ? ink : paper;
+          const p = i * 4;
+          d[p] = c[0]; d[p + 1] = c[1]; d[p + 2] = c[2]; d[p + 3] = 255;
+        }
+      } else {
+        for (let i = 0; i < B.length; i++) {
+          const v = clamp(B[i] * 1.35, 0, 1);
+          /* dark ink -> grape -> teal -> banana colour ramp */
+          const p = i * 4;
+          d[p] = Math.round(20 + v * (v < 0.5 ? 200 : 235));
+          d[p + 1] = Math.round(12 + Math.pow(v, 1.4) * 200);
+          d[p + 2] = Math.round(30 + (1 - v) * 90 + v * 30);
+          d[p + 3] = 255;
+        }
       }
       octx.putImageData(img, 0, 0);
+      /* the low-res grid is upscaled ~5x into the on-screen canvas; bilinear
+         smoothing would blur every hard ink/paper edge into a grey band, so
+         doc mode switches to nearest-neighbour for this copy (paired with the
+         image-rendering: pixelated rule on this game's own .gcanvas in
+         css/arcade.css, which stops the *browser's own* CSS upscale of the
+         canvas element from re-introducing the same blur a second time). */
+      ctx.imageSmoothingEnabled = !doc0;
       ctx.drawImage(off, 0, 0, GW, GH, 0, 0, W, H);
+      ctx.imageSmoothingEnabled = true;
     }
 
     function syncPills() {
@@ -205,6 +232,7 @@
 
   Arcade.register({
     id: 'reactdiff',
+    lightBoard: true,   // doc mode draws a hard black/white threshold plate straight into the pixel buffer; see css/arcade.css for the matching nearest-neighbour upscale
     title: 'Reaction-Diffusion',
     emoji: 'reactdiff',
     cat: 'sim',

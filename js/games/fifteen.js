@@ -125,6 +125,7 @@
     emoji: 'fifteen',
     cat: 'puzzle',
     order: 14,
+    lightBoard: true,   // doc mode recolours every tile to paper/ink in css/arcade.css; the blanket invert would only flip the colours back
     blurb: 'The 15-tile sliding puzzle. Slide tiles into the gap until they read 1 to 15, and your score is how few moves that takes.',
     scoreLabel: 'Fewest moves',
     lowerIsBetter: true,

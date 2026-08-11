@@ -52,6 +52,9 @@
     const bif = document.createElement('canvas');   // cached bifurcation diagram
     bif.width = W; bif.height = BIFH;
     const bctx = bif.getContext('2d');
+    const bifDoc = document.createElement('canvas');   // doc-mode: binary ink/paper twin, built alongside
+    bifDoc.width = W; bifDoc.height = BIFH;
+    const bctxDoc = bifDoc.getContext('2d');
     let bifReady = false;
     let lam = null;                      // cached Lyapunov curve across the panel
 
@@ -95,6 +98,14 @@
     function buildBif() {
       const im = bctx.createImageData(W, BIFH);
       const d = im.data;
+      /* doc-mode twin: same hit test, built in the same pass, but every hit
+         is solid ink on paper instead of an additive colour glow — additive
+         RGB blending is exactly the kind of continuous shade grayscale turns
+         into a grey wash, and a bifurcation diagram is conventionally a flat
+         black-dot plot anyway. */
+      const imDoc = bctxDoc.createImageData(W, BIFH);
+      const dd = imDoc.data;
+      dd.fill(255);
       for (let px = 0; px < W; px++) {
         const rr = RLO + (RHI - RLO) * px / (W - 1);
         let x = 0.4;
@@ -107,9 +118,11 @@
           d[o + 1] = Math.min(255, d[o + 1] + 150);
           d[o + 2] = Math.min(255, d[o + 2] + 170);
           d[o + 3] = 255;
+          dd[o] = 0; dd[o + 1] = 0; dd[o + 2] = 0; dd[o + 3] = 255;
         }
       }
       bctx.putImageData(im, 0, 0);
+      bctxDoc.putImageData(imDoc, 0, 0);
       bifReady = true;
     }
 
@@ -122,25 +135,26 @@
     const RX = (rr, x0, wpix) => x0 + (rr - RLO) / (RHI - RLO) * wpix;
 
     function drawPanel() {
+      const doc = Arcade.docMode();
       const w = plot.width, hh = plot.height, mL = 30, mB = 22;
-      pctx.fillStyle = '#0b0f16'; pctx.fillRect(0, 0, w, hh);
+      pctx.fillStyle = doc ? Engine.docPaper() : '#0b0f16'; pctx.fillRect(0, 0, w, hh);
       const plw = w - mL - 8, plh = hh - mB - 8;
       const lamMin = -1.6, lamMax = 0.8;
       const Y = (l) => 8 + (lamMax - clamp(l, lamMin, lamMax)) / (lamMax - lamMin) * plh;
       const X = (rr) => RX(rr, mL, plw);
       /* zero line */
-      pctx.strokeStyle = '#3a4658'; pctx.lineWidth = 1;
+      pctx.strokeStyle = doc ? Engine.docInk() : '#3a4658'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(mL, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.stroke();
-      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('λ', 4, Y(0) - 3); pctx.fillText('0', 16, Y(0) + 3); pctx.fillText('r', w - 14, hh - 8);
       /* onset of chaos marker */
-      pctx.strokeStyle = 'rgba(232,64,42,.8)'; pctx.setLineDash([4, 3]);
+      pctx.strokeStyle = doc ? Engine.docInk() : 'rgba(232,64,42,.8)'; pctx.setLineDash([4, 3]);
       pctx.beginPath(); pctx.moveTo(X(RCHAOS), 6); pctx.lineTo(X(RCHAOS), hh - mB); pctx.stroke();
       pctx.setLineDash([]);
-      pctx.fillStyle = '#f2ede0'; pctx.fillText('chaos ' + RCHAOS.toFixed(3), X(RCHAOS) - 64, hh - 10);
+      pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.fillText('chaos ' + RCHAOS.toFixed(3), X(RCHAOS) - 64, hh - 10);
       /* the curve */
       if (lam) {
-        pctx.strokeStyle = '#00a6b4'; pctx.lineWidth = 1.4; pctx.beginPath();
+        pctx.strokeStyle = doc ? Engine.docInk() : '#00a6b4'; pctx.lineWidth = 1.4; pctx.beginPath();
         for (let i = 0; i < lam.length; i++) {
           const rr = RLO + (RHI - RLO) * i / (lam.length - 1);
           const x = X(rr), y = Y(lam[i]);
@@ -149,42 +163,43 @@
         pctx.stroke();
       }
       /* current r */
-      pctx.strokeStyle = '#ffcb1f'; pctx.lineWidth = 1;
+      pctx.strokeStyle = doc ? Engine.docInk() : '#ffcb1f'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(X(r), 6); pctx.lineTo(X(r), hh - mB); pctx.stroke();
     }
 
     function draw() {
+      const doc = Arcade.docMode();
       /* bifurcation diagram */
-      ctx.fillStyle = '#0b0f16'; ctx.fillRect(0, 0, W, H);
-      if (bifReady) ctx.drawImage(bif, 0, 0);
-      else { ctx.fillStyle = '#f2ede0'; ctx.font = '13px Verdana'; ctx.fillText('measuring the map…', 20, 30); }
+      ctx.fillStyle = doc ? Engine.docPaper() : '#0b0f16'; ctx.fillRect(0, 0, W, H);
+      if (bifReady) ctx.drawImage(doc ? bifDoc : bif, 0, 0);
+      else { ctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; ctx.font = '13px Verdana'; ctx.fillText('measuring the map…', 20, 30); }
       /* current-r line + labels on the diagram */
       const xr = RX(r, 0, W - 1);
-      ctx.strokeStyle = 'rgba(255,203,31,.9)'; ctx.lineWidth = 1;
+      ctx.strokeStyle = doc ? Engine.docInk() : 'rgba(255,203,31,.9)'; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(xr, 0); ctx.lineTo(xr, BIFH); ctx.stroke();
-      ctx.fillStyle = '#e8402a';
       const xc = RX(RCHAOS, 0, W - 1);
-      ctx.setLineDash([3, 3]); ctx.strokeStyle = 'rgba(232,64,42,.6)';
+      ctx.setLineDash([3, 3]); ctx.strokeStyle = doc ? Engine.docInk() : 'rgba(232,64,42,.6)';
       ctx.beginPath(); ctx.moveTo(xc, 0); ctx.lineTo(xc, BIFH); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = doc ? Engine.docInk() : '#e8402a';
       ctx.font = '10px Verdana, sans-serif';
       ctx.fillText('onset of chaos', xc + 3, 12);
-      ctx.fillStyle = '#f2ede0';
+      ctx.fillStyle = doc ? Engine.docInk() : '#f2ede0';
       ctx.fillText('r = ' + RLO, 4, BIFH - 4); ctx.fillText('r = ' + RHI, W - 44, BIFH - 4);
-      ctx.fillStyle = '#ded6c2'; ctx.fillText('population x', 4, 12);
+      ctx.fillStyle = doc ? Engine.docInk() : '#ded6c2'; ctx.fillText('population x', 4, 12);
 
       /* live orbit strip */
-      ctx.fillStyle = '#141019'; ctx.fillRect(0, BIFH, W, ORBH);
-      ctx.strokeStyle = '#2a2440'; ctx.beginPath(); ctx.moveTo(0, BIFH + 0.5); ctx.lineTo(W, BIFH + 0.5); ctx.stroke();
+      ctx.fillStyle = doc ? Engine.docPaper() : '#141019'; ctx.fillRect(0, BIFH, W, ORBH);
+      ctx.strokeStyle = doc ? Engine.docInk() : '#2a2440'; ctx.beginPath(); ctx.moveTo(0, BIFH + 0.5); ctx.lineTo(W, BIFH + 0.5); ctx.stroke();
       const oy = (x) => BIFH + 8 + (1 - x) * (ORBH - 16);
-      ctx.strokeStyle = '#6fcf2f'; ctx.lineWidth = 1.5; ctx.beginPath();
+      ctx.strokeStyle = doc ? Engine.docInk() : '#6fcf2f'; ctx.lineWidth = 1.5; ctx.beginPath();
       for (let i = 0; i < orbit.length; i++) {
         const x = 6 + i / 140 * (W - 12), y = oy(orbit[i]);
         i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
       }
       ctx.stroke();
-      ctx.fillStyle = '#6fcf2f';
-      for (let i = 0; i < orbit.length; i++) ctx.fillRect(6 + i / 140 * (W - 12) - 1, oy(orbit[i]) - 1, 2, 2);
-      ctx.fillStyle = '#f2ede0'; ctx.font = '10px Verdana, sans-serif';
+      ctx.fillStyle = doc ? Engine.docInk() : '#6fcf2f';
+      for (let i = 0; i < orbit.length; i++) ctx.fillRect(Math.round(6 + i / 140 * (W - 12)) - 1, Math.round(oy(orbit[i])) - 1, 2, 2);
+      ctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; ctx.font = '10px Verdana, sans-serif';
       ctx.fillText('this year → next year (watch the cycle length)', 8, H - 6);
 
       drawPanel();
@@ -222,6 +237,7 @@
     order: 11,
     blurb: 'One line of arithmetic runs a population. Turn the growth-rate knob up and it goes from a steady level into doubling boom-bust cycles and then chaos, with small windows of order hidden in the mess.',
     scoreLabel: 'Deepest cycle',
+    lightBoard: true,   // doc mode draws its own paper/ink palette above; the blanket invert would only flip it back
     tags: ['logistic-map', 'chaos', 'bifurcation', 'dynamical-systems'],
     how: [
       'In one line: drag the "growth rate r" slider and watch the population go from steady, to a boom-bust cycle, to chaos. Landing on a longer exact cycle scores more.',

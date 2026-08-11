@@ -72,9 +72,25 @@
       /* doc mode desaturates everything to grey, so same-luminance colours
          (red vs hot pink, say) become indistinguishable — reuse the existing
          colour-blind symbol fallback instead of trying to out-guess the filter */
-      const cs = document.body.classList.contains('colorsafe') || (window.Arcade && Arcade.docMode && Arcade.docMode());
-      for (let i = 0; i < N * N; i++) { cells[i].style.background = COLORS[grid[i]]; cells[i].textContent = cs ? SYMS[grid[i]] : ''; }
-      swatches.forEach((b, ci) => { b.textContent = cs ? SYMS[ci] : ''; b.classList.remove('cur'); });
+      const doc = window.Arcade && Arcade.docMode && Arcade.docMode();
+      const cs = document.body.classList.contains('colorsafe') || doc;
+      /* doc mode: every one of the six inline swatch colours is set from JS,
+         so no CSS rule can reach them — paper background + ink glyph here
+         instead of a literal colour that would otherwise land as one more
+         shade of grey once desaturated. The glyph alone still tells the six
+         apart, same as the non-doc colour-blind fallback above. */
+      for (let i = 0; i < N * N; i++) {
+        cells[i].style.background = doc ? Engine.docPaper() : COLORS[grid[i]];
+        cells[i].style.color = doc ? Engine.docInk() : '';
+        cells[i].textContent = cs ? SYMS[grid[i]] : '';
+      }
+      swatches.forEach((b, ci) => {
+        b.style.background = doc ? Engine.docPaper() : COLORS[ci];
+        b.style.color = doc ? Engine.docInk() : '';
+        b.style.boxShadow = doc ? 'inset 0 0 0 2px ' + Engine.docInk() : '';
+        b.textContent = cs ? SYMS[ci] : '';
+        b.classList.remove('cur');
+      });
       swatches[grid[0]].classList.add('cur');
       pMoves.textContent = 'Moves: ' + moves;
       pPar.textContent = 'Par: ' + par();
@@ -91,6 +107,7 @@
     emoji: 'flood',
     cat: 'puzzle',
     order: 16,
+    lightBoard: true,   // doc mode paints its own paper/ink palette above/in css/arcade.css; the blanket invert would only flip it back
     blurb: 'Flood the whole 14x14 board into one colour from the top-left corner. Do it in as few moves as you can.',
     scoreLabel: 'Fewest moves',
     lowerIsBetter: true,

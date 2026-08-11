@@ -15,6 +15,20 @@
   const W = 560, H = 560, L = 62;
   const CELL = W / L;
   const EMPTY = 0, A = 1, B = 2;
+  /* doc-mode supersample factor: each cell is rendered as a KxK block of raw
+     pixels (never a vector shape), so a "hollow square" outline is just a
+     ring of ink subpixels around a paper interior — hard pixel edges only,
+     no antialiasing to leak a grey ring the way a stroked rect would at this
+     scale. Scaled back up with imageSmoothingEnabled=false, same trick the
+     other lattice sims (turf/ising) already use for their whole grid. */
+  const K = 5;
+
+  /* '#rrggbb' -> 0xAABBGGRR (ABGR little-endian), the layout every imageData
+     buffer in these grid sims uses (see carColor in traffic.js). */
+  function hexToAbgr(hex) {
+    const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+    return (0xff000000 | (b << 16) | (g << 8) | r) >>> 0;
+  }
 
   function mount(root, api) {
     const bagg = Engine.bag();
@@ -25,6 +39,10 @@
 
     const cv = Engine.canvas(root, W, H, { maxHeight: '62vh' });
     const ctx = cv.ctx;
+    const off = document.createElement('canvas'); off.width = L * K; off.height = L * K;
+    const octx = off.getContext('2d');
+    const img = octx.createImageData(L * K, L * K);
+    const buf = new Uint32Array(img.data.buffer);
     const plot = h('canvas', { class: 'fire-plot', width: 520, height: 200 });
     root.appendChild(h('div', { class: 'fire-panel' }, plot));
     const pctx = plot.getContext('2d');
@@ -135,34 +153,72 @@
     }
 
     function drawPlot() {
+      const doc = Arcade.docMode();
       const w = plot.width, hh = plot.height, m = 26;
-      pctx.fillStyle = '#12100c'; pctx.fillRect(0, 0, w, hh);
+      pctx.fillStyle = doc ? Engine.docPaper() : '#12100c'; pctx.fillRect(0, 0, w, hh);
       const X = (t) => m + t / 0.85 * (w - m - 8);
       const Y = (s) => hh - m - s * (hh - m - 8);
-      pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
+      pctx.strokeStyle = doc ? Engine.docInk() : '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(1)); pctx.stroke();
-      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('segregation', 2, 12); pctx.fillText('preference T', w - 78, hh - 8);
       /* mixed baseline ~0.5 */
-      pctx.strokeStyle = 'rgba(0,166,180,.6)'; pctx.setLineDash([3, 3]);
+      pctx.strokeStyle = doc ? Engine.docInk() : 'rgba(0,166,180,.6)'; pctx.setLineDash([3, 3]);
       pctx.beginPath(); pctx.moveTo(m, Y(0.5)); pctx.lineTo(w - 8, Y(0.5)); pctx.stroke(); pctx.setLineDash([]);
-      pctx.fillStyle = '#00a6b4'; pctx.fillText('well-mixed 50%', m + 4, Y(0.5) - 3);
+      pctx.fillStyle = doc ? Engine.docInk() : '#00a6b4'; pctx.fillText('well-mixed 50%', m + 4, Y(0.5) - 3);
       if (ref.length) {
-        pctx.strokeStyle = '#ffcb1f'; pctx.lineWidth = 2; pctx.beginPath();
+        pctx.strokeStyle = doc ? Engine.docInk() : '#ffcb1f'; pctx.lineWidth = 2; pctx.beginPath();
         ref.forEach((s, i) => { const x = X(s.T), y = Y(s.seg); i ? pctx.lineTo(x, y) : pctx.moveTo(x, y); });
         pctx.stroke();
       }
-      for (const s of samples) { pctx.fillStyle = '#f2ede0'; pctx.beginPath(); pctx.arc(X(s.T), Y(s.seg), 3, 0, 7); pctx.fill(); }
-      pctx.fillStyle = '#fffdf3'; pctx.beginPath(); pctx.moveTo(X(T), Y(0) + 2); pctx.lineTo(X(T) - 4, Y(0) + 9); pctx.lineTo(X(T) + 4, Y(0) + 9); pctx.fill();
+      for (const s of samples) {
+        pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0';
+        if (doc) pctx.fillRect(Math.round(X(s.T)) - 2, Math.round(Y(s.seg)) - 2, 4, 4);
+        else { pctx.beginPath(); pctx.arc(X(s.T), Y(s.seg), 3, 0, 7); pctx.fill(); }
+      }
+      pctx.fillStyle = doc ? Engine.docInk() : '#fffdf3'; pctx.beginPath(); pctx.moveTo(X(T), Y(0) + 2); pctx.lineTo(X(T) - 4, Y(0) + 9); pctx.lineTo(X(T) + 4, Y(0) + 9); pctx.fill();
     }
 
     function draw() {
-      ctx.fillStyle = '#141019'; ctx.fillRect(0, 0, W, H);
-      for (let i = 0; i < grid.length; i++) {
-        const v = grid[i];
-        if (v === EMPTY) continue;
-        ctx.fillStyle = v === A ? '#00a6b4' : '#e8402a';
-        ctx.fillRect((i % L) * CELL, ((i / L) | 0) * CELL, CELL + 1, CELL + 1);
+      const doc = Arcade.docMode();
+      if (doc) {
+        /* 92%-occupied lattice, two teams — no sparse "common state" to fall
+           back to blank paper the way sir.js does, and filling every cell
+           edge-to-edge would read as a solid black mass instead of a
+           document figure ("very limited black" is the house style — see
+           the 2048 doc-mode comment in arcade.css). Team A gets a small
+           inset ink square, team B a single ink pixel at its centre — most
+           of the paper stays paper either way. Both are raw supersampled
+           pixel writes, never a vector shape, so nothing here antialiases
+           into grey. */
+        const inkC = hexToAbgr(Engine.docInk()), paperC = hexToAbgr(Engine.docPaper());
+        buf.fill(paperC);
+        const S = L * K, mid = (K / 2) | 0;
+        for (let i = 0; i < grid.length; i++) {
+          const v = grid[i];
+          if (v === EMPTY) continue;
+          const cx = (i % L) * K, cy = ((i / L) | 0) * K;
+          for (let dy = 0; dy < K; dy++) {
+            const row = (cy + dy) * S + cx;
+            for (let dx = 0; dx < K; dx++) {
+              const on = v === A ? (dx > 0 && dx < K - 1 && dy > 0 && dy < K - 1) : (dx === mid && dy === mid);
+              buf[row + dx] = on ? inkC : paperC;
+            }
+          }
+        }
+        octx.putImageData(img, 0, 0);
+        ctx.save();
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(off, 0, 0, S, S, 0, 0, W, H);
+        ctx.restore();
+      } else {
+        ctx.fillStyle = '#141019'; ctx.fillRect(0, 0, W, H);
+        for (let i = 0; i < grid.length; i++) {
+          const v = grid[i];
+          if (v === EMPTY) continue;
+          ctx.fillStyle = v === A ? '#00a6b4' : '#e8402a';
+          ctx.fillRect((i % L) * CELL, ((i / L) | 0) * CELL, CELL + 1, CELL + 1);
+        }
       }
       drawPlot();
     }
@@ -206,6 +262,7 @@
     order: 7,
     blurb: 'Two teams on a floor of desks, each person wanting some fraction of same-team neighbors. Even a mild preference sorts a mixed floor into hard blocks. A famous, uncomfortable little model.',
     scoreLabel: 'Peak segregation',
+    lightBoard: true,   // doc mode draws its own paper/ink palette above; the blanket invert would only flip it back
     tags: ['schelling', 'segregation', 'phase-transition', 'emergence'],
     how: [
       'Teal and red are the two teams; dark squares are empty desks. A person is content when at least a fraction T of their occupied neighbors share their team.',

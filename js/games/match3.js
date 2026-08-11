@@ -307,6 +307,7 @@
     emoji: 'match3',
     cat: 'puzzle',
     order: 12,
+    lightBoard: true,   // doc mode recolours every gem tile to paper/ink in css/arcade.css; the blanket invert would only flip the colours back
     blurb: 'Swap office supplies to line up three or more of a kind and clear the shelves before the buzzer runs out.',
     scoreLabel: 'Points',
     tags: ['match-3', 'bejeweled', 'gems', 'timed'],

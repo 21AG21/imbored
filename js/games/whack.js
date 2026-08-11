@@ -144,32 +144,47 @@
     }
 
     function draw() {
-      ctx.fillStyle = '#141a26';
+      const doc = Arcade.docMode();
+      ctx.fillStyle = doc ? Engine.docPaper() : '#141a26';
       ctx.fillRect(0, 0, W, H);
 
       /* calendar header */
-      ctx.fillStyle = '#6f3fa8';
-      ctx.fillRect(0, 0, W, 48);
-      ctx.fillStyle = '#fffdf3';
+      if (doc) {
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2;
+        ctx.strokeRect(1, 1, W - 2, 46);
+      } else {
+        ctx.fillStyle = '#6f3fa8';
+        ctx.fillRect(0, 0, W, 48);
+      }
+      ctx.fillStyle = doc ? Engine.docInk() : '#fffdf3';
       ctx.font = '22px Impact, Haettenschweiler, Arial Black, sans-serif';
       ctx.textBaseline = 'middle';
       ctx.fillText('YOUR WEEK', 16, 25);
       ctx.font = 'bold 13px Verdana, sans-serif';
-      ctx.fillStyle = '#ffcb1f';
+      ctx.fillStyle = doc ? Engine.docInk() : '#ffcb1f';
       ctx.textAlign = 'right';
       ctx.fillText(combo > 2 ? 'DECLINE STREAK x' + combo : '', W - 16, 25);
       ctx.textAlign = 'left';
 
       for (let i = 0; i < slots.length; i++) {
-        const b = slotBox(i);
+        const b0 = slotBox(i);
+        /* pixel-snap the box in doc mode — a fractional box edge antialiases
+           even with a crisp source pixel, and with nine boxes on screen that
+           adds up to a visible wash of grey */
+        const b = doc ? { x: Math.round(b0.x), y: Math.round(b0.y), w: Math.round(b0.w), h: Math.round(b0.h) } : b0;
         const shake = shakes.find((s) => s.i === i);
         const ox = shake ? Math.sin(shake.t * 60) * 5 : 0;
 
-        ctx.fillStyle = '#1e2635';
+        ctx.fillStyle = doc ? Engine.docPaper() : '#1e2635';
         ctx.fillRect(b.x + ox, b.y, b.w, b.h);
-        ctx.strokeStyle = '#333d52';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(b.x + ox, b.y, b.w, b.h);
+        ctx.strokeStyle = doc ? Engine.docInk() : '#333d52';
+        ctx.lineWidth = doc ? 1 : 2;
+        /* +0.5 centres a 1px stroke exactly on the pixel grid instead of
+           straddling it — the classic crisp-hairline trick, needed here
+           because a plain integer coordinate with an odd line width still
+           antialiases across two rows */
+        if (doc) ctx.strokeRect(b.x + ox + 0.5, b.y + 0.5, b.w - 1, b.h - 1);
+        else ctx.strokeRect(b.x + ox, b.y, b.w, b.h);
 
         const s = slots[i];
         if (!s) continue;
@@ -177,14 +192,24 @@
         const hgt = b.h * grow;
         const y = b.y + b.h - hgt;
 
-        ctx.fillStyle = s.gold ? '#ffcb1f' : '#00a6b4';
-        ctx.fillRect(b.x + 4 + ox, y + 2, b.w - 8, hgt - 4);
-        ctx.strokeStyle = '#0c1119';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(b.x + 4 + ox, y + 2, b.w - 8, hgt - 4);
+        /* gold (keep) cards read as solid ink, junk (decline) cards as a
+           paper-and-outline box — the same solid-vs-outline language used
+           elsewhere on the site to tell two states apart without colour */
+        if (doc) {
+          ctx.fillStyle = s.gold ? Engine.docInk() : Engine.docPaper();
+          ctx.fillRect(b.x + 4 + ox, y + 2, b.w - 8, hgt - 4);
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2;
+          ctx.strokeRect(b.x + 4 + ox, y + 2, b.w - 8, hgt - 4);
+        } else {
+          ctx.fillStyle = s.gold ? '#ffcb1f' : '#00a6b4';
+          ctx.fillRect(b.x + 4 + ox, y + 2, b.w - 8, hgt - 4);
+          ctx.strokeStyle = '#0c1119';
+          ctx.lineWidth = 3;
+          ctx.strokeRect(b.x + 4 + ox, y + 2, b.w - 8, hgt - 4);
+        }
 
         if (grow > 0.55) {
-          ctx.fillStyle = s.gold ? '#1d1722' : '#fffdf3';
+          ctx.fillStyle = doc ? (s.gold ? Engine.docPaper() : Engine.docInk()) : (s.gold ? '#1d1722' : '#fffdf3');
           ctx.font = 'bold 13px Verdana, sans-serif';
           ctx.fillText(s.title.slice(0, 20), b.x + 12 + ox, y + 22);
           ctx.font = '11px Verdana, sans-serif';
@@ -194,10 +219,18 @@
 
           /* time-left bar */
           const f = clamp(s.life / s.max, 0, 1);
-          ctx.fillStyle = 'rgba(0,0,0,.3)';
-          ctx.fillRect(b.x + 10 + ox, b.y + b.h - 14, b.w - 20, 6);
-          ctx.fillStyle = s.gold ? '#1d1722' : '#fffdf3';
-          ctx.fillRect(b.x + 10 + ox, b.y + b.h - 14, (b.w - 20) * f, 6);
+          if (doc) {
+            const barCol = s.gold ? Engine.docPaper() : Engine.docInk();
+            ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1;
+            ctx.strokeRect(b.x + 10 + ox, b.y + b.h - 14, b.w - 20, 6);
+            ctx.fillStyle = barCol;
+            ctx.fillRect(b.x + 10 + ox, b.y + b.h - 14, (b.w - 20) * f, 6);
+          } else {
+            ctx.fillStyle = 'rgba(0,0,0,.3)';
+            ctx.fillRect(b.x + 10 + ox, b.y + b.h - 14, b.w - 20, 6);
+            ctx.fillStyle = s.gold ? '#1d1722' : '#fffdf3';
+            ctx.fillRect(b.x + 10 + ox, b.y + b.h - 14, (b.w - 20) * f, 6);
+          }
         }
       }
       ctx.textBaseline = 'alphabetic';
@@ -220,6 +253,7 @@
     emoji: 'whack',
     cat: 'goof',
     order: 61,
+    lightBoard: true,   // doc mode draws its own paper/ink palette above; the blanket invert would only flip it back
     blurb: 'Meeting invites pop onto your calendar. Click the junk ones to decline them, but leave the gold ones alone. Those are payroll and your own review.',
     scoreLabel: 'Score',
     tags: ['whack a mole', 'calendar', 'meetings', 'reflex'],

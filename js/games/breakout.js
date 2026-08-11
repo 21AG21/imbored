@@ -230,61 +230,108 @@
     }
 
     function draw() {
+      const doc = Arcade.docMode();
       ctx.save();
       if (shake > 0) ctx.translate(rand(-shake * 3, shake * 3), rand(-shake * 3, shake * 3));
-      ctx.fillStyle = '#080d18';
+      ctx.fillStyle = doc ? Engine.docPaper() : '#080d18';
       ctx.fillRect(-10, -10, W + 20, H + 20);
 
       for (const k of bricks) {
         const dmg = k.hp / k.max;
-        ctx.fillStyle = 'hsl(' + k.hue + ', 72%, ' + (34 + dmg * 22) + '%)';
-        Engine.roundRect(ctx, k.x, k.y, k.w, k.h, 4);
-        ctx.fill();
-        ctx.fillStyle = 'rgba(255,255,255,.14)';
-        Engine.roundRect(ctx, k.x + 3, k.y + 3, k.w - 6, 5, 2);
-        ctx.fill();
-        if (k.max > 1 && k.hp > 1) {
-          ctx.strokeStyle = 'rgba(255,255,255,.5)';
-          ctx.lineWidth = 1.5;
-          Engine.roundRect(ctx, k.x + 1, k.y + 1, k.w - 2, k.h - 2, 4);
-          ctx.stroke();
+        if (doc) {
+          /* a brick with more than one hit left reads as solid ink; a brick
+             one hit from breaking is paper with an ink outline — the same
+             solid-vs-outline cue used across the doc-mode fixes, no colour.
+             Plain rects at integer coordinates (fill ink, inset fill paper)
+             instead of a rounded stroke — with 40+ bricks on screen, the
+             curved corners of a stroked roundRect are a real amount of
+             antialiasing; a square-cornered fill is pixel-perfect. */
+          const strong = k.max > 1 && k.hp > 1;
+          const x = Math.round(k.x), y = Math.round(k.y), w = Math.round(k.w), h = Math.round(k.h);
+          ctx.fillStyle = Engine.docInk();
+          ctx.fillRect(x, y, w, h);
+          if (!strong) { ctx.fillStyle = Engine.docPaper(); ctx.fillRect(x + 2, y + 2, w - 4, h - 4); }
+        } else {
+          ctx.fillStyle = 'hsl(' + k.hue + ', 72%, ' + (34 + dmg * 22) + '%)';
+          Engine.roundRect(ctx, k.x, k.y, k.w, k.h, 4);
+          ctx.fill();
+          ctx.fillStyle = 'rgba(255,255,255,.14)';
+          Engine.roundRect(ctx, k.x + 3, k.y + 3, k.w - 6, 5, 2);
+          ctx.fill();
+          if (k.max > 1 && k.hp > 1) {
+            ctx.strokeStyle = 'rgba(255,255,255,.5)';
+            ctx.lineWidth = 1.5;
+            Engine.roundRect(ctx, k.x + 1, k.y + 1, k.w - 2, k.h - 2, 4);
+            ctx.stroke();
+          }
         }
       }
 
       for (const d of drops) {
-        ctx.fillStyle = d.p.color;
-        Engine.roundRect(ctx, d.x - 11, d.y - 9, 22, 18, 5);
-        ctx.fill();
-        ctx.fillStyle = '#0a1020';
+        if (doc) {
+          ctx.fillStyle = Engine.docPaper();
+          Engine.roundRect(ctx, d.x - 11, d.y - 9, 22, 18, 5);
+          ctx.fill();
+          ctx.strokeStyle = Engine.docInk();
+          ctx.lineWidth = 1.5;
+          Engine.roundRect(ctx, d.x - 11, d.y - 9, 22, 18, 5);
+          ctx.stroke();
+          ctx.fillStyle = Engine.docInk();
+        } else {
+          ctx.fillStyle = d.p.color;
+          Engine.roundRect(ctx, d.x - 11, d.y - 9, 22, 18, 5);
+          ctx.fill();
+          ctx.fillStyle = '#0a1020';
+        }
         ctx.font = 'bold 12px system-ui';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(d.p.label, d.x, d.y);
       }
 
-      ctx.fillStyle = wideT > 0 ? '#38e1ff' : '#dfe6f5';
-      Engine.roundRect(ctx, paddle.x - paddle.w / 2, paddle.y, paddle.w, paddle.h, 7);
-      ctx.fill();
+      if (doc) {
+        ctx.fillStyle = Engine.docPaper();
+        Engine.roundRect(ctx, paddle.x - paddle.w / 2, paddle.y, paddle.w, paddle.h, 7);
+        ctx.fill();
+        ctx.strokeStyle = Engine.docInk();
+        ctx.lineWidth = wideT > 0 ? 3 : 1.5;
+        Engine.roundRect(ctx, paddle.x - paddle.w / 2, paddle.y, paddle.w, paddle.h, 7);
+        ctx.stroke();
+      } else {
+        ctx.fillStyle = wideT > 0 ? '#38e1ff' : '#dfe6f5';
+        Engine.roundRect(ctx, paddle.x - paddle.w / 2, paddle.y, paddle.w, paddle.h, 7);
+        ctx.fill();
+      }
 
       for (const b of balls) {
-        ctx.fillStyle = slowT > 0 ? '#9dff5c' : '#fff';
-        ctx.shadowColor = slowT > 0 ? '#9dff5c' : '#8fd0ff';
-        ctx.shadowBlur = 12;
-        ctx.beginPath();
-        ctx.arc(b.x, b.y, b.r, 0, 7);
-        ctx.fill();
-        ctx.shadowBlur = 0;
+        if (doc) {
+          ctx.fillStyle = Engine.docPaper();
+          ctx.strokeStyle = Engine.docInk();
+          ctx.lineWidth = slowT > 0 ? 2.5 : 1.5;
+          ctx.beginPath();
+          ctx.arc(b.x, b.y, b.r, 0, 7);
+          ctx.fill();
+          ctx.stroke();
+        } else {
+          ctx.fillStyle = slowT > 0 ? '#9dff5c' : '#fff';
+          ctx.shadowColor = slowT > 0 ? '#9dff5c' : '#8fd0ff';
+          ctx.shadowBlur = 12;
+          ctx.beginPath();
+          ctx.arc(b.x, b.y, b.r, 0, 7);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
       }
 
       if (!launched && !over) {
-        ctx.fillStyle = '#8f9ab8';
+        ctx.fillStyle = doc ? Engine.docInk() : '#8f9ab8';
         ctx.font = 'bold 15px system-ui';
         ctx.textAlign = 'center';
         ctx.fillText('space or click to launch', W / 2, paddle.y - 46);
       }
       if (msgT > 0) {
         ctx.globalAlpha = clamp(msgT, 0, 1);
-        ctx.fillStyle = '#ffd98a';
+        ctx.fillStyle = doc ? Engine.docInk() : '#ffd98a';
         ctx.font = 'bold 30px system-ui';
         ctx.textAlign = 'center';
         ctx.fillText(msg, W / 2, H / 2 - 30);
@@ -306,6 +353,7 @@
     emoji: 'breakout',
     cat: 'action',
     order: 31,
+    lightBoard: true,   // doc mode draws its own paper/ink palette above; the blanket invert would only flip it back
     blurb: 'Clear the bricks with a paddle and ball. Catch the falling tiles for power-ups.',
     scoreLabel: 'Score',
     tags: ['breakout', 'arkanoid', 'paddle', 'ball'],

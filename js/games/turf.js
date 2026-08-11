@@ -16,6 +16,18 @@
   'use strict';
   const { h, clamp } = Engine;
   const N = 150, W = 560, H = 560;
+  /* doc-mode supersample factor for the main lattice: every cell becomes a
+     KxK block of raw pixel writes (never a vector shape) so the three
+     species can each get a distinct hard-edged mark — a filled block, a
+     ring, a small dot — with zero antialiasing to leak grey at this scale. */
+  const DK = 3;
+
+  /* '#rrggbb' -> 0xAABBGGRR (ABGR little-endian), the layout this file's own
+     COL palette below already uses. */
+  function hexToAbgr(hex) {
+    const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+    return (0xff000000 | (b << 16) | (g << 8) | r) >>> 0;
+  }
 
   function mount(root, api) {
     const bagg = Engine.bag();
@@ -31,6 +43,10 @@
     const img = octx.createImageData(N, N);
     const buf = new Uint32Array(img.data.buffer);
     const COL = [0xff140f19 >>> 0, 0xff2a40e8 >>> 0, 0xff2fcf6f >>> 0, 0xffd67f2a >>> 0]; // empty, red, green, blue (ABGR)
+    const docOff = document.createElement('canvas'); docOff.width = N * DK; docOff.height = N * DK;
+    const docOctx = docOff.getContext('2d');
+    const docImg = docOctx.createImageData(N * DK, N * DK);
+    const docBuf = new Uint32Array(docImg.data.buffer);
 
     const plot = h('canvas', { class: 'fire-plot', width: 520, height: 200 });
     root.appendChild(h('div', { class: 'fire-panel' }, plot));
@@ -82,28 +98,66 @@
     }
 
     function draw() {
-      for (let i = 0; i < grid.length; i++) buf[i] = COL[grid[i]];
-      octx.putImageData(img, 0, 0);
-      ctx.save(); ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(off, 0, 0, N, N, 0, 0, W, H);
-      ctx.restore();
+      const doc = Arcade.docMode();
+      if (doc) {
+        /* fully-tiled lattice, three species, no natural "blank/common"
+           state — a flat ink/paper recolour of COL would still read as a
+           solid grey mass, so each species gets its own hard-edged mark
+           instead: a filled block, a ring, a small dot. Raw supersampled
+           pixel writes only, so none of it antialiases into grey. */
+        const inkC = hexToAbgr(Engine.docInk()), paperC = hexToAbgr(Engine.docPaper());
+        const S = N * DK, mid = (DK / 2) | 0;
+        docBuf.fill(paperC);
+        for (let i = 0; i < grid.length; i++) {
+          const v = grid[i];
+          if (!v) continue;   // empty: blank paper
+          const cx = (i % N) * DK, cy = ((i / N) | 0) * DK;
+          for (let dy = 0; dy < DK; dy++) {
+            const row = (cy + dy) * S + cx;
+            for (let dx = 0; dx < DK; dx++) {
+              let on;
+              if (v === 1) on = true;                                   // filled block
+              else if (v === 2) on = dx === mid || dy === mid;          // cross/ring
+              else on = dx === mid && dy === mid;                       // single dot
+              docBuf[row + dx] = on ? inkC : paperC;
+            }
+          }
+        }
+        docOctx.putImageData(docImg, 0, 0);
+        ctx.save(); ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(docOff, 0, 0, S, S, 0, 0, W, H);
+        ctx.restore();
+      } else {
+        for (let i = 0; i < grid.length; i++) buf[i] = COL[grid[i]];
+        octx.putImageData(img, 0, 0);
+        ctx.save(); ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(off, 0, 0, N, N, 0, 0, W, H);
+        ctx.restore();
+      }
       drawPlot();
     }
 
     function drawPlot() {
+      const doc = Arcade.docMode();
       const w = plot.width, hh = plot.height, m = 26;
-      pctx.fillStyle = '#0b0f16'; pctx.fillRect(0, 0, w, hh);
+      pctx.fillStyle = doc ? Engine.docPaper() : '#0b0f16'; pctx.fillRect(0, 0, w, hh);
       const X = (i) => m + i / 520 * (w - m - 8), Y = (v) => hh - 20 - clamp(v, 0, 0.6) / 0.6 * (hh - 30);
-      pctx.strokeStyle = '#3a4658'; pctx.lineWidth = 1;
+      pctx.strokeStyle = doc ? Engine.docInk() : '#3a4658'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.stroke();
-      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('population', 2, 12); pctx.fillText('time', w - 30, hh - 6);
-      const cols = ['#e8402a', '#6fcf2f', '#2a7fd6'], keys = ['a', 'b', 'c'];
+      /* no colour trio to tell the three curves apart in doc mode — ink for
+         all three, a different dash pattern per line instead (same trick
+         sir.js/ising.js use for their multi-line panels). */
+      const cols = ['#e8402a', '#6fcf2f', '#2a7fd6'], dashes = [null, [5, 3], [1, 3]], keys = ['a', 'b', 'c'];
       for (let s = 0; s < 3; s++) {
-        pctx.strokeStyle = cols[s]; pctx.lineWidth = 1.5; pctx.beginPath();
+        pctx.strokeStyle = doc ? Engine.docInk() : cols[s]; pctx.lineWidth = 1.5;
+        pctx.setLineDash(doc ? (dashes[s] || []) : []);
+        pctx.beginPath();
         hist.forEach((p, i) => { const x = X(i), y = Y(p[keys[s]]); i ? pctx.lineTo(x, y) : pctx.moveTo(x, y); });
         pctx.stroke();
       }
+      pctx.setLineDash([]);
     }
 
     /* ---- test seam ---- */
@@ -134,6 +188,7 @@
     order: 13,
     blurb: 'Rock-paper-scissors played across a whole grid, each colour eating the one it beats. Left running, the noise organises into rotating spiral waves where all three colours survive.',
     scoreLabel: 'Coexistence streak',
+    lightBoard: true,   // doc mode draws its own paper/ink palette above; the blanket invert would only flip it back
     tags: ['cyclic-dominance', 'spirals', 'emergence', 'ecology'],
     how: [
       'Every cell is red, green, blue, or empty. The colours run in a loop where red beats green, green beats blue, and blue beats red.',

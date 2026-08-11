@@ -58,7 +58,11 @@
       /* brief flash on the newest row: a stronger pop when a digit lands right */
       rowEl.style.transition = 'background-color .6s ease, transform .2s ease';
       rowEl.style.transform = 'scale(1.04)';
-      if (bulls > 0) rowEl.style.backgroundColor = 'var(--lime)';
+      /* doc mode: no lime flash — a solid ink flash would just as easily
+         cover the row's own black digits/pegs for a frame, so skip the
+         background pop entirely rather than trade one legibility problem
+         for another; the filled pegs already say "a digit landed". */
+      if (bulls > 0 && !Arcade.docMode()) rowEl.style.backgroundColor = 'var(--lime)';
       void rowEl.offsetWidth;
       requestAnimationFrame(() => { rowEl.style.transform = ''; rowEl.style.backgroundColor = ''; });
       input.value = ''; msg.textContent = ''; msg.className = 'crk-msg';

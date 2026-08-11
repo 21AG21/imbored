@@ -308,9 +308,11 @@
 
   Arcade.register({
     id: 'blackjack',
-    // NOT lightBoard: the felt table is a genuinely dark backdrop that needs
-    // the normal invert (dark -> light); only the light card faces need
-    // protecting from it, handled in css/arcade.css via a .bj-card counter-invert.
+    // lightBoard: the old counter-invert-just-the-cards approach left the felt
+    // itself (and anything else not explicitly listed) landing as a mid grey —
+    // proven not good enough. Every surface is authored directly for doc mode
+    // in css/arcade.css instead, same migration as reversi/checkers.
+    lightBoard: true,
     title: 'Chip Ledger',
     emoji: 'blackjack',
     cat: 'goof',

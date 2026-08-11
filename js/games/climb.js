@@ -2,6 +2,7 @@
 (function () {
   'use strict';
   const { h, clamp, randInt } = Engine;
+  const DOC = () => !!(window.Arcade && Arcade.docMode && Arcade.docMode());
   const W = 480, H = 680;
   const PW = 78, PH = 16, R = 18;
   const JUMP = -720, GRAV = 1500, START_PY = H - 80;
@@ -103,24 +104,44 @@
     function sync() { pScore.textContent = 'Height: ' + Math.max(0, Math.round(best / 10)); }
 
     function draw() {
-      ctx.fillStyle = '#1b2340';
+      const doc0 = DOC();
+      ctx.fillStyle = doc0 ? Engine.docPaper() : '#1b2340';
       ctx.fillRect(0, 0, W, H);
       for (const p of plats) {
         const sy = p.y - camY;
         if (sy < -PH || sy > H) continue;
-        ctx.fillStyle = p.moving ? '#c9822e' : '#3bbf6a';
-        ctx.fillRect(p.x, sy, PW, PH);
-        ctx.fillStyle = 'rgba(255,255,255,.16)';
-        ctx.fillRect(p.x, sy, PW, 4);
+        if (doc0) {
+          /* still vs. sliding shelves are told apart by outline style
+             (solid/dashed), not colour — the same move used for Battleship's
+             ok/bad placement preview above */
+          ctx.fillStyle = Engine.docPaper();
+          ctx.fillRect(p.x, sy, PW, PH);
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5;
+          ctx.setLineDash(p.moving ? [5, 4] : []);
+          ctx.strokeRect(p.x + 0.75, sy + 0.75, PW - 1.5, PH - 1.5);
+          ctx.setLineDash([]);
+        } else {
+          ctx.fillStyle = p.moving ? '#c9822e' : '#3bbf6a';
+          ctx.fillRect(p.x, sy, PW, PH);
+          ctx.fillStyle = 'rgba(255,255,255,.16)';
+          ctx.fillRect(p.x, sy, PW, 4);
+        }
       }
       const sy = py - camY;
-      ctx.fillStyle = '#ffd02a';
-      ctx.beginPath(); ctx.arc(px, sy, R, 0, 7); ctx.fill();
-      ctx.fillStyle = '#1d1722';
+      if (doc0) {
+        /* player: paper fill + ink outline, not a filled colour block */
+        ctx.fillStyle = Engine.docPaper(); ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(px, sy, R, 0, 7); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = Engine.docInk();
+      } else {
+        ctx.fillStyle = '#ffd02a';
+        ctx.beginPath(); ctx.arc(px, sy, R, 0, 7); ctx.fill();
+        ctx.fillStyle = '#1d1722';
+      }
       ctx.beginPath(); ctx.arc(px + facing * 5, sy - 5, 2.6, 0, 7); ctx.fill();
       ctx.beginPath(); ctx.arc(px + facing * 5 + facing * 6, sy - 5, 2.6, 0, 7); ctx.fill();
       if (!started && !over) {
-        ctx.fillStyle = 'rgba(255,255,255,.6)';
+        ctx.fillStyle = doc0 ? Engine.docInk() : 'rgba(255,255,255,.6)';
         ctx.font = 'bold 20px system-ui';
         ctx.textAlign = 'center';
         ctx.fillText('click or press a key to start', W / 2, H * 0.5);
@@ -135,6 +156,7 @@
 
   Arcade.register({
     id: 'climb',
+    lightBoard: true,   // dark navy backdrop + orange/green shelf fills need paper/ink, not an invert of a mid-tone palette
     title: 'Climb',
     emoji: 'climb',
     cat: 'action',

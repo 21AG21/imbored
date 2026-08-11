@@ -754,6 +754,30 @@ body.docmode .ms .n5, body.docmode .ms .n6, body.docmode .ms .n7, body.docmode .
 }
 .kbd-key:active { box-shadow: var(--bevel-in); }
 .kbd-key.wide { min-width: 56px; font-size: 10px; }
+
+/* Word Guess doc mode: literal extremes for the unfilled/filled tile and the
+   quiet keyboard — even the "fixed for legibility" hit/near/miss greens,
+   ambers and greys are still real colour/grey and grayscale straight into
+   the same wash this fix removes. Result state collapses to a filled/hollow/
+   outlined ink distinction instead of three different tones. */
+body.docmode .wg-tile { background: #ffffff; border-color: #000000; color: #000000; }
+body.docmode .wg-tile.filled { background: #ffffff; color: #000000; }
+body.docmode .wg-tile.hit  { background: #000000; color: #ffffff; border-color: #000000; }
+body.docmode .wg-tile.near { background: #ffffff; color: #000000; border-color: #000000; box-shadow: inset 0 0 0 3px #000000; }
+body.docmode .wg-tile.miss { background: #ffffff; color: #000000; border-color: #000000; }
+body.docmode .kbd-key { background: #ffffff; border-color: #000000; box-shadow: none; color: #000000; }
+body.docmode .kbd-key.hit  { background: #000000; color: #ffffff; }
+body.docmode .kbd-key.near { background: #ffffff; color: #000000; box-shadow: inset 0 0 0 2px #000000; }
+body.docmode .kbd-key.miss { background: #ffffff; color: #000000; box-shadow: none; }
+:root[data-dark="1"] body.docmode .wg-tile { background: var(--doc-paper); border-color: var(--doc-rule2); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .wg-tile.filled { background: var(--doc-paper); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .wg-tile.hit  { background: var(--doc-ink); color: var(--doc-paper); border-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .wg-tile.near { background: var(--doc-paper); color: var(--doc-ink); border-color: var(--doc-rule2); box-shadow: inset 0 0 0 3px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .wg-tile.miss { background: var(--doc-paper); color: var(--doc-ink); border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .kbd-key { background: var(--doc-paper); border-color: var(--doc-rule2); box-shadow: none; color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .kbd-key.hit  { background: var(--doc-ink); color: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .kbd-key.near { background: var(--doc-paper); color: var(--doc-ink); box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .kbd-key.miss { background: var(--doc-paper); color: var(--doc-ink); box-shadow: none; }
 .kbd-key.hit  { background: #2e9e3f; color: #fff; }
 .kbd-key.near { background: #d8a400; color: #1a1305; }
 .kbd-key.miss { background: #4a463c; color: #e8e4d8; box-shadow: var(--bevel-in); }
@@ -802,6 +826,23 @@ body.docmode .ms .n5, body.docmode .ms .n6, body.docmode .ms .n7, body.docmode .
 .f15 .cell.home { background: var(--lime); }
 .f15 .cell.blank { background: #2c2735; border-color: #2c2735; box-shadow: none; cursor: default; }
 
+/* fifteen, doc mode: plain ink numerals on paper tiles instead of a banana
+   yellow that would otherwise land as flat grey once desaturated. A tile
+   home in place gets a thin double outline instead of a green fill — a
+   colour swap would still be one more shade of grey to the filter. */
+body.docmode .f15 { background: #ffffff; border-color: #000000; box-shadow: none; }
+body.docmode .f15 .cell {
+  color: #000000; background: #ffffff; border-color: #000000; box-shadow: none;
+}
+body.docmode .f15 .cell.home { background: #ffffff; box-shadow: inset 0 0 0 2px #000000; }
+body.docmode .f15 .cell.blank { background: #ffffff; border-color: #000000; box-shadow: none; }
+:root[data-dark="1"] body.docmode .f15 { background: var(--doc-paper); border-color: var(--doc-rule2); box-shadow: none; }
+:root[data-dark="1"] body.docmode .f15 .cell {
+  color: var(--doc-ink); background: var(--doc-paper); border-color: var(--doc-rule2); box-shadow: none;
+}
+:root[data-dark="1"] body.docmode .f15 .cell.home { background: var(--doc-paper); box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .f15 .cell.blank { background: var(--doc-paper); border-color: var(--doc-rule2); box-shadow: none; }
+
 /* flood */
 .flood { width: min(430px, 92vw); padding: 7px; background: var(--ink); border: 5px solid var(--ink); box-shadow: var(--hard); }
 .flood .board { gap: 0; width: 100%; }
@@ -810,6 +851,21 @@ body.docmode .ms .n5, body.docmode .ms .n6, body.docmode .ms .n7, body.docmode .
 .flood-swatch { width: 44px; height: 44px; border: 3px solid var(--ink); box-shadow: var(--bevel-out); cursor: pointer; }
 .flood-swatch:active { box-shadow: var(--bevel-in); }
 .flood-swatch.cur { outline: 3px solid var(--label); outline-offset: -6px; }
+
+/* flood, doc mode: the six flood colours are set inline from JS (flood.js
+   render()), already repainted to paper/ink there — this just covers the
+   board frame and swatch chrome, which stay in CSS. No per-cell outline: a
+   196-tile board means 196 antialiased 1px insets, which measurably adds up
+   to a grey haze on its own (same lesson as match3's grid above) — the
+   glyph alone still marks each cell, same as match3's bare-glyph tiles. */
+body.docmode .flood { background: #ffffff; border-color: #000000; box-shadow: none; }
+body.docmode .flood .cell { box-shadow: none; }
+body.docmode .flood-swatch { border-color: #000000; box-shadow: none; }
+body.docmode .flood-swatch.cur { outline-color: #000000; }
+:root[data-dark="1"] body.docmode .flood { background: var(--doc-paper); border-color: var(--doc-rule2); box-shadow: none; }
+:root[data-dark="1"] body.docmode .flood .cell { box-shadow: none; }
+:root[data-dark="1"] body.docmode .flood-swatch { border-color: var(--doc-rule2); box-shadow: none; }
+:root[data-dark="1"] body.docmode .flood-swatch.cur { outline-color: var(--doc-ink); }
 
 /* noughts */
 .ttt { background: var(--ink); padding: 8px; border: 5px solid var(--ink); box-shadow: var(--hard); }
@@ -822,6 +878,31 @@ body.docmode .ms .n5, body.docmode .ms .n6, body.docmode .ms .n7, body.docmode .
 .ttt .cell.x { color: var(--tomato); }
 .ttt .cell.o { color: var(--teal); }
 .ttt .cell.win { background: var(--banana); }
+
+/* Noughts: the grid frame and cell borders both read var(--ink) — already
+   dark, but not pure black, so the lightBoard filter's brightness lift
+   turns them into a visible charcoal grey (same trap as Reversi/Checkers
+   above). The X/O tomato/teal colouring and the banana win highlight are
+   worse — bright hues that land squarely in the middle of the grey band
+   after grayscale(). It's `lightBoard: true` (see Arcade.register), so
+   only grayscale(1) contrast(0.92) brightness(1.12) runs, no invert.
+   X and O don't need colour to tell apart — they're already different
+   glyphs — so both go ink; the win line is a solid ink cell with paper
+   text instead of a yellow tint, the same filled/hollow trick as
+   Escalate's "you" cell. Light theme literal #fff/#000 (the tuned
+   variables would land short of the extremes a second time through this
+   filter); dark theme has no such compounding filter on a lightBoard
+   stage, so it reads the variables directly. */
+body.docmode .ttt { background: #000000; }
+body.docmode .ttt .cell { background: #ffffff; border-color: #000000; color: #000000; }
+body.docmode .ttt .cell.x,
+body.docmode .ttt .cell.o { color: #000000; }
+body.docmode .ttt .cell.win { background: #000000; color: #ffffff; }
+:root[data-dark="1"] body.docmode .ttt { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .ttt .cell { background: var(--doc-paper); border-color: var(--doc-ink); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .ttt .cell.x,
+:root[data-dark="1"] body.docmode .ttt .cell.o { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .ttt .cell.win { background: var(--doc-ink); color: var(--doc-paper); }
 
 /* reversi */
 .rev { background: #1c7a4a; padding: 7px; border: 5px solid var(--ink); box-shadow: var(--hard); }
@@ -1223,6 +1304,47 @@ body.bigscreen .bigscreen-note { opacity: 1; animation: fadeout 1s 2.6s forwards
 .shop-cost { display: block; font-weight: 700; font-size: 12.5px; }
 .shop-own { display: block; font-size: 11px; color: var(--ink2); }
 .shop-foot { margin: 8px 0 2px; font-size: 10.5px; text-align: center; color: var(--ink2); }
+
+/* coffee, doc mode: already `lightBoard: true` (see Arcade.register), so the
+   blanket invert is off — but the banana-yellow mug, the shop panel's tuned
+   near-white --label/--paper tones, and the lime/salmon event colours all
+   still land somewhere in the grey band under the gentler lightBoard filter,
+   never quite reaching true paper white or ink black. Flattened to literal
+   extremes throughout. The mug/shop-row icons are Icons.svg() output shared
+   by other games (out of scope to recolour there), so a light-theme-only
+   filter turns each one into a flat ink silhouette instead — the dark doc
+   theme has no compounding filter to wash multi-colour icons into grey in
+   the first place, so it's left alone there. */
+body.docmode .mug { background: #ffffff; border-color: #000000; box-shadow: none; }
+body.docmode .mug:active { box-shadow: none; }
+:root:not([data-dark="1"]) body.docmode .mug-art svg,
+:root:not([data-dark="1"]) body.docmode .shop-emoji svg { filter: brightness(0); }
+body.docmode .pop { color: #000000; background: #ffffff; border-color: #000000; }
+body.docmode .coffee-event { border-color: #000000; background: #ffffff; color: #000000; }
+body.docmode .coffee-event.up,
+body.docmode .coffee-event.down { background: #ffffff; color: #000000; }
+body.docmode .shop { background: #ffffff; border-color: #000000; box-shadow: none; }
+/* the "can't afford yet" state was a flat .55 opacity — over solid ink that
+   is a literal 55%-grey blend, not a shade the filter can be blamed for.
+   A dashed vs. solid outline reads the same way at full ink instead. */
+body.docmode .shop-row { background: #ffffff; border-color: #000000; border-width: 1px; color: #000000; opacity: 1; }
+body.docmode .shop-row.afford { background: #ffffff; border-width: 3px; box-shadow: none; }
+body.docmode .shop-row.afford:hover { background: #ffffff; }
+body.docmode .shop-blurb,
+body.docmode .shop-own,
+body.docmode .shop-foot { color: #000000; }
+
+:root[data-dark="1"] body.docmode .mug { background: var(--doc-paper); border-color: var(--doc-rule2); box-shadow: none; }
+:root[data-dark="1"] body.docmode .pop { color: var(--doc-ink); background: var(--doc-paper); border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .coffee-event { border-color: var(--doc-rule2); background: var(--doc-paper); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .coffee-event.up,
+:root[data-dark="1"] body.docmode .coffee-event.down { background: var(--doc-paper); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .shop { background: var(--doc-paper); border-color: var(--doc-rule2); box-shadow: none; }
+:root[data-dark="1"] body.docmode .shop-row { background: var(--doc-paper); border-color: var(--doc-rule2); border-style: dashed; color: var(--doc-ink); opacity: 1; }
+:root[data-dark="1"] body.docmode .shop-row.afford { background: var(--doc-paper); border-style: solid; box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .shop-blurb,
+:root[data-dark="1"] body.docmode .shop-own,
+:root[data-dark="1"] body.docmode .shop-foot { color: var(--doc-mut); }
 
 .foot-link { text-decoration: underline; font-weight: 700; }
 .foot-link:hover { background: var(--banana); }
@@ -1839,6 +1961,54 @@ body.docmode .sud-key.on { background: #000000; color: #ffffff; box-shadow: none
   .blackjack .bj-side { flex-basis: 68px; }
 }
 
+/* Blackjack, doc mode: the felt used to rely on the blanket invert (dark
+   green -> light page) with just the light .bj-card counter-inverted back
+   out of it — proven not good enough (the felt itself still lands as a mid
+   grey, and so does anything not explicitly listed). Migrated to
+   `lightBoard: true` (see Arcade.register) like reversi/checkers: every
+   surface below is authored directly instead of relying on any invert.
+   Suits are already told apart by their own glyph (♠♥♦♦), so red vs black
+   ink is decorative, not information — flattened to plain ink either way. */
+body.docmode .blackjack .bj-felt { background: #ffffff; border-color: #000000; box-shadow: none; }
+body.docmode .blackjack .bj-row + .bj-row { border-top-color: #000000; }
+body.docmode .blackjack .bj-side { color: #000000; }
+body.docmode .blackjack .bj-score { color: #000000; background: transparent; box-shadow: inset 0 0 0 1px #000000; }
+body.docmode .blackjack .bj-empty { color: #000000; }
+body.docmode .blackjack .bj-card {
+  background: #ffffff; color: #000000; border-color: #000000; box-shadow: none;
+}
+body.docmode .blackjack .bj-card.red { color: #000000; }
+body.docmode .blackjack .bj-card.back {
+  color: transparent; border-color: #000000;
+  background: repeating-linear-gradient(45deg, #000000, #000000 5px, #ffffff 5px, #ffffff 10px);
+}
+body.docmode .blackjack .bj-back-mark { color: #ffffff; }
+body.docmode .blackjack .bj-msg,
+body.docmode .blackjack .bj-msg.win,
+body.docmode .blackjack .bj-msg.bj,
+body.docmode .blackjack .bj-msg.push,
+body.docmode .blackjack .bj-msg.lose { color: #000000; }
+
+:root[data-dark="1"] body.docmode .blackjack .bj-felt { background: var(--doc-paper); border-color: var(--doc-rule2); box-shadow: none; }
+:root[data-dark="1"] body.docmode .blackjack .bj-row + .bj-row { border-top-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .blackjack .bj-side { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .blackjack .bj-score { color: var(--doc-ink); background: transparent; box-shadow: inset 0 0 0 1px var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .blackjack .bj-empty { color: var(--doc-mut); }
+:root[data-dark="1"] body.docmode .blackjack .bj-card {
+  background: var(--doc-paper); color: var(--doc-ink); border-color: var(--doc-rule2); box-shadow: none;
+}
+:root[data-dark="1"] body.docmode .blackjack .bj-card.red { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .blackjack .bj-card.back {
+  color: transparent; border-color: var(--doc-rule2);
+  background: repeating-linear-gradient(45deg, var(--doc-ink), var(--doc-ink) 5px, var(--doc-paper) 5px, var(--doc-paper) 10px);
+}
+:root[data-dark="1"] body.docmode .blackjack .bj-back-mark { color: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .blackjack .bj-msg,
+:root[data-dark="1"] body.docmode .blackjack .bj-msg.win,
+:root[data-dark="1"] body.docmode .blackjack .bj-msg.bj,
+:root[data-dark="1"] body.docmode .blackjack .bj-msg.push,
+:root[data-dark="1"] body.docmode .blackjack .bj-msg.lose { color: var(--doc-ink); }
+
 /* match3 */
 .board.match3{grid-template-columns:repeat(8,1fr);gap:4px;width:100%;max-width:460px;margin:0 auto;padding:6px;background:var(--crt);border-radius:10px;box-shadow:var(--bevel-in)}
 .match3 .cell{aspect-ratio:1;min-width:0;border:none;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:clamp(13px,3.4vw,22px);font-weight:800;line-height:1;padding:0;color:#1d1722;cursor:pointer;box-shadow:var(--bevel-out);transition:transform .07s ease}
@@ -1853,6 +2023,31 @@ body.docmode .sud-key.on { background: #000000; color: #ffffff; box-shadow: none
 .match3 .g4{background:#6fcf2f}
 .match3 .g5{background:#2a4bbd;color:#fffdf3}
 .match3 .g6{background:#ff2d87;color:#fffdf3}
+
+/* match3, doc mode: each gem already carries its own glyph (◆●■▲★✦♥), so
+   colour is decorative, not information — flatten every tile to plain paper
+   with an ink glyph instead of seven backgrounds that would otherwise land
+   as seven shades of grey once desaturated. No per-cell outline either: a
+   64-cell board means 64 rounded 1px inset borders, and that many small
+   antialiased curves adds up to a measurable grey haze on its own — bare
+   glyphs on paper read clean without it. */
+body.docmode .board.match3 { background: #ffffff; }
+body.docmode .match3 .cell,
+body.docmode .match3 .g0, body.docmode .match3 .g1, body.docmode .match3 .g2,
+body.docmode .match3 .g3, body.docmode .match3 .g4, body.docmode .match3 .g5,
+body.docmode .match3 .g6 {
+  background: #ffffff; color: #000000; box-shadow: none;
+}
+body.docmode .match3 .cell.sel { outline-color: #000000; }
+:root[data-dark="1"] body.docmode .board.match3 { background: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .match3 .cell,
+:root[data-dark="1"] body.docmode .match3 .g0, :root[data-dark="1"] body.docmode .match3 .g1,
+:root[data-dark="1"] body.docmode .match3 .g2, :root[data-dark="1"] body.docmode .match3 .g3,
+:root[data-dark="1"] body.docmode .match3 .g4, :root[data-dark="1"] body.docmode .match3 .g5,
+:root[data-dark="1"] body.docmode .match3 .g6 {
+  background: var(--doc-paper); color: var(--doc-ink); box-shadow: inset 0 0 0 1px var(--doc-rule2);
+}
+:root[data-dark="1"] body.docmode .match3 .cell.sel { outline-color: var(--doc-ink); }
 
 /* deskfit (Space Allocation) */
 .deskfit { display: flex; flex-direction: column; align-items: center; gap: 14px; }
@@ -1885,6 +2080,58 @@ body.docmode .sud-key.on { background: #000000; color: #ffffff; box-shadow: none
   position: fixed; z-index: 999; display: grid; gap: 2px; pointer-events: none;
   filter: drop-shadow(0 6px 10px rgba(0,0,0,.4));
 }
+
+/* Space Allocation (deskfit): a glowing CRT board (low-opacity white cells
+   on --crt) plus six saturated block colours (df-c1..c6) both survive
+   grayscale() as a wash of mid-grey tiles. Now `lightBoard: true` (see
+   Arcade.register), so only grayscale(1) contrast(0.92) brightness(1.12)
+   runs, no invert — the older .df-slot/.df-slot-empty counter-invert rule
+   further down is scoped to stages WITHOUT .no-doc-invert and stops
+   matching once this stage carries that class, so the tray cards are
+   repainted fresh here instead. Colour never carried unique information —
+   every placed block only ever needed to read as "filled" — so all six
+   df-c1..c6 collapse to one ink fill. The alternating 3x3-zone tint
+   becomes a thicker ink rule at each zone boundary instead (same idea as
+   the nonogram grid's every-5th band, at every 3rd cell here). The
+   ok/bad drop preview is a solid ink outline versus a black/white hazard
+   hatch rather than a green/red tint — chroma is never involved, so even
+   the hatch's own edges only ever antialias between true black and true
+   white. Light theme literal #fff/#000 (the tuned variables would land
+   short of the extremes a second time through this filter); dark theme
+   has no such compounding filter on a lightBoard stage, so it reads the
+   variables directly. */
+body.docmode .df-board { background: #ffffff; box-shadow: none; }
+body.docmode .df-cell { background: #ffffff; border-color: #000000; }
+body.docmode .df-cell.df-alt { background: #ffffff; }
+body.docmode .df-board .df-cell:nth-child(9n+3),
+body.docmode .df-board .df-cell:nth-child(9n+6) { border-right-width: 2px; }
+body.docmode .df-board .df-cell:nth-child(n+28):nth-child(-n+36),
+body.docmode .df-board .df-cell:nth-child(n+55):nth-child(-n+63) { border-top-width: 2px; }
+body.docmode .df-c1, body.docmode .df-c2, body.docmode .df-c3,
+body.docmode .df-c4, body.docmode .df-c5, body.docmode .df-c6 { background: #000000; }
+body.docmode .df-cell.df-preview-ok { box-shadow: inset 0 0 0 3px #000000; background: #ffffff; }
+body.docmode .df-cell.df-preview-bad {
+  box-shadow: inset 0 0 0 3px #000000;
+  background-image: repeating-linear-gradient(45deg, #000000 0, #000000 2px, transparent 2px, transparent 6px);
+}
+body.docmode .df-slot { background: #ffffff; border-color: #000000; box-shadow: none; }
+body.docmode .df-slot-empty { border-color: #000000; }
+:root[data-dark="1"] body.docmode .df-board { background: var(--doc-paper); box-shadow: none; }
+:root[data-dark="1"] body.docmode .df-cell { background: var(--doc-paper); border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .df-cell.df-alt { background: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .df-board .df-cell:nth-child(9n+3),
+:root[data-dark="1"] body.docmode .df-board .df-cell:nth-child(9n+6) { border-right-width: 2px; border-right-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .df-board .df-cell:nth-child(n+28):nth-child(-n+36),
+:root[data-dark="1"] body.docmode .df-board .df-cell:nth-child(n+55):nth-child(-n+63) { border-top-width: 2px; border-top-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .df-c1, :root[data-dark="1"] body.docmode .df-c2, :root[data-dark="1"] body.docmode .df-c3,
+:root[data-dark="1"] body.docmode .df-c4, :root[data-dark="1"] body.docmode .df-c5, :root[data-dark="1"] body.docmode .df-c6 { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .df-cell.df-preview-ok { box-shadow: inset 0 0 0 3px var(--doc-ink); background: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .df-cell.df-preview-bad {
+  box-shadow: inset 0 0 0 3px var(--doc-ink);
+  background-image: repeating-linear-gradient(45deg, var(--doc-ink) 0, var(--doc-ink) 2px, transparent 2px, transparent 6px);
+}
+:root[data-dark="1"] body.docmode .df-slot { background: var(--doc-paper); border-color: var(--doc-ink); box-shadow: none; }
+:root[data-dark="1"] body.docmode .df-slot-empty { border-color: var(--doc-rule2); }
 
 /* checkers */
 .board.checkers { gap: 0; background: #4a3221; padding: 7px; border: 5px solid var(--ink); box-shadow: var(--hard); }
@@ -1992,11 +2239,15 @@ body.docmode .sud-key.on { background: #000000; color: #ffffff; box-shadow: none
    through this filter a second time would land short of the extremes);
    dark theme has no such compounding filter on a lightBoard stage, so it
    reads the variables directly — they ARE the final colour. */
-body.docmode .nono-wrap,
+body.docmode .nono-wrap { background: #ffffff; border-color: #000000; }
 body.docmode .nono-grid { background: #ffffff; }
-body.docmode .nono-grid > div { border-color: #000000; }
+/* the doc-mode stage runs at a non-integer CSS zoom (~1.8x), so a 1px
+   hairline lands on a fractional device pixel and antialiases into a
+   visible thin grey line across its whole length instead of a crisp rule —
+   widen it enough that the interior is solid ink with only the edge soft. */
+body.docmode .nono-grid > div { border-color: #000000; border-width: 2px; }
 body.docmode .nono-grid > div.band-r,
-body.docmode .nono-grid > div.band-b { border-color: #000000; }
+body.docmode .nono-grid > div.band-b { border-color: #000000; border-width: 3px; }
 body.docmode .nono-hcell { background: #ffffff; color: #000000; }
 body.docmode .corner { background: #ffffff; color: #000000; }
 body.docmode .gcell { background: #ffffff; }
@@ -2004,7 +2255,7 @@ body.docmode .gcell:hover { box-shadow: inset 0 0 0 3px #000000; }
 body.docmode .gcell.filled { background: #000000; }
 body.docmode .gcell.marked::after { color: #000000; }
 body.docmode .gcell.error { background: #ffffff; box-shadow: inset 0 0 0 2px #000000; }
-:root[data-dark="1"] body.docmode .nono-wrap,
+:root[data-dark="1"] body.docmode .nono-wrap { background: var(--doc-paper); border-color: var(--doc-ink); }
 :root[data-dark="1"] body.docmode .nono-grid { background: var(--doc-paper); }
 :root[data-dark="1"] body.docmode .nono-grid > div { border-color: var(--doc-rule2); }
 :root[data-dark="1"] body.docmode .nono-grid > div.band-r,
@@ -2056,6 +2307,46 @@ body.docmode .fire-plot {
 .cell.prev-ok { background: #2f7a3a; }
 .cell.prev-bad { background: #8a2a1a; }
 @media (max-width: 640px) { .battleship { --bsc: min(27px, 7vw); } .battleship .panelrow { gap: 10px; } }
+
+/* Battleship is `lightBoard: true` (see Arcade.register); its dark navy
+   water (#1c3a5c), red hit/sunk fills, and the grey ship/ghost/preview tints
+   are all non-pure colours that would either invert to a flat mid-grey (the
+   same "dark backdrop doesn't invert to white" failure Reversi/Checkers hit
+   above) or survive plain grayscale as a visible grey once the invert is
+   dropped, and the board's own --ink border/shadow does too, for the same
+   "authored non-pure-black" reason as Pig/Sudoku above. Redraw the whole
+   board in paper/ink instead: a black board background showing through the
+   cell gaps as grid lines, white water cells, and filled/hollow ink for hit
+   vs. unhit — the same move used throughout this file. The ok/bad placement
+   preview is told apart by border style (solid/dashed) rather than colour,
+   so it survives grayscale for free. Literal #000/#fff for the light doc
+   theme; the dark doc theme runs no filter on a lightBoard stage, so the
+   --doc-ink/--doc-paper/--doc-rule variables are already the correct final
+   colour there. */
+body.docmode .bs-board { background: #000000; border-color: #000000; box-shadow: none; }
+body.docmode .bs-board .bs-lab { color: #ffffff; }
+body.docmode .bs-board .cell { background: #ffffff; border-color: #000000; }
+body.docmode .bs-them .cell.water.live:hover { background: #f2f2f2; }
+body.docmode .cell.miss { background: #ffffff; }
+body.docmode .cell.miss::after { background: #000000; }
+body.docmode .cell.hit,
+body.docmode .cell.sunk { background: #000000; }
+body.docmode .battleship .bs-me .cell.ship { background: #ffffff; box-shadow: inset 0 0 0 2px #000000; }
+body.docmode .cell.ghost { background: #ffffff; box-shadow: inset 0 0 0 1px #000000; }
+body.docmode .cell.prev-ok { background: #ffffff; box-shadow: inset 0 0 0 2px #000000; }
+body.docmode .cell.prev-bad { background: #ffffff; box-shadow: inset 0 0 0 2px #000000; border-style: dashed; }
+:root[data-dark="1"] body.docmode .bs-board { background: var(--doc-ink); border-color: var(--doc-ink); box-shadow: none; }
+:root[data-dark="1"] body.docmode .bs-board .bs-lab { color: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .bs-board .cell { background: var(--doc-paper); border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .bs-them .cell.water.live:hover { background: var(--doc-rule); }
+:root[data-dark="1"] body.docmode .cell.miss { background: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .cell.miss::after { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .cell.hit,
+:root[data-dark="1"] body.docmode .cell.sunk { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .battleship .bs-me .cell.ship { background: var(--doc-paper); box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .cell.ghost { background: var(--doc-paper); box-shadow: inset 0 0 0 1px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .cell.prev-ok { background: var(--doc-paper); box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .cell.prev-bad { background: var(--doc-paper); box-shadow: inset 0 0 0 2px var(--doc-ink); border-style: dashed; }
 
 /* ============ CRT mode — "the boss's old 15-inch" ============ */
 body.crt::after {
@@ -2216,6 +2507,25 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
   box-shadow: var(--bevel-in); background: var(--label); color: var(--ink); width: 100%; box-sizing: border-box; }
 .type-input:focus { outline: 3px solid var(--grape); outline-offset: 1px; }
 
+/* Data Entry doc mode: literal extremes — the tan passage box, muted
+   untyped-character ink, banana cursor highlight and grape focus ring all
+   survive lightBoard's grayscale as visible mid-greys. The already-typed
+   vs. not-yet-typed distinction collapses to plain black text (grayscale
+   would have erased the colour cue anyway); the current character still
+   reads via a solid ink block instead. */
+body.docmode .type-text { background: #ffffff; border-color: #000000; box-shadow: none; color: #000000; }
+body.docmode .type-text .ch.ok { color: #000000; }
+body.docmode .type-text .ch.cur { background: #000000; color: #ffffff; box-shadow: none; }
+body.docmode .type-text .ch.cur.bad { background: #ffffff; color: #000000; box-shadow: inset 0 0 0 2px #000000; }
+body.docmode .type-input { background: #ffffff; border-color: #000000; box-shadow: none; color: #000000; }
+body.docmode .type-input:focus { outline-color: #000000; }
+:root[data-dark="1"] body.docmode .type-text { background: var(--doc-paper); border-color: var(--doc-rule2); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .type-text .ch.ok { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .type-text .ch.cur { background: var(--doc-ink); color: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .type-text .ch.cur.bad { background: var(--doc-paper); color: var(--doc-ink); box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .type-input { background: var(--doc-paper); border-color: var(--doc-rule2); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .type-input:focus { outline-color: var(--doc-ink); }
+
 /* Busywork — idle/incremental */
 .busywork { width: 100%; max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
 .bw-top { display: flex; gap: 12px; align-items: stretch; flex-wrap: wrap; }
@@ -2240,6 +2550,44 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 .bw-up-cost { grid-column: 2; grid-row: 1 / span 2; align-self: center; font: 700 13px "Courier New", monospace; }
 .bw-noups { font: 12px Verdana, sans-serif; color: var(--ink3); padding: 4px; }
 
+/* Busywork: the hire-row card (tan --paper, var(--ink) border+bevel) and
+   every label's ink2/ink3 text colour all survive grayscale() as a wash of
+   mid-grey — same trap as the rest of this page, and the plain body{color:
+   var(--ink)} default that .bw-gen-name/.bw-up-name/.bw-up-cost inherit
+   with no colour rule of their own would too. It's `lightBoard: true`
+   (see Arcade.register), so only grayscale(1) contrast(0.92)
+   brightness(1.12) runs, no invert. Setting the base colour once on
+   .busywork covers every unstyled label via inheritance; the explicit
+   ink2/ink3 rules below still need their own override since a child's own
+   `color` wins over what it inherits. The shared .btn rule elsewhere in
+   this file reads var(--doc-ink) directly, which is exactly the tuned-
+   variable-through-the-filter-twice trap described above — .bw-buy/.bw-up/
+   .bw-file/.bw-reorg .btn are overridden again here, scoped under
+   .busywork, to go pure ink instead. Light theme literal #fff/#000 (the
+   tuned variables would land short of the extremes a second time through
+   this filter); dark theme has no such compounding filter on a lightBoard
+   stage, so it reads the variables directly. */
+body.docmode .busywork { color: #000000; }
+body.docmode .bw-gen { background: #ffffff; border-color: #000000; box-shadow: none; }
+body.docmode .bw-h, body.docmode .bw-own,
+body.docmode .bw-gen-blurb, body.docmode .bw-up-desc, body.docmode .bw-noups { color: #000000; }
+body.docmode .busywork .btn { background: #ffffff; color: #000000; border-color: #000000; }
+body.docmode .busywork .btn.primary { border-width: 1.5px; }
+body.docmode .busywork .btn:hover { background: #f0f0f0; }
+/* the base .btn:disabled rule drops opacity to .5 — on solid ink that
+   blends with the paper behind it into exactly the mid-grey this whole
+   pass exists to remove. Full-strength ink with a dashed border (the
+   codebase's established "unavailable" idiom — see df-slot-empty,
+   hn-peg.sel) instead of a faded one. */
+body.docmode .busywork .btn:disabled { opacity: 1; color: #000000; border-color: #000000; border-style: dashed; }
+:root[data-dark="1"] body.docmode .busywork { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .bw-gen { background: var(--doc-paper); border-color: var(--doc-rule2); box-shadow: none; }
+:root[data-dark="1"] body.docmode .bw-h, :root[data-dark="1"] body.docmode .bw-own,
+:root[data-dark="1"] body.docmode .bw-gen-blurb, :root[data-dark="1"] body.docmode .bw-up-desc, :root[data-dark="1"] body.docmode .bw-noups { color: var(--doc-mut); }
+:root[data-dark="1"] body.docmode .busywork .btn { background: var(--doc-paper); color: var(--doc-ink); border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .busywork .btn:hover { background: var(--doc-rule); }
+:root[data-dark="1"] body.docmode .busywork .btn:disabled { opacity: 1; color: var(--doc-mut); border-color: var(--doc-rule2); border-style: dashed; }
+
 /* Word Search */
 .ws-wrap { width: 100%; max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; align-items: center; }
 .ws-board { display: grid; gap: 2px; background: var(--ink); border: 4px solid var(--ink); box-shadow: var(--hard);
@@ -2253,6 +2601,25 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 .ws-word { font: 700 13px "Courier New", monospace; color: var(--ink2); border: 2px solid var(--ink);
   background: var(--paper); padding: 3px 8px; box-shadow: 2px 2px 0 0 var(--ink); }
 .ws-word.got { color: var(--ink3); background: var(--paper2); text-decoration: line-through; box-shadow: none; opacity: .7; }
+
+/* Word Search doc mode: literal extremes — the ink board frame, label-tint
+   cells, banana/lime selection highlights and the muted word-list chips all
+   survive lightBoard's grayscale as visible mid-greys. Selected/found cells
+   keep a filled/hollow ink distinction instead of two different greys. */
+body.docmode .ws-board { background: #000000; border-color: #000000; box-shadow: none; }
+body.docmode .ws-cell { background: #ffffff; color: #000000; }
+body.docmode .ws-cell.sel { background: #000000; color: #ffffff; }
+body.docmode .ws-cell.got { background: #ffffff; color: #000000; box-shadow: inset 0 0 0 2px #000000; }
+body.docmode .ws-cell.got.sel { background: #000000; color: #ffffff; }
+body.docmode .ws-word { color: #000000; border-color: #000000; background: #ffffff; box-shadow: 2px 2px 0 0 #000000; }
+body.docmode .ws-word.got { color: #ffffff; background: #000000; box-shadow: none; opacity: 1; }
+:root[data-dark="1"] body.docmode .ws-board { background: var(--doc-ink); border-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .ws-cell { background: var(--doc-paper); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .ws-cell.sel { background: var(--doc-ink); color: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .ws-cell.got { background: var(--doc-paper); color: var(--doc-ink); box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .ws-cell.got.sel { background: var(--doc-ink); color: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .ws-word { color: var(--doc-ink); border-color: var(--doc-rule2); background: var(--doc-paper); box-shadow: 2px 2px 0 0 var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .ws-word.got { color: var(--doc-paper); background: var(--doc-mut); box-shadow: none; opacity: 1; }
 
 /* Video Poker */
 .vp-table { width: 100%; max-width: 460px; margin: 0 auto 14px; border: 3px solid var(--ink); box-shadow: var(--bevel-out);
@@ -2276,6 +2643,33 @@ body.colorsafe .flood-swatch { display: grid; place-items: center; font: 700 20p
 .vp-controls { text-align: center; margin-bottom: 8px; }
 .vp-deal { font-size: 16px; padding: 10px 28px; }
 .vp-status { text-align: center; font: 13px Verdana, sans-serif; color: var(--ink2); min-height: 18px; }
+
+/* Incentive Draw doc mode: the pay table, card faces (rank+suit are plain
+   Unicode glyphs, not emoji, so CSS `color` reaches them fine) and the
+   striped face-down back all survive lightBoard's grayscale as visible
+   mid-greys — literal extremes throughout instead. The face-down back keeps
+   a solid ink fill rather than its two-tone stripe (a stripe of two
+   near-identical greys after grayscale is exactly the wash this is fixing). */
+body.docmode .vp-table { background: #ffffff; border-color: #000000; box-shadow: none; }
+body.docmode .vp-pay { color: #000000; border-bottom-color: #000000; }
+body.docmode .vp-pay.lit { background: #000000; color: #ffffff; }
+body.docmode .vp-pay-n { color: #000000; }
+body.docmode .vp-card { background: #ffffff; border-color: #000000; box-shadow: none; color: #000000; }
+body.docmode .vp-card.red { color: #000000; }
+body.docmode .vp-card.back { background: #000000; }
+body.docmode .vp-hold { background: #000000; color: #ffffff; }
+body.docmode .vp-card.held { outline-color: #000000; }
+body.docmode .vp-status { color: #000000; }
+:root[data-dark="1"] body.docmode .vp-table { background: var(--doc-paper); border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .vp-pay { color: var(--doc-ink); border-bottom-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .vp-pay.lit { background: var(--doc-ink); color: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .vp-pay-n { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .vp-card { background: var(--doc-paper); border-color: var(--doc-rule2); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .vp-card.red { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .vp-card.back { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .vp-hold { background: var(--doc-ink); color: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .vp-card.held { outline-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .vp-status { color: var(--doc-ink2); }
 
 /* Rave Mode */
 .rave-warn { max-width: 460px; margin: 10px auto; text-align: center; border: 3px solid var(--ink);
@@ -2572,6 +2966,23 @@ body.docmode .sb-label {
 .rps-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
 .rps-btn { font-size: 15px; }
 
+/* Desk Duel doc mode: the hand glyphs are colour emoji (baked font colour,
+   not currentColor) — filter: brightness(0) on the inner .rps-ico span forces
+   every opaque emoji pixel to solid black without also blackening the card/
+   button box around it. Card/verdict chrome gets the usual literal-extremes
+   treatment (var(--ink2)/var(--ink3)/--lime/--tomato all survive lightBoard's
+   grayscale as visible mid-greys). */
+:root:not([data-dark="1"]) body.docmode .rps-ico { filter: brightness(0); }
+body.docmode .rps-lbl { color: #000000; }
+body.docmode .rps-hand { background: #ffffff; border-color: #000000; box-shadow: none; }
+body.docmode .rps-verdict { color: #000000; }
+body.docmode .rps-verdict.win, body.docmode .rps-verdict.lose, body.docmode .rps-verdict.tie { color: #000000; }
+:root[data-dark="1"] body.docmode .rps-lbl { color: var(--doc-mut); }
+:root[data-dark="1"] body.docmode .rps-hand { background: var(--doc-paper); border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .rps-verdict { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .rps-verdict.win, :root[data-dark="1"] body.docmode .rps-verdict.lose,
+:root[data-dark="1"] body.docmode .rps-verdict.tie { color: var(--doc-ink); }
+
 /* ================= Hangman ================= */
 .hangman { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 14px; }
 .hm-gallows { font-size: 54px; line-height: 1; }
@@ -2636,6 +3047,18 @@ body.docmode .pig .pig-btns .btn { color: #000000 !important; border-color: #000
 .hl-msg.win { color: var(--lime); } .hl-msg.lose { color: var(--tomato); }
 .hl-btns { display: flex; gap: 12px; }
 
+/* Higher or Lower doc mode: rank+suit are plain Unicode glyphs (not emoji),
+   so CSS `color` reaches them fine — literal extremes for the card faces,
+   the grape face-down back, and the win/lose message. */
+body.docmode .hl-card { background: #ffffff; border-color: #000000; box-shadow: none; color: #000000; }
+body.docmode .hl-card.red { color: #000000; }
+body.docmode .hl-card.back { background: #000000; color: #ffffff; }
+body.docmode .hl-msg.win, body.docmode .hl-msg.lose { color: #000000; }
+:root[data-dark="1"] body.docmode .hl-card { background: var(--doc-paper); border-color: var(--doc-rule2); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .hl-card.red { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .hl-card.back { background: var(--doc-ink); color: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .hl-msg.win, :root[data-dark="1"] body.docmode .hl-msg.lose { color: var(--doc-ink); }
+
 /* ================= Tower of Hanoi ================= */
 .hanoi-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 14px; width: 100%; }
 .hanoi { display: flex; gap: 10px; width: 100%; max-width: 560px; }
@@ -2649,6 +3072,31 @@ body.docmode .pig .pig-btns .btn { color: #000000 !important; border-color: #000
 .hn-disk.d4 { background: var(--teal); } .hn-disk.d5 { background: var(--grape); } .hn-disk.d6 { background: var(--hotpink); }
 .hn-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
 .hn-msg.win { color: var(--lime); } .hn-msg.lose { color: var(--tomato); }
+
+/* Tower of Hanoi: the tan peg panel (--paper2), brown rod (--shade), and six
+   rainbow disk colours (tomato/banana/lime/teal/grape/hotpink) all survive
+   grayscale() as a wash of mid-grey — the classic "authored colour isn't
+   pure black/white" failure. Disks never needed colour to tell apart:
+   they're already ordered by WIDTH (bigger disk = wider bar), so every
+   size renders as the same paper-white bar with an ink outline — a clean
+   nested-bars line diagram instead of a rainbow stack. It's
+   `lightBoard: true` (see Arcade.register), so only grayscale(1)
+   contrast(0.92) brightness(1.12) runs, no invert. Light theme literal
+   #fff/#000 (the tuned variables would land short of the extremes a
+   second time through this filter); dark theme has no such compounding
+   filter on a lightBoard stage, so it reads the variables directly. */
+body.docmode .hn-peg { background: #ffffff; border-color: #000000; }
+body.docmode .hn-peg.sel { outline-color: #000000; }
+body.docmode .hn-rod { background: #000000; }
+body.docmode .hn-disk { border-color: #000000; }
+body.docmode .hn-disk.d1, body.docmode .hn-disk.d2, body.docmode .hn-disk.d3,
+body.docmode .hn-disk.d4, body.docmode .hn-disk.d5, body.docmode .hn-disk.d6 { background: #ffffff; }
+:root[data-dark="1"] body.docmode .hn-peg { background: var(--doc-paper); border-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .hn-peg.sel { outline-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .hn-rod { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .hn-disk { border-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .hn-disk.d1, :root[data-dark="1"] body.docmode .hn-disk.d2, :root[data-dark="1"] body.docmode .hn-disk.d3,
+:root[data-dark="1"] body.docmode .hn-disk.d4, :root[data-dark="1"] body.docmode .hn-disk.d5, :root[data-dark="1"] body.docmode .hn-disk.d6 { background: var(--doc-paper); }
 
 /* ================= Word Scramble (anagram) ================= */
 .anagram { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 16px; }
@@ -2697,6 +3145,31 @@ body.docmode .pig .pig-btns .btn { color: #000000 !important; border-color: #000
 .gk-cell.last::before { content: ''; position: absolute; inset: 28%; border: 2px solid var(--tomato); border-radius: 50%; z-index: 1; }
 .gk-cell.win { box-shadow: inset 0 0 0 3px var(--lime); }
 
+/* gomoku, doc mode: already `lightBoard: true` (see Arcade.register), so the
+   blanket invert is already off — but the wood-tan cell and the two radial
+   stone gradients were never given a doc-mode palette of their own, so they
+   still land as several shades of grey under the gentler lightBoard filter.
+   Flat ink vs. paper: a solid stone for the human, a hollow ring for the
+   deskmate. */
+body.docmode .gk-msg,
+body.docmode .gk-msg.win,
+body.docmode .gk-msg.lose { color: #000000; }
+body.docmode .gk-grid { background: #000000; border-color: #000000; box-shadow: none; }
+body.docmode .gk-cell { background: #ffffff; }
+body.docmode .gk-cell.b::after { background: #000000; }
+body.docmode .gk-cell.w::after { background: #ffffff; box-shadow: inset 0 0 0 2px #000000; }
+body.docmode .gk-cell.last::before { border-color: #000000; }
+body.docmode .gk-cell.win { box-shadow: inset 0 0 0 3px #000000; }
+:root[data-dark="1"] body.docmode .gk-msg,
+:root[data-dark="1"] body.docmode .gk-msg.win,
+:root[data-dark="1"] body.docmode .gk-msg.lose { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .gk-grid { background: var(--doc-ink); border-color: var(--doc-ink); box-shadow: none; }
+:root[data-dark="1"] body.docmode .gk-cell { background: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .gk-cell.b::after { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .gk-cell.w::after { background: var(--doc-paper); box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .gk-cell.last::before { border-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .gk-cell.win { box-shadow: inset 0 0 0 3px var(--doc-ink); }
+
 /* ================= Number Cracker (bulls & cows) ================= */
 .cracker { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 14px; width: 100%; max-width: 420px; margin: 0 auto; }
 .crk-help { font: 600 12px/1.4 Verdana, sans-serif; color: var(--ink2); text-align: center; }
@@ -2713,6 +3186,41 @@ body.docmode .pig .pig-btns .btn { color: #000000 !important; border-color: #000
 .crk-input.shake { animation: ana-shake .3s; }
 .crk-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
 .crk-msg.win { color: var(--lime); } .crk-msg.lose { color: var(--tomato); }
+
+/* Number Cracker: the tan guess-row background (--paper2), var(--ink) text/
+   borders, and the banana "cow" peg all survive grayscale() as a wash of
+   mid-grey — same trap as everywhere else on this page. It's
+   `lightBoard: true` (see Arcade.register), so only grayscale(1)
+   contrast(0.92) brightness(1.12) runs, no invert. A cow peg is documented
+   as hollow (see .crk-help's "○ = right digit, wrong spot") but was
+   painted with a solid yellow fill — doc mode actually makes it hollow,
+   which needs no colour at all. The answer field auto-focuses after every
+   guess, so its :focus-visible ring and default placeholder dimming are
+   always on screen, not just on an occasional hover — overridden here the
+   same way .mr-input does. Light theme literal #fff/#000 (the tuned
+   variables would land short of the extremes a second time through this
+   filter); dark theme has no such compounding filter on a lightBoard
+   stage, so it reads the variables directly. */
+body.docmode .crk-help { color: #000000; }
+body.docmode .crk-row { background: #ffffff; border-color: #000000; }
+body.docmode .crk-digit { color: #000000; }
+body.docmode .crk-peg { border-color: #000000; }
+body.docmode .crk-peg.bull { background: #000000; }
+body.docmode .crk-peg.cow { background: transparent; }
+body.docmode .crk-input { border-color: #000000; background: #ffffff; color: #000000; box-shadow: none; }
+body.docmode .crk-input:focus-visible { outline-color: #000000; }
+body.docmode .crk-input::placeholder { color: #000000; opacity: 1; }
+body.docmode .crk-msg.win, body.docmode .crk-msg.lose { color: #000000; }
+:root[data-dark="1"] body.docmode .crk-help { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .crk-row { background: var(--doc-paper); border-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .crk-digit { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .crk-peg { border-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .crk-peg.bull { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .crk-peg.cow { background: transparent; }
+:root[data-dark="1"] body.docmode .crk-input { border-color: var(--doc-ink); background: var(--doc-paper); color: var(--doc-ink); box-shadow: none; }
+:root[data-dark="1"] body.docmode .crk-input:focus-visible { outline-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .crk-input::placeholder { color: var(--doc-ink); opacity: 1; }
+:root[data-dark="1"] body.docmode .crk-msg.win, :root[data-dark="1"] body.docmode .crk-msg.lose { color: var(--doc-ink); }
 
 /* ================= Peg Solitaire ================= */
 .pegs { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 14px; }
@@ -2733,6 +3241,19 @@ body.docmode .pig .pig-btns .btn { color: #000000 !important; border-color: #000
 .slot-msg.win { color: var(--lime); } .slot-msg.lose { color: var(--tomato); }
 .slot-btns { display: flex; gap: 10px; }
 
+/* Quarterly Slots doc mode: literal extremes for the reel window/glass, and
+   filter: brightness(0) on the inner .slot-sym span forces the colour-emoji
+   reel symbols to a solid black silhouette (baked font colour, not
+   currentColor — CSS `color` can't touch them) without blackening the reel's
+   own white background the way a filter on .slot-reel itself would. */
+body.docmode .slot-window { background: #000000; border-color: #000000; box-shadow: none; }
+body.docmode .slot-reel { background: #ffffff; }
+:root:not([data-dark="1"]) body.docmode .slot-sym { filter: brightness(0); }
+body.docmode .slot-msg.win, body.docmode .slot-msg.lose { color: #000000; }
+:root[data-dark="1"] body.docmode .slot-window { background: var(--doc-ink); border-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .slot-reel { background: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .slot-msg.win, :root[data-dark="1"] body.docmode .slot-msg.lose { color: var(--doc-ink); }
+
 /* ================= Timesheet Math ================= */
 .mathrace { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 18px; }
 .mr-q { font: 800 clamp(32px, 8vw, 56px) Impact, "Arial Black", sans-serif; color: var(--ink); letter-spacing: 1px; }
@@ -2741,6 +3262,32 @@ body.docmode .pig .pig-btns .btn { color: #000000 !important; border-color: #000
 .mr-input { font: 800 26px Impact, "Arial Black", sans-serif; width: 130px; text-align: center; padding: 8px; border: 3px solid var(--ink); border-radius: 6px; background: var(--label); color: var(--ink); box-shadow: var(--bevel-in); }
 .mr-msg { font: 700 15px Verdana, sans-serif; min-height: 22px; text-align: center; }
 .mr-msg.win { color: var(--lime); }
+
+/* Timesheet Math: the sum, the answer field, and the win message all read
+   var(--ink)/var(--lime) — already dark/bright but not pure black/white, so
+   the lightBoard filter's brightness lift turns them into a visible grey
+   (same trap as everywhere else on this page). It's `lightBoard: true`
+   (see Arcade.register), so only grayscale(1) contrast(0.92)
+   brightness(1.12) runs, no invert. Light theme literal #fff/#000 (the
+   tuned variables would land short of the extremes a second time through
+   this filter); dark theme has no such compounding filter on a lightBoard
+   stage, so it reads the variables directly. */
+body.docmode .mr-q { color: #000000; }
+body.docmode .mr-input { border-color: #000000; background: #ffffff; color: #000000; box-shadow: none; }
+/* the answer field auto-focuses on every question, so the sitewide
+   :focus-visible ring (var(--grape), a purple that survives grayscale()
+   as visible grey) and the browser's own default placeholder dimming are
+   both always on screen here, not just on a rare hover/focus — override
+   both for this field alone, same as .type-input/.vp-card/.hn-peg.sel
+   already do elsewhere in this file. */
+body.docmode .mr-input:focus-visible { outline-color: #000000; }
+body.docmode .mr-input::placeholder { color: #000000; opacity: 1; }
+body.docmode .mr-msg.win { color: #000000; }
+:root[data-dark="1"] body.docmode .mr-q { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .mr-input { border-color: var(--doc-ink); background: var(--doc-paper); color: var(--doc-ink); box-shadow: none; }
+:root[data-dark="1"] body.docmode .mr-input:focus-visible { outline-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .mr-input::placeholder { color: var(--doc-ink); opacity: 1; }
+:root[data-dark="1"] body.docmode .mr-msg.win { color: var(--doc-ink); }
 
 /* ================= Dots and Boxes ================= */
 .dotsboxes { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 16px; }
@@ -2785,6 +3332,37 @@ body.docmode .pig .pig-btns .btn { color: #000000 !important; border-color: #000
 .yz-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
 .yz-msg.win { color: var(--lime); }
 
+/* Deadline Dice (yahtzee): the die face, the tan score-row background
+   (--paper2), a banana "held" tint, and a partial-opacity "filled" row
+   (opacity .72 over --chrome, a metallic grey to start with) all survive
+   grayscale() — or are already grey outright — as a wash of mid-tone.
+   It's `lightBoard: true` (see Arcade.register), so only grayscale(1)
+   contrast(0.92) brightness(1.12) runs, no invert. A held die goes solid
+   ink with paper pips (filled vs hollow, same trick as Noughts' win line
+   and Escalate's "you" cell) instead of a yellow tint; a filled score row
+   goes solid ink with paper text (its own number is what actually marks
+   it "done" — the tint was decorative), full opacity, instead of a faded
+   grey slab. Light theme literal #fff/#000 (the tuned variables would
+   land short of the extremes a second time through this filter); dark
+   theme has no such compounding filter on a lightBoard stage, so it
+   reads the variables directly. */
+body.docmode .yz-die { background: #ffffff; border-color: #000000; box-shadow: none; color: #000000; }
+body.docmode .yz-die.held { background: #000000; color: #ffffff; box-shadow: none; }
+body.docmode .yz-row { border-color: #000000; background: #ffffff; color: #000000; }
+body.docmode .yz-row.pickable:hover { background: #f0f0f0; }
+body.docmode .yz-row.filled { opacity: 1; background: #000000; color: #ffffff; }
+body.docmode .yz-row.bonus { background: transparent; border-color: #000000; }
+body.docmode .yz-val.preview { color: #000000; }
+body.docmode .yz-msg.win { color: #000000; }
+:root[data-dark="1"] body.docmode .yz-die { background: var(--doc-paper); border-color: var(--doc-ink); box-shadow: none; color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .yz-die.held { background: var(--doc-ink); color: var(--doc-paper); box-shadow: none; }
+:root[data-dark="1"] body.docmode .yz-row { border-color: var(--doc-rule2); background: var(--doc-paper); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .yz-row.pickable:hover { background: var(--doc-rule); }
+:root[data-dark="1"] body.docmode .yz-row.filled { opacity: 1; background: var(--doc-ink); color: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .yz-row.bonus { background: transparent; border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .yz-val.preview { color: var(--doc-mut); }
+:root[data-dark="1"] body.docmode .yz-msg.win { color: var(--doc-ink); }
+
 /* ================= Ultimate Noughts (uttt) ================= */
 .uttt { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px; width: 100%; }
 .uttt-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
@@ -2806,6 +3384,35 @@ body.docmode .pig .pig-btns .btn { color: #000000 !important; border-color: #000
 .uttt-cell:disabled { cursor: default; }
 .uttt-board.won-you .uttt-cell, .uttt-board.won-cpu .uttt-cell, .uttt-board.drawn .uttt-cell { opacity: .28; }
 
+/* Ultimate Noughts doc mode: X/O are plain Unicode glyphs (not emoji), so
+   CSS `color` reaches them fine. Literal extremes throughout — the paper2/
+   banana/teal/tomato surfaces here all survive lightBoard's grayscale as
+   visible mid-greys. The grid's own ink background becomes the gutter
+   between paper-white small boards, same look as checkers' board frame. */
+body.docmode .uttt-msg.win, body.docmode .uttt-msg.lose { color: #000000; }
+body.docmode .uttt-grid { background: #000000; border-color: #000000; box-shadow: none; }
+body.docmode .uttt-board { background: #ffffff; }
+body.docmode .uttt-board.active { background: #ffffff; box-shadow: inset 0 0 0 2px #000000; }
+body.docmode .uttt-board.won-you, body.docmode .uttt-board.won-cpu, body.docmode .uttt-board.drawn { background: #ffffff; }
+body.docmode .uttt-board.won-you::after, body.docmode .uttt-board.won-cpu::after { color: #000000; }
+body.docmode .uttt-cell { border-color: #000000; background: #ffffff; color: #000000; }
+body.docmode .uttt-cell:hover:not(:disabled) { background: #000000; color: #ffffff; }
+body.docmode .uttt-cell.x, body.docmode .uttt-cell.o { color: #000000; }
+/* the shared .28-opacity dim for a decided small board would alpha-blend
+   black text into a genuine grey against the white doc cell — the big
+   ::after mark already reads as "decided", so keep cells at full opacity. */
+body.docmode .uttt-board.won-you .uttt-cell, body.docmode .uttt-board.won-cpu .uttt-cell, body.docmode .uttt-board.drawn .uttt-cell { opacity: 1; }
+:root[data-dark="1"] body.docmode .uttt-msg.win, :root[data-dark="1"] body.docmode .uttt-msg.lose { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .uttt-grid { background: var(--doc-ink); border-color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .uttt-board { background: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .uttt-board.active { background: var(--doc-paper); box-shadow: inset 0 0 0 2px var(--doc-ink); }
+:root[data-dark="1"] body.docmode .uttt-board.won-you, :root[data-dark="1"] body.docmode .uttt-board.won-cpu,
+:root[data-dark="1"] body.docmode .uttt-board.drawn { background: var(--doc-paper); }
+:root[data-dark="1"] body.docmode .uttt-board.won-you::after, :root[data-dark="1"] body.docmode .uttt-board.won-cpu::after { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .uttt-cell { border-color: var(--doc-rule2); background: var(--doc-paper); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .uttt-cell:hover:not(:disabled) { background: var(--doc-rule); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .uttt-cell.x, :root[data-dark="1"] body.docmode .uttt-cell.o { color: var(--doc-ink); }
+
 /* ================= Desk Mancala ================= */
 .mancala { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 12px; width: 100%; }
 .mc-msg { font: 700 14px Verdana, sans-serif; min-height: 20px; text-align: center; }
@@ -2824,6 +3431,29 @@ body.docmode .pig .pig-btns .btn { color: #000000 !important; border-color: #000
 .mc-store { width: 58px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 3px solid var(--ink); border-radius: 30px; background: var(--paper2); box-shadow: inset 0 3px 10px rgba(0,0,0,.3); }
 .mc-store b { font: 900 24px Impact, "Arial Black", sans-serif; color: var(--ink); }
 .mc-slab { font: 700 9px Verdana, sans-serif; text-transform: uppercase; color: var(--ink3); }
+
+/* Desk Mancala doc mode: literal extremes — the grape board, tan pit/store
+   bowls and tomato stones all survive lightBoard's grayscale as visible
+   mid-greys, so the board becomes a solid ink slab holding paper-white pits,
+   each stone a plain ink dot. */
+body.docmode .mc-board { background: #000000; box-shadow: none; }
+body.docmode .mc-pit { background: #ffffff; border-color: #000000; box-shadow: none; }
+body.docmode .mc-pit.mine:hover:not(:disabled) { background: #000000; }
+body.docmode .mc-num { background: #ffffff; color: #000000; }
+body.docmode .mc-stones i { background: #000000; box-shadow: none; border-radius: 0; }
+body.docmode .mc-store { background: #ffffff; border-color: #000000; box-shadow: none; }
+body.docmode .mc-store b { color: #000000; }
+body.docmode .mc-slab { color: #000000; }
+body.docmode .mc-msg.win, body.docmode .mc-msg.lose { color: #000000; }
+:root[data-dark="1"] body.docmode .mc-board { background: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .mc-pit { background: var(--doc-paper); border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .mc-pit.mine:hover:not(:disabled) { background: var(--doc-rule); }
+:root[data-dark="1"] body.docmode .mc-num { background: var(--doc-paper); color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .mc-stones i { background: var(--doc-ink); border-radius: 0; }
+:root[data-dark="1"] body.docmode .mc-store { background: var(--doc-paper); border-color: var(--doc-rule2); }
+:root[data-dark="1"] body.docmode .mc-store b { color: var(--doc-ink); }
+:root[data-dark="1"] body.docmode .mc-slab { color: var(--doc-mut); }
+:root[data-dark="1"] body.docmode .mc-msg.win, :root[data-dark="1"] body.docmode .mc-msg.lose { color: var(--doc-ink); }
 /* on a phone the two fat stores squeezed the six pits to ~30px each — trim the
    stores and gaps so every pit clears a ~40px touch target */
 @media (max-width: 560px) {
@@ -3213,6 +3843,43 @@ body.docmode.in-game .view { overflow-x: visible; }
 body.docmode .gcanvas {
   border: 1px solid #d7dade; border-radius: 6px; box-shadow: none;
   background: #fff;
+}
+/* schelling/turf/ising/logistic/copycat/jam draw hard-edged ink/paper doc
+   figures at a low internal canvas resolution, then the element is scaled up
+   (often non-integer) to fit the page — the browser's default bilinear
+   canvas scaling smears every one of those hard edges into a gradient band
+   of grey pixels, which is measurable across a dense grid. Nearest-neighbour
+   scaling keeps every edge a crisp step instead, with no grey band at all.
+   Scoped to just these games' own canvases so no other game's rendering
+   (including their own non-doc pixel art) is affected. */
+body.docmode[data-game="schelling"] .gcanvas,
+body.docmode[data-game="turf"] .gcanvas,
+body.docmode[data-game="ising"] .gcanvas,
+body.docmode[data-game="logistic"] .gcanvas,
+body.docmode[data-game="copycat"] .gcanvas,
+body.docmode[data-game="jam"] .gcanvas {
+  image-rendering: pixelated;
+}
+/* maze/whack/breakout/obby/spamfilter/invaders/plinko: same fixed-resolution
+   canvas upscale-blur fix as above (own block so it never collides with
+   concurrent edits to the list above), scoped to these games' own canvases. */
+body.docmode[data-game="maze"] .gcanvas,
+body.docmode[data-game="whack"] .gcanvas,
+body.docmode[data-game="breakout"] .gcanvas,
+body.docmode[data-game="obby"] .gcanvas,
+body.docmode[data-game="spamfilter"] .gcanvas,
+body.docmode[data-game="invaders"] .gcanvas,
+body.docmode[data-game="plinko"] .gcanvas {
+  image-rendering: pixelated;
+}
+/* Reaction-Diffusion: same low-res-grid upscale-blur fix as the two blocks
+   above (own block so it never collides with concurrent edits to either),
+   scoped to just this game's own canvas. The JS side already disables canvas
+   2D smoothing for the drawImage copy in doc mode (see render() in
+   js/games/reactdiff.js); this stops the browser's own CSS upscale of the
+   canvas element from reintroducing the same blur a second time. */
+body.docmode[data-game="reactdiff"] .gcanvas {
+  image-rendering: pixelated;
 }
 /* flat, quiet control pad to match (the light-mode double-invert nets these
    colours back to exactly what is written here) */

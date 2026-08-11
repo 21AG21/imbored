@@ -169,8 +169,8 @@
          since a translucent black/white overlay still grayscales to a solid
          mid-tone under the lightBoard filter. */
       if (Arcade.docMode()) {
-        ctx.fillStyle = Engine.docPaper(); ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5;
-        ctx.beginPath(); ctx.arc(x, y, rad || R, 0, 7); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = Engine.docPaper(); ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(Math.round(x) + 0.5, Math.round(y) + 0.5, rad || R, 0, 7); ctx.fill(); ctx.stroke();
         return;
       }
       ctx.fillStyle = COLORS[color]; ctx.strokeStyle = 'rgba(0,0,0,.35)'; ctx.lineWidth = 2;

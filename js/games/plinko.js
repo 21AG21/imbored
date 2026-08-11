@@ -117,27 +117,52 @@
     }
 
     function draw() {
-      ctx.fillStyle = '#1b1630'; ctx.fillRect(0, 0, W, H);
+      const doc = Arcade.docMode();
+      ctx.fillStyle = doc ? Engine.docPaper() : '#1b1630'; ctx.fillRect(0, 0, W, H);
       // slots
       for (const s of slots) {
         const big = s.v >= SLOTVALS[0], zero = s.v === 0, neg = s.v < 0;
-        ctx.fillStyle = big ? '#3a9d3a' : neg ? '#b3312a' : zero ? '#3a3450' : s.v >= 3 ? '#6f3fa8' : '#00838d';
-        ctx.fillRect(s.x1 + 1, BOT + 4, s.x2 - s.x1 - 2, H - BOT - 8);
-        ctx.fillStyle = '#fff'; ctx.font = 'bold 13px system-ui'; ctx.textAlign = 'center';
+        const x1 = Math.round(s.x1), x2 = Math.round(s.x2);
+        if (doc) {
+          /* the big payout slots read as solid ink, the penalty slots as a
+             dashed outline, the rest plain paper-and-outline — same
+             fill/outline/dash language used elsewhere instead of colour */
+          ctx.fillStyle = big ? Engine.docInk() : Engine.docPaper();
+          ctx.fillRect(x1 + 1, BOT + 4, x2 - x1 - 2, H - BOT - 8);
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1;
+          if (neg) ctx.setLineDash([3, 2]);
+          ctx.strokeRect(x1 + 1.5, BOT + 4.5, x2 - x1 - 3, H - BOT - 9);
+          ctx.setLineDash([]);
+          ctx.fillStyle = big ? Engine.docPaper() : Engine.docInk();
+        } else {
+          ctx.fillStyle = big ? '#3a9d3a' : neg ? '#b3312a' : zero ? '#3a3450' : s.v >= 3 ? '#6f3fa8' : '#00838d';
+          ctx.fillRect(s.x1 + 1, BOT + 4, s.x2 - s.x1 - 2, H - BOT - 8);
+          ctx.fillStyle = '#fff';
+        }
+        ctx.font = 'bold 13px system-ui'; ctx.textAlign = 'center';
         ctx.fillText((s.v > 0 ? '+' : '') + s.v, (s.x1 + s.x2) / 2, BOT + 26);
       }
       ctx.textAlign = 'left';
       // pegs
-      ctx.fillStyle = '#cdbef2';
+      ctx.fillStyle = doc ? Engine.docInk() : '#cdbef2';
       for (const p of pegs) { ctx.beginPath(); ctx.arc(p.x, p.y, PEG_R, 0, 7); ctx.fill(); }
       // chips
       for (const c of chips) {
-        ctx.fillStyle = c.done ? '#8a7fb0' : '#ffcb1f';
-        ctx.beginPath(); ctx.arc(c.x, c.y, CHIP_R, 0, 7); ctx.fill();
-        ctx.strokeStyle = '#1d1722'; ctx.lineWidth = 1.5; ctx.stroke();
+        if (doc) {
+          ctx.fillStyle = c.done ? Engine.docInk() : Engine.docPaper();
+          ctx.beginPath(); ctx.arc(c.x, c.y, CHIP_R, 0, 7); ctx.fill();
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5; ctx.stroke();
+        } else {
+          ctx.fillStyle = c.done ? '#8a7fb0' : '#ffcb1f';
+          ctx.beginPath(); ctx.arc(c.x, c.y, CHIP_R, 0, 7); ctx.fill();
+          ctx.strokeStyle = '#1d1722'; ctx.lineWidth = 1.5; ctx.stroke();
+        }
       }
       // drop hint line
-      if (!over) { ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.fillRect(0, 22, W, 1); }
+      if (!over) {
+        if (doc) { ctx.fillStyle = Engine.docInk(); ctx.fillRect(0, 22, W, 1); }
+        else { ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.fillRect(0, 22, W, 1); }
+      }
     }
 
     reset();
@@ -147,6 +172,7 @@
 
   Arcade.register({
     id: 'plinko', title: 'Quarter Plinko', emoji: 'plinko', cat: 'goof', order: 44,
+    lightBoard: true,   // doc mode draws its own paper/ink palette above; the blanket invert would only flip it back
     blurb: 'Drop a chip and watch it rattle down through the pegs into a payout slot. The outer slots pay big — but the two just inside them take points away, so aiming for the edge is a gamble. Fifteen chips to a round.',
     scoreLabel: 'Best round', tags: ['luck', 'physics', 'risk'],
     how: [

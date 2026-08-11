@@ -183,6 +183,7 @@
 
   Arcade.register({
     id: 'mancala', title: 'Desk Mancala', emoji: 'mancala', cat: 'brain', order: 25,
+    lightBoard: true,   // light pit/store bowls would invert to solid black under the figure flip
     blurb: 'The count-and-capture board game, versus a deskmate. Sow your pits, chain extra turns by landing in your store, and capture across an empty pit. Most stones wins.',
     scoreLabel: 'Wins', tags: ['strategy', 'board', 'vs cpu', 'classic'],
     how: [

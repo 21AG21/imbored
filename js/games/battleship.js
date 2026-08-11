@@ -573,6 +573,7 @@
 
   Arcade.register({
     id: 'battleship',
+    lightBoard: true,   // dark navy water + red hit fills invert to flat mid-grey; see css/arcade.css
     title: 'Battleship',
     emoji: 'battleship',
     cat: 'brain',

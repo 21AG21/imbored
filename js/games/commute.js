@@ -19,7 +19,29 @@
     { kind: 'trolley', w: 50, col: '#00a6b4' }
   ];
 
-  function drawHazard(ctx, k, w, hgt) {
+  function drawHazard(ctx, k, w, hgt, doc) {
+    if (doc) {
+      /* every hazard becomes a single paper-white silhouette with a thin ink
+         outline instead of its own colour and internal detail (wheels,
+         handles, trays) — same "white fill, ink stroke" recipe as flap's
+         pipes. The 840px-wide playfield gets scaled down to fit the doc
+         column, and that minification blur turns a dense edge count into a
+         visible grey wash, so doc mode trades the per-hazard detail for a
+         single clean outline per shape (still four distinct silhouettes —
+         low, tall, flat, tall — so hazards stay tellable apart at a glance). */
+      ctx.fillStyle = Engine.docPaper();
+      ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2.5;
+      if (k.kind === 'chair') {
+        ctx.fillRect(-w / 2, -hgt / 2 + 2, w, hgt - 6); ctx.strokeRect(-w / 2, -hgt / 2 + 2, w, hgt - 6);
+      } else if (k.kind === 'cart') {
+        ctx.fillRect(-w / 2, -hgt / 2 + 4, w, hgt - 14); ctx.strokeRect(-w / 2, -hgt / 2 + 4, w, hgt - 14);
+      } else if (k.kind === 'printer') {
+        ctx.fillRect(-w / 2, -10, w, 20); ctx.strokeRect(-w / 2, -10, w, 20);
+      } else {
+        ctx.fillRect(-w / 2, -hgt / 2 + 6, w, hgt - 16); ctx.strokeRect(-w / 2, -hgt / 2 + 6, w, hgt - 16);
+      }
+      return;
+    }
     ctx.fillStyle = k.col;
     if (k.kind === 'chair') {
       ctx.fillRect(-w / 2, -4, w, 9);
@@ -205,12 +227,25 @@
     }
 
     function draw() {
-      ctx.fillStyle = '#141a26';
+      const doc = Arcade.docMode();
+      ctx.fillStyle = doc ? Engine.docPaper() : '#141a26';
       ctx.fillRect(0, 0, W, H);
 
-      /* row backgrounds */
+      /* row backgrounds: doc mode drops the five tinted row-types (every one
+         of them lands as a visible grey under lightBoard's grayscale) for
+         blank paper with a thin ink rule between rows. The belts' diagonal
+         hatch is dropped too — the figure gets scaled down to fit the doc
+         column (840px of playfield into a narrower text column), and a dense
+         field of short hairlines is exactly the texture that minification
+         blur turns into a grey wash; the belt box outlines below already
+         mark the lane without it. */
       for (let r = 0; r < ROWS; r++) {
         const y = rowY(r);
+        if (doc) {
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+          continue;
+        }
         let col = '#1e2635';
         if (r === 0 || r === 5 || r === 6) col = '#2b3548';           // safe carpet
         else if (r >= 1 && r <= 4) col = '#232c3d';                   // walkway
@@ -229,9 +264,22 @@
         }
       }
 
-      /* desks along the top */
+      /* desks along the top: filled ink = taken, hollow paper = free — the
+         same filled/hollow distinction used elsewhere instead of a second
+         grey tone. */
       for (let i = 0; i < 5; i++) {
         const x = i * (W / 5);
+        if (doc) {
+          ctx.fillStyle = desks[i] ? Engine.docInk() : Engine.docPaper();
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2.5;
+          ctx.fillRect(x + 8, rowY(11) + 6, W / 5 - 16, ROWH - 12);
+          ctx.strokeRect(x + 8, rowY(11) + 6, W / 5 - 16, ROWH - 12);
+          const dx = x + W / 10, dy = rowY(11) + ROWH / 2;
+          ctx.fillStyle = desks[i] ? Engine.docPaper() : Engine.docInk();
+          ctx.fillRect(dx - 13, dy - 8, 26, 15);
+          ctx.fillRect(dx - 4, dy + 7, 8, 5);
+          continue;
+        }
         ctx.fillStyle = desks[i] ? '#6fcf2f' : '#5d452a';
         ctx.fillRect(x + 8, rowY(11) + 6, W / 5 - 16, ROWH - 12);
         ctx.strokeStyle = '#0c1119';
@@ -248,6 +296,13 @@
       for (const b of belts) {
         const y = rowY(b.r);
         for (const it of b.items) {
+          if (doc) {
+            ctx.fillStyle = Engine.docPaper();
+            ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2.5;
+            ctx.fillRect(it.x, y + 7, it.w, ROWH - 14);
+            ctx.strokeRect(it.x, y + 7, it.w, ROWH - 14);
+            continue;
+          }
           ctx.fillStyle = '#8a6a3a';
           ctx.fillRect(it.x, y + 7, it.w, ROWH - 14);
           ctx.strokeStyle = '#0c1119';
@@ -267,7 +322,7 @@
           ctx.save();
           ctx.translate(it.x + it.w / 2, y + ROWH / 2);
           if (l.speed < 0) ctx.scale(-1, 1);
-          drawHazard(ctx, it.kind, it.w, ROWH - 8);
+          drawHazard(ctx, it.kind, it.w, ROWH - 8, doc);
           ctx.restore();
         }
       }
@@ -278,25 +333,43 @@
         ctx.save();
         ctx.translate(px, py + ROWH / 2);
         ctx.scale(s, s);
-        if (dead) {
-          ctx.fillStyle = '#e8402a';
-          ctx.beginPath();
-          for (let i = 0; i < 10; i++) {
-            const a = i / 10 * Math.PI * 2, rr = i % 2 ? 7 : 15;
-            i ? ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : ctx.moveTo(Math.cos(a) * rr, Math.sin(a) * rr);
+        if (doc) {
+          ctx.fillStyle = Engine.docPaper(); ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2.5;
+          if (dead) {
+            ctx.beginPath();
+            for (let i = 0; i < 10; i++) {
+              const a = i / 10 * Math.PI * 2, rr = i % 2 ? 7 : 15;
+              i ? ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : ctx.moveTo(Math.cos(a) * rr, Math.sin(a) * rr);
+            }
+            ctx.closePath(); ctx.fill(); ctx.stroke();
+          } else {
+            ctx.beginPath(); ctx.arc(0, -9, 5.5, 0, 7); ctx.fill(); ctx.stroke();
+            ctx.fillRect(-5, -3, 10, 11); ctx.strokeRect(-5, -3, 10, 11);
+            ctx.fillRect(-5, 8, 4, 6); ctx.strokeRect(-5, 8, 4, 6);
+            ctx.fillRect(1, 8, 4, 6); ctx.strokeRect(1, 8, 4, 6);
           }
-          ctx.closePath(); ctx.fill();
+          ctx.restore();
         } else {
-          ctx.fillStyle = '#00a6b4';
-          ctx.beginPath(); ctx.arc(0, -9, 5.5, 0, 7); ctx.fill();
-          ctx.fillRect(-5, -3, 10, 11);
-          ctx.fillRect(-5, 8, 4, 6);
-          ctx.fillRect(1, 8, 4, 6);
+          if (dead) {
+            ctx.fillStyle = '#e8402a';
+            ctx.beginPath();
+            for (let i = 0; i < 10; i++) {
+              const a = i / 10 * Math.PI * 2, rr = i % 2 ? 7 : 15;
+              i ? ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : ctx.moveTo(Math.cos(a) * rr, Math.sin(a) * rr);
+            }
+            ctx.closePath(); ctx.fill();
+          } else {
+            ctx.fillStyle = '#00a6b4';
+            ctx.beginPath(); ctx.arc(0, -9, 5.5, 0, 7); ctx.fill();
+            ctx.fillRect(-5, -3, 10, 11);
+            ctx.fillRect(-5, 8, 4, 6);
+            ctx.fillRect(1, 8, 4, 6);
+          }
+          ctx.restore();
         }
-        ctx.restore();
       }
 
-      ctx.fillStyle = '#ded6c2';
+      ctx.fillStyle = doc ? Engine.docInk() : '#ded6c2';
       ctx.font = 'bold 12px Verdana, sans-serif';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'alphabetic';
@@ -327,6 +400,7 @@
     emoji: 'commute',
     cat: 'action',
     order: 34,
+    lightBoard: true,   // doc mode draws its own paper/ink palette above; the blanket invert would only flip it back
     blurb: 'Cross the open-plan office to a free desk. Four lanes of rolling chairs first, then conveyor belts where standing on empty floor kills you.',
     scoreLabel: 'Score',
     tags: ['frogger', 'crossing', 'office', 'arcade'],

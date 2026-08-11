@@ -12,7 +12,13 @@
 
     const pCredits = api.pill('credits: 20');
     const pBest = api.pill('best: 20');
-    const reelEls = [0, 1, 2].map(() => h('div', { class: 'slot-reel' }, '❓'));
+    /* the reel symbols are colour emoji (baked font colour, not currentColor)
+       — a .slot-sym inner span lets doc mode's filter: brightness(0) force
+       them to a solid black silhouette (arcade.css) without also blackening
+       the reel's own white background, which a filter on .slot-reel itself
+       would do. */
+    const reelEls = [0, 1, 2].map(() => h('div', { class: 'slot-reel' }));
+    const symEls = reelEls.map((r) => { const s = h('span', { class: 'slot-sym' }, '❓'); r.appendChild(s); return s; });
     const msg = h('div', { class: 'slot-msg' }, 'Spin costs your bet. A pair returns it; three of a kind pays.');
     const betLabel = h('span', { class: 'pill slot-bet' }, 'bet: 1');
     const betDown = h('button', { class: 'btn tiny', type: 'button', onclick: () => setBet(bet - 1) }, '–');
@@ -33,7 +39,7 @@
     function save() { api.save('credits', credits); api.save('bestCredits', best); }
     function reset() {
       credits = 20; best = 20; bet = 1; spinning = false;
-      reelEls.forEach((r) => { r.textContent = '❓'; });
+      symEls.forEach((s) => { s.textContent = '❓'; });
       msg.textContent = 'Spin costs your bet. A pair returns it; three of a kind pays.'; msg.className = 'slot-msg';
       setBet(1); sync(); save();
       api.status('Each spin costs your bet. A pair just returns your stake — three of a kind is where the money is, and three 7s is the jackpot. The house keeps a thin edge, so a good run has to be pressed. Bet bigger for bigger swings.');
@@ -64,8 +70,8 @@
         if (disposed) { clearInterval(iv); return; }
         ticks++;
         for (let r = 0; r < 3; r++) {
-          if (ticks < settle[r]) reelEls[r].textContent = SYMS[randInt(0, SYMS.length - 1)];
-          else reelEls[r].textContent = SYMS[finals[r]];
+          if (ticks < settle[r]) symEls[r].textContent = SYMS[randInt(0, SYMS.length - 1)];
+          else symEls[r].textContent = SYMS[finals[r]];
         }
         if (ticks % 2 === 0) api.sfx.blip(400 + ticks * 20);
         if (ticks >= settle[2]) {
@@ -100,7 +106,7 @@
     credits = api.load('credits', 20);
     best = api.load('bestCredits', 20);
     setBet(Math.min(bet, Math.min(3, Math.max(1, credits))));
-    reelEls.forEach((r) => { r.textContent = '❓'; });
+    symEls.forEach((s) => { s.textContent = '❓'; });
     msg.textContent = 'Spin costs your bet. A pair returns it; three of a kind pays.'; msg.className = 'slot-msg';
     sync();
     api.status('Each spin costs your bet. A pair just returns your stake — three of a kind is where the money is, and three 7s is the jackpot. The house keeps a thin edge, so a good run has to be pressed. Bet bigger for bigger swings.');

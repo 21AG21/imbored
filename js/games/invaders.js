@@ -288,6 +288,26 @@
     }
 
     function drawInv(ix, iy, color) {
+      const doc = Arcade.docMode();
+      if (doc) {
+        /* the formation is in continuous motion so ix/iy are basically never
+           whole pixels — round to a device pixel and outline by filling ink
+           then an inset paper rect, instead of stroking a rect at a
+           fractional position, so all ~45 envelopes stay crisp every frame */
+        const x = Math.round(ix), y = Math.round(iy);
+        ctx.fillStyle = Engine.docInk();
+        ctx.fillRect(x, y, invW, invH);
+        ctx.fillStyle = Engine.docPaper();
+        ctx.fillRect(x + 2, y + 2, invW - 4, invH - 4);
+        ctx.strokeStyle = Engine.docInk();
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(x + 2, y + 2);
+        ctx.lineTo(x + invW / 2, y + invH * 0.55);
+        ctx.lineTo(x + invW - 2, y + 2);
+        ctx.stroke();
+        return;
+      }
       ctx.fillStyle = color;
       ctx.fillRect(ix, iy, invW, invH);
       ctx.strokeStyle = '#1d1722';
@@ -301,6 +321,17 @@
     }
 
     function drawShip() {
+      const doc = Arcade.docMode();
+      if (doc) {
+        ctx.fillStyle = Engine.docPaper();
+        ctx.fillRect(ship.x, shipY + 4, shipW, shipH - 4);
+        ctx.fillRect(ship.x + shipW / 2 - 3, shipY - 6, 6, 10);
+        ctx.strokeStyle = Engine.docInk();
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(ship.x, shipY + 4, shipW, shipH - 4);
+        ctx.strokeRect(ship.x + shipW / 2 - 3, shipY - 6, 6, 10);
+        return;
+      }
       ctx.fillStyle = '#00a6b4';
       ctx.fillRect(ship.x, shipY + 4, shipW, shipH - 4);
       ctx.fillRect(ship.x + shipW / 2 - 3, shipY - 6, 6, 10);
@@ -310,16 +341,19 @@
     }
 
     function draw() {
-      cv.clear('#0c1119');
-      ctx.fillStyle = 'rgba(255,255,255,0.22)';
-      for (let i = 0; i < 40; i++) {
-        const sx = (i * 97 + 13) % W;
-        const sy = (i * 53 + 29) % (H - 120);
-        ctx.fillRect(sx, sy, 2, 2);
+      const doc = Arcade.docMode();
+      cv.clear(doc ? Engine.docPaper() : '#0c1119');
+      if (!doc) {
+        ctx.fillStyle = 'rgba(255,255,255,0.22)';
+        for (let i = 0; i < 40; i++) {
+          const sx = (i * 97 + 13) % W;
+          const sy = (i * 53 + 29) % (H - 120);
+          ctx.fillRect(sx, sy, 2, 2);
+        }
       }
       for (let i = 0; i < bunkers.length; i++) {
         const b = bunkers[i];
-        ctx.fillStyle = '#6fcf2f';
+        ctx.fillStyle = doc ? Engine.docInk() : '#6fcf2f';
         for (let r = 0; r < b.rows; r++) {
           for (let c = 0; c < b.cols; c++) {
             if (b.grid[r][c]) ctx.fillRect(b.x + c * b.cell, b.y + r * b.cell, b.cell, b.cell);
@@ -331,42 +365,77 @@
         drawInv(invX(alive[i]), invY(alive[i]), alive[i].color);
       }
       if (ufo) {
-        ctx.fillStyle = '#ff2d87';
-        ctx.fillRect(ufo.x, ufo.y, ufo.w, ufo.h);
-        ctx.strokeStyle = '#1d1722';
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(ufo.x, ufo.y, ufo.w, ufo.h);
-        ctx.fillStyle = '#fffdf3';
+        if (doc) {
+          ctx.fillStyle = Engine.docPaper();
+          ctx.fillRect(ufo.x, ufo.y, ufo.w, ufo.h);
+          ctx.strokeStyle = Engine.docInk();
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(ufo.x, ufo.y, ufo.w, ufo.h);
+          ctx.fillStyle = Engine.docInk();
+        } else {
+          ctx.fillStyle = '#ff2d87';
+          ctx.fillRect(ufo.x, ufo.y, ufo.w, ufo.h);
+          ctx.strokeStyle = '#1d1722';
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(ufo.x, ufo.y, ufo.w, ufo.h);
+          ctx.fillStyle = '#fffdf3';
+        }
         ctx.font = 'bold 12px monospace';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('URGENT', ufo.x + ufo.w / 2, ufo.y + ufo.h / 2 + 1);
       }
-      ctx.fillStyle = '#ffcb1f';
+      ctx.fillStyle = doc ? Engine.docInk() : '#ffcb1f';
       for (let i = 0; i < shots.length; i++) ctx.fillRect(shots[i].x - 2, shots[i].y, 4, 10);
-      ctx.fillStyle = '#e8402a';
-      for (let i = 0; i < bombs.length; i++) ctx.fillRect(bombs[i].x - 2, bombs[i].y, 4, 10);
+      if (doc) {
+        ctx.strokeStyle = Engine.docInk();
+        ctx.lineWidth = 1.5;
+        for (let i = 0; i < bombs.length; i++) ctx.strokeRect(bombs[i].x - 2, bombs[i].y, 4, 10);
+      } else {
+        ctx.fillStyle = '#e8402a';
+        for (let i = 0; i < bombs.length; i++) ctx.fillRect(bombs[i].x - 2, bombs[i].y, 4, 10);
+      }
 
       if (!(respawnT > 0 && Math.floor(respawnT * 10) % 2 === 0)) drawShip();
 
       if (state === 'over') {
-        ctx.fillStyle = 'rgba(12,17,25,0.8)';
-        ctx.fillRect(0, 0, W, H);
-        ctx.fillStyle = '#ffcb1f';
-        ctx.font = 'bold 44px monospace';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('GAME OVER', W / 2, H / 2 - 40);
-        ctx.fillStyle = '#fffdf3';
-        ctx.font = 'bold 20px monospace';
-        ctx.fillText('Final Score ' + score, W / 2, H / 2 + 4);
-        if (result && result.isRecord) {
-          ctx.fillStyle = '#6fcf2f';
-          ctx.fillText('NEW RECORD', W / 2, H / 2 + 34);
+        if (doc) {
+          ctx.fillStyle = Engine.docPaper();
+          ctx.fillRect(0, 0, W, H);
+          ctx.strokeStyle = Engine.docInk();
+          ctx.lineWidth = 2;
+          ctx.strokeRect(30, H / 2 - 90, W - 60, 180);
+          ctx.fillStyle = Engine.docInk();
+          ctx.font = 'bold 44px monospace';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('GAME OVER', W / 2, H / 2 - 40);
+          ctx.font = 'bold 20px monospace';
+          ctx.fillText('Final Score ' + score, W / 2, H / 2 + 4);
+          if (result && result.isRecord) {
+            ctx.fillText('NEW RECORD', W / 2, H / 2 + 34);
+          }
+          ctx.font = '15px monospace';
+          ctx.fillText('Press Space or New Game to retry', W / 2, H / 2 + 70);
+        } else {
+          ctx.fillStyle = 'rgba(12,17,25,0.8)';
+          ctx.fillRect(0, 0, W, H);
+          ctx.fillStyle = '#ffcb1f';
+          ctx.font = 'bold 44px monospace';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('GAME OVER', W / 2, H / 2 - 40);
+          ctx.fillStyle = '#fffdf3';
+          ctx.font = 'bold 20px monospace';
+          ctx.fillText('Final Score ' + score, W / 2, H / 2 + 4);
+          if (result && result.isRecord) {
+            ctx.fillStyle = '#6fcf2f';
+            ctx.fillText('NEW RECORD', W / 2, H / 2 + 34);
+          }
+          ctx.fillStyle = '#cfc6ae';
+          ctx.font = '15px monospace';
+          ctx.fillText('Press Space or New Game to retry', W / 2, H / 2 + 70);
         }
-        ctx.fillStyle = '#cfc6ae';
-        ctx.font = '15px monospace';
-        ctx.fillText('Press Space or New Game to retry', W / 2, H / 2 + 70);
       }
       ctx.textAlign = 'left';
       ctx.textBaseline = 'alphabetic';
@@ -408,6 +477,7 @@
     emoji: 'invaders',
     cat: 'action',
     order: 30,
+    lightBoard: true,   // doc mode draws its own paper/ink palette above; the blanket invert would only flip it back
     blurb: 'A formation of unread email marches down the screen. Shoot every one before it reaches the bottom.',
     scoreLabel: 'Score',
     tags: ['shooter', 'arcade', 'reflex'],

@@ -2,6 +2,7 @@
 (function () {
   'use strict';
   const { h } = Engine;
+  const DOC = () => !!(window.Arcade && Arcade.docMode && Arcade.docMode());
   const W = 520, H = 640, BH = 34;
 
   function mount(root, api) {
@@ -85,6 +86,23 @@
 
     function slab(x, y, w, i, active) {
       if (y > H || y < -BH) return;
+      if (DOC()) {
+        /* the falling slab reads as a solid ink block (the "live" piece);
+           placed slabs are hollow paper with a thin ink outline — the same
+           filled/hollow move used for Escalate's "you"/"ai" cells — instead
+           of an HSL hue ramp + white-highlight/black-shadow bevel, none of
+           which are pure black/white and so all survive grayscale as grey. */
+        if (active) {
+          ctx.fillStyle = Engine.docInk();
+          ctx.fillRect(x, y, w, BH - 3);
+        } else {
+          ctx.fillStyle = Engine.docPaper();
+          ctx.fillRect(x, y, w, BH - 3);
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1;
+          ctx.strokeRect(x + 0.5, y + 0.5, Math.max(0, w - 1), BH - 4);
+        }
+        return;
+      }
       ctx.fillStyle = active ? '#ffd05a' : 'hsl(' + ((190 + i * 12) % 360) + ',52%,' + (44 + (i % 3) * 6) + '%)';
       ctx.fillRect(x, y, w, BH - 3);
       ctx.fillStyle = 'rgba(255,255,255,.12)';
@@ -94,17 +112,26 @@
     }
 
     function draw() {
-      ctx.fillStyle = '#141726';
+      const doc0 = DOC();
+      ctx.fillStyle = doc0 ? Engine.docPaper() : '#141726';
       ctx.fillRect(0, 0, W, H);
       for (let i = 0; i < stack.length; i++) slab(stack[i].x, screenTop(i), stack[i].w, i, false);
       if (!over) slab(cur.x, screenTop(cur.row), cur.w, cur.row, true);
       for (const s of slivers) {
         ctx.save();
-        ctx.globalAlpha = 0.85;
-        ctx.fillStyle = '#8892b8';
-        ctx.translate(s.sx + s.w / 2, s.sy + BH / 2);
-        ctx.rotate(s.rot);
-        ctx.fillRect(-s.w / 2, -BH / 2, s.w, BH - 3);
+        if (doc0) {
+          /* sliced-off debris: an ink-outlined chip, not a filled grey tint */
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1;
+          ctx.translate(s.sx + s.w / 2, s.sy + BH / 2);
+          ctx.rotate(s.rot);
+          ctx.strokeRect(-s.w / 2 + 0.5, -BH / 2 + 0.5, Math.max(0, s.w - 1), BH - 4);
+        } else {
+          ctx.globalAlpha = 0.85;
+          ctx.fillStyle = '#8892b8';
+          ctx.translate(s.sx + s.w / 2, s.sy + BH / 2);
+          ctx.rotate(s.rot);
+          ctx.fillRect(-s.w / 2, -BH / 2, s.w, BH - 3);
+        }
         ctx.restore();
       }
       ctx.globalAlpha = 1;
@@ -119,6 +146,7 @@
 
   Arcade.register({
     id: 'stack',
+    lightBoard: true,   // the paper/ink doc board wants plain greyscale, not an invert of its own dark #141726 backdrop
     title: 'Stack',
     emoji: 'stack',
     cat: 'action',

@@ -283,6 +283,7 @@
     emoji: 'deskfit',
     cat: 'puzzle',
     order: 16,
+    lightBoard: true,   // doc mode repaints the board/tray in css/arcade.css; the blanket invert would only flip it back
     blurb: 'A floor-plan approval queue. Drag each pending desk cluster onto the plan; fill a row, column, or department zone and it ships out, freeing the space back up.',
     scoreLabel: 'Sq ft approved',
     tags: ['blocks', 'fit', 'polyomino', 'endless'],

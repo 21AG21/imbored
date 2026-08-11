@@ -210,13 +210,14 @@
       ctx.fillStyle = doc ? Engine.docPaper() : '#151d31';
       Engine.roundRect(ctx, PAD - 8, PAD - 8, N * CELL + 16, N * CELL + 16, 14);
       ctx.fill();
-      if (doc) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5; Engine.roundRect(ctx, PAD - 8, PAD - 8, N * CELL + 16, N * CELL + 16, 14); ctx.stroke(); }
+      if (doc) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2; Engine.roundRect(ctx, PAD - 8, PAD - 8, N * CELL + 16, N * CELL + 16, 14); ctx.stroke(); }
       ctx.strokeStyle = doc ? Engine.docInk() : '#28324e';
       ctx.lineWidth = 1;
+      const gridOff = doc ? 0.5 : 0;   // half-pixel snap keeps a 1px line crisp instead of a 2px AA smear
       for (let i = 0; i <= N; i++) {
         ctx.beginPath();
-        ctx.moveTo(bx(i), by(0)); ctx.lineTo(bx(i), by(N));
-        ctx.moveTo(bx(0), by(i)); ctx.lineTo(bx(N), by(i));
+        ctx.moveTo(bx(i) + gridOff, by(0)); ctx.lineTo(bx(i) + gridOff, by(N));
+        ctx.moveTo(bx(0), by(i) + gridOff); ctx.lineTo(bx(N), by(i) + gridOff);
         ctx.stroke();
       }
 
@@ -224,7 +225,7 @@
       const ey = by(EXIT_ROW);
       ctx.fillStyle = doc ? Engine.docPaper() : '#1b2740';
       ctx.fillRect(bx(N) + 8, ey + 6, 34, CELL - 12);
-      if (doc) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5; ctx.strokeRect(bx(N) + 8, ey + 6, 34, CELL - 12); }
+      if (doc) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1; ctx.strokeRect(bx(N) + 8.5, ey + 6.5, 33, CELL - 13); }
       ctx.fillStyle = doc ? Engine.docInk() : '#ff4d5e';
       ctx.beginPath();
       ctx.moveTo(bx(N) + 16, ey + CELL / 2 - 12);
@@ -245,12 +246,16 @@
         if (doc) {
           /* no per-car colour palette, no translucent drop shadow (blends to
              grey over paper) — the red car you drive is a solid ink block,
-             every blocker is a hollow paper block with an ink outline. */
+             every blocker is a hollow paper block with an ink outline. A
+             tight corner radius (vs. the normal-mode 11) keeps the curve
+             short, since every pixel along a curved edge anti-aliases and a
+             13-car board has a lot of corners to add that up over. */
+          const rr = 0;
           ctx.fillStyle = v.red ? Engine.docInk() : Engine.docPaper();
-          Engine.roundRect(ctx, x, y, w, hh, 11);
+          Engine.roundRect(ctx, x, y, w, hh, rr);
           ctx.fill();
           ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2;
-          Engine.roundRect(ctx, x, y, w, hh, 11);
+          Engine.roundRect(ctx, x, y, w, hh, rr);
           ctx.stroke();
         } else {
           ctx.fillStyle = 'rgba(0,0,0,.32)';

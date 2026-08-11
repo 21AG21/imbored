@@ -16,11 +16,19 @@
 
     const pStreak = api.pill('streak: 0');
     const pBest = api.pill('best: 0');
-    const youCard = h('div', { class: 'rps-hand' }, '❔');
-    const cpuCard = h('div', { class: 'rps-hand' }, '❔');
+    /* the hand glyphs are colour emoji whose fill is baked into the font, not
+       currentColor — CSS `color` can't touch them. Doc mode instead targets
+       this inner .rps-ico span with `filter: brightness(0)` (arcade.css),
+       which forces every opaque emoji pixel to solid black regardless of its
+       source hue, without also blackening the card/button chrome around it. */
+    const youIco = h('span', { class: 'rps-ico' }, '❔');
+    const cpuIco = h('span', { class: 'rps-ico' }, '❔');
+    const youCard = h('div', { class: 'rps-hand' }, youIco);
+    const cpuCard = h('div', { class: 'rps-hand' }, cpuIco);
     const verdict = h('div', { class: 'rps-verdict' }, 'Throw a move.');
     const btns = h('div', { class: 'rps-btns' }, MOVES.map((m) =>
-      h('button', { class: 'btn rps-btn', type: 'button', onclick: () => play(m.id) }, m.ico + ' ' + m.label)));
+      h('button', { class: 'btn rps-btn', type: 'button', onclick: () => play(m.id) },
+        h('span', { class: 'rps-ico' }, m.ico), ' ' + m.label)));
     root.appendChild(h('div', { class: 'rps' },
       h('div', { class: 'rps-row' },
         h('div', { class: 'rps-side' }, h('span', { class: 'rps-lbl' }, 'YOU'), youCard),
@@ -44,8 +52,8 @@
         let top = 0; for (let i = 1; i < 3; i++) if (hist[i] > hist[top]) top = i;
         cpu = MOVES.find((m) => m.beats === MOVES[top].id) || MOVES[randInt(0, 2)];
       } else cpu = MOVES[randInt(0, 2)];
-      youCard.textContent = ico(myId);
-      cpuCard.textContent = cpu.ico;
+      youIco.textContent = ico(myId);
+      cpuIco.textContent = cpu.ico;
       const me = MOVES.find((m) => m.id === myId);
       if (myId === cpu.id) { verdict.textContent = 'Tie'; verdict.className = 'rps-verdict tie'; api.sfx.click(); }
       else if (me.beats === cpu.id) {
@@ -65,6 +73,7 @@
 
   Arcade.register({
     id: 'rps', title: 'Desk Duel', emoji: 'circle', cat: 'brain', order: 26,
+    lightBoard: true,   // light hand cards would invert to solid black under the figure flip
     blurb: 'Rock, paper, scissors against a deskmate who quietly reads your habits. Keep leaning on one throw and it will start punishing you for it. Chase the longest winning streak you can.',
     scoreLabel: 'Best streak', tags: ['quick', 'mind games', 'classic'],
     how: [

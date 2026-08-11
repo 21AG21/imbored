@@ -159,50 +159,119 @@
     }
 
     function draw() {
-      ctx.fillStyle = '#e7e0cf'; ctx.fillRect(0, 0, W, H);
-      /* build tiles */
-      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
-        if (onPath.has(r + ',' + c)) continue;
-        ctx.fillStyle = '#d8cfb8'; ctx.fillRect(c * CELL + 1, r * CELL + 1, CELL - 2, CELL - 2);
+      const doc = Arcade.docMode();
+      ctx.fillStyle = doc ? Engine.docPaper() : '#e7e0cf'; ctx.fillRect(0, 0, W, H);
+      /* build tiles. Doc mode fills each tile's inset with paper over a full
+         ink backdrop instead of stroking a border — a fill at integer
+         coordinates is always pixel-perfect, where a 1px stroke needs its
+         centre on an exact half-pixel to avoid splitting across two rows,
+         and with ~180 of these on screen even a slightly-off centre shows
+         up as a real amount of grey. */
+      if (doc) {
+        for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+          if (onPath.has(r + ',' + c)) continue;
+          ctx.fillStyle = Engine.docInk();
+          ctx.fillRect(c * CELL, r * CELL, CELL, CELL);
+          ctx.fillStyle = Engine.docPaper();
+          ctx.fillRect(c * CELL + 2, r * CELL + 2, CELL - 4, CELL - 4);
+        }
+      } else {
+        for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+          if (onPath.has(r + ',' + c)) continue;
+          ctx.fillStyle = '#d8cfb8'; ctx.fillRect(c * CELL + 1, r * CELL + 1, CELL - 2, CELL - 2);
+        }
       }
       /* the wire */
-      ctx.strokeStyle = '#3a3446'; ctx.lineWidth = CELL * 0.5; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-      ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.stroke();
-      ctx.strokeStyle = '#565064'; ctx.lineWidth = CELL * 0.5 - 6; ctx.stroke();
+      if (doc) {
+        /* the path is strictly axis-aligned (every waypoint segment is
+           horizontal or vertical), so a miter join renders each turn as a
+           perfect right angle with no curve at all — unlike a round join,
+           which draws a little antialiased arc at every corner */
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = CELL * 0.5; ctx.lineJoin = 'miter'; ctx.lineCap = 'butt';
+        ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.stroke();
+        ctx.strokeStyle = Engine.docPaper(); ctx.lineWidth = CELL * 0.5 - 6; ctx.stroke();
+        ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      } else {
+        ctx.strokeStyle = '#3a3446'; ctx.lineWidth = CELL * 0.5; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+        ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.stroke();
+        ctx.strokeStyle = '#565064'; ctx.lineWidth = CELL * 0.5 - 6; ctx.stroke();
+      }
       /* inbox at the end */
       const end2 = pts[pts.length - 1];
-      ctx.fillStyle = '#1c7a4a'; ctx.fillRect(end2.x - 14, end2.y - 12, 28, 24);
-      ctx.fillStyle = '#fffdf3'; ctx.font = 'bold 9px Verdana'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      if (doc) {
+        ctx.fillStyle = Engine.docPaper(); ctx.fillRect(end2.x - 14, end2.y - 12, 28, 24);
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2; ctx.strokeRect(end2.x - 14, end2.y - 12, 28, 24);
+        ctx.fillStyle = Engine.docInk();
+      } else {
+        ctx.fillStyle = '#1c7a4a'; ctx.fillRect(end2.x - 14, end2.y - 12, 28, 24);
+        ctx.fillStyle = '#fffdf3';
+      }
+      ctx.font = 'bold 9px Verdana'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText('INBOX', end2.x, end2.y);
 
-      /* towers + range on the selected type when affordable (hover-free hint: none) */
+      /* towers: fill/outline/ring combos stand in for the three colours */
       for (const t of towers) {
         const spec = TOWERS[t.type];
-        ctx.fillStyle = spec.col; ctx.strokeStyle = '#0c1119'; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(t.x, t.y, CELL * 0.32, 0, 7); ctx.fill(); ctx.stroke();
-        ctx.fillStyle = '#fffdf3'; ctx.beginPath(); ctx.arc(t.x, t.y, CELL * 0.13, 0, 7); ctx.fill();
+        if (doc) {
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2;
+          if (t.type === 'shred') {
+            ctx.fillStyle = Engine.docInk();
+            ctx.beginPath(); ctx.arc(t.x, t.y, CELL * 0.32, 0, 7); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = Engine.docPaper();
+          } else {
+            ctx.fillStyle = Engine.docPaper();
+            ctx.beginPath(); ctx.arc(t.x, t.y, CELL * 0.32, 0, 7); ctx.fill(); ctx.stroke();
+            if (t.type === 'quar') { ctx.beginPath(); ctx.arc(t.x, t.y, CELL * 0.2, 0, 7); ctx.stroke(); }
+            ctx.fillStyle = Engine.docInk();
+          }
+          ctx.beginPath(); ctx.arc(t.x, t.y, CELL * 0.13, 0, 7); ctx.fill();
+        } else {
+          ctx.fillStyle = spec.col; ctx.strokeStyle = '#0c1119'; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(t.x, t.y, CELL * 0.32, 0, 7); ctx.fill(); ctx.stroke();
+          ctx.fillStyle = '#fffdf3'; ctx.beginPath(); ctx.arc(t.x, t.y, CELL * 0.13, 0, 7); ctx.fill();
+        }
       }
       /* enemies: little envelopes with an HP bar */
       for (const e of enemies) {
         if (e.hp <= 0) continue;
         const p = posAt(e.d); const s = CELL * 0.34;
-        ctx.fillStyle = e.slowT > 0 ? '#9fb6d8' : '#f4d03f';
-        ctx.strokeStyle = '#3a3446'; ctx.lineWidth = 1.5;
-        ctx.fillRect(p.x - s, p.y - s * 0.7, s * 2, s * 1.4); ctx.strokeRect(p.x - s, p.y - s * 0.7, s * 2, s * 1.4);
-        ctx.beginPath(); ctx.moveTo(p.x - s, p.y - s * 0.7); ctx.lineTo(p.x, p.y + s * 0.05); ctx.lineTo(p.x + s, p.y - s * 0.7); ctx.stroke();
-        const f = clamp(e.hp / e.max, 0, 1);
-        ctx.fillStyle = '#e8402a'; ctx.fillRect(p.x - s, p.y - s * 1.15, s * 2, 3);
-        ctx.fillStyle = '#6fcf2f'; ctx.fillRect(p.x - s, p.y - s * 1.15, s * 2 * f, 3);
+        if (doc) {
+          ctx.fillStyle = Engine.docPaper();
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5;
+          if (e.slowT > 0) ctx.setLineDash([2, 2]);
+          ctx.fillRect(p.x - s, p.y - s * 0.7, s * 2, s * 1.4); ctx.strokeRect(p.x - s, p.y - s * 0.7, s * 2, s * 1.4);
+          ctx.setLineDash([]);
+          ctx.beginPath(); ctx.moveTo(p.x - s, p.y - s * 0.7); ctx.lineTo(p.x, p.y + s * 0.05); ctx.lineTo(p.x + s, p.y - s * 0.7); ctx.stroke();
+          const f = clamp(e.hp / e.max, 0, 1);
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1; ctx.strokeRect(p.x - s, p.y - s * 1.15, s * 2, 3);
+          ctx.fillStyle = Engine.docInk(); ctx.fillRect(p.x - s, p.y - s * 1.15, s * 2 * f, 3);
+        } else {
+          ctx.fillStyle = e.slowT > 0 ? '#9fb6d8' : '#f4d03f';
+          ctx.strokeStyle = '#3a3446'; ctx.lineWidth = 1.5;
+          ctx.fillRect(p.x - s, p.y - s * 0.7, s * 2, s * 1.4); ctx.strokeRect(p.x - s, p.y - s * 0.7, s * 2, s * 1.4);
+          ctx.beginPath(); ctx.moveTo(p.x - s, p.y - s * 0.7); ctx.lineTo(p.x, p.y + s * 0.05); ctx.lineTo(p.x + s, p.y - s * 0.7); ctx.stroke();
+          const f = clamp(e.hp / e.max, 0, 1);
+          ctx.fillStyle = '#e8402a'; ctx.fillRect(p.x - s, p.y - s * 1.15, s * 2, 3);
+          ctx.fillStyle = '#6fcf2f'; ctx.fillRect(p.x - s, p.y - s * 1.15, s * 2 * f, 3);
+        }
       }
       /* beams */
-      for (const b of beams) { ctx.strokeStyle = b.col; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(b.x1, b.y1); ctx.lineTo(b.x2, b.y2); ctx.stroke(); }
+      for (const b of beams) { ctx.strokeStyle = doc ? Engine.docInk() : b.col; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(b.x1, b.y1); ctx.lineTo(b.x2, b.y2); ctx.stroke(); }
 
       ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
       if (over) {
-        ctx.fillStyle = 'rgba(20,16,12,.72)'; ctx.fillRect(0, H / 2 - 44, W, 88);
-        ctx.fillStyle = won ? '#6fcf2f' : '#e8402a'; ctx.font = 'bold 34px Impact, sans-serif'; ctx.textAlign = 'center';
-        ctx.fillText(won ? 'INBOX DEFENDED' : 'INBOX OVERFLOW', W / 2, H / 2 + 2);
-        ctx.fillStyle = '#fffdf3'; ctx.font = '13px Verdana'; ctx.fillText('Blocked ' + score + ' messages — Restart to play again', W / 2, H / 2 + 26);
+        if (doc) {
+          ctx.fillStyle = Engine.docPaper(); ctx.fillRect(0, H / 2 - 44, W, 88);
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2; ctx.strokeRect(2, H / 2 - 43, W - 4, 86);
+          ctx.fillStyle = Engine.docInk(); ctx.font = 'bold 34px Impact, sans-serif'; ctx.textAlign = 'center';
+          ctx.fillText(won ? 'INBOX DEFENDED' : 'INBOX OVERFLOW', W / 2, H / 2 + 2);
+          ctx.font = '13px Verdana'; ctx.fillText('Blocked ' + score + ' messages — Restart to play again', W / 2, H / 2 + 26);
+        } else {
+          ctx.fillStyle = 'rgba(20,16,12,.72)'; ctx.fillRect(0, H / 2 - 44, W, 88);
+          ctx.fillStyle = won ? '#6fcf2f' : '#e8402a'; ctx.font = 'bold 34px Impact, sans-serif'; ctx.textAlign = 'center';
+          ctx.fillText(won ? 'INBOX DEFENDED' : 'INBOX OVERFLOW', W / 2, H / 2 + 2);
+          ctx.fillStyle = '#fffdf3'; ctx.font = '13px Verdana'; ctx.fillText('Blocked ' + score + ' messages — Restart to play again', W / 2, H / 2 + 26);
+        }
         ctx.textAlign = 'left';
       }
     }

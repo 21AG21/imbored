@@ -147,42 +147,92 @@
     }
 
     function draw() {
+      const doc = Arcade.docMode();
       const camX = clamp(px - W * 0.34, 0, Math.max(0, worldEnd - W));
-      const g = ctx.createLinearGradient(0, 0, 0, H);
-      g.addColorStop(0, '#2a3552'); g.addColorStop(1, '#3e4e78');
-      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-      ctx.save(); ctx.translate(-camX, 0);
+      if (doc) {
+        ctx.fillStyle = Engine.docPaper(); ctx.fillRect(0, 0, W, H);
+      } else {
+        const g = ctx.createLinearGradient(0, 0, 0, H);
+        g.addColorStop(0, '#2a3552'); g.addColorStop(1, '#3e4e78');
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      }
+      ctx.save(); ctx.translate(-Math.round(camX), 0);
 
       for (const p of plats) {
-        ctx.fillStyle = PLAT_COLS[p.c]; ctx.fillRect(p.x, p.y, p.w, p.h);
-        ctx.fillStyle = 'rgba(255,255,255,.22)'; ctx.fillRect(p.x, p.y, p.w, 5);
-        ctx.fillStyle = 'rgba(0,0,0,.18)'; ctx.fillRect(p.x, p.y + p.h - 4, p.w, 4);
+        if (doc) {
+          const x = Math.round(p.x), y = Math.round(p.y), w = Math.round(p.w), h = Math.round(p.h);
+          ctx.fillStyle = Engine.docPaper(); ctx.fillRect(x, y, w, h);
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2; ctx.strokeRect(x + 1, y + 1, w - 2, h - 2);
+        } else {
+          ctx.fillStyle = PLAT_COLS[p.c]; ctx.fillRect(p.x, p.y, p.w, p.h);
+          ctx.fillStyle = 'rgba(255,255,255,.22)'; ctx.fillRect(p.x, p.y, p.w, 5);
+          ctx.fillStyle = 'rgba(0,0,0,.18)'; ctx.fillRect(p.x, p.y + p.h - 4, p.w, 4);
+        }
       }
       for (const hz of hazards) {
-        if (hz.t === 'lava') { ctx.fillStyle = '#ff5a2a'; ctx.fillRect(hz.x, hz.y, hz.w, hz.h); ctx.fillStyle = '#ffb02e'; for (let x = hz.x; x < hz.x + hz.w; x += 12) ctx.fillRect(x, hz.y, 6, 3); }
-        else { ctx.fillStyle = '#d0d0d8'; for (let x = hz.x; x < hz.x + hz.w - 6; x += 10) { ctx.beginPath(); ctx.moveTo(x, hz.y + hz.h); ctx.lineTo(x + 5, hz.y); ctx.lineTo(x + 10, hz.y + hz.h); ctx.closePath(); ctx.fill(); } }
+        if (hz.t === 'lava') {
+          if (doc) {
+            ctx.fillStyle = Engine.docInk(); ctx.fillRect(hz.x, hz.y, hz.w, hz.h);
+            ctx.fillStyle = Engine.docPaper(); for (let x = hz.x; x < hz.x + hz.w; x += 12) ctx.fillRect(Math.round(x), Math.round(hz.y), 6, 3);
+          } else {
+            ctx.fillStyle = '#ff5a2a'; ctx.fillRect(hz.x, hz.y, hz.w, hz.h); ctx.fillStyle = '#ffb02e'; for (let x = hz.x; x < hz.x + hz.w; x += 12) ctx.fillRect(x, hz.y, 6, 3);
+          }
+        }
+        else {
+          ctx.fillStyle = doc ? Engine.docInk() : '#d0d0d8';
+          for (let x = hz.x; x < hz.x + hz.w - 6; x += 10) { ctx.beginPath(); ctx.moveTo(x, hz.y + hz.h); ctx.lineTo(x + 5, hz.y); ctx.lineTo(x + 10, hz.y + hz.h); ctx.closePath(); ctx.fill(); }
+        }
       }
       for (const c of checks) {
         const reached = c.i <= spawnIdx;
-        ctx.fillStyle = reached ? '#6fcf2f' : '#8a8674';
-        ctx.fillRect(c.x - 2, c.y - 22, 4, 24);
-        ctx.beginPath(); ctx.moveTo(c.x + 2, c.y - 22); ctx.lineTo(c.x + 18, c.y - 17); ctx.lineTo(c.x + 2, c.y - 12); ctx.closePath(); ctx.fill();
+        if (doc) {
+          ctx.fillStyle = Engine.docInk();
+          ctx.fillRect(Math.round(c.x) - 2, Math.round(c.y) - 22, 4, 24);
+          ctx.beginPath(); ctx.moveTo(c.x + 2, c.y - 22); ctx.lineTo(c.x + 18, c.y - 17); ctx.lineTo(c.x + 2, c.y - 12); ctx.closePath();
+          if (reached) ctx.fill(); else { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5; ctx.stroke(); }
+        } else {
+          ctx.fillStyle = reached ? '#6fcf2f' : '#8a8674';
+          ctx.fillRect(c.x - 2, c.y - 22, 4, 24);
+          ctx.beginPath(); ctx.moveTo(c.x + 2, c.y - 22); ctx.lineTo(c.x + 18, c.y - 17); ctx.lineTo(c.x + 2, c.y - 12); ctx.closePath(); ctx.fill();
+        }
       }
       /* finish flag */
-      ctx.fillStyle = '#ded6c2'; ctx.fillRect(finish.x - 2, finish.y, 4, finish.h);
-      ctx.fillStyle = '#ffcb1f'; ctx.fillRect(finish.x + 2, finish.y, 22, 16);
-      ctx.fillStyle = '#1d1722'; ctx.fillRect(finish.x + 2, finish.y, 22, 4); ctx.fillRect(finish.x + 2, finish.y + 8, 22, 4);
+      if (doc) {
+        ctx.fillStyle = Engine.docInk(); ctx.fillRect(Math.round(finish.x) - 2, Math.round(finish.y), 4, finish.h);
+        ctx.fillStyle = Engine.docPaper(); ctx.fillRect(Math.round(finish.x) + 2, Math.round(finish.y), 22, 16);
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.5; ctx.strokeRect(Math.round(finish.x) + 2.5, Math.round(finish.y) + 0.5, 21, 15);
+        ctx.fillStyle = Engine.docInk();
+        ctx.fillRect(Math.round(finish.x) + 2, Math.round(finish.y), 22, 4); ctx.fillRect(Math.round(finish.x) + 2, Math.round(finish.y) + 8, 22, 4);
+      } else {
+        ctx.fillStyle = '#ded6c2'; ctx.fillRect(finish.x - 2, finish.y, 4, finish.h);
+        ctx.fillStyle = '#ffcb1f'; ctx.fillRect(finish.x + 2, finish.y, 22, 16);
+        ctx.fillStyle = '#1d1722'; ctx.fillRect(finish.x + 2, finish.y, 22, 4); ctx.fillRect(finish.x + 2, finish.y + 8, 22, 4);
+      }
 
       /* player */
-      ctx.fillStyle = '#ffcb1f'; ctx.fillRect(px, py, PW, PH);
-      ctx.fillStyle = '#1d1722'; ctx.fillRect(px + (vx >= 0 ? 12 : 4), py + 8, 5, 5);
-      ctx.fillStyle = '#e8402a'; ctx.fillRect(px, py + PH - 8, PW, 4);
+      if (doc) {
+        const ppx = Math.round(px), ppy = Math.round(py);
+        ctx.fillStyle = Engine.docPaper(); ctx.fillRect(ppx, ppy, PW, PH);
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2; ctx.strokeRect(ppx + 1, ppy + 1, PW - 2, PH - 2);
+        ctx.fillStyle = Engine.docInk(); ctx.fillRect(ppx + (vx >= 0 ? 12 : 4), ppy + 8, 5, 5);
+      } else {
+        ctx.fillStyle = '#ffcb1f'; ctx.fillRect(px, py, PW, PH);
+        ctx.fillStyle = '#1d1722'; ctx.fillRect(px + (vx >= 0 ? 12 : 4), py + 8, 5, 5);
+        ctx.fillStyle = '#e8402a'; ctx.fillRect(px, py + PH - 8, PW, 4);
+      }
       ctx.restore();
 
       pTime.textContent = t.toFixed(1) + 's';
       /* progress */
-      ctx.fillStyle = 'rgba(0,0,0,.4)'; ctx.fillRect(10, 10, W - 20, 7);
-      ctx.fillStyle = '#6fcf2f'; ctx.fillRect(10, 10, (W - 20) * clamp(px / worldEnd, 0, 1), 7);
+      if (doc) {
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1;
+        ctx.strokeRect(10.5, 10.5, W - 21, 6);
+        ctx.fillStyle = Engine.docInk();
+        ctx.fillRect(11, 11, Math.round((W - 22) * clamp(px / worldEnd, 0, 1)), 5);
+      } else {
+        ctx.fillStyle = 'rgba(0,0,0,.4)'; ctx.fillRect(10, 10, W - 20, 7);
+        ctx.fillStyle = '#6fcf2f'; ctx.fillRect(10, 10, (W - 20) * clamp(px / worldEnd, 0, 1), 7);
+      }
     }
 
     bagg.add(Engine.onKey((e) => { if ((e.key === 'r' || e.key === 'R') && over) { build(); return true; } }));
@@ -208,6 +258,7 @@
     emoji: 'obby',
     cat: 'action',
     order: 21,
+    lightBoard: true,   // doc mode draws its own paper/ink palette above; the blanket invert would only flip it back
     blurb: 'A Roblox-style obstacle course. Jump across the platforms to the flag while dodging lava and spikes. Twenty stages, and you can start on any one.',
     scoreLabel: 'Stages cleared',
     tags: ['platformer', 'obby', 'jump', 'obstacle-course'],

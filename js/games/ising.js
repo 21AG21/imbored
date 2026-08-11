@@ -24,6 +24,14 @@
   const TC = 2.2691853;                // exact Onsager critical temperature (J = k_B = 1)
   const TMIN = 1.0, TMAX = 3.6;
 
+  /* '#rrggbb' -> 0xAABBGGRR, matching the ABGR little-endian layout every
+     imageData buffer in these grid sims already uses (see carColor in
+     traffic.js). Engine.docPaper()/docInk() always return a hex literal. */
+  function hexToAbgr(hex) {
+    const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+    return (0xff000000 | (b << 16) | (g << 8) | r) >>> 0;
+  }
+
   function mount(root, api) {
     const bagg = Engine.bag();
     const spin = new Int8Array(N * N);
@@ -158,37 +166,50 @@
     }
 
     function drawPlot() {
+      const doc = Arcade.docMode();
       const w = plot.width, hh = plot.height, m = 26;
       pctx.clearRect(0, 0, w, hh);
-      pctx.fillStyle = '#12100c'; pctx.fillRect(0, 0, w, hh);
+      pctx.fillStyle = doc ? Engine.docPaper() : '#12100c'; pctx.fillRect(0, 0, w, hh);
       const X = (t) => m + (t - TMIN) / (TMAX - TMIN) * (w - m - 8);
       const Y = (v) => hh - m - v * (hh - m - 8);
-      pctx.strokeStyle = '#4a4436'; pctx.lineWidth = 1;
+      pctx.strokeStyle = doc ? Engine.docInk() : '#4a4436'; pctx.lineWidth = 1;
       pctx.beginPath(); pctx.moveTo(m, Y(0)); pctx.lineTo(w - 8, Y(0)); pctx.moveTo(m, Y(0)); pctx.lineTo(m, Y(1)); pctx.stroke();
-      pctx.fillStyle = '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
+      pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.font = '10px Verdana, sans-serif';
       pctx.fillText('|M|', 2, 12); pctx.fillText('temperature', w - 74, hh - 8);
-      /* T_c line */
-      pctx.strokeStyle = 'rgba(232,64,42,.8)'; pctx.setLineDash([4, 3]);
+      /* T_c line — ink, dashed, instead of a colour that grayscale erases anyway */
+      pctx.strokeStyle = doc ? Engine.docInk() : 'rgba(232,64,42,.8)'; pctx.setLineDash([4, 3]);
       pctx.beginPath(); pctx.moveTo(X(TC), Y(0)); pctx.lineTo(X(TC), Y(1)); pctx.stroke();
       pctx.setLineDash([]);
-      pctx.fillStyle = '#f2ede0'; pctx.fillText('T_c ' + TC.toFixed(3), X(TC) + 4, Y(1) + 10);
+      pctx.fillStyle = doc ? Engine.docInk() : '#f2ede0'; pctx.fillText('T_c ' + TC.toFixed(3), X(TC) + 4, Y(1) + 10);
       /* measured magnetisation curve */
       if (ref.length) {
-        pctx.strokeStyle = '#00a6b4'; pctx.lineWidth = 2; pctx.beginPath();
+        pctx.strokeStyle = doc ? Engine.docInk() : '#00a6b4'; pctx.lineWidth = 2; pctx.beginPath();
         ref.forEach((s, i) => { const x = X(s.T), y = Y(s.m); i ? pctx.lineTo(x, y) : pctx.moveTo(x, y); });
         pctx.stroke();
       }
-      /* live sample: current (T, |m|) */
+      /* live sample: current (T, |m|) — a small filled square (hard edges)
+         instead of a circle (curve antialiasing), same ink either way */
       const am = Math.abs(magSum / spin.length);
-      pctx.fillStyle = '#ffcb1f';
-      pctx.beginPath(); pctx.arc(X(T), Y(am), 4, 0, 7); pctx.fill();
+      pctx.fillStyle = doc ? Engine.docInk() : '#ffcb1f';
+      if (doc) pctx.fillRect(Math.round(X(T)) - 3, Math.round(Y(am)) - 3, 6, 6);
+      else { pctx.beginPath(); pctx.arc(X(T), Y(am), 4, 0, 7); pctx.fill(); }
       /* current T marker on axis */
-      pctx.fillStyle = '#fffdf3';
+      pctx.fillStyle = doc ? Engine.docInk() : '#fffdf3';
       pctx.beginPath(); pctx.moveTo(X(T), Y(0) + 2); pctx.lineTo(X(T) - 4, Y(0) + 9); pctx.lineTo(X(T) + 4, Y(0) + 9); pctx.fill();
     }
 
     function draw() {
-      for (let i = 0; i < spin.length; i++) buf[i] = spin[i] === 1 ? UP : DN;
+      const doc = Arcade.docMode();
+      if (doc) {
+        /* dense, fully-occupied lattice — every spin is one or the other,
+           no "sparse/empty" state to fall back to blank paper. Straight ink
+           vs. paper per spin, no mid-tone, is the only way to keep a 100x100
+           fully-tiled grid from reading as a grey wash. */
+        const inkC = hexToAbgr(Engine.docInk()), paperC = hexToAbgr(Engine.docPaper());
+        for (let i = 0; i < spin.length; i++) buf[i] = spin[i] === 1 ? inkC : paperC;
+      } else {
+        for (let i = 0; i < spin.length; i++) buf[i] = spin[i] === 1 ? UP : DN;
+      }
       octx.putImageData(img, 0, 0);
       ctx.save();
       ctx.imageSmoothingEnabled = false;
@@ -237,6 +258,7 @@
     order: 8,
     blurb: 'A grid of magnetic spins run by one flip rule. Cool it and the sheet locks to a single colour; heat it past the Curie point Onsager fixed in 1944 and thermal noise pulls it apart.',
     scoreLabel: 'Peak susceptibility',
+    lightBoard: true,   // doc mode draws its own paper/ink palette above; the blanket invert would only flip it back
     tags: ['ising', 'phase-transition', 'magnetism', 'monte-carlo'],
     how: [
       'Every square is a tiny magnet pointing up or down. Neighbours prefer to match, and there is no outside field, so that agreement is the whole interaction.',

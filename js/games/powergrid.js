@@ -2,6 +2,7 @@
 (function () {
   'use strict';
   const { h, clamp, rand, randInt, pick } = Engine;
+  const DOC = () => !!(window.Arcade && Arcade.docMode && Arcade.docMode());
 
   const W = 900, H = 340;
   const HOURS_PER_SEC = 0.4;          // a 24h day every 60 seconds
@@ -251,7 +252,8 @@
 
     /* ---------------- render ---------------- */
     function draw() {
-      ctx.fillStyle = '#0a1020';
+      const doc0 = DOC();
+      ctx.fillStyle = doc0 ? Engine.docPaper() : '#0a1020';
       ctx.fillRect(0, 0, W, H);
 
       const gx = 56, gy = 26, gw = W - 200, gh = H - 80;
@@ -259,14 +261,17 @@
       for (const p of hist) maxV = Math.max(maxV, p.d, p.s);
       maxV *= 1.08;
 
-      /* night shading */
-      for (let i = 0; i < hist.length; i++) {
-        const x = gx + i / HIST * gw;
-        ctx.fillStyle = 'rgba(255,200,60,' + (hist[i].sun * 0.07).toFixed(3) + ')';
-        ctx.fillRect(x, gy, gw / HIST + 1, gh);
+      /* night shading: a decorative colour wash, dropped entirely in doc mode
+         rather than converted (nothing paper/ink to redraw it as) */
+      if (!doc0) {
+        for (let i = 0; i < hist.length; i++) {
+          const x = gx + i / HIST * gw;
+          ctx.fillStyle = 'rgba(255,200,60,' + (hist[i].sun * 0.07).toFixed(3) + ')';
+          ctx.fillRect(x, gy, gw / HIST + 1, gh);
+        }
       }
 
-      ctx.strokeStyle = '#1e2740';
+      ctx.strokeStyle = doc0 ? Engine.docRule() : '#1e2740';
       ctx.lineWidth = 1;
       ctx.beginPath();
       for (let i = 0; i <= 4; i++) {
@@ -274,17 +279,20 @@
         ctx.moveTo(gx, y); ctx.lineTo(gx + gw, y);
       }
       ctx.stroke();
-      ctx.fillStyle = '#5f6a86';
+      ctx.fillStyle = doc0 ? Engine.docInk() : '#5f6a86';
       ctx.font = '11px ui-monospace, Menlo, monospace';
       ctx.textAlign = 'right';
       for (let i = 0; i <= 4; i++) {
         ctx.fillText(Math.round(maxV * (1 - i / 4)) + '', gx - 8, gy + gh * i / 4 + 4);
       }
 
-      const line = (key, color, width) => {
+      /* demand vs. generation: told apart by line style (solid/dashed), not
+         colour, since grayscale would otherwise erase the pink/cyan split */
+      const line = (key, color, width, dashed) => {
         ctx.strokeStyle = color;
         ctx.lineWidth = width;
         ctx.lineJoin = 'round';
+        ctx.setLineDash(dashed ? [7, 5] : []);
         ctx.beginPath();
         hist.forEach((p, i) => {
           const x = gx + i / HIST * gw;
@@ -292,14 +300,30 @@
           i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
         });
         ctx.stroke();
+        ctx.setLineDash([]);
       };
-      line('d', '#ff5c8f', 2.4);
-      line('s', '#38e1ff', 2.4);
+      if (doc0) {
+        line('d', Engine.docInk(), 1.6, false);
+        line('s', Engine.docInk(), 1.6, true);
+      } else {
+        line('d', '#ff5c8f', 2.4, false);
+        line('s', '#38e1ff', 2.4, false);
+      }
 
       ctx.textAlign = 'left';
       ctx.font = 'bold 12px system-ui';
-      ctx.fillStyle = '#ff5c8f'; ctx.fillText('demand', gx + 6, gy + 16);
-      ctx.fillStyle = '#38e1ff'; ctx.fillText('generation', gx + 74, gy + 16);
+      if (doc0) {
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1.6;
+        ctx.beginPath(); ctx.moveTo(gx + 2, gy + 12); ctx.lineTo(gx + 20, gy + 12); ctx.stroke();
+        ctx.fillStyle = Engine.docInk(); ctx.fillText('demand', gx + 26, gy + 16);
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath(); ctx.moveTo(gx + 96, gy + 12); ctx.lineTo(gx + 114, gy + 12); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillText('generation', gx + 120, gy + 16);
+      } else {
+        ctx.fillStyle = '#ff5c8f'; ctx.fillText('demand', gx + 6, gy + 16);
+        ctx.fillStyle = '#38e1ff'; ctx.fillText('generation', gx + 74, gy + 16);
+      }
 
       /* live coach — the one thing that tells you what to actually do right now */
       const gap = (S.supply || 0) - (S.demand || 0);
@@ -307,48 +331,59 @@
       if (gap < -3) { coach = '▲  generation is BELOW demand — raise a generator'; cc = '#ffd98a'; }
       else if (gap > 3) { coach = '▼  generation is ABOVE demand — ease one down'; cc = '#ffd98a'; }
       else { coach = '✓  balanced — hold it here'; cc = '#8fe6a0'; }
-      ctx.fillStyle = cc;
+      ctx.fillStyle = doc0 ? Engine.docInk() : cc;
       ctx.font = 'bold 13px system-ui';
       ctx.textAlign = 'center';
       ctx.fillText(coach, gx + gw / 2, 15);
       ctx.textAlign = 'left';
 
-      /* frequency dial */
+      /* frequency dial: a thick colour-coded band + coloured needle becomes a
+         thin ink ring + ink needle — a filled band that wide would otherwise
+         paint a big grey doughnut once grayscale erases its colour */
       const cx = W - 100, cy = 118, R = 62;
-      ctx.strokeStyle = '#1e2740';
-      ctx.lineWidth = 12;
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, Math.PI * 0.75, Math.PI * 2.25);
-      ctx.stroke();
-      ctx.strokeStyle = '#2c8f4a';
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, Math.PI * 1.42, Math.PI * 1.58);
-      ctx.stroke();
+      if (doc0) {
+        ctx.strokeStyle = Engine.docRule(); ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(cx, cy, R, Math.PI * 0.75, Math.PI * 2.25); ctx.stroke();
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.arc(cx, cy, R, Math.PI * 1.42, Math.PI * 1.58); ctx.stroke();
+      } else {
+        ctx.strokeStyle = '#1e2740'; ctx.lineWidth = 12;
+        ctx.beginPath(); ctx.arc(cx, cy, R, Math.PI * 0.75, Math.PI * 2.25); ctx.stroke();
+        ctx.strokeStyle = '#2c8f4a'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(cx, cy, R, Math.PI * 1.42, Math.PI * 1.58); ctx.stroke();
+      }
       const t = clamp((S.freq - 48) / 4, 0, 1);
       const ang = Math.PI * 0.75 + t * Math.PI * 1.5;
       const dev = Math.abs(S.freq - 50);
-      ctx.strokeStyle = dev > 0.8 ? '#ff4d5e' : dev > 0.45 ? '#ffc043' : '#4ade5e';
+      ctx.strokeStyle = doc0 ? Engine.docInk() : (dev > 0.8 ? '#ff4d5e' : dev > 0.45 ? '#ffc043' : '#4ade5e');
       ctx.lineWidth = 3.5;
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.lineTo(cx + Math.cos(ang) * (R - 8), cy + Math.sin(ang) * (R - 8));
       ctx.stroke();
-      ctx.fillStyle = '#e8ecf7';
+      ctx.fillStyle = doc0 ? Engine.docInk() : '#e8ecf7';
       ctx.font = 'bold 19px ui-monospace, Menlo, monospace';
       ctx.textAlign = 'center';
       ctx.fillText(S.freq.toFixed(2), cx, cy + 40);
-      ctx.fillStyle = '#5f6a86';
+      ctx.fillStyle = doc0 ? Engine.docInk() : '#5f6a86';
       ctx.font = '11px system-ui';
       ctx.fillText('grid frequency (Hz)', cx, cy + 56);
 
-      /* stability bar */
-      ctx.fillStyle = '#141c30';
-      Engine.roundRect(ctx, W - 168, H - 46, 140, 14, 7);
-      ctx.fill();
-      ctx.fillStyle = S.stability > 55 ? '#4ade5e' : S.stability > 25 ? '#ffc043' : '#ff4d5e';
-      Engine.roundRect(ctx, W - 168, H - 46, 140 * S.stability / 100, 14, 7);
-      ctx.fill();
-      ctx.fillStyle = '#8f9ab8';
+      /* stability bar: paper track + ink fill instead of a coloured gauge */
+      if (doc0) {
+        ctx.fillStyle = Engine.docPaper();
+        Engine.roundRect(ctx, W - 168, H - 46, 140, 14, 7); ctx.fill();
+        ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1;
+        Engine.roundRect(ctx, W - 168 + 0.5, H - 46 + 0.5, 139, 13, 6.5); ctx.stroke();
+        ctx.fillStyle = Engine.docInk();
+        Engine.roundRect(ctx, W - 168, H - 46, 140 * S.stability / 100, 14, 7); ctx.fill();
+      } else {
+        ctx.fillStyle = '#141c30';
+        Engine.roundRect(ctx, W - 168, H - 46, 140, 14, 7); ctx.fill();
+        ctx.fillStyle = S.stability > 55 ? '#4ade5e' : S.stability > 25 ? '#ffc043' : '#ff4d5e';
+        Engine.roundRect(ctx, W - 168, H - 46, 140 * S.stability / 100, 14, 7); ctx.fill();
+      }
+      ctx.fillStyle = doc0 ? Engine.docInk() : '#8f9ab8';
       ctx.font = '11px system-ui';
       ctx.textAlign = 'center';
       ctx.fillText('grid stability', W - 98, H - 54);
@@ -356,10 +391,17 @@
       /* event ticker */
       if (S.eventT > 0) {
         ctx.globalAlpha = clamp(S.eventT / 1.4, 0, 1);
-        ctx.fillStyle = 'rgba(20,28,48,.94)';
-        Engine.roundRect(ctx, gx, H - 52, gw, 30, 8);
-        ctx.fill();
-        ctx.fillStyle = '#ffd98a';
+        if (doc0) {
+          ctx.fillStyle = Engine.docPaper();
+          Engine.roundRect(ctx, gx, H - 52, gw, 30, 8); ctx.fill();
+          ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1;
+          Engine.roundRect(ctx, gx + 0.5, H - 52 + 0.5, gw - 1, 29, 7.5); ctx.stroke();
+          ctx.fillStyle = Engine.docInk();
+        } else {
+          ctx.fillStyle = 'rgba(20,28,48,.94)';
+          Engine.roundRect(ctx, gx, H - 52, gw, 30, 8); ctx.fill();
+          ctx.fillStyle = '#ffd98a';
+        }
         ctx.font = 'bold 13px system-ui';
         ctx.textAlign = 'left';
         ctx.fillText(S.eventText, gx + 14, H - 32);
@@ -389,6 +431,7 @@
 
   Arcade.register({
     id: 'powergrid',
+    lightBoard: true,   // dark dashboard chart + colour-coded dial/gauges need paper/ink, not an invert of a mid-tone palette
     title: 'Load Balance',
     emoji: 'powergrid',
     cat: 'sim',

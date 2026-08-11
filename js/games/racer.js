@@ -257,19 +257,27 @@
         ctx.beginPath(); ctx.moveTo(x, y - th * 0.78); ctx.lineTo(x - tw * 1.15, y - th * 0.18); ctx.lineTo(x + tw * 1.15, y - th * 0.18); ctx.closePath();
         if (doc0) { ctx.fill(); ctx.stroke(); } else ctx.fill();
       } else if (spr.type === 'bush') {
-        const r = s * 0.5;
-        ctx.fillStyle = '#2f8a3a';
+        const r = s * 0.5, doc0 = DOC();
+        ctx.fillStyle = doc0 ? Engine.docPaper() : '#2f8a3a';
         ctx.beginPath(); ctx.arc(x, y - r * 0.6, r, 0, 7); ctx.arc(x - r * 0.7, y - r * 0.3, r * 0.7, 0, 7); ctx.arc(x + r * 0.7, y - r * 0.3, r * 0.7, 0, 7); ctx.fill();
+        if (doc0) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1; ctx.stroke(); }
       } else if (spr.type === 'sign') {
-        const bw = s * 1.5, bh = s * 0.9, ph = s * 1.1;
-        ctx.fillStyle = '#3a2f22'; ctx.fillRect(x - s * 0.08, y - ph, s * 0.16, ph);
-        ctx.fillStyle = '#1666a8'; ctx.fillRect(x - bw / 2, y - ph - bh, bw, bh);
-        ctx.fillStyle = '#fff'; ctx.fillRect(x - bw / 2 + 3, y - ph - bh + 3, bw - 6, Math.max(1, bh * 0.22));
+        const bw = s * 1.5, bh = s * 0.9, ph = s * 1.1, doc0 = DOC();
+        /* post: thin, ink is fine even filled solid, same call as the tree trunk above */
+        ctx.fillStyle = doc0 ? Engine.docInk() : '#3a2f22'; ctx.fillRect(x - s * 0.08, y - ph, s * 0.16, ph);
+        /* board: white with an ink outline, not a solid colour block */
+        ctx.fillStyle = doc0 ? Engine.docPaper() : '#1666a8'; ctx.fillRect(x - bw / 2, y - ph - bh, bw, bh);
+        if (doc0) { ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1; ctx.strokeRect(x - bw / 2 + 0.5, y - ph - bh + 0.5, bw - 1, bh - 1); }
+        /* text bars: ink strokes on the paper board, not white-on-blue */
+        ctx.fillStyle = doc0 ? Engine.docInk() : '#fff';
+        ctx.fillRect(x - bw / 2 + 3, y - ph - bh + 3, bw - 6, Math.max(1, bh * 0.22));
         ctx.fillRect(x - bw / 2 + 3, y - ph - bh * 0.5, bw * 0.6, Math.max(1, bh * 0.18));
-      } else { /* post */
-        const ph = s * 1.2;
-        ctx.fillStyle = '#f4f4f4'; ctx.fillRect(x - s * 0.05, y - ph, s * 0.1, ph);
-        ctx.fillStyle = '#e8402a'; ctx.fillRect(x - s * 0.05, y - ph, s * 0.1, ph * 0.3);
+      } else { /* post: thin marker, ink is fine even filled solid; the reflector
+                  band is a decorative detail dropped in doc mode rather than
+                  converted, same call as the sun/haze omissions in drawSky */
+        const ph = s * 1.2, doc0 = DOC();
+        ctx.fillStyle = doc0 ? Engine.docInk() : '#f4f4f4'; ctx.fillRect(x - s * 0.05, y - ph, s * 0.1, ph);
+        if (!doc0) { ctx.fillStyle = '#e8402a'; ctx.fillRect(x - s * 0.05, y - ph, s * 0.1, ph * 0.3); }
       }
     }
 
@@ -277,6 +285,20 @@
       const cw = sp.sw * 0.9, cx = sp.sx + sp.sw * car.x, cy = sp.sy;
       if (cw < 2) return;
       const bw = cw * 0.6, bh = cw * 0.34;
+      const doc0 = DOC();
+      if (doc0) {
+        /* paper body with an ink outline + outline-only rear window, like the
+           player car's own doc treatment above — no filled colour block, no
+           translucent black shadow/shade (those blend to grey on paper). */
+        ctx.fillStyle = Engine.docPaper(); ctx.strokeStyle = Engine.docInk(); ctx.lineWidth = 1;
+        ctx.fillRect(cx - bw / 2, cy - bh, bw, bh); ctx.strokeRect(cx - bw / 2 + 0.5, cy - bh + 0.5, bw - 1, bh - 1);
+        ctx.strokeRect(cx - bw * 0.32 + 0.5, cy - bh * 0.9 + 0.5, bw * 0.64 - 1, bh * 0.42 - 1);
+        /* tail lights: small, ink is fine */
+        ctx.fillStyle = Engine.docInk();
+        ctx.fillRect(cx - bw / 2, cy - bh * 0.28, bw * 0.16, bh * 0.2);
+        ctx.fillRect(cx + bw / 2 - bw * 0.16, cy - bh * 0.28, bw * 0.16, bh * 0.2);
+        return;
+      }
       ctx.fillStyle = 'rgba(0,0,0,.28)';
       ctx.beginPath(); ctx.ellipse(cx, cy + 1, bw * 0.6, bh * 0.22, 0, 0, 7); ctx.fill();
       ctx.fillStyle = car.col; ctx.fillRect(cx - bw / 2, cy - bh, bw, bh);              // body

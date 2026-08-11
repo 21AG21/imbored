@@ -425,20 +425,37 @@
 
     /* ---------------- drawing ---------------- */
     function card(x, y, c, dim) {
-      ctx.fillStyle = 'rgba(0,0,0,.28)';
-      Engine.roundRect(ctx, x + 3, y + 4, CW, CH, 7);
-      ctx.fill();
+      const doc = DOC();
+      if (!doc) {
+        ctx.fillStyle = 'rgba(0,0,0,.28)';
+        Engine.roundRect(ctx, x + 3, y + 4, CW, CH, 7);
+        ctx.fill();
+      }
 
       if (!c.up) {
-        const doc = DOC();
-        ctx.fillStyle = doc ? '#e5e8ec' : '#2a4bbd';
+        /* doc mode: a face-down card is a solid ink block — the felt-back
+           hatch pattern was drawn with partial-alpha strokes, which is
+           still visibly grey no matter what colour the alpha is mixed
+           with. A filled/hollow contrast against the paper-white face-up
+           cards needs no alpha at all. */
+        if (doc) {
+          ctx.fillStyle = Engine.docInk();
+          Engine.roundRect(ctx, x, y, CW, CH, 3);
+          ctx.fill();
+          ctx.strokeStyle = Engine.docPaper();
+          ctx.lineWidth = 2;
+          Engine.roundRect(ctx, x + 5, y + 5, CW - 10, CH - 10, 2);
+          ctx.stroke();
+          return;
+        }
+        ctx.fillStyle = '#2a4bbd';
         Engine.roundRect(ctx, x, y, CW, CH, 7);
         ctx.fill();
-        ctx.strokeStyle = doc ? '#2b2f36' : '#0c1119';
+        ctx.strokeStyle = '#0c1119';
         ctx.lineWidth = 3;
         Engine.roundRect(ctx, x, y, CW, CH, 7);
         ctx.stroke();
-        ctx.strokeStyle = doc ? 'rgba(43,47,54,.28)' : 'rgba(255,255,255,.28)';
+        ctx.strokeStyle = 'rgba(255,255,255,.28)';
         ctx.lineWidth = 1.5;
         for (let i = -CH; i < CW; i += 9) {
           ctx.beginPath();
@@ -446,23 +463,27 @@
           ctx.lineTo(x + Math.min(CW, i + CH), y + Math.min(CH, CH - i + (i < 0 ? i : 0)));
           ctx.stroke();
         }
-        ctx.strokeStyle = doc ? 'rgba(43,47,54,.5)' : 'rgba(255,255,255,.5)';
+        ctx.strokeStyle = 'rgba(255,255,255,.5)';
         ctx.lineWidth = 2;
         Engine.roundRect(ctx, x + 6, y + 6, CW - 12, CH - 12, 4);
         ctx.stroke();
         return;
       }
 
-      ctx.fillStyle = dim ? '#e6e2d5' : '#fffdf3';
-      Engine.roundRect(ctx, x, y, CW, CH, 7);
+      ctx.fillStyle = doc ? Engine.docPaper() : (dim ? '#e6e2d5' : '#fffdf3');
+      Engine.roundRect(ctx, x, y, CW, CH, doc ? 3 : 7);
       ctx.fill();
-      ctx.strokeStyle = '#0c1119';
-      ctx.lineWidth = 3;
-      Engine.roundRect(ctx, x, y, CW, CH, 7);
+      ctx.strokeStyle = doc ? Engine.docInk() : '#0c1119';
+      ctx.lineWidth = doc ? 2.5 : 3;
+      Engine.roundRect(ctx, x, y, CW, CH, doc ? 3 : 7);
       ctx.stroke();
 
-      const col = isRed(c.s) ? '#d1252b' : '#1d1722';
-      ctx.fillStyle = col;
+      /* red vs black suit is gameplay-relevant (alternating colour is a
+         stacking rule), but the four suit glyphs are already visually
+         distinct from each other — the shape alone still carries that
+         distinction with zero colour, so doc mode inks every rank/suit
+         the same instead of running tomato red through grayscale(). */
+      ctx.fillStyle = doc ? Engine.docInk() : (isRed(c.s) ? '#d1252b' : '#1d1722');
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
       ctx.font = 'bold 19px Verdana, sans-serif';
@@ -481,14 +502,14 @@
 
     function slot(x, y, label) {
       const doc = DOC();
-      ctx.strokeStyle = doc ? 'rgba(43,47,54,.4)' : 'rgba(255,255,255,.4)';
+      ctx.strokeStyle = doc ? Engine.docInk() : 'rgba(255,255,255,.4)';
       ctx.lineWidth = 2.5;
       ctx.setLineDash([7, 6]);
-      Engine.roundRect(ctx, x, y, CW, CH, 7);
+      Engine.roundRect(ctx, x, y, CW, CH, doc ? 3 : 7);
       ctx.stroke();
       ctx.setLineDash([]);
       if (label) {
-        ctx.fillStyle = doc ? 'rgba(43,47,54,.5)' : 'rgba(255,255,255,.35)';
+        ctx.fillStyle = doc ? Engine.docInk() : 'rgba(255,255,255,.35)';
         ctx.font = '34px Verdana, sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -501,16 +522,21 @@
     function draw(dt) {
       if (winAnim > 0) winAnim += dt;
       const doc = DOC();
-      ctx.fillStyle = doc ? '#f2f3f5' : '#1c7a4a';
+      ctx.fillStyle = doc ? Engine.docPaper() : '#1c7a4a';
       ctx.fillRect(0, 0, W, H);
-      ctx.fillStyle = doc ? 'rgba(0,0,0,.03)' : 'rgba(0,0,0,.05)';
-      for (let y = 0; y < H; y += 8) ctx.fillRect(0, y, W, 3);
+      /* the felt-stripe texture is a partial-opacity black wash — on the
+         green felt that reads as a shadow, but on doc-mode paper it is
+         just a field of grey, so skip it entirely there. */
+      if (!doc) {
+        ctx.fillStyle = 'rgba(0,0,0,.05)';
+        for (let y = 0; y < H; y += 8) ctx.fillRect(0, y, W, 3);
+      }
 
       /* stock */
       if (stock.length) card(colX(0), TOPY, { up: false });
       else slot(colX(0), TOPY, redealsLeft > 0 ? '↺' : '✕');
       if (stock.length) {
-        ctx.fillStyle = doc ? '#2b2f36' : '#fffdf3';
+        ctx.fillStyle = doc ? Engine.docInk() : '#fffdf3';
         ctx.font = 'bold 12px Verdana, sans-serif';
         ctx.fillText(String(stock.length), colX(0) + 4, TOPY + CH + 15);
       }
@@ -543,17 +569,23 @@
         for (let k = 0; k < cut; k++) card(colX(t), cardY(t, k), pile[k]);
       }
 
-      /* keyboard cursor + held-run highlight */
+      /* keyboard cursor + held-run highlight. Neither is gated on whether
+         the player has touched the keyboard — the cursor box is always on
+         screen — so both need a doc-safe colour, not just a doc-safe one
+         for an occasional overlay. Same ink for both, told apart by a
+         dash pattern instead of banana-yellow vs teal. */
       const kbRect = pileRects()[kbCursor];
       ctx.save();
-      ctx.strokeStyle = '#ffcb1f';
-      ctx.lineWidth = 4;
+      ctx.strokeStyle = doc ? Engine.docInk() : '#ffcb1f';
+      ctx.lineWidth = doc ? 2 : 4;
+      if (doc) ctx.setLineDash([6, 5]);
       Engine.roundRect(ctx, kbRect.x - 4, kbRect.y - 4, kbRect.w + 8, kbRect.h + 8, 10);
       ctx.stroke();
+      if (doc) ctx.setLineDash([]);
       ctx.restore();
       if (kbHeld) {
         ctx.save();
-        ctx.strokeStyle = '#33c0d0';
+        ctx.strokeStyle = doc ? Engine.docInk() : '#33c0d0';
         ctx.lineWidth = 4;
         if (kbHeld.from === 'tab') {
           const y0 = cardY(kbHeld.fromI, kbHeld.fromK);
@@ -576,9 +608,21 @@
       }
 
       if (won) {
-        ctx.fillStyle = 'rgba(12,17,25,' + clamp(winAnim * 0.5, 0, 0.66).toFixed(2) + ')';
-        ctx.fillRect(0, 0, W, H);
-        ctx.fillStyle = '#ffcb1f';
+        if (doc) {
+          /* no translucent dimming here — any alpha mixed over paper is
+             still visibly grey no matter the source colour, so the win
+             flash is a solid ink-on-paper card instead of a dark scrim. */
+          ctx.fillStyle = Engine.docPaper();
+          ctx.fillRect(0, H / 2 - 60, W, 120);
+          ctx.strokeStyle = Engine.docInk();
+          ctx.lineWidth = 3;
+          ctx.strokeRect(4, H / 2 - 56, W - 8, 112);
+          ctx.fillStyle = Engine.docInk();
+        } else {
+          ctx.fillStyle = 'rgba(12,17,25,' + clamp(winAnim * 0.5, 0, 0.66).toFixed(2) + ')';
+          ctx.fillRect(0, 0, W, H);
+          ctx.fillStyle = '#ffcb1f';
+        }
         ctx.font = '58px Impact, Haettenschweiler, Arial Black, sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText('YOU WIN', W / 2, H / 2);

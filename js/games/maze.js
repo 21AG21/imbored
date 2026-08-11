@@ -119,32 +119,40 @@
     }
 
     function draw() {
+      const doc = Arcade.docMode();
       const pad = 18;
       const cell = (cv.w - pad * 2) / N;
-      ctx.fillStyle = '#0f1729';
+      ctx.fillStyle = doc ? Engine.docPaper() : '#0f1729';
       ctx.fillRect(0, 0, cv.w, cv.h);
 
-      const X = (c) => pad + c * cell;
-      const Y = (r) => pad + r * cell;
+      /* rounded to whole device pixels: with a fractional cell size every wall
+         segment would otherwise land on a sub-pixel boundary and antialias on
+         every edge — negligible on a normal dark board, but in document mode
+         that antialiasing halo around thousands of wall segments is itself a
+         wash of visible grey. Snapping keeps walls crisp ink with no halo. */
+      const X = (c) => Math.round(pad + c * cell);
+      const Y = (r) => Math.round(pad + r * cell);
 
-      /* solution hint */
+      /* solution hint — dashed ink so it reads apart from the solid ink trail */
       if (showSol) {
         sol = solve();
-        ctx.strokeStyle = 'rgba(56,225,255,.5)';
+        ctx.strokeStyle = doc ? Engine.docInk() : 'rgba(56,225,255,.5)';
         ctx.lineWidth = Math.max(3, cell * 0.32);
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
+        if (doc) ctx.setLineDash([cell * 0.16, cell * 0.16]);
         ctx.beginPath();
         sol.forEach((ci, i) => {
           const x = X(ci % N) + cell / 2, y = Y(Math.floor(ci / N)) + cell / 2;
           i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
         });
         ctx.stroke();
+        if (doc) ctx.setLineDash([]);
         ctx.lineCap = 'butt';
       }
 
       /* breadcrumb trail */
-      ctx.strokeStyle = 'rgba(255,203,31,.55)';
+      ctx.strokeStyle = doc ? Engine.docInk() : 'rgba(255,203,31,.55)';
       ctx.lineWidth = Math.max(2, cell * 0.2);
       ctx.lineJoin = 'round';
       ctx.beginPath();
@@ -154,29 +162,55 @@
       });
       ctx.stroke();
 
-      /* exit cell */
-      ctx.fillStyle = '#1e6b3a';
-      ctx.fillRect(X(N - 1) + 2, Y(N - 1) + 2, cell - 4, cell - 4);
-
-      /* walls */
-      ctx.strokeStyle = '#cfc6ae';
-      ctx.lineWidth = Math.max(2, cell * 0.14);
-      ctx.lineCap = 'round';
-      ctx.beginPath();
-      for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
-        const cellObj = cells[r * N + c];
-        const x = X(c), y = Y(r);
-        if (cellObj.N) { ctx.moveTo(x, y); ctx.lineTo(x + cell, y); }
-        if (cellObj.W) { ctx.moveTo(x, y); ctx.lineTo(x, y + cell); }
-        if (cellObj.S) { ctx.moveTo(x, y + cell); ctx.lineTo(x + cell, y + cell); }
-        if (cellObj.E) { ctx.moveTo(x + cell, y); ctx.lineTo(x + cell, y + cell); }
+      /* exit cell: paper fill with an ink outline, not a solid tinted block */
+      if (doc) {
+        ctx.fillStyle = Engine.docPaper();
+        ctx.fillRect(X(N - 1) + 2, Y(N - 1) + 2, cell - 4, cell - 4);
+        ctx.strokeStyle = Engine.docInk();
+        ctx.lineWidth = 2;
+        ctx.strokeRect(X(N - 1) + 3, Y(N - 1) + 3, cell - 6, cell - 6);
+      } else {
+        ctx.fillStyle = '#1e6b3a';
+        ctx.fillRect(X(N - 1) + 2, Y(N - 1) + 2, cell - 4, cell - 4);
       }
-      ctx.stroke();
-      ctx.lineCap = 'butt';
+
+      /* walls. In doc mode every segment gets its own crisp axis-aligned
+         rectangle (integer width, butt caps, both endpoints pixel-snapped)
+         instead of a round-capped stroke — a round cap on a few big shapes
+         antialiases invisibly, but on ~4*N*N separate short wall segments
+         those little curved antialiasing halos add up to a real wash of
+         grey, which is exactly what this figure has to avoid. */
+      if (doc) {
+        const ww = Math.max(4, Math.round(cell * 0.1) * 2);   // kept even so half-width offsets stay whole pixels
+        ctx.fillStyle = Engine.docInk();
+        for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+          const cellObj = cells[r * N + c];
+          const x0 = X(c), y0 = Y(r), x1 = X(c + 1), y1 = Y(r + 1);
+          if (cellObj.N) ctx.fillRect(x0 - ww / 2, y0 - ww / 2, x1 - x0 + ww, ww);
+          if (cellObj.W) ctx.fillRect(x0 - ww / 2, y0 - ww / 2, ww, y1 - y0 + ww);
+          if (cellObj.S) ctx.fillRect(x0 - ww / 2, y1 - ww / 2, x1 - x0 + ww, ww);
+          if (cellObj.E) ctx.fillRect(x1 - ww / 2, y0 - ww / 2, ww, y1 - y0 + ww);
+        }
+      } else {
+        ctx.strokeStyle = '#cfc6ae';
+        ctx.lineWidth = Math.max(2, cell * 0.14);
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+          const cellObj = cells[r * N + c];
+          const x = X(c), y = Y(r);
+          if (cellObj.N) { ctx.moveTo(x, y); ctx.lineTo(x + cell, y); }
+          if (cellObj.W) { ctx.moveTo(x, y); ctx.lineTo(x, y + cell); }
+          if (cellObj.S) { ctx.moveTo(x, y + cell); ctx.lineTo(x + cell, y + cell); }
+          if (cellObj.E) { ctx.moveTo(x + cell, y); ctx.lineTo(x + cell, y + cell); }
+        }
+        ctx.stroke();
+        ctx.lineCap = 'butt';
+      }
 
       /* flag */
       const fx = X(N - 1) + cell / 2, fy = Y(N - 1) + cell / 2;
-      ctx.strokeStyle = '#fffdf3';
+      ctx.strokeStyle = doc ? Engine.docInk() : '#fffdf3';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(fx, fy + cell * 0.3);
@@ -186,7 +220,7 @@
          luminance as the exit cell behind it (both wash to a similar light
          grey), making it nearly invisible in document mode — match the pole's
          colour instead, which is chosen to survive inversion as dark ink */
-      ctx.fillStyle = '#fffdf3';
+      ctx.fillStyle = doc ? Engine.docInk() : '#fffdf3';
       ctx.beginPath();
       ctx.moveTo(fx, fy - cell * 0.3);
       ctx.lineTo(fx + cell * 0.32, fy - cell * 0.18);
@@ -194,14 +228,24 @@
       ctx.closePath();
       ctx.fill();
 
-      /* player */
-      ctx.fillStyle = '#38e1ff';
-      ctx.beginPath();
-      ctx.arc(X(px) + cell / 2, Y(py) + cell / 2, cell * 0.3, 0, 7);
-      ctx.fill();
-      ctx.strokeStyle = '#0c1119';
-      ctx.lineWidth = 2;
-      ctx.stroke();
+      /* player: an outlined marker in doc mode, never a solid tinted blob */
+      if (doc) {
+        ctx.fillStyle = Engine.docPaper();
+        ctx.strokeStyle = Engine.docInk();
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(X(px) + cell / 2, Y(py) + cell / 2, cell * 0.3, 0, 7);
+        ctx.fill();
+        ctx.stroke();
+      } else {
+        ctx.fillStyle = '#38e1ff';
+        ctx.beginPath();
+        ctx.arc(X(px) + cell / 2, Y(py) + cell / 2, cell * 0.3, 0, 7);
+        ctx.fill();
+        ctx.strokeStyle = '#0c1119';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
     }
 
     bagg.add(Engine.onKey((e) => {
@@ -242,6 +286,7 @@
     order: 16,
     blurb: 'Get from the top-left corner to the flag. There is always exactly one route through, so you can never get boxed in with no way out.',
     scoreLabel: 'Level',
+    lightBoard: true,   // doc mode draws its own paper/ink palette above; the blanket invert would only flip it back
     tags: ['maze', 'labyrinth', 'navigation'],
     how: [
       'Move one cell at a time with the arrows, WASD, a swipe, or the on-screen pad.',
